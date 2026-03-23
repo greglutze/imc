@@ -1,0 +1,286 @@
+import { Request } from 'express';
+
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    name: string;
+    org_id: string;
+    role: 'owner' | 'member';
+    tier: 'creator' | 'pro' | 'team' | 'enterprise';
+  };
+}
+
+// ── JSONB nested types ──
+
+export interface ProjectConcept {
+  genre_primary: string;
+  genre_secondary: string[];
+  reference_artists: string[];
+  creative_direction: string;
+  target_audience: string;
+  mood_keywords: string[];
+  track_count: number;
+}
+
+export interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+}
+
+// Instrument 1 types
+
+export interface I1MarketOverview {
+  genre_landscape: string;
+  saturation_level: string;
+  growth_trend: string;
+  key_trends: string[];
+}
+
+export interface I1ComparableArtist {
+  name: string;
+  monthly_listeners: number | null;
+  relevance_score: number;
+  positioning_gap: string;
+}
+
+export interface I1AudienceProfile {
+  age_range: string;
+  gender_split: string;
+  top_markets: string[];
+  platforms: string[];
+  psychographic_traits: string[];
+}
+
+export interface I1PlaylistLandscape {
+  target_playlists: string[];
+  curator_patterns: string;
+  placement_difficulty: string;
+}
+
+export interface I1SonicBlueprint {
+  bpm_range: string;
+  key_signatures: string[];
+  energy_level: string;
+  production_aesthetic: string;
+  sonic_signatures: string[];
+}
+
+export interface I1Opportunity {
+  title: string;
+  description: string;
+  market_gap_score: number;
+  success_probability: string;
+}
+
+export interface I1RevenueProjections {
+  streaming: string;
+  touring: string;
+  merchandise: string;
+  sync_licensing: string;
+  total_year1: string;
+}
+
+export interface I1RiskAssessment {
+  risks: Array<{ category: string; description: string; severity: string }>;
+}
+
+export interface I1Recommendations {
+  items: Array<{ priority: string; action: string }>;
+}
+
+export interface I1Report {
+  market_overview: I1MarketOverview;
+  comparable_artists: I1ComparableArtist[];
+  audience_profile: I1AudienceProfile;
+  playlist_landscape: I1PlaylistLandscape;
+  sonic_blueprint: I1SonicBlueprint;
+  opportunities: I1Opportunity[];
+  revenue_projections: I1RevenueProjections;
+  risk_assessment: I1RiskAssessment;
+  recommendations: I1Recommendations;
+}
+
+export interface I1Confidence {
+  overall_score: number;
+  data_completeness: number;
+  sources_used: string[];
+  sources_failed: string[];
+}
+
+// Instrument 2 types
+
+export interface I2StyleProfile {
+  production_aesthetic: string;
+  sonic_signatures: string[];
+  tempo_range: string;
+  key_preferences: string[];
+}
+
+export interface I2VocalistPersona {
+  vocal_character: string;
+  delivery_style: string;
+  reference_vocalists: string[];
+  tone_keywords: string[];
+}
+
+export interface I2Track {
+  track_number: number;
+  title: string;
+  suno_prompt: string;
+  udio_prompt: string;
+  structure: string;
+  notes: string;
+}
+
+// Instrument 3 types
+
+export interface I3AudioQuality {
+  loudness_lufs: number;
+  dynamic_range: number;
+  frequency_balance: string;
+  mix_notes: string;
+}
+
+export interface I3HookEffectiveness {
+  repetition_score: number;
+  melodic_contour: string;
+  hook_timestamps: string[];
+  overall_score: number;
+}
+
+export interface I3Structure {
+  sections: Array<{ name: string; start: string; end: string }>;
+  pacing_assessment: string;
+  transitions_quality: string;
+}
+
+export interface I3CompetitivePosition {
+  genre_fit_score: number;
+  differentiation: string;
+  comparable_tracks: string[];
+}
+
+export interface I3CommercialViability {
+  score: number;
+  reasoning: string;
+  strengths: string[];
+  weaknesses: string[];
+}
+
+export interface I3Analysis {
+  audio_quality: I3AudioQuality;
+  hook_effectiveness: I3HookEffectiveness;
+  structure: I3Structure;
+  competitive_position: I3CompetitivePosition;
+  commercial_viability: I3CommercialViability;
+}
+
+export interface I3SuccessScore {
+  overall: number;
+  breakdown: Record<string, number>;
+  criteria_version: string;
+}
+
+export interface I3Recommendation {
+  priority: 'critical' | 'high' | 'optimization';
+  category: string;
+  finding: string;
+  action: string;
+}
+
+export interface AudioFeatures {
+  bpm: number;
+  key: string;
+  energy: number;
+  danceability: number;
+  loudness_lufs: number;
+  dynamic_range: number;
+  spectral_centroid: number;
+  onset_rate: number;
+}
+
+// ── Core entity types ──
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  org_id: string;
+  role: 'owner' | 'member';
+  tier: 'creator' | 'pro' | 'team' | 'enterprise';
+  password_hash: string;
+  created_at: Date;
+}
+
+export interface Organization {
+  id: string;
+  name: string;
+  created_at: Date;
+}
+
+export interface Project {
+  id: string;
+  user_id: string;
+  org_id: string;
+  status: 'draft' | 'research' | 'prompting' | 'analysis' | 'complete';
+  artist_name: string | null;
+  concept: ProjectConcept;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ConceptConversation {
+  id: string;
+  project_id: string;
+  messages: ConversationMessage[];
+  extracted: boolean;
+  created_at: Date;
+}
+
+export interface Instrument1Report {
+  id: string;
+  project_id: string;
+  version: number;
+  report: I1Report;
+  confidence: I1Confidence;
+  created_at: Date;
+}
+
+export interface Instrument2Prompts {
+  id: string;
+  project_id: string;
+  report_id: string | null;
+  version: number;
+  style_profile: I2StyleProfile;
+  vocalist_persona: I2VocalistPersona;
+  tracks: I2Track[];
+  created_at: Date;
+}
+
+export interface Instrument3Analysis {
+  id: string;
+  project_id: string;
+  report_id: string | null;
+  track_title: string | null;
+  audio_file_key: string | null;
+  analysis: I3Analysis;
+  success_score: I3SuccessScore;
+  recommendations: I3Recommendation[];
+  target_alignment: Record<string, unknown> | null;
+  created_at: Date;
+}
+
+export interface AudioFile {
+  id: string;
+  project_id: string;
+  user_id: string;
+  filename: string;
+  storage_key: string;
+  format: string;
+  duration_ms: number | null;
+  file_size_bytes: number | null;
+  features: AudioFeatures | null;
+  created_at: Date;
+}
