@@ -224,7 +224,7 @@ router.post(
 
       const newTrack = await regenerateTrack(concept, report, trackNum, currentPrompts);
 
-      const updatedTracks = currentPrompts.tracks.map((t) =>
+      const updatedTracks = currentPrompts.tracks.map((t: { track_number: number }) =>
         t.track_number === trackNum ? newTrack : t
       );
 

@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import pool from '../config/database';
 import { authMiddleware } from '../middleware/auth';
-import { AuthRequest, ProjectConcept, ConversationMessage } from '../types';
+import { AuthRequest, ConversationMessage } from '../types';
 
 const router = Router();
 

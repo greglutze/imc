@@ -6,7 +6,6 @@ import {
   searchPlaylists,
   getAudioFeatures,
   SpotifyArtist,
-  SpotifyTrack,
   SpotifyPlaylist,
   SpotifyAudioFeatures,
 } from './spotify';

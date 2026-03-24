@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import pool from '../config/database';
 import { authMiddleware } from '../middleware/auth';
-import { AuthRequest, AudioFile, AudioFeatures, Project, Instrument1Report } from '../types';
+import { AuthRequest, AudioFile, AudioFeatures, Project } from '../types';
 import { extractFeatures } from '../services/audio';
 import { analyzeTrack } from '../services/instrument3';
 import path from 'path';
