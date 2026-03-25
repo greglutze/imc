@@ -38,13 +38,13 @@ const config: Config = {
           violet: '#7C4DFF',   // AI/intelligence indicator
         },
 
-        // Surface colors
+        // Surface colors — light mode
         surface: {
-          primary: '#000000',
-          secondary: '#0A0A0A',
-          tertiary: '#171717',
-          elevated: '#1C1C1C',
-          overlay: 'rgba(0, 0, 0, 0.72)',
+          primary: '#FFFFFF',
+          secondary: '#FAFAFA',
+          tertiary: '#F5F5F5',
+          elevated: '#FFFFFF',
+          overlay: 'rgba(0, 0, 0, 0.08)',
         },
       },
 
@@ -105,9 +105,9 @@ const config: Config = {
       },
 
       boxShadow: {
-        'elevated': '0 2px 8px rgba(0, 0, 0, 0.4)',
-        'card': '0 1px 3px rgba(0, 0, 0, 0.3)',
-        'modal': '0 8px 32px rgba(0, 0, 0, 0.6)',
+        'elevated': '0 2px 8px rgba(0, 0, 0, 0.06)',
+        'card': '0 1px 3px rgba(0, 0, 0, 0.04)',
+        'modal': '0 8px 32px rgba(0, 0, 0, 0.12)',
       },
 
       animation: {

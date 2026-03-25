@@ -12,8 +12,8 @@ export default function Card({ children, className = '', hoverable = false, onCl
     <div
       onClick={onClick}
       className={`
-        bg-surface-tertiary border border-neutral-800 rounded-md p-6
-        ${hoverable ? 'hover:border-neutral-600 hover:bg-surface-elevated transition-all duration-fast cursor-pointer' : ''}
+        bg-white border border-neutral-200 rounded-md p-6
+        ${hoverable ? 'hover:border-neutral-300 hover:shadow-elevated transition-all duration-fast cursor-pointer' : ''}
         ${className}
       `}
     >
@@ -32,7 +32,7 @@ export function CardHeader({ children, className = '' }: { children: React.React
 
 export function CardTitle({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <h3 className={`text-heading-sm font-bold text-white ${className}`}>
+    <h3 className={`text-heading-sm font-bold text-black ${className}`}>
       {children}
     </h3>
   );
@@ -40,7 +40,7 @@ export function CardTitle({ children, className = '' }: { children: React.ReactN
 
 export function CardDescription({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <p className={`text-body-sm text-neutral-400 ${className}`}>
+    <p className={`text-body-sm text-neutral-500 ${className}`}>
       {children}
     </p>
   );

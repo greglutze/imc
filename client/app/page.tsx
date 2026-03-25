@@ -7,8 +7,8 @@ export default function Home() {
     <div className="p-8 space-y-8 animate-fade-in">
       {/* Page Header */}
       <div>
-        <h1 className="text-heading-lg font-bold tracking-tight">Dashboard</h1>
-        <p className="text-body text-neutral-400 mt-1">Welcome back, Greg.</p>
+        <h1 className="text-heading-lg font-bold tracking-tight text-black">Dashboard</h1>
+        <p className="text-body text-neutral-500 mt-1">Welcome back, Greg.</p>
       </div>
 
       {/* Quick Stats */}
@@ -23,7 +23,7 @@ export default function Home() {
       {/* Projects */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-heading-sm font-bold">Projects</h2>
+          <h2 className="text-heading-sm font-bold text-black">Projects</h2>
           <Button size="sm">New Project</Button>
         </div>
 
@@ -47,7 +47,7 @@ export default function Home() {
 
           <Card className="border-dashed flex items-center justify-center min-h-[180px]">
             <div className="text-center">
-              <p className="text-body-sm text-neutral-500 mb-3">Start a new project</p>
+              <p className="text-body-sm text-neutral-400 mb-3">Start a new project</p>
               <Button variant="secondary" size="sm">Create</Button>
             </div>
           </Card>
@@ -59,12 +59,12 @@ export default function Home() {
 
 function StatCard({ label, value, signal }: { label: string; value: string; signal: 'green' | 'yellow' | 'red' | 'neutral' }) {
   return (
-    <div className="bg-surface-tertiary border border-neutral-800 rounded-md p-5">
+    <div className="bg-white border border-neutral-200 rounded-md p-5">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-label font-bold uppercase tracking-widest text-neutral-500">{label}</span>
+        <span className="text-label font-bold uppercase tracking-widest text-neutral-400">{label}</span>
         <Signal color={signal} />
       </div>
-      <p className="text-heading-lg font-bold">{value}</p>
+      <p className="text-heading-lg font-bold text-black">{value}</p>
     </div>
   );
 }

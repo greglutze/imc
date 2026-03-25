@@ -4,16 +4,16 @@ import { Button, Input, Badge, Card, CardHeader, CardTitle, CardDescription, Sig
 
 export default function SystemPage() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white text-neutral-900">
       {/* Header */}
-      <div className="border-b border-neutral-800 px-12 py-10">
-        <p className="text-micro font-bold uppercase tracking-widest text-neutral-500 mb-3">
+      <div className="border-b border-neutral-200 px-12 py-10">
+        <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-3">
           IMC Design System
         </p>
-        <h1 className="text-display font-bold tracking-tight">
+        <h1 className="text-display font-bold tracking-tight text-black">
           Component Reference
         </h1>
-        <p className="text-body text-neutral-400 mt-2 max-w-xl">
+        <p className="text-body text-neutral-500 mt-2 max-w-xl">
           Dieter Rams meets Virgil Abloh. Functional color, Swiss typography, considered space.
         </p>
       </div>
@@ -26,54 +26,54 @@ export default function SystemPage() {
 
           <div className="space-y-6 mt-6">
             <div>
-              <span className="text-micro text-neutral-500 font-mono">display-lg / 64px</span>
-              <p className="text-display-lg font-bold">Instruments</p>
+              <span className="text-micro text-neutral-400 font-mono">display-lg / 64px</span>
+              <p className="text-display-lg font-bold text-black">Instruments</p>
             </div>
             <div>
-              <span className="text-micro text-neutral-500 font-mono">display / 48px</span>
-              <p className="text-display font-bold">Mass Creation</p>
+              <span className="text-micro text-neutral-400 font-mono">display / 48px</span>
+              <p className="text-display font-bold text-black">Mass Creation</p>
             </div>
             <div>
-              <span className="text-micro text-neutral-500 font-mono">heading-lg / 36px</span>
-              <p className="text-heading-lg font-bold">Market Research</p>
+              <span className="text-micro text-neutral-400 font-mono">heading-lg / 36px</span>
+              <p className="text-heading-lg font-bold text-black">Market Research</p>
             </div>
             <div>
-              <span className="text-micro text-neutral-500 font-mono">heading / 28px</span>
-              <p className="text-heading font-bold">Artist Concept</p>
+              <span className="text-micro text-neutral-400 font-mono">heading / 28px</span>
+              <p className="text-heading font-bold text-black">Artist Concept</p>
             </div>
             <div>
-              <span className="text-micro text-neutral-500 font-mono">heading-sm / 20px</span>
-              <p className="text-heading-sm font-bold">Prompt Generation</p>
-            </div>
-
-            <Divider />
-
-            <div>
-              <span className="text-micro text-neutral-500 font-mono">body-lg / 17px</span>
-              <p className="text-body-lg">The Sonic Engine processes musical DNA through AI-assisted research and prompt engineering.</p>
-            </div>
-            <div>
-              <span className="text-micro text-neutral-500 font-mono">body / 15px</span>
-              <p className="text-body text-neutral-300">Each instrument serves a specific function in the creative pipeline. Research informs prompts. Prompts inform production.</p>
-            </div>
-            <div>
-              <span className="text-micro text-neutral-500 font-mono">body-sm / 13px</span>
-              <p className="text-body-sm text-neutral-400">Confidence scores are calculated from multiple data signals across Spotify&apos;s API.</p>
+              <span className="text-micro text-neutral-400 font-mono">heading-sm / 20px</span>
+              <p className="text-heading-sm font-bold text-black">Prompt Generation</p>
             </div>
 
             <Divider />
 
             <div>
-              <span className="text-micro text-neutral-500 font-mono">label / 12px — uppercase</span>
-              <p className="text-label font-bold uppercase tracking-widest text-neutral-400">Instrument One</p>
+              <span className="text-micro text-neutral-400 font-mono">body-lg / 17px</span>
+              <p className="text-body-lg text-neutral-700">The Sonic Engine processes musical DNA through AI-assisted research and prompt engineering.</p>
             </div>
             <div>
-              <span className="text-micro text-neutral-500 font-mono">caption / 11px</span>
-              <p className="text-caption text-neutral-500">Last updated 3 hours ago</p>
+              <span className="text-micro text-neutral-400 font-mono">body / 15px</span>
+              <p className="text-body text-neutral-600">Each instrument serves a specific function in the creative pipeline. Research informs prompts. Prompts inform production.</p>
             </div>
             <div>
-              <span className="text-micro text-neutral-500 font-mono">mono / JetBrains Mono</span>
-              <p className="font-mono text-body-sm text-signal-yellow">confidence: 87 — genre_match: 0.92</p>
+              <span className="text-micro text-neutral-400 font-mono">body-sm / 13px</span>
+              <p className="text-body-sm text-neutral-500">Confidence scores are calculated from multiple data signals across Spotify&apos;s API.</p>
+            </div>
+
+            <Divider />
+
+            <div>
+              <span className="text-micro text-neutral-400 font-mono">label / 12px — uppercase</span>
+              <p className="text-label font-bold uppercase tracking-widest text-neutral-500">Instrument One</p>
+            </div>
+            <div>
+              <span className="text-micro text-neutral-400 font-mono">caption / 11px</span>
+              <p className="text-caption text-neutral-400">Last updated 3 hours ago</p>
+            </div>
+            <div>
+              <span className="text-micro text-neutral-400 font-mono">mono / JetBrains Mono</span>
+              <p className="font-mono text-body-sm text-neutral-600">confidence: 87 — genre_match: 0.92</p>
             </div>
           </div>
         </section>
@@ -81,7 +81,7 @@ export default function SystemPage() {
         {/* ———————— COLORS ———————— */}
         <section>
           <SectionLabel>Signal Colors</SectionLabel>
-          <p className="text-body-sm text-neutral-400 mt-2 mb-6">
+          <p className="text-body-sm text-neutral-500 mt-2 mb-6">
             Color conveys meaning. Never decoration.
           </p>
 
@@ -95,18 +95,18 @@ export default function SystemPage() {
           </div>
 
           <div className="grid grid-cols-6 gap-2 mt-8">
-            {['bg-neutral-950', 'bg-neutral-900', 'bg-neutral-800', 'bg-neutral-700', 'bg-neutral-600', 'bg-neutral-500'].map((bg, i) => (
+            {['bg-black', 'bg-neutral-900', 'bg-neutral-800', 'bg-neutral-700', 'bg-neutral-600', 'bg-neutral-500'].map((bg, i) => (
               <div key={i} className="space-y-1">
                 <div className={`h-12 rounded-sm ${bg}`} />
-                <p className="text-micro text-neutral-500 font-mono">{(950 - i * 100) || 500}</p>
+                <p className="text-micro text-neutral-400 font-mono">{['black', '900', '800', '700', '600', '500'][i]}</p>
               </div>
             ))}
           </div>
           <div className="grid grid-cols-6 gap-2 mt-2">
             {['bg-neutral-400', 'bg-neutral-300', 'bg-neutral-200', 'bg-neutral-100', 'bg-neutral-50', 'bg-white'].map((bg, i) => (
               <div key={i} className="space-y-1">
-                <div className={`h-12 rounded-sm border border-neutral-800 ${bg}`} />
-                <p className="text-micro text-neutral-500 font-mono">{i < 5 ? (400 - i * 100) : 'white'}</p>
+                <div className={`h-12 rounded-sm border border-neutral-200 ${bg}`} />
+                <p className="text-micro text-neutral-400 font-mono">{['400', '300', '200', '100', '50', 'white'][i]}</p>
               </div>
             ))}
           </div>
@@ -167,7 +167,7 @@ export default function SystemPage() {
         {/* ———————— SIGNALS ———————— */}
         <section>
           <SectionLabel>Signals</SectionLabel>
-          <p className="text-body-sm text-neutral-400 mt-2 mb-6">
+          <p className="text-body-sm text-neutral-500 mt-2 mb-6">
             Status at a glance. No words needed.
           </p>
 
@@ -198,7 +198,7 @@ export default function SystemPage() {
           </div>
 
           <div className="space-y-2 mt-6 max-w-md">
-            <p className="text-caption text-neutral-500">Compact variant</p>
+            <p className="text-caption text-neutral-400">Compact variant</p>
             <ConfidenceMeter value={87} label="Overall" size="sm" />
           </div>
         </section>
@@ -250,7 +250,7 @@ export default function SystemPage() {
         {/* ———————— SPACING ———————— */}
         <section>
           <SectionLabel>Spacing Scale</SectionLabel>
-          <p className="text-body-sm text-neutral-400 mt-2 mb-6">
+          <p className="text-body-sm text-neutral-500 mt-2 mb-6">
             4px base grid. Everything aligns.
           </p>
 
@@ -266,8 +266,8 @@ export default function SystemPage() {
               { name: '12', px: '48px' },
             ].map(({ name, px }) => (
               <div key={name} className="flex items-center gap-4">
-                <span className="text-micro font-mono text-neutral-500 w-16">{name} / {px}</span>
-                <div className="h-3 bg-signal-yellow/20 rounded-sm" style={{ width: px }} />
+                <span className="text-micro font-mono text-neutral-400 w-16">{name} / {px}</span>
+                <div className="h-3 bg-black/5 border border-black/10 rounded-sm" style={{ width: px }} />
               </div>
             ))}
           </div>
@@ -276,7 +276,7 @@ export default function SystemPage() {
         {/* Footer */}
         <div className="pb-20">
           <Divider label="End" />
-          <p className="text-caption text-neutral-600 mt-6 text-center">
+          <p className="text-caption text-neutral-400 mt-6 text-center">
             IMC Design System v0.1 — Helvetica Neue Bold × JetBrains Mono × Signal Colors
           </p>
         </div>
@@ -290,7 +290,7 @@ export default function SystemPage() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-micro font-bold uppercase tracking-widest text-signal-yellow">
+    <h2 className="text-micro font-bold uppercase tracking-widest text-black">
       {children}
     </h2>
   );
@@ -301,9 +301,9 @@ function ColorSwatch({ color, label, hex, usage }: { color: string; label: strin
     <div className="space-y-2">
       <div className={`h-16 rounded-sm ${color}`} />
       <div>
-        <p className="text-label font-bold text-white">{label}</p>
-        <p className="text-micro font-mono text-neutral-500">{hex}</p>
-        <p className="text-caption text-neutral-500 mt-0.5">{usage}</p>
+        <p className="text-label font-bold text-black">{label}</p>
+        <p className="text-micro font-mono text-neutral-400">{hex}</p>
+        <p className="text-caption text-neutral-400 mt-0.5">{usage}</p>
       </div>
     </div>
   );

@@ -1,13 +1,7 @@
 'use client';
 
-/**
- * ConfidenceMeter — visualizes a 0-100 confidence score
- * as a horizontal bar with signal colors.
- * Core to Instrument 1 research reports.
- */
-
 interface ConfidenceMeterProps {
-  value: number; // 0-100
+  value: number;
   label?: string;
   showValue?: boolean;
   size?: 'sm' | 'md';
@@ -43,7 +37,7 @@ export default function ConfidenceMeter({
       {(label || showValue) && (
         <div className="flex items-center justify-between">
           {label && (
-            <span className="text-caption text-neutral-400">{label}</span>
+            <span className="text-caption text-neutral-500">{label}</span>
           )}
           {showValue && (
             <span className={`text-caption font-mono font-bold ${getTextColor(clampedValue)}`}>
@@ -52,7 +46,7 @@ export default function ConfidenceMeter({
           )}
         </div>
       )}
-      <div className={`w-full ${height} bg-neutral-800 rounded-full overflow-hidden`}>
+      <div className={`w-full ${height} bg-neutral-100 rounded-full overflow-hidden`}>
         <div
           className={`${height} ${getColor(clampedValue)} rounded-full transition-all duration-slow`}
           style={{ width: `${clampedValue}%` }}

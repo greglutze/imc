@@ -13,13 +13,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-black text-white font-sans">
+      <body className="bg-white text-neutral-900 font-sans">
         <div className="flex h-screen">
           {/* Sidebar */}
-          <aside className="w-56 bg-surface-primary border-r border-neutral-800 flex flex-col hidden lg:flex">
+          <aside className="w-56 bg-surface-primary border-r border-neutral-200 flex flex-col hidden lg:flex">
             {/* Logo */}
-            <div className="h-14 flex items-center px-6 border-b border-neutral-800">
-              <span className="text-heading-sm font-bold tracking-tight">IMC</span>
+            <div className="h-14 flex items-center px-6 border-b border-neutral-200">
+              <span className="text-heading-sm font-bold tracking-tight text-black">IMC</span>
             </div>
 
             {/* Navigation */}
@@ -32,18 +32,18 @@ export default function RootLayout({
             </nav>
 
             {/* Footer */}
-            <div className="px-6 py-4 border-t border-neutral-800">
-              <p className="text-micro font-mono text-neutral-600">v0.1.0</p>
+            <div className="px-6 py-4 border-t border-neutral-200">
+              <p className="text-micro font-mono text-neutral-400">v0.1.0</p>
             </div>
           </aside>
 
           {/* Main */}
           <div className="flex-1 flex flex-col min-w-0">
             {/* Top Bar */}
-            <header className="h-14 bg-surface-primary border-b border-neutral-800 flex items-center justify-between px-8 shrink-0">
+            <header className="h-14 bg-surface-primary border-b border-neutral-200 flex items-center justify-between px-8 shrink-0">
               <div />
               <div className="flex items-center gap-3">
-                <div className="w-7 h-7 rounded-full bg-neutral-800 border border-neutral-700" />
+                <div className="w-7 h-7 rounded-full bg-neutral-100 border border-neutral-200" />
               </div>
             </header>
 
@@ -65,8 +65,8 @@ function NavItem({ label, active = false }: { label: string; active?: boolean })
         flex items-center h-9 px-3 rounded-sm text-body-sm cursor-pointer
         transition-colors duration-fast
         ${active
-          ? 'bg-neutral-800 text-white font-bold'
-          : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
+          ? 'bg-neutral-100 text-black font-bold'
+          : 'text-neutral-500 hover:text-black hover:bg-neutral-50'
         }
       `}
     >
