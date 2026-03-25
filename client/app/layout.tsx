@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'IMC - Instruments of Mass Creation',
+  title: 'IMC — Instruments of Mass Creation',
   description: 'Music Intelligence Platform',
 };
 
@@ -15,43 +15,62 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-black text-white font-sans">
         <div className="flex h-screen">
-          {/* Sidebar Navigation */}
-          <aside className="w-64 bg-black border-r border-gray-700 p-6 hidden lg:block overflow-y-auto">
-            <nav className="space-y-4">
-              <div className="text-xs uppercase tracking-widest text-gray-500 font-mono mb-8">
-                Navigation
-              </div>
-              <div className="text-sm text-gray-400 hover:text-yellow-accent transition-colors cursor-pointer">
-                Dashboard
-              </div>
-              <div className="text-sm text-gray-400 hover:text-yellow-accent transition-colors cursor-pointer">
-                Projects
-              </div>
-              <div className="text-sm text-gray-400 hover:text-yellow-accent transition-colors cursor-pointer">
-                Analysis
-              </div>
-              <div className="text-sm text-gray-400 hover:text-yellow-accent transition-colors cursor-pointer">
-                Settings
-              </div>
+          {/* Sidebar */}
+          <aside className="w-56 bg-surface-primary border-r border-neutral-800 flex flex-col hidden lg:flex">
+            {/* Logo */}
+            <div className="h-14 flex items-center px-6 border-b border-neutral-800">
+              <span className="text-heading-sm font-bold tracking-tight">IMC</span>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 px-3 py-4 space-y-0.5">
+              <NavItem label="Dashboard" active />
+              <NavItem label="Projects" />
+              <NavItem label="Research" />
+              <NavItem label="Prompts" />
+              <NavItem label="Settings" />
             </nav>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-neutral-800">
+              <p className="text-micro font-mono text-neutral-600">v0.1.0</p>
+            </div>
           </aside>
 
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col">
+          {/* Main */}
+          <div className="flex-1 flex flex-col min-w-0">
             {/* Top Bar */}
-            <header className="h-16 bg-black border-b border-gray-700 flex items-center px-8">
-              <div className="text-lg font-mono text-yellow-accent tracking-wide">
-                IMC
+            <header className="h-14 bg-surface-primary border-b border-neutral-800 flex items-center justify-between px-8 shrink-0">
+              <div />
+              <div className="flex items-center gap-3">
+                <div className="w-7 h-7 rounded-full bg-neutral-800 border border-neutral-700" />
               </div>
             </header>
 
-            {/* Content Area */}
-            <main className="flex-1 bg-white overflow-y-auto">
+            {/* Content */}
+            <main className="flex-1 bg-surface-secondary overflow-y-auto">
               {children}
             </main>
           </div>
         </div>
       </body>
     </html>
+  );
+}
+
+function NavItem({ label, active = false }: { label: string; active?: boolean }) {
+  return (
+    <div
+      className={`
+        flex items-center h-9 px-3 rounded-sm text-body-sm cursor-pointer
+        transition-colors duration-fast
+        ${active
+          ? 'bg-neutral-800 text-white font-bold'
+          : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
+        }
+      `}
+    >
+      {label}
+    </div>
   );
 }

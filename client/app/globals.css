@@ -2,8 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+/* JetBrains Mono for technical elements */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ————————————————————————————————————————
+   Base
+   ———————————————————————————————————————— */
 
 html, body {
   height: 100%;
@@ -13,19 +17,65 @@ html, body {
 body {
   background-color: #000000;
   color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #0F0F0F; }
-::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #555555; }
+/* ————————————————————————————————————————
+   Typography utilities
+   ———————————————————————————————————————— */
 
-/* Focus */
+.font-bold-extended {
+  font-weight: 700;
+  font-stretch: normal;
+}
+
+.text-uppercase-label {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 14px;
+}
+
+/* ————————————————————————————————————————
+   Scrollbar — minimal, dark
+   ———————————————————————————————————————— */
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #404040; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #525252; }
+
+/* ————————————————————————————————————————
+   Focus — yellow signal ring
+   ———————————————————————————————————————— */
+
 :focus-visible {
   outline: 2px solid #FFD700;
   outline-offset: 2px;
+}
+
+/* ————————————————————————————————————————
+   Selection
+   ———————————————————————————————————————— */
+
+::selection {
+  background: rgba(255, 215, 0, 0.2);
+  color: #FFFFFF;
+}
+
+/* ————————————————————————————————————————
+   Resets for component consistency
+   ———————————————————————————————————————— */
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  -webkit-font-smoothing: antialiased;
 }
