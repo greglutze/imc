@@ -15,40 +15,30 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-white text-neutral-900 font-sans">
         <div className="flex h-screen">
-          {/* Sidebar */}
-          <aside className="w-56 bg-surface-primary border-r border-neutral-200 flex flex-col hidden lg:flex">
+          {/* Sidebar — slim, editorial */}
+          <aside className="w-14 bg-white border-r border-neutral-200 flex flex-col items-center hidden lg:flex">
             {/* Logo */}
-            <div className="h-14 flex items-center px-6 border-b border-neutral-200">
-              <span className="text-heading-sm font-bold tracking-tight text-black">IMC</span>
+            <div className="h-14 flex items-center justify-center border-b border-neutral-200 w-full">
+              <span className="text-label font-bold tracking-tight text-black">I</span>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 px-3 py-4 space-y-0.5">
-              <NavItem label="Dashboard" active />
-              <NavItem label="Projects" />
-              <NavItem label="Research" />
-              <NavItem label="Prompts" />
-              <NavItem label="Settings" />
+            {/* Nav icons — vertical, minimal */}
+            <nav className="flex-1 flex flex-col items-center py-6 gap-6">
+              <NavDot active label="D" />
+              <NavDot label="P" />
+              <NavDot label="R" />
+              <NavDot label="G" />
             </nav>
 
             {/* Footer */}
-            <div className="px-6 py-4 border-t border-neutral-200">
-              <p className="text-micro font-mono text-neutral-400">v0.1.0</p>
+            <div className="py-4">
+              <div className="w-6 h-6 rounded-full bg-neutral-100 border border-neutral-200" />
             </div>
           </aside>
 
           {/* Main */}
           <div className="flex-1 flex flex-col min-w-0">
-            {/* Top Bar */}
-            <header className="h-14 bg-surface-primary border-b border-neutral-200 flex items-center justify-between px-8 shrink-0">
-              <div />
-              <div className="flex items-center gap-3">
-                <div className="w-7 h-7 rounded-full bg-neutral-100 border border-neutral-200" />
-              </div>
-            </header>
-
-            {/* Content */}
-            <main className="flex-1 bg-surface-secondary overflow-y-auto">
+            <main className="flex-1 overflow-y-auto">
               {children}
             </main>
           </div>
@@ -58,15 +48,15 @@ export default function RootLayout({
   );
 }
 
-function NavItem({ label, active = false }: { label: string; active?: boolean }) {
+function NavDot({ label, active = false }: { label: string; active?: boolean }) {
   return (
     <div
       className={`
-        flex items-center h-9 px-3 rounded-sm text-body-sm cursor-pointer
-        transition-colors duration-fast
+        w-8 h-8 rounded-full flex items-center justify-center
+        text-micro font-bold cursor-pointer transition-all duration-fast
         ${active
-          ? 'bg-neutral-100 text-black font-bold'
-          : 'text-neutral-500 hover:text-black hover:bg-neutral-50'
+          ? 'bg-black text-white'
+          : 'text-neutral-400 hover:text-black hover:bg-neutral-100'
         }
       `}
     >
