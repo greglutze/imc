@@ -9,7 +9,7 @@ export default function Home() {
     <div className="animate-fade-in">
       {/* Masthead */}
       <div className="border-b border-neutral-200">
-        <div className="max-w-[1400px] mx-auto px-10 py-6 flex items-end justify-between">
+        <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
           <div>
             <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
               Instruments of Mass Creation
