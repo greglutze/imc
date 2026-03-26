@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './config/database';
@@ -22,7 +22,7 @@ app.get('/api/health', (_req: Request, res: Response): void => {
 app.use('/api', apiRoutes);
 
 // Error handling middleware
-app.use((err: Error, _req: Request, res: Response): void => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction): void => {
   console.error(err);
   res.status(500).json({ error: 'Internal Server Error' });
 });
