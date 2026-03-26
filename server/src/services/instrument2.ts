@@ -16,7 +16,9 @@ Given the artist concept and market data, generate:
 3. Individual track prompts optimized for both Suno and Udio
 
 CRITICAL RULES:
-- Suno prompts are descriptive and tag-based. Use comma-separated descriptors. Include genre, mood, tempo, instruments, vocal style. Max ~200 chars.
+- Suno prompts use bracketed category tags. Max 1000 words. Format each prompt as a continuous string of bracketed sections:
+  [Genres: ...] [Moods: ...] [Instrumentation: ... — include exclusions like "no guitar, no 808"] [Tempo: BPM range, feel description — "played not programmed"] [Vocal Style: specific character — include what NOT to do] [Production: aesthetic description — reference textures, recording approach, analog vs digital] [Structure: section-by-section flow in plain language, not bracket notation] [Sound Design: evocative scene-setting — describe the physical space and emotional landscape the listener inhabits]
+  Be poetic and specific in each category. Use em dashes for contrast and exclusions. Each section should read like a creative brief, not a tag list.
 - Udio prompts are more narrative. Describe the sound in natural language. Include production style, era references, sonic textures. Max ~500 chars.
 - Maintain 80%+ genre consistency across tracks while allowing creative variation
 - Each track should have a distinct identity within the project's sonic universe
@@ -41,7 +43,7 @@ Return JSON:
     {
       "track_number": 1,
       "title": "Working Title",
-      "suno_prompt": "genre, mood, tempo BPM, instruments, vocal style, production tags",
+      "suno_prompt": "[Genres: ...] [Moods: ...] [Instrumentation: ...] [Tempo: ...] [Vocal Style: ...] [Production: ...] [Structure: ...] [Sound Design: ...]",
       "udio_prompt": "Narrative description of the track's sound, production approach, and aesthetic...",
       "structure": "[Intro] [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus] [Outro]",
       "notes": "Generation guidance and intent"
@@ -209,7 +211,7 @@ Now regenerate Track ${trackNumber} keeping the style consistent with the rest o
 {
   "track_number": ${trackNumber},
   "title": "Track title",
-  "suno_prompt": "tag-based prompt for Suno",
+  "suno_prompt": "[Genres: ...] [Moods: ...] [Instrumentation: ...] [Tempo: ...] [Vocal Style: ...] [Production: ...] [Structure: ...] [Sound Design: ...]",
   "udio_prompt": "narrative prompt for Udio",
   "structure": "[Section] [Section] ...",
   "notes": "Generation guidance"
