@@ -75,9 +75,9 @@ export default function ConceptChat({
           <div className="py-16 max-w-2xl">
             <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
             <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-              Define Your<br />Artist
+              Define Your Artist
             </p>
-            <p className="text-body-lg text-neutral-400 mt-5 max-w-sm">
+            <p className="text-body-lg text-black mt-5 max-w-sm">
               Start a conversation with the AI creative director.
               Genre, influences, mood, vision.
             </p>
@@ -144,7 +144,7 @@ export default function ConceptChat({
       {/* Input — rounded grey container */}
       {!conceptReady && (
         <form onSubmit={handleSubmit} className="px-8 py-5">
-          <div className="max-w-2xl bg-neutral-50 rounded-xl px-5 py-4 flex items-end gap-3">
+          <div className="max-w-2xl bg-neutral-50 rounded-sm px-5 py-4 flex items-end gap-3">
             <textarea
               ref={inputRef}
               value={input}
@@ -160,7 +160,7 @@ export default function ConceptChat({
               type="submit"
               disabled={!input.trim() || loading}
               className={`
-                text-label font-bold uppercase tracking-widest px-5 h-9 rounded-lg
+                text-label font-bold uppercase tracking-widest px-5 h-9 rounded-sm
                 transition-colors duration-fast shrink-0
                 ${input.trim() && !loading
                   ? 'bg-black text-white hover:bg-neutral-800'
