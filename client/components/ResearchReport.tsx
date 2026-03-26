@@ -191,10 +191,10 @@ export default function ResearchReport({
           <div className="col-span-5 px-8 py-10 border-r border-neutral-200">
             <SectionHeader number="04" title="Sonic Blueprint" />
 
-            <div className="mt-6 space-y-4">
+            <div className="mt-6 space-y-5">
               <DataRow label="BPM Range" value={report.sonic_blueprint.bpm_range} />
-              <DataRow label="Energy" value={report.sonic_blueprint.energy_profile} />
-              <DataRow label="Production" value={report.sonic_blueprint.production_style} />
+              <DataField label="Energy" value={report.sonic_blueprint.energy_profile} />
+              <DataField label="Production" value={report.sonic_blueprint.production_style} />
             </div>
 
             <div className="mt-6">
@@ -350,7 +350,16 @@ function SectionHeader({ number, title }: { number: string; title: string }) {
 function DataRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between border-b border-neutral-100 pb-2">
-      <span className="text-caption text-neutral-400">{label}</span>
+      <span className="text-caption text-neutral-400 shrink-0 mr-4">{label}</span>
+      <span className="text-body-sm text-black font-bold text-right">{value}</span>
+    </div>
+  );
+}
+
+function DataField({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border-b border-neutral-100 pb-3">
+      <span className="text-caption text-neutral-400 block mb-1">{label}</span>
       <span className="text-body-sm text-black font-bold">{value}</span>
     </div>
   );
