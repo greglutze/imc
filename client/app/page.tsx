@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Badge, Signal } from '../components/ui';
 import { useAuth } from '../lib/auth-context';
 import { api, type Project } from '../lib/api';
@@ -10,7 +9,6 @@ import { api, type Project } from '../lib/api';
 
 export default function Home() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
-  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(false);
 
