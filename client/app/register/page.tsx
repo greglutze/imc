@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { api } from '../../lib/api';
+import { useAuth } from '../../lib/auth-context';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { register } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +22,7 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      await api.register({ email, password, name, org_name: orgName });
+      await register({ email, password, name, org_name: orgName });
       router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');

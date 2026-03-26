@@ -1,19 +1,28 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../../lib/auth-context';
 import { api } from '../../../lib/api';
 
 /* eslint-disable @next/next/no-img-element */
 
 export default function NewProjectPage() {
   const router = useRouter();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [artistName, setArtistName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [authLoading, isAuthenticated, router]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -39,13 +48,10 @@ export default function NewProjectPage() {
     setError('');
 
     try {
-      if (api.isAuthenticated()) {
-        const project = await api.createProject(artistName || undefined);
-        // TODO: upload imageFile to storage when backend supports it
-        router.push(`/projects/${project.id}`);
-      } else {
-        router.push('/projects/demo');
-      }
+      const result = await api.createProject(artistName || undefined);
+      // result may have { project, conversation_id } shape from backend
+      const projectId = (result as any).project?.id || result.id;
+      router.push(`/projects/${projectId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create project');
       setLoading(false);

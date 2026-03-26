@@ -11,6 +11,7 @@ interface ResearchReportProps {
   artistName: string;
   createdAt?: string;
   onVersionChange?: (version: number) => void;
+  projectId?: string;
 }
 
 export default function ResearchReport({
@@ -21,6 +22,7 @@ export default function ResearchReport({
   artistName,
   createdAt,
   onVersionChange,
+  projectId,
 }: ResearchReportProps) {
   return (
     <div className="animate-fade-in">
@@ -360,7 +362,7 @@ export default function ResearchReport({
               Style profiles, vocalist personas, and track-by-track prompt sheets.
             </p>
             <a
-              href="/projects/demo/prompts"
+              href={`/projects/${projectId || 'demo'}/prompts`}
               className="mt-6 bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-6 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
             >
               Generate Prompts

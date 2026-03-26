@@ -13,19 +13,61 @@ import { ProjectConcept, I1Report, I1Confidence } from '../types';
 
 const MARKET_RESEARCH_SYSTEM_PROMPT = `You are IMC's market intelligence engine. You speak like an experienced A&R executive — direct, data-backed, realistic, and actionable.
 
-Analyze the provided market data and artist concept. Produce a comprehensive market research report as JSON matching exactly this structure:
+Analyze the provided market data and artist concept. Produce a comprehensive market research report as JSON matching EXACTLY this structure — do not deviate from these field names or types:
 
 {
-  "market_overview": { "genre_landscape": "...", "saturation_level": "low|medium|high", "growth_trend": "declining|stable|growing|emerging", "key_trends": ["..."] },
-  "comparable_artists": [{ "name": "...", "monthly_listeners": N, "relevance_score": 0.0-1.0, "positioning_gap": "..." }],
-  "audience_profile": { "age_range": "...", "gender_split": "...", "top_markets": ["..."], "platforms": ["..."], "psychographic_traits": ["..."] },
-  "playlist_landscape": { "target_playlists": ["..."], "curator_patterns": "...", "placement_difficulty": "easy|moderate|difficult|very_difficult" },
-  "sonic_blueprint": { "bpm_range": "...", "key_signatures": ["..."], "energy_level": "low|medium|high", "production_aesthetic": "...", "sonic_signatures": ["..."] },
-  "opportunities": [{ "title": "...", "description": "...", "market_gap_score": 0.0-10.0, "success_probability": "..." }],
-  "revenue_projections": { "streaming": "$X-$Y", "touring": "$X-$Y", "merchandise": "$X-$Y", "sync_licensing": "$X-$Y", "total_year1": "$X-$Y" },
-  "risk_assessment": { "risks": [{ "category": "...", "description": "...", "severity": "low|medium|high" }] },
-  "recommendations": { "items": [{ "priority": "critical|high|standard", "action": "..." }] }
+  "market_overview": {
+    "genre_landscape": "2-3 sentence overview of the genre space",
+    "saturation_level": "Low|Low-Medium|Medium|Medium-High|High",
+    "growth_trend": "Declining|Stable|Growing steadily|Emerging rapidly",
+    "key_trends": ["trend 1", "trend 2", "trend 3", "trend 4"]
+  },
+  "comparable_artists": [
+    {
+      "name": "Artist Name",
+      "monthly_listeners": 1500000,
+      "relevance_score": 85,
+      "positioning_gap": "How the new artist differentiates from this comparable"
+    }
+  ],
+  "audience_profile": {
+    "primary_age_range": "25–35",
+    "gender_split": "58% Male, 42% Female",
+    "top_markets": ["Country 1", "Country 2", "Country 3"],
+    "platforms": ["Spotify", "Apple Music", "Bandcamp"],
+    "psychographics": "Single paragraph describing the listener psychographic profile"
+  },
+  "playlist_landscape": {
+    "target_playlists": [
+      { "name": "Playlist Name", "followers": 2100000, "placement_difficulty": "High|Medium|Low" }
+    ],
+    "curator_patterns": "Description of curator behavior and algorithmic patterns"
+  },
+  "sonic_blueprint": {
+    "bpm_range": "110–140",
+    "key_signatures": ["C minor", "A minor"],
+    "energy_profile": "Description of energy arc and levels",
+    "production_style": "Description of production approach and techniques",
+    "sonic_signatures": ["signature 1", "signature 2", "signature 3"]
+  },
+  "opportunities": [
+    { "gap": "Market gap description", "market_score": 87, "success_probability": 72 }
+  ],
+  "revenue_projections": {
+    "streaming": "$8K–15K/mo at 500K monthly listeners",
+    "touring": "$2K–5K per show estimate",
+    "merch": "$1K–3K/mo estimate",
+    "sync_licensing": "$5K–25K per placement"
+  },
+  "risk_assessment": [
+    { "risk": "Risk description", "severity": "Low|Medium|High" }
+  ],
+  "recommendations": [
+    { "priority": 1, "action": "What to do", "timeline": "0–2 months" }
+  ]
 }
+
+CRITICAL: relevance_score, market_score, and success_probability are integers 0-100 (not decimals). risk_assessment and recommendations are arrays (not nested objects). revenue_projections uses "merch" not "merchandise". audience_profile uses "psychographics" (string) and "primary_age_range".
 
 Be honest. Show probability ranges, not certainty. Every insight must be data-backed. Never overpromise success.`;
 
@@ -171,44 +213,38 @@ export async function runMarketResearch(
   let reportJson: I1Report = {
     market_overview: {
       genre_landscape: '',
-      saturation_level: 'medium',
-      growth_trend: 'stable',
+      saturation_level: 'Medium',
+      growth_trend: 'Stable',
       key_trends: [],
     },
     comparable_artists: [],
     audience_profile: {
-      age_range: '',
+      primary_age_range: '',
       gender_split: '',
       top_markets: [],
       platforms: [],
-      psychographic_traits: [],
+      psychographics: '',
     },
     playlist_landscape: {
       target_playlists: [],
       curator_patterns: '',
-      placement_difficulty: 'moderate',
     },
     sonic_blueprint: {
       bpm_range: '',
       key_signatures: [],
-      energy_level: 'medium',
-      production_aesthetic: '',
+      energy_profile: '',
+      production_style: '',
       sonic_signatures: [],
     },
     opportunities: [],
     revenue_projections: {
-      streaming: '$0-$5000',
-      touring: '$0-$10000',
-      merchandise: '$0-$2000',
-      sync_licensing: '$0-$1000',
-      total_year1: '$0-$18000',
+      streaming: '$0',
+      touring: '$0',
+      merch: '$0',
+      sync_licensing: '$0',
     },
-    risk_assessment: {
-      risks: [],
-    },
-    recommendations: {
-      items: [],
-    },
+    risk_assessment: [],
+    recommendations: [],
   };
 
   try {

@@ -85,18 +85,18 @@ Market Intelligence:
 Sonic Blueprint (from Instrument 1 research):
 - BPM Range: ${sonicBlueprint.bpm_range}
 - Key Signatures: ${sonicBlueprint.key_signatures.join(', ')}
-- Energy Level: ${sonicBlueprint.energy_level}
-- Production Aesthetic: ${sonicBlueprint.production_aesthetic}
+- Energy Profile: ${sonicBlueprint.energy_profile}
+- Production Style: ${sonicBlueprint.production_style}
 - Sonic Signatures: ${sonicBlueprint.sonic_signatures.join(', ')}
 
 Comparable Artists: ${comparableArtists}
 
 Audience Profile:
-- Age Range: ${audienceProfile.age_range}
+- Age Range: ${audienceProfile.primary_age_range}
 - Gender Split: ${audienceProfile.gender_split}
 - Top Markets: ${audienceProfile.top_markets.join(', ')}
 - Platforms: ${audienceProfile.platforms.join(', ')}
-- Psychographic Traits: ${audienceProfile.psychographic_traits.join(', ')}
+- Psychographics: ${audienceProfile.psychographics}
 
 Genre Landscape: ${context.report.market_overview.genre_landscape}
 Growth Trend: ${context.report.market_overview.growth_trend}

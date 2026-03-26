@@ -46,48 +46,54 @@ export interface I1ComparableArtist {
 }
 
 export interface I1AudienceProfile {
-  age_range: string;
+  primary_age_range: string;
   gender_split: string;
   top_markets: string[];
   platforms: string[];
-  psychographic_traits: string[];
+  psychographics: string;
+}
+
+export interface I1PlaylistEntry {
+  name: string;
+  followers: number;
+  placement_difficulty: string;
 }
 
 export interface I1PlaylistLandscape {
-  target_playlists: string[];
+  target_playlists: I1PlaylistEntry[];
   curator_patterns: string;
-  placement_difficulty: string;
 }
 
 export interface I1SonicBlueprint {
   bpm_range: string;
   key_signatures: string[];
-  energy_level: string;
-  production_aesthetic: string;
+  energy_profile: string;
+  production_style: string;
   sonic_signatures: string[];
 }
 
 export interface I1Opportunity {
-  title: string;
-  description: string;
-  market_gap_score: number;
-  success_probability: string;
+  gap: string;
+  market_score: number;
+  success_probability: number;
 }
 
 export interface I1RevenueProjections {
   streaming: string;
   touring: string;
-  merchandise: string;
+  merch: string;
   sync_licensing: string;
-  total_year1: string;
 }
 
-export interface I1RiskAssessment {
-  risks: Array<{ category: string; description: string; severity: string }>;
+export interface I1Risk {
+  risk: string;
+  severity: string;
 }
 
-export interface I1Recommendations {
-  items: Array<{ priority: string; action: string }>;
+export interface I1Recommendation {
+  priority: number;
+  action: string;
+  timeline: string;
 }
 
 export interface I1Report {
@@ -98,8 +104,8 @@ export interface I1Report {
   sonic_blueprint: I1SonicBlueprint;
   opportunities: I1Opportunity[];
   revenue_projections: I1RevenueProjections;
-  risk_assessment: I1RiskAssessment;
-  recommendations: I1Recommendations;
+  risk_assessment: I1Risk[];
+  recommendations: I1Recommendation[];
 }
 
 export interface I1Confidence {

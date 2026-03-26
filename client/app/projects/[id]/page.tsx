@@ -1,115 +1,21 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { Tabs, Badge } from '../../../components/ui';
 import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
-import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence } from '../../../lib/api';
-
-/* ———————————————————————————————————————
-   Demo data — used until auth is wired up.
-   Once the API is connected, this file
-   switches to real data seamlessly.
-   ——————————————————————————————————————— */
-
-const DEMO_CONCEPT: ProjectConcept = {
-  genre_primary: 'Neoclassical Electronic',
-  genre_secondary: ['Ambient', 'Post-Dubstep'],
-  reference_artists: ['Ólafur Arnalds', 'The Prodigy', 'Burial', 'Nils Frahm'],
-  creative_direction: 'Classical instruments processed through electronic production techniques. Piano and strings layered with breakbeats, sub-bass, and atmospheric textures. Cinematic but club-ready.',
-  target_audience: '25-35 year old music enthusiasts who straddle indie/electronic scenes',
-  mood_keywords: ['Melancholic', 'Driving', 'Atmospheric', 'Cinematic'],
-  track_count: 8,
-};
-
-const DEMO_REPORT: I1Report = {
-  market_overview: {
-    genre_landscape: 'The neoclassical electronic space occupies a growing niche at the intersection of contemporary classical and electronic music. Artists like Ólafur Arnalds, Nils Frahm, and Kiasmos have demonstrated that orchestral elements can coexist with electronic production to create commercially viable, critically acclaimed work. The genre has seen steady growth in streaming numbers, fueled by playlist culture and the broader trend toward ambient and focus-oriented listening.',
-    saturation_level: 'Low-Medium',
-    growth_trend: 'Growing steadily',
-    key_trends: [
-      'Increasing crossover between classical training and electronic production tools',
-      'Rise of "focus" and "study" playlists driving ambient-adjacent discovery',
-      'Live performance blending acoustic instruments with real-time electronic processing',
-      'Sync licensing demand for cinematic, emotionally rich instrumentals',
-    ],
-  },
-  comparable_artists: [
-    { name: 'Ólafur Arnalds', monthly_listeners: 3_200_000, relevance_score: 95, positioning_gap: 'More ambient and less beat-driven. MMe. can capture the energy gap with breakbeat elements.' },
-    { name: 'Kiasmos', monthly_listeners: 1_800_000, relevance_score: 88, positioning_gap: 'Minimal techno + piano duo. MMe. can differentiate with fuller orchestration and wider dynamic range.' },
-    { name: 'Nils Frahm', monthly_listeners: 2_100_000, relevance_score: 82, positioning_gap: 'Piano-centric, more acoustic. MMe. fills the gap with heavier electronic production.' },
-    { name: 'Burial', monthly_listeners: 1_400_000, relevance_score: 74, positioning_gap: 'UK garage/dubstep influence. MMe. shares atmospheric DNA but adds classical instruments.' },
-  ],
-  audience_profile: {
-    primary_age_range: '25–35',
-    gender_split: '58% Male, 42% Female',
-    top_markets: ['United Kingdom', 'Germany', 'United States', 'Netherlands', 'Iceland'],
-    platforms: ['Spotify', 'Apple Music', 'Bandcamp', 'YouTube', 'SoundCloud'],
-    psychographics: 'Design-conscious, culturally curious listeners. Value artistic integrity over commercial polish. Frequent independent cinema, art galleries, and boutique festivals like Melt! or Sónar.',
-  },
-  playlist_landscape: {
-    target_playlists: [
-      { name: 'Peaceful Piano', followers: 7_200_000, placement_difficulty: 'High' },
-      { name: 'Electronic Concentration', followers: 2_100_000, placement_difficulty: 'Medium' },
-      { name: 'Ambient Relaxation', followers: 3_500_000, placement_difficulty: 'Medium' },
-      { name: 'Chillout Lounge', followers: 1_800_000, placement_difficulty: 'Low' },
-      { name: 'Modern Classical', followers: 890_000, placement_difficulty: 'Low' },
-    ],
-    curator_patterns: 'Curators in this space prioritize production quality and emotional coherence over commercial metrics. Pitching with a clear narrative — the classical-meets-electronic angle — resonates well. Algorithmic playlists (Discover Weekly, Release Radar) perform strongly due to the genre\'s consistent audio features.',
-  },
-  sonic_blueprint: {
-    bpm_range: '110–140',
-    key_signatures: ['C minor', 'A minor', 'D minor', 'F major'],
-    energy_profile: 'Builds from ambient foundations to driving peaks. Average energy 0.45–0.65.',
-    production_style: 'Layered: acoustic core → electronic processing → spatial mixing. Heavy use of reverb, delay, sidechain compression.',
-    sonic_signatures: [
-      'Piano processed through granular synthesis and tape saturation',
-      'String arrangements that dissolve into pad-like textures',
-      'Breakbeat and two-step rhythms under orchestral elements',
-      'Field recordings and found sound as transitional elements',
-      'Sub-bass as a counterweight to high-register strings',
-    ],
-  },
-  opportunities: [
-    { gap: 'No dominant artist occupying the "symphonic breakbeat" crossover', market_score: 87, success_probability: 72 },
-    { gap: 'Sync licensing demand for emotionally rich, beat-driven instrumentals', market_score: 91, success_probability: 68 },
-    { gap: 'Festival circuit gap between classical stages and electronic tents', market_score: 74, success_probability: 55 },
-  ],
-  revenue_projections: {
-    streaming: '$8K–15K/mo at 500K monthly listeners (12-month target)',
-    touring: '$2K–5K per show, 30-show circuit in Year 1',
-    merch: '$1K–3K/mo with limited-run vinyl and branded items',
-    sync_licensing: '$5K–25K per placement — high potential for film/TV',
-  },
-  risk_assessment: [
-    { risk: 'Niche genre may limit mainstream crossover potential', severity: 'Medium' },
-    { risk: 'Dependence on playlist placement for initial discovery', severity: 'Medium' },
-    { risk: 'Live performance complexity requires significant production investment', severity: 'High' },
-    { risk: 'Reference artist fatigue if positioning is too derivative', severity: 'Low' },
-  ],
-  recommendations: [
-    { priority: 1, action: 'Release 2-track single to test market response before full EP', timeline: '0–2 months' },
-    { priority: 2, action: 'Pitch to Modern Classical and Electronic Concentration playlists', timeline: '2–3 months' },
-    { priority: 3, action: 'Develop live A/V show concept for festival applications', timeline: '3–6 months' },
-    { priority: 4, action: 'Target sync licensing agencies specializing in film/TV placement', timeline: '2–4 months' },
-    { priority: 5, action: 'Build Bandcamp presence for direct-to-fan revenue', timeline: '0–1 months' },
-  ],
-};
-
-const DEMO_CONFIDENCE: I1Confidence = {
-  overall_score: 87,
-  data_completeness: 82,
-  sources_used: ['Spotify Search', 'Related Artists', 'Top Tracks', 'Audio Features', 'Playlists'],
-  sources_failed: [],
-};
-
-/* ———————————————————————————————————————
-   Project Page
-   ——————————————————————————————————————— */
+import { useAuth } from '../../../lib/auth-context';
+import { api } from '../../../lib/api';
+import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project } from '../../../lib/api';
 
 type ViewState = 'concept' | 'report';
 
 export default function ProjectPage() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const { isAuthenticated, loading: authLoading } = useAuth();
+
   const [activeTab, setActiveTab] = useState<ViewState>('concept');
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [loading, setLoading] = useState(false);
@@ -117,85 +23,142 @@ export default function ProjectPage() {
   const [concept, setConcept] = useState<ProjectConcept | null>(null);
   const [report, setReport] = useState<{ report: I1Report; confidence: I1Confidence } | null>(null);
   const [researchRunning, setResearchRunning] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const [project, setProject] = useState<Project | null>(null);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [reportVersion, setReportVersion] = useState(1);
+  const [totalVersions, setTotalVersions] = useState(1);
 
-  // Restore state from sessionStorage on mount
+  // Redirect to login if not authenticated
   useEffect(() => {
-    try {
-      const saved = sessionStorage.getItem('imc_demo_state');
-      if (saved) {
-        const state = JSON.parse(saved);
-        if (state.messages?.length) setMessages(state.messages);
-        if (state.conceptReady) setConceptReady(true);
-        if (state.concept) setConcept(state.concept);
-        if (state.report) setReport(state.report);
-        if (state.activeTab) setActiveTab(state.activeTab);
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [authLoading, isAuthenticated, router]);
+
+  // Load project data on mount
+  useEffect(() => {
+    if (!isAuthenticated || !id) return;
+
+    const loadProject = async () => {
+      try {
+        // Fetch project details
+        const proj = await api.getProject(id);
+        setProject(proj);
+
+        // If concept exists on project, set it
+        if (proj.concept && proj.concept.genre_primary) {
+          setConcept(proj.concept);
+          setConceptReady(true);
+        }
+
+        // Fetch conversation messages
+        try {
+          const conv = await api.getConversation(id);
+          if (conv.messages && conv.messages.length > 0) {
+            setMessages(conv.messages);
+          }
+        } catch {
+          // Conversation might not exist yet for new projects
+        }
+
+        // Fetch latest research report if status is past draft
+        if (proj.status !== 'draft') {
+          try {
+            const reportData = await api.getReport(id);
+            setReport({ report: reportData.report, confidence: reportData.confidence });
+            setReportVersion(reportData.version);
+            setTotalVersions(reportData.version);
+            setActiveTab('report');
+          } catch {
+            // No report yet
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load project:', err);
+      } finally {
+        setPageLoading(false);
       }
-    } catch { /* ignore */ }
-    setHydrated(true);
-  }, []);
+    };
 
-  // Persist state to sessionStorage on change
-  useEffect(() => {
-    if (!hydrated) return;
-    try {
-      sessionStorage.setItem('imc_demo_state', JSON.stringify({
-        messages,
-        conceptReady,
-        concept,
-        report,
-        activeTab,
-      }));
-    } catch { /* ignore */ }
-  }, [messages, conceptReady, concept, report, activeTab, hydrated]);
+    loadProject();
+  }, [isAuthenticated, id]);
 
-  // Demo mode: simulate conversation
+  // Send message to concept conversation via API
   const handleSendMessage = useCallback(async (content: string) => {
+    if (!id) return;
+
     setMessages(prev => [...prev, { role: 'user', content }]);
     setLoading(true);
 
-    // Simulate AI response delay
-    await new Promise(r => setTimeout(r, 1500 + Math.random() * 1000));
+    try {
+      const res = await api.sendConceptMessage(id, content);
 
-    const turnCount = Math.floor(messages.length / 2) + 1;
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: res.response,
+      }]);
 
-    const responses = [
-      "I love the direction. Let's dig deeper — when you say symphonic meets electronic, which classical instruments are most central to the sound? And are we talking lush orchestral arrangements or more intimate, solo instrument pieces processed through effects?",
-      "Interesting — piano and strings as the foundation, run through electronic processing. That reminds me of Ólafur Arnalds' approach but with more energy. What's the rhythmic backbone? Are we thinking four-on-the-floor, breakbeats, UK garage patterns, or something more fluid?",
-      "Breakbeats and two-step under classical elements — that's a distinctive combination. Now tell me about the emotional arc. Is this music for dark clubs at 2am, or headphones on a rainy afternoon, or something that moves between those worlds?",
-      `CONCEPT_READY. I've captured the full artist concept for MMe. — a neoclassical electronic project blending piano and strings with breakbeat rhythms and atmospheric production. The creative direction is clear: cinematic but club-ready, melancholic but driving.\n\nI've extracted all the key parameters. You're ready to run market research.`,
-    ];
-
-    const responseIdx = Math.min(turnCount - 1, responses.length - 1);
-    const isLastResponse = turnCount >= responses.length;
-
-    setMessages(prev => [...prev, {
-      role: 'assistant',
-      content: responses[responseIdx],
-    }]);
-
-    if (isLastResponse) {
-      setConceptReady(true);
-      setConcept(DEMO_CONCEPT);
+      if (res.conceptReady && res.concept) {
+        setConceptReady(true);
+        setConcept(res.concept);
+      }
+    } catch (err) {
+      console.error('Failed to send message:', err);
+      // Remove the optimistic user message on error
+      setMessages(prev => prev.slice(0, -1));
+    } finally {
+      setLoading(false);
     }
+  }, [id]);
 
-    setLoading(false);
-  }, [messages.length]);
-
+  // Run market research via API
   const handleRunResearch = useCallback(async () => {
+    if (!id) return;
+
     setResearchRunning(true);
     setActiveTab('report');
 
-    // Simulate research delay
-    await new Promise(r => setTimeout(r, 3000));
+    try {
+      const reportData = await api.runResearch(id);
+      setReport({ report: reportData.report, confidence: reportData.confidence });
+      setReportVersion(reportData.version);
+      setTotalVersions(reportData.version);
+    } catch (err) {
+      console.error('Failed to run research:', err);
+    } finally {
+      setResearchRunning(false);
+    }
+  }, [id]);
 
-    setReport({ report: DEMO_REPORT, confidence: DEMO_CONFIDENCE });
-    setResearchRunning(false);
-  }, []);
+  // Load a specific report version
+  const handleVersionChange = useCallback(async (version: number) => {
+    if (!id) return;
+
+    try {
+      const reportData = await api.getReportVersion(id, version);
+      setReport({ report: reportData.report, confidence: reportData.confidence });
+      setReportVersion(version);
+    } catch (err) {
+      console.error('Failed to load version:', err);
+    }
+  }, [id]);
+
+  const artistName = project?.artist_name || 'Untitled';
+
+  if (authLoading || pageLoading) {
+    return (
+      <div className="animate-fade-in px-8 py-16 max-w-2xl">
+        <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
+        <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+          Loading...
+        </p>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: 'concept', label: 'Concept', count: messages.length > 0 ? Math.ceil(messages.length / 2) : undefined },
-    { id: 'report', label: 'Research', count: report ? 1 : undefined },
+    { id: 'report', label: 'Research', count: report ? totalVersions : undefined },
   ];
 
   return (
@@ -210,7 +173,7 @@ export default function ProjectPage() {
             </a>
             <span className="text-neutral-200">/</span>
             <span className="text-micro font-bold uppercase tracking-widest text-black">
-              MMe.
+              {artistName}
             </span>
             {activeTab === 'report' && (
               <>
@@ -239,7 +202,7 @@ export default function ProjectPage() {
 
       {/* Tabs */}
       <div className="max-w-[1400px] mx-auto w-full px-10">
-        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={(id) => setActiveTab(id as ViewState)} />
+        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={(tabId) => setActiveTab(tabId as ViewState)} />
       </div>
 
       {/* Content area */}
@@ -293,9 +256,12 @@ export default function ProjectPage() {
                 <ResearchReport
                   report={report.report}
                   confidence={report.confidence}
-                  version={1}
-                  artistName="MMe."
+                  version={reportVersion}
+                  totalVersions={totalVersions}
+                  artistName={artistName}
                   createdAt={new Date().toISOString()}
+                  onVersionChange={handleVersionChange}
+                  projectId={id}
                 />
               )}
             </>

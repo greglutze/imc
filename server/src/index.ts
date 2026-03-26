@@ -19,7 +19,7 @@ app.get('/api/health', (_req: Request, res: Response): void => {
 });
 
 // API routes
-app.use('/api/v1', apiRoutes);
+app.use('/api', apiRoutes);
 
 // Error handling middleware
 app.use((err: Error, _req: Request, res: Response): void => {

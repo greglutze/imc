@@ -1,10 +1,107 @@
 'use client';
 
-import { Badge, Signal, ConfidenceMeter } from '../components/ui';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Badge, Signal } from '../components/ui';
+import { useAuth } from '../lib/auth-context';
+import { api, type Project } from '../lib/api';
 
 /* eslint-disable @next/next/no-img-element */
 
 export default function Home() {
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
+  const router = useRouter();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loadingProjects, setLoadingProjects] = useState(false);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isAuthenticated) return;
+
+    setLoadingProjects(true);
+    api.listProjects()
+      .then(setProjects)
+      .catch(console.error)
+      .finally(() => setLoadingProjects(false));
+  }, [authLoading, isAuthenticated]);
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="animate-fade-in flex items-center justify-center h-full">
+        <div className="text-center">
+          <p className="text-[120px] leading-[0.85] font-bold text-neutral-100">IMC</p>
+          <p className="text-body text-neutral-400 mt-4">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not logged in — show landing with login CTA
+  if (!isAuthenticated) {
+    return (
+      <div className="animate-fade-in">
+        {/* Masthead */}
+        <div className="border-b border-neutral-200">
+          <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
+            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+              Instruments of Mass Creation
+            </p>
+            <div className="flex items-center gap-3">
+              <a
+                href="/login"
+                className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+              >
+                Sign In
+              </a>
+              <a
+                href="/register"
+                className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
+              >
+                Get Started
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-[1400px] mx-auto px-10 py-32">
+          <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">IMC</p>
+          <p className="text-[48px] leading-[1.1] font-bold text-black mt-6 tracking-tight max-w-xl">
+            AI-powered market research &amp; prompt generation for artists
+          </p>
+          <p className="text-body-lg text-neutral-500 mt-6 max-w-md">
+            Define your concept. Run research. Generate Suno &amp; Udio prompts.
+            All powered by real market intelligence.
+          </p>
+          <div className="mt-10 flex items-center gap-3">
+            <a
+              href="/register"
+              className="bg-black text-white text-label font-bold uppercase tracking-widest h-12 px-8 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
+            >
+              Create Account
+            </a>
+            <a
+              href="/login"
+              className="bg-white text-black border border-neutral-200 text-label font-bold uppercase tracking-widest h-12 px-8 rounded-sm hover:border-black transition-colors duration-fast inline-flex items-center"
+            >
+              Sign In
+            </a>
+          </div>
+        </div>
+
+        {/* Colophon */}
+        <div className="border-t border-neutral-200">
+          <div className="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
+            <p className="text-micro font-mono text-neutral-300">IMC v0.1.0</p>
+            <p className="text-micro font-mono text-neutral-300">Music Intelligence Platform</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const activeProject = projects.length > 0 ? projects[0] : null;
+
   return (
     <div className="animate-fade-in">
       {/* Masthead */}
@@ -15,148 +112,147 @@ export default function Home() {
               Instruments of Mass Creation
             </p>
           </div>
-          <p className="text-micro font-mono text-neutral-300">
-            March 2026
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-micro font-mono text-neutral-300">
+              {user?.name}
+            </p>
+          </div>
         </div>
       </div>
 
       <div className="max-w-[1400px] mx-auto px-10">
 
-        {/* Hero — oversized project feature with artist image */}
-        <div className="grid grid-cols-12 gap-x-6 border-b border-neutral-200">
-          {/* Left: large project name + description */}
-          <div className="col-span-7 py-16 pr-12 border-r border-neutral-200">
-            <div className="flex items-center gap-3 mb-6">
-              <Signal color="green" />
-              <Badge variant="green">Active Project</Badge>
+        {loadingProjects ? (
+          <div className="py-32 text-center">
+            <p className="text-[120px] leading-[0.85] font-bold text-neutral-100">...</p>
+            <p className="text-body text-neutral-400 mt-4">Loading projects</p>
+          </div>
+        ) : activeProject ? (
+          <>
+            {/* Hero — active project */}
+            <div className="py-16 border-b border-neutral-200">
+              <div className="flex items-center gap-3 mb-6">
+                <Signal color="green" />
+                <Badge variant="green">Active Project</Badge>
+              </div>
+              <a href={`/projects/${activeProject.id}`} className="block hover:opacity-80 transition-opacity duration-fast">
+                <h1 className="text-[120px] leading-[0.9] font-bold tracking-tight text-black -ml-1">
+                  {activeProject.artist_name || 'Untitled'}
+                </h1>
+              </a>
+              <p className="text-body-lg text-neutral-500 mt-8 max-w-md">
+                {activeProject.concept?.creative_direction || 'No concept defined yet. Start the concept interview to begin.'}
+              </p>
             </div>
-            <a href="/projects/demo" className="block hover:opacity-80 transition-opacity duration-fast">
-              <h1 className="text-[120px] leading-[0.9] font-bold tracking-tight text-black -ml-1">
-                MMe.
-              </h1>
+
+            {/* Pipeline status */}
+            <div className="grid grid-cols-12 gap-x-6 border-b border-neutral-200">
+              <div className="col-span-4 py-10 border-r border-neutral-200 pr-6">
+                <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
+                  Pipeline
+                </p>
+                <div className="space-y-6">
+                  <InstrumentRow
+                    number="01"
+                    name="Market Research"
+                    status={activeProject.status === 'draft' ? 'Pending' : 'Complete'}
+                    statusColor={activeProject.status === 'draft' ? 'neutral' : 'green'}
+                  />
+                  <InstrumentRow
+                    number="02"
+                    name="Prompt Generation"
+                    status={activeProject.status === 'prompting' ? 'Complete' : activeProject.status === 'research' ? 'Ready' : 'Pending'}
+                    statusColor={activeProject.status === 'prompting' ? 'green' : activeProject.status === 'research' ? 'yellow' : 'neutral'}
+                  />
+                  <InstrumentRow
+                    number="03"
+                    name="Track Analysis"
+                    status="On Hold"
+                    statusColor="neutral"
+                  />
+                </div>
+              </div>
+
+              {/* Concept excerpt */}
+              <div className="col-span-4 py-10 border-r border-neutral-200 pr-6">
+                <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
+                  Artist Concept
+                </p>
+                {activeProject.concept?.genre_primary ? (
+                  <>
+                    <blockquote className="text-heading font-bold text-black leading-tight">
+                      &ldquo;{activeProject.concept.creative_direction?.slice(0, 80)}...&rdquo;
+                    </blockquote>
+                    <div className="mt-8 space-y-3">
+                      <DetailRow label="Genre" value={activeProject.concept.genre_primary} />
+                      <DetailRow label="Influences" value={activeProject.concept.reference_artists?.slice(0, 3).join(', ') || '—'} />
+                      <DetailRow label="Mood" value={activeProject.concept.mood_keywords?.slice(0, 3).join(', ') || '—'} />
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-body text-neutral-400">Not defined yet</p>
+                )}
+              </div>
+
+              {/* Status */}
+              <div className="col-span-4 py-10">
+                <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
+                  Status
+                </p>
+                <p className="text-heading font-bold text-black capitalize">{activeProject.status}</p>
+                <p className="text-body-sm text-neutral-400 mt-2">
+                  Created {new Date(activeProject.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                </p>
+              </div>
+            </div>
+
+            {/* Bottom strip */}
+            <div className="grid grid-cols-12 gap-x-6 py-16">
+              <div className="col-span-3">
+                <p className="text-[96px] leading-none font-bold text-black">
+                  {String(projects.length).padStart(2, '0')}
+                </p>
+                <p className="text-body-sm text-neutral-400 mt-2">
+                  {projects.length === 1 ? 'Active project' : 'Projects'}
+                </p>
+              </div>
+              <div className="col-span-6" />
+              <div className="col-span-3 flex flex-col justify-end">
+                <div className="flex items-center gap-3">
+                  <a
+                    href={`/projects/${activeProject.id}`}
+                    className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
+                  >
+                    Open Project
+                  </a>
+                  <a
+                    href="/projects/new"
+                    className="bg-white text-black border border-neutral-200 text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:border-black transition-colors duration-fast inline-flex items-center"
+                  >
+                    New Project
+                  </a>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          /* No projects yet */
+          <div className="py-32">
+            <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">00</p>
+            <p className="text-[48px] leading-[1.1] font-bold text-black mt-6 tracking-tight">
+              No Projects Yet
+            </p>
+            <p className="text-body-lg text-neutral-500 mt-4 max-w-md">
+              Create your first project to start defining an artist concept and running market research.
+            </p>
+            <a
+              href="/projects/new"
+              className="mt-8 bg-black text-white text-label font-bold uppercase tracking-widest h-12 px-8 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
+            >
+              New Project
             </a>
-            <p className="text-body-lg text-neutral-500 mt-8 max-w-md">
-              Symphonic × electronic. Where Ólafur Arnalds meets The Prodigy.
-              A debut artist pushing genre boundaries through AI-assisted production.
-            </p>
           </div>
-
-          {/* Right: artist portrait, cropped tight */}
-          <div className="col-span-5 py-16 pl-8 flex items-center justify-center">
-            <div className="w-full max-w-[320px] aspect-[3/4] overflow-hidden">
-              <img
-                src="/images/greglutze_A_photograph_of_a_black_fashion_man_with_black_drea_06690802-0bdb-4c5d-84bd-ed8a8199d311_0.png"
-                alt="MMe. — artist portrait"
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Editorial grid — three columns, mixed scale */}
-        <div className="grid grid-cols-12 gap-x-6 border-b border-neutral-200">
-
-          {/* Column 1: Instrument status */}
-          <div className="col-span-4 py-10 border-r border-neutral-200 pr-6">
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
-              Pipeline
-            </p>
-
-            <div className="space-y-6">
-              <InstrumentRow
-                number="01"
-                name="Market Research"
-                status="Complete"
-                statusColor="green"
-              />
-              <InstrumentRow
-                number="02"
-                name="Prompt Generation"
-                status="In Progress"
-                statusColor="yellow"
-              />
-              <InstrumentRow
-                number="03"
-                name="Track Analysis"
-                status="On Hold"
-                statusColor="neutral"
-              />
-            </div>
-          </div>
-
-          {/* Column 2: Concept excerpt */}
-          <div className="col-span-4 py-10 border-r border-neutral-200 pr-6">
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
-              Artist Concept
-            </p>
-
-            <blockquote className="text-heading font-bold text-black leading-tight">
-              &ldquo;Classical instruments processed through electronic production
-              techniques&rdquo;
-            </blockquote>
-
-            <div className="mt-8 space-y-3">
-              <DetailRow label="Genre" value="Neoclassical Electronic" />
-              <DetailRow label="Influences" value="Arnalds, Prodigy, Burial" />
-              <DetailRow label="BPM Range" value="110–140" />
-              <DetailRow label="Mood" value="Melancholic, Driving" />
-            </div>
-          </div>
-
-          {/* Column 3: Confidence breakdown */}
-          <div className="col-span-4 py-10">
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
-              Confidence Breakdown
-            </p>
-
-            <div className="space-y-5">
-              <ConfidenceMeter value={92} label="Genre Fit" />
-              <ConfidenceMeter value={87} label="Reference Artist Match" />
-              <ConfidenceMeter value={74} label="Market Demand" />
-              <ConfidenceMeter value={68} label="Playlist Potential" />
-              <ConfidenceMeter value={55} label="Audience Reach" />
-              <ConfidenceMeter value={28} label="Saturation Risk" />
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom strip — oversized number + context */}
-        <div className="grid grid-cols-12 gap-x-6 py-16">
-          <div className="col-span-3">
-            <p className="text-[96px] leading-none font-bold text-black">01</p>
-            <p className="text-body-sm text-neutral-400 mt-2">Active project</p>
-          </div>
-          <div className="col-span-3">
-            <p className="text-[96px] leading-none font-bold text-neutral-200">00</p>
-            <p className="text-body-sm text-neutral-400 mt-2">Prompts generated</p>
-          </div>
-          <div className="col-span-3">
-            <p className="text-[96px] leading-none font-bold text-neutral-200">00</p>
-            <p className="text-body-sm text-neutral-400 mt-2">Tracks analyzed</p>
-          </div>
-          <div className="col-span-3 flex flex-col justify-end">
-            <p className="text-body-sm text-neutral-400">
-              The Sonic Engine is ready. Define your concept, run research,
-              generate prompts.
-            </p>
-            <div className="mt-4 flex items-center gap-3">
-              <a
-                href="/projects/demo"
-                className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
-              >
-                Open Project
-              </a>
-              <a
-                href="/projects/new"
-                className="bg-white text-black border border-neutral-200 text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:border-black transition-colors duration-fast inline-flex items-center"
-              >
-                New Project
-              </a>
-            </div>
-          </div>
-        </div>
-
+        )}
       </div>
 
       {/* Colophon */}
@@ -171,24 +267,6 @@ export default function Home() {
 }
 
 /* ———————— Editorial Components ———————— */
-
-function MetricLarge({ value, label, color }: { value: string; label: string; color: 'green' | 'yellow' | 'red' | 'neutral' }) {
-  const colorMap = {
-    green: 'text-signal-green',
-    yellow: 'text-signal-yellow',
-    red: 'text-signal-red',
-    neutral: 'text-neutral-300',
-  };
-
-  return (
-    <div className="flex items-end justify-between border-b border-neutral-100 pb-4">
-      <span className="text-body-sm text-neutral-500">{label}</span>
-      <span className={`text-[48px] leading-none font-bold font-mono ${colorMap[color]}`}>
-        {value}
-      </span>
-    </div>
-  );
-}
 
 function InstrumentRow({ number, name, status, statusColor }: {
   number: string;
