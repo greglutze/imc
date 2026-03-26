@@ -153,7 +153,7 @@ export default function ConceptChat({
               placeholder="Describe your artist concept..."
               disabled={loading}
               rows={1}
-              className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none py-1"
+              className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
               style={{ minHeight: '36px', maxHeight: '120px' }}
             />
             <button
