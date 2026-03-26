@@ -106,6 +106,42 @@ export interface Instrument1Report {
   created_at: string;
 }
 
+/* ———————— Instrument 2 Types ———————— */
+
+export interface I2StyleProfile {
+  production_aesthetic: string;
+  sonic_signatures: string[];
+  tempo_range: string;
+  key_preferences: string[];
+}
+
+export interface I2VocalistPersona {
+  vocal_character: string;
+  delivery_style: string;
+  reference_vocalists: string[];
+  tone_keywords: string[];
+}
+
+export interface I2Track {
+  track_number: number;
+  title: string;
+  suno_prompt: string;
+  udio_prompt: string;
+  structure: string;
+  notes: string;
+}
+
+export interface Instrument2Prompts {
+  id: string;
+  project_id: string;
+  report_id: string | null;
+  version: number;
+  style_profile: I2StyleProfile;
+  vocalist_persona: I2VocalistPersona;
+  tracks: I2Track[];
+  created_at: string;
+}
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -265,6 +301,31 @@ class ApiClient {
 
   async getReportVersion(projectId: string, version: number): Promise<Instrument1Report> {
     return this.request(`/api/instrument1/report/${projectId}/${version}`);
+  }
+
+  /* — Instrument 2: Prompt Generation — */
+
+  async generatePrompts(projectId: string): Promise<Instrument2Prompts> {
+    return this.request(`/api/instrument2/generate/${projectId}`, {
+      method: 'POST',
+    });
+  }
+
+  async getPrompts(projectId: string): Promise<Instrument2Prompts> {
+    return this.request(`/api/instrument2/prompts/${projectId}`);
+  }
+
+  async updatePrompts(id: string, data: Partial<Instrument2Prompts>): Promise<Instrument2Prompts> {
+    return this.request(`/api/instrument2/prompts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async regenerateTrack(id: string, trackNumber: number): Promise<Instrument2Prompts> {
+    return this.request(`/api/instrument2/regenerate-track/${id}/${trackNumber}`, {
+      method: 'POST',
+    });
   }
 }
 

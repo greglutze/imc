@@ -359,9 +359,12 @@ export default function ResearchReport({
               Generate Suno and Udio prompts based on your market research.
               Style profiles, vocalist personas, and track-by-track prompt sheets.
             </p>
-            <button className="mt-6 bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-6 rounded-sm hover:bg-neutral-800 transition-colors duration-fast">
+            <a
+              href="/projects/demo/prompts"
+              className="mt-6 bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-6 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
+            >
               Generate Prompts
-            </button>
+            </a>
           </div>
           <span className="text-[96px] leading-none font-bold font-mono text-neutral-100">02</span>
         </div>
