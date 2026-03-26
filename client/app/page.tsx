@@ -140,12 +140,20 @@ export default function Home() {
               The Sonic Engine is ready. Define your concept, run research,
               generate prompts.
             </p>
-            <a
-              href="/projects/demo"
-              className="mt-4 bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast self-start inline-flex items-center"
-            >
-              Open Project
-            </a>
+            <div className="mt-4 flex items-center gap-3">
+              <a
+                href="/projects/demo"
+                className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
+              >
+                Open Project
+              </a>
+              <a
+                href="/projects/new"
+                className="bg-white text-black border border-neutral-200 text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:border-black transition-colors duration-fast inline-flex items-center"
+              >
+                New Project
+              </a>
+            </div>
           </div>
         </div>
 

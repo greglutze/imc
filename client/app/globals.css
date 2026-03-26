@@ -79,3 +79,44 @@ input, textarea, select {
   font-family: inherit;
   -webkit-font-smoothing: antialiased;
 }
+
+/* ————————————————————————————————————————
+   Print — clean report output
+   ———————————————————————————————————————— */
+
+@media print {
+  /* Hide navigation chrome */
+  nav, .print\\:hidden,
+  [class*="sidebar"], [class*="nav-dot"] {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove shadows and borders for cleaner print */
+  * {
+    box-shadow: none !important;
+  }
+
+  /* Page breaks */
+  .border-b {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure signal colors print */
+  .bg-signal-green, .bg-signal-yellow, .bg-signal-orange, .bg-signal-red, .bg-signal-violet, .bg-signal-blue {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+}

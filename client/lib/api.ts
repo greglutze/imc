@@ -106,6 +106,20 @@ export interface Instrument1Report {
   created_at: string;
 }
 
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  org_id: string;
+  role: 'owner' | 'member';
+  tier: 'creator' | 'pro' | 'team' | 'enterprise';
+}
+
+export interface AuthResponse {
+  token: string;
+  user: AuthUser;
+}
+
 /* ———————— API Client ———————— */
 
 class ApiClient {
@@ -148,6 +162,56 @@ class ApiClient {
     }
 
     return res.json();
+  }
+
+  clearToken() {
+    this.token = null;
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('imc_token');
+      sessionStorage.removeItem('imc_user');
+    }
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+
+  /* — Auth — */
+
+  async register(data: { email: string; password: string; name: string; org_name: string }): Promise<AuthResponse> {
+    const res = await this.request<AuthResponse>('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    this.setToken(res.token);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('imc_user', JSON.stringify(res.user));
+    }
+    return res;
+  }
+
+  async login(data: { email: string; password: string }): Promise<AuthResponse> {
+    const res = await this.request<AuthResponse>('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    this.setToken(res.token);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('imc_user', JSON.stringify(res.user));
+    }
+    return res;
+  }
+
+  async me(): Promise<{ user: AuthUser }> {
+    return this.request('/api/auth/me');
+  }
+
+  getUser(): AuthUser | null {
+    if (typeof window === 'undefined') return null;
+    try {
+      const stored = sessionStorage.getItem('imc_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch { return null; }
   }
 
   /* — Projects — */

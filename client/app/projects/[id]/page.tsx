@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { Tabs, Badge, Signal } from '../../../components/ui';
+import { useState, useCallback, useEffect } from 'react';
+import { Tabs, Badge } from '../../../components/ui';
 import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
 import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence } from '../../../lib/api';
@@ -117,6 +117,37 @@ export default function ProjectPage() {
   const [concept, setConcept] = useState<ProjectConcept | null>(null);
   const [report, setReport] = useState<{ report: I1Report; confidence: I1Confidence } | null>(null);
   const [researchRunning, setResearchRunning] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Restore state from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('imc_demo_state');
+      if (saved) {
+        const state = JSON.parse(saved);
+        if (state.messages?.length) setMessages(state.messages);
+        if (state.conceptReady) setConceptReady(true);
+        if (state.concept) setConcept(state.concept);
+        if (state.report) setReport(state.report);
+        if (state.activeTab) setActiveTab(state.activeTab);
+      }
+    } catch { /* ignore */ }
+    setHydrated(true);
+  }, []);
+
+  // Persist state to sessionStorage on change
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      sessionStorage.setItem('imc_demo_state', JSON.stringify({
+        messages,
+        conceptReady,
+        concept,
+        report,
+        activeTab,
+      }));
+    } catch { /* ignore */ }
+  }, [messages, conceptReady, concept, report, activeTab, hydrated]);
 
   // Demo mode: simulate conversation
   const handleSendMessage = useCallback(async (content: string) => {
@@ -173,13 +204,29 @@ export default function ProjectPage() {
       <div className="border-b border-neutral-200">
         <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <a href="/" className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast">
+            <a href="/" className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast flex items-center gap-2">
+              <span className="text-body">&#8592;</span>
               IMC
             </a>
             <span className="text-neutral-200">/</span>
             <span className="text-micro font-bold uppercase tracking-widest text-black">
               MMe.
             </span>
+            {activeTab === 'report' && (
+              <>
+                <span className="text-neutral-200">/</span>
+                <button
+                  onClick={() => setActiveTab('concept')}
+                  className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+                >
+                  Concept
+                </button>
+                <span className="text-neutral-200">/</span>
+                <span className="text-micro font-bold uppercase tracking-widest text-black">
+                  Research
+                </span>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <Badge variant="green">Active</Badge>
@@ -212,11 +259,12 @@ export default function ProjectPage() {
           {activeTab === 'report' && (
             <>
               {researchRunning && (
-                <div className="flex flex-col items-center justify-center py-32">
-                  <Signal color="violet" pulse label="" />
-                  <p className="text-[96px] leading-none font-bold text-neutral-100 mt-6 font-mono">01</p>
-                  <p className="text-heading-sm font-bold text-black mt-4">Running Market Research</p>
-                  <p className="text-body text-neutral-500 mt-2 max-w-md text-center">
+                <div className="px-8 py-16 max-w-2xl">
+                  <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
+                  <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+                    Running Market Research
+                  </p>
+                  <p className="text-body-lg text-black mt-5 max-w-sm">
                     Analyzing Spotify data, mapping comparable artists,
                     and generating your market intelligence report.
                   </p>
@@ -229,10 +277,12 @@ export default function ProjectPage() {
               )}
 
               {!researchRunning && !report && (
-                <div className="flex flex-col items-center justify-center py-32">
-                  <p className="text-[96px] leading-none font-bold text-neutral-100 font-mono">01</p>
-                  <p className="text-heading-sm font-bold text-black mt-4">No Research Yet</p>
-                  <p className="text-body text-neutral-500 mt-2 max-w-md text-center">
+                <div className="px-8 py-16 max-w-2xl">
+                  <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
+                  <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+                    No Research Yet
+                  </p>
+                  <p className="text-body-lg text-black mt-5 max-w-sm">
                     Complete the concept interview first, then run market research
                     to generate your intelligence report.
                   </p>
