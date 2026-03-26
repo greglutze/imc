@@ -72,14 +72,14 @@ export default function ConceptChat({
       {/* Messages — editorial style, not bubbles */}
       <div className="flex-1 overflow-y-auto px-8 py-6">
         {messages.length === 0 && !loading && (
-          <div className="text-center py-20">
-            <p className="text-[64px] leading-none font-bold text-neutral-100 mb-6">01</p>
-            <p className="text-heading-sm font-bold text-black mb-3">
-              Define Your Artist
+          <div className="py-16 max-w-2xl">
+            <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
+            <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+              Define Your<br />Artist
             </p>
-            <p className="text-body text-neutral-500 max-w-md mx-auto">
+            <p className="text-body-lg text-neutral-400 mt-5 max-w-sm">
               Start a conversation with the AI creative director.
-              Describe your artist concept — genre, influences, mood, vision.
+              Genre, influences, mood, vision.
             </p>
           </div>
         )}
@@ -141,29 +141,26 @@ export default function ConceptChat({
         </div>
       )}
 
-      {/* Input — minimal editorial style */}
+      {/* Input — rounded grey container */}
       {!conceptReady && (
-        <form onSubmit={handleSubmit} className="border-t border-neutral-200 px-8 py-4">
-          <div className="max-w-2xl flex items-end gap-4">
-            <div className="flex-1 relative">
-              <textarea
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Describe your artist concept..."
-                disabled={loading}
-                rows={1}
-                className="w-full bg-transparent text-body text-black placeholder-neutral-300 resize-none border-none outline-none py-2"
-                style={{ minHeight: '40px', maxHeight: '120px' }}
-              />
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-neutral-200" />
-            </div>
+        <form onSubmit={handleSubmit} className="px-8 py-5">
+          <div className="max-w-2xl bg-neutral-50 rounded-xl px-5 py-4 flex items-end gap-3">
+            <textarea
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Describe your artist concept..."
+              disabled={loading}
+              rows={1}
+              className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none py-1"
+              style={{ minHeight: '36px', maxHeight: '120px' }}
+            />
             <button
               type="submit"
               disabled={!input.trim() || loading}
               className={`
-                text-label font-bold uppercase tracking-widest px-5 h-10 rounded-sm
+                text-label font-bold uppercase tracking-widest px-5 h-9 rounded-lg
                 transition-colors duration-fast shrink-0
                 ${input.trim() && !loading
                   ? 'bg-black text-white hover:bg-neutral-800'
