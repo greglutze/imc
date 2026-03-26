@@ -5,3 +5,6 @@ export { default as Card, CardHeader, CardTitle, CardDescription } from './Card'
 export { default as Signal } from './Signal';
 export { default as Divider } from './Divider';
 export { default as ConfidenceMeter } from './ConfidenceMeter';
+export { default as Tabs } from './Tabs';
+export { default as TextArea } from './TextArea';
+export { default as Skeleton } from './Skeleton';

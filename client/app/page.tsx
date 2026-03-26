@@ -31,9 +31,11 @@ export default function Home() {
               <Signal color="green" />
               <Badge variant="green">Active Project</Badge>
             </div>
-            <h1 className="text-[120px] leading-[0.9] font-bold tracking-tight text-black -ml-1">
-              MMe.
-            </h1>
+            <a href="/projects/demo" className="block hover:opacity-80 transition-opacity duration-fast">
+              <h1 className="text-[120px] leading-[0.9] font-bold tracking-tight text-black -ml-1">
+                MMe.
+              </h1>
+            </a>
             <p className="text-body-lg text-neutral-500 mt-8 max-w-md">
               Symphonic × electronic. Where Ólafur Arnalds meets The Prodigy.
               A debut artist pushing genre boundaries through AI-assisted production.
@@ -138,9 +140,12 @@ export default function Home() {
               The Sonic Engine is ready. Define your concept, run research,
               generate prompts.
             </p>
-            <button className="mt-4 bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast self-start">
-              New Project
-            </button>
+            <a
+              href="/projects/demo"
+              className="mt-4 bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast self-start inline-flex items-center"
+            >
+              Open Project
+            </a>
           </div>
         </div>
 
