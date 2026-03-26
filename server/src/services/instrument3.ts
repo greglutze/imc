@@ -312,9 +312,9 @@ Artist Concept:
   if (i1Report) {
     marketContext = `
 Market Context (from Instrument 1):
-- Playlist Landscape: ${i1Report.playlist_landscape.target_playlists.slice(0, 5).join(', ')}
+- Playlist Landscape: ${i1Report.playlist_landscape.target_playlists.slice(0, 5).map((p) => p.name).join(', ')}
 - Sonic Blueprint BPM Range: ${i1Report.sonic_blueprint.bpm_range}
-- Energy Level Expected: ${i1Report.sonic_blueprint.energy_level}
+- Energy Profile Expected: ${i1Report.sonic_blueprint.energy_profile}
 - Comparable Artists: ${i1Report.comparable_artists.slice(0, 3).map((a) => a.name).join(', ')}
 `;
   }
