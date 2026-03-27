@@ -11,7 +11,6 @@ interface ResearchReportProps {
   artistName: string;
   createdAt?: string;
   onVersionChange?: (version: number) => void;
-  projectId?: string;
 }
 
 export default function ResearchReport({
@@ -22,7 +21,6 @@ export default function ResearchReport({
   artistName,
   createdAt,
   onVersionChange,
-  projectId,
 }: ResearchReportProps) {
   return (
     <div className="animate-fade-in">
@@ -344,31 +342,6 @@ export default function ResearchReport({
               ))}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Next step — Instrument 2 CTA */}
-      <div className="border-b border-neutral-200 px-8 py-12">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-              Next Step
-            </p>
-            <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
-              Instrument 02
-            </p>
-            <p className="text-body text-neutral-500 mt-3 max-w-md">
-              Generate Suno and Udio prompts based on your market research.
-              Style profiles, vocalist personas, and track-by-track prompt sheets.
-            </p>
-            <a
-              href={`/projects/${projectId || 'demo'}/prompts`}
-              className="mt-6 bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-6 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
-            >
-              Generate Prompts
-            </a>
-          </div>
-          <span className="text-[96px] leading-none font-bold font-mono text-neutral-100">02</span>
         </div>
       </div>
 

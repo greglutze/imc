@@ -283,7 +283,6 @@ export default function ProjectPage() {
                     artistName={artistName}
                     createdAt={new Date().toISOString()}
                     onVersionChange={handleVersionChange}
-                    projectId={id}
                   />
                 </>
               )}
