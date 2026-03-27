@@ -8,62 +8,202 @@ router.use(authMiddleware);
 
 // ── Default checklist items (from PRD Section 12) ──
 
-const DEFAULT_ITEMS: Array<{ category: ChecklistCategory; label: string }> = [
+const DEFAULT_ITEMS: Array<{ category: ChecklistCategory; label: string; guide: string }> = [
   // Creative
-  { category: 'creative', label: 'Define the artist concept and sonic identity' },
-  { category: 'creative', label: 'Create a reference playlist (10–20 tracks)' },
-  { category: 'creative', label: 'Build a visual moodboard' },
-  { category: 'creative', label: 'Write the artist biography — short form (100 words) and long form (400 words)' },
-  { category: 'creative', label: 'Draft the album or EP concept and narrative arc' },
-  { category: 'creative', label: 'Complete all demos and reference recordings' },
-  { category: 'creative', label: 'Finalize tracklist and sequencing' },
-  { category: 'creative', label: 'Record all final vocals and instruments' },
-  { category: 'creative', label: 'Complete mixing' },
-  { category: 'creative', label: 'Complete mastering' },
+  {
+    category: 'creative',
+    label: 'Define the artist concept and sonic identity',
+    guide: 'This is the foundation everything else builds on. Write down who you are as an artist, what you sound like, and what makes you different. Think of it as your creative north star — it keeps every decision aligned.',
+  },
+  {
+    category: 'creative',
+    label: 'Create a reference playlist (10–20 tracks)',
+    guide: 'Curate tracks that represent the sound, energy, and production quality you\'re aiming for. This becomes a shared language between you, producers, and engineers — and helps AI tools like Suno and Udio understand your target.',
+  },
+  {
+    category: 'creative',
+    label: 'Build a visual moodboard',
+    guide: 'Collect images, colors, textures, and typography that capture the visual world of your project. This guides album art, press photos, social content, and merch — and keeps your visual identity cohesive from day one.',
+  },
+  {
+    category: 'creative',
+    label: 'Write the artist biography — short form (100 words) and long form (400 words)',
+    guide: 'You\'ll need both versions constantly — short for social profiles and playlist pitches, long for press kits and features. Write in third person, lead with what makes you compelling, and keep it current.',
+  },
+  {
+    category: 'creative',
+    label: 'Draft the album or EP concept and narrative arc',
+    guide: 'Even if it\'s loose, having a concept gives your project shape. What\'s the story across the tracklist? What does the listener feel at the start versus the end? This makes sequencing and marketing much easier later.',
+  },
+  {
+    category: 'creative',
+    label: 'Complete all demos and reference recordings',
+    guide: 'Demos are your proof of concept — rough recordings that capture the song\'s core idea. Get every track to a point where the arrangement, melody, and lyrics are clear enough to move into final production.',
+  },
+  {
+    category: 'creative',
+    label: 'Finalize tracklist and sequencing',
+    guide: 'Lock in which songs make the cut and in what order. Think about pacing, energy flow, and how the project feels as a continuous listen. The first and last tracks matter most — they\'re your first and lasting impressions.',
+  },
+  {
+    category: 'creative',
+    label: 'Record all final vocals and instruments',
+    guide: 'This is the performance that ships. Make sure tuning, timing, and tone are where you want them. If you\'re working with session players or vocalists, get clean stems exported separately for mixing flexibility.',
+  },
+  {
+    category: 'creative',
+    label: 'Complete mixing',
+    guide: 'Mixing balances every element — levels, panning, EQ, compression, effects — into a cohesive stereo image. Whether you mix yourself or hire an engineer, reference your playlist to stay sonically on target.',
+  },
+  {
+    category: 'creative',
+    label: 'Complete mastering',
+    guide: 'Mastering is the final polish — it optimizes loudness, clarity, and consistency across all tracks and playback systems. Always master to streaming-optimized levels (around -14 LUFS for Spotify). Don\'t skip this step.',
+  },
 
   // Legal
-  { category: 'legal', label: 'Register with a Performing Rights Organization (ASCAP, BMI, or SESAC)' },
-  { category: 'legal', label: 'Register all compositions with your PRO' },
-  { category: 'legal', label: 'Confirm all songwriting splits are documented and signed' },
-  { category: 'legal', label: 'Obtain clearances for any sampled material' },
-  { category: 'legal', label: 'Register masters with SoundExchange' },
-  { category: 'legal', label: 'Set up a publishing entity (if applicable)' },
-  { category: 'legal', label: 'File copyright registration for lyrics and compositions' },
-  { category: 'legal', label: 'Confirm ownership of artist name — run a trademark search' },
+  {
+    category: 'legal',
+    label: 'Register with a Performing Rights Organization (ASCAP, BMI, or SESAC)',
+    guide: 'A PRO collects royalties on your behalf whenever your music is played publicly — radio, streaming, live venues, TV. You can only join one at a time. ASCAP and BMI are free to join; SESAC is invite-only.',
+  },
+  {
+    category: 'legal',
+    label: 'Register all compositions with your PRO',
+    guide: 'Joining a PRO isn\'t enough — you need to register each song individually so they know what to collect on. Include all songwriters and their splits. Do this before release day so royalties start flowing immediately.',
+  },
+  {
+    category: 'legal',
+    label: 'Confirm all songwriting splits are documented and signed',
+    guide: 'If anyone contributed to the writing — lyrics, melody, chords — they own a piece. Get percentage splits agreed on and signed in writing before release. Undocumented splits are the most common source of legal disputes in music.',
+  },
+  {
+    category: 'legal',
+    label: 'Obtain clearances for any sampled material',
+    guide: 'If you\'ve sampled another recording or interpolated someone else\'s melody, you need written clearance from both the publisher and the master owner. Releasing uncleared samples can result in takedowns, lawsuits, or lost revenue.',
+  },
+  {
+    category: 'legal',
+    label: 'Register masters with SoundExchange',
+    guide: 'SoundExchange collects digital performance royalties for the recording owner and featured artist — this is separate from what your PRO collects. Registration is free and covers plays on Pandora, SiriusXM, and other non-interactive platforms.',
+  },
+  {
+    category: 'legal',
+    label: 'Set up a publishing entity (if applicable)',
+    guide: 'If you self-publish, creating a publishing entity (like an LLC) lets you collect the publisher\'s share of royalties — which is 50% of the total. Without one, that share may go uncollected or sit with your PRO.',
+  },
+  {
+    category: 'legal',
+    label: 'File copyright registration for lyrics and compositions',
+    guide: 'Your work is technically copyrighted the moment you create it, but registering with the U.S. Copyright Office gives you legal standing to sue for infringement and claim statutory damages. It costs around $65 per work.',
+  },
+  {
+    category: 'legal',
+    label: 'Confirm ownership of artist name — run a trademark search',
+    guide: 'Before investing in branding, check that no one else is using your artist name in music. Search the USPTO database, Spotify, and social platforms. A name conflict after release can force expensive rebranding.',
+  },
 
   // Business
-  { category: 'business', label: 'Set up artist socials: Instagram, TikTok, YouTube, X' },
-  { category: 'business', label: 'Claim artist profiles on all major streaming platforms' },
-  { category: 'business', label: 'Create an electronic press kit (EPK)' },
-  { category: 'business', label: 'Shoot artist photography — press and promo' },
-  { category: 'business', label: 'Finalize all artwork: album cover, singles, social assets' },
-  { category: 'business', label: 'Write press release for the release' },
-  { category: 'business', label: 'Build a pitch list: blogs, press, and playlist curators' },
-  { category: 'business', label: 'Set up Linktree or equivalent artist landing page' },
+  {
+    category: 'business',
+    label: 'Set up artist socials: Instagram, TikTok, YouTube, X',
+    guide: 'Claim your handles on every major platform even if you don\'t plan to post everywhere yet. Consistent naming across platforms makes you easier to find and looks more professional to press and playlist curators.',
+  },
+  {
+    category: 'business',
+    label: 'Claim artist profiles on all major streaming platforms',
+    guide: 'Claim your Spotify for Artists, Apple Music for Artists, and Amazon Music for Artists profiles. This gives you access to analytics, editorial pitch tools, and the ability to customize your artist page with images and bio.',
+  },
+  {
+    category: 'business',
+    label: 'Create an electronic press kit (EPK)',
+    guide: 'An EPK is your professional one-pager for press, venues, and industry contacts. Include your bio, high-res photos, music links, notable press, and contact info. Keep it clean, current, and easy to share as a link or PDF.',
+  },
+  {
+    category: 'business',
+    label: 'Shoot artist photography — press and promo',
+    guide: 'You\'ll need high-resolution images for press features, social content, streaming profiles, and marketing. Aim for at least one portrait and one landscape shot. Professional photography makes a real difference in how seriously you\'re taken.',
+  },
+  {
+    category: 'business',
+    label: 'Finalize all artwork: album cover, singles, social assets',
+    guide: 'Your cover art is often the first thing a listener sees. It needs to work at 3000x3000px for stores and still read clearly as a tiny thumbnail on Spotify. Create matching assets for singles and social posts to build a cohesive visual rollout.',
+  },
+  {
+    category: 'business',
+    label: 'Write press release for the release',
+    guide: 'A press release tells the story of your release in a way journalists can easily pull quotes from. Keep it to one page, lead with the hook, include a streaming link and high-res photo, and send it 2–3 weeks before release day.',
+  },
+  {
+    category: 'business',
+    label: 'Build a pitch list: blogs, press, and playlist curators',
+    guide: 'Research blogs, journalists, and independent playlist curators who cover your genre. Build a spreadsheet with contact info and personalize each pitch. Start reaching out 4–6 weeks before release to give them time to listen and write.',
+  },
+  {
+    category: 'business',
+    label: 'Set up Linktree or equivalent artist landing page',
+    guide: 'A single link that routes to all your platforms, merch, and content. Put it in every social bio. Services like Linktree, Koji, or a custom landing page work — just make sure it loads fast and looks on-brand.',
+  },
 
   // Distribution
-  { category: 'distribution', label: 'Select a distributor and create account (Distrokid, TuneCore, etc.)' },
-  { category: 'distribution', label: 'Upload all audio files in the correct format (WAV, 44.1kHz, 16-bit minimum)' },
-  { category: 'distribution', label: 'Upload final artwork (3000x3000px minimum)' },
-  { category: 'distribution', label: 'Enter all metadata: titles, credits, ISRC codes, UPC' },
-  { category: 'distribution', label: 'Set release date — minimum 3–4 weeks out for editorial consideration' },
-  { category: 'distribution', label: 'Submit for Spotify editorial playlist consideration' },
-  { category: 'distribution', label: 'Register with the MLC for mechanical licensing' },
-  { category: 'distribution', label: 'Submit to sync licensing platforms (Musicbed, Artlist, etc.)' },
+  {
+    category: 'distribution',
+    label: 'Select a distributor and create account (Distrokid, TuneCore, etc.)',
+    guide: 'Your distributor gets your music into Spotify, Apple Music, Amazon, and every other streaming platform. DistroKid charges an annual fee for unlimited uploads; TuneCore charges per release. Both are solid for independent artists.',
+  },
+  {
+    category: 'distribution',
+    label: 'Upload all audio files in the correct format (WAV, 44.1kHz, 16-bit minimum)',
+    guide: 'Stores require lossless audio files — never upload MP3s. WAV at 44.1kHz/16-bit is the standard minimum. Some distributors accept 24-bit, which preserves more detail. Double-check your export settings before uploading.',
+  },
+  {
+    category: 'distribution',
+    label: 'Upload final artwork (3000x3000px minimum)',
+    guide: 'All major platforms require square cover art at 3000x3000 pixels in RGB color mode, saved as JPEG or PNG. No blurry images, no pixelation, no logos of streaming platforms. The artwork must match what you submit for every release.',
+  },
+  {
+    category: 'distribution',
+    label: 'Enter all metadata: titles, credits, ISRC codes, UPC',
+    guide: 'Metadata is how streaming platforms identify and credit your music. ISRC codes are unique per track, UPC is unique per release. Your distributor usually generates these. Triple-check artist names, featured artists, and songwriting credits.',
+  },
+  {
+    category: 'distribution',
+    label: 'Set release date — minimum 3–4 weeks out for editorial consideration',
+    guide: 'Spotify editorial playlists require at least 7 days lead time, but 3–4 weeks gives you the best shot. This also gives press, curators, and your audience time to build anticipation. Never rush a release date — plan it.',
+  },
+  {
+    category: 'distribution',
+    label: 'Submit for Spotify editorial playlist consideration',
+    guide: 'Through Spotify for Artists, you can pitch one unreleased track per release to Spotify\'s editorial team. Write a compelling pitch — describe the song\'s story, mood, and what makes it special. Submit at least 7 days before release.',
+  },
+  {
+    category: 'distribution',
+    label: 'Register with the MLC for mechanical licensing',
+    guide: 'The MLC (Mechanical Licensing Collective) collects mechanical royalties from streaming services in the U.S. Registration is free and ensures you get paid every time your composition is streamed. Don\'t leave this money on the table.',
+  },
+  {
+    category: 'distribution',
+    label: 'Submit to sync licensing platforms (Musicbed, Artlist, etc.)',
+    guide: 'Sync licensing places your music in films, ads, TV shows, and video content. Platforms like Musicbed, Artlist, and Songtradr connect you to sync opportunities. It\'s a meaningful revenue stream, especially for instrumental or mood-driven tracks.',
+  },
 ];
 
 // ── Seed default items for a project ──
 
 async function seedDefaults(projectId: string): Promise<void> {
+  // Each item uses two parameterized values: label ($odd) and guide ($even)
   const values = DEFAULT_ITEMS.map(
     (item, i) =>
-      `(gen_random_uuid(), '${projectId}', '${item.category}', $${i + 1}, true, false, '', ${i})`
+      `(gen_random_uuid(), '${projectId}', '${item.category}', $${i * 2 + 1}, $${i * 2 + 2}, true, false, '', ${i})`
   ).join(',\n');
 
-  const params = DEFAULT_ITEMS.map((item) => item.label);
+  const params: string[] = [];
+  for (const item of DEFAULT_ITEMS) {
+    params.push(item.label, item.guide);
+  }
 
   await pool.query(
-    `INSERT INTO checklist_items (id, project_id, category, label, is_default, is_checked, notes, sort_order)
+    `INSERT INTO checklist_items (id, project_id, category, label, guide, is_default, is_checked, notes, sort_order)
      VALUES ${values}`,
     params
   );
@@ -92,6 +232,20 @@ router.get('/:projectId', async (req: AuthRequest, res: Response): Promise<void>
     );
     if (parseInt(count.rows[0].count) === 0) {
       await seedDefaults(projectId);
+    } else {
+      // Backfill guide text for existing default items that have empty guides
+      const emptyGuides = await pool.query(
+        `SELECT id, label FROM checklist_items WHERE project_id = $1 AND is_default = true AND (guide IS NULL OR guide = '')`,
+        [projectId]
+      );
+      if (emptyGuides.rows.length > 0) {
+        for (const row of emptyGuides.rows) {
+          const match = DEFAULT_ITEMS.find((d) => d.label === row.label);
+          if (match) {
+            await pool.query('UPDATE checklist_items SET guide = $1 WHERE id = $2', [match.guide, row.id]);
+          }
+        }
+      }
     }
 
     // Fetch all items ordered by category and sort_order

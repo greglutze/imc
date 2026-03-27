@@ -162,6 +162,19 @@ async function migrate(): Promise<void> {
       `);
       console.log('Checklist migration complete.');
     }
+
+    // Add guide column if missing (v2 migration)
+    const guideColCheck = await pool.query(
+      `SELECT EXISTS (
+        SELECT FROM information_schema.columns
+        WHERE table_name = 'checklist_items' AND column_name = 'guide'
+      )`
+    );
+    if (!guideColCheck.rows[0].exists) {
+      console.log('Adding guide column to checklist_items...');
+      await pool.query(`ALTER TABLE checklist_items ADD COLUMN guide text DEFAULT ''`);
+      console.log('Guide column added.');
+    }
   } catch (err) {
     console.error('Migration error:', err);
   }

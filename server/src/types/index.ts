@@ -287,6 +287,7 @@ export interface ChecklistItem {
   project_id: string;
   category: ChecklistCategory;
   label: string;
+  guide: string;
   is_default: boolean;
   is_checked: boolean;
   notes: string;

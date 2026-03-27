@@ -269,6 +269,7 @@ function ChecklistItemRow({
   onUpdate: () => void;
 }) {
   const [showNotes, setShowNotes] = useState(!!item.notes);
+  const [showGuide, setShowGuide] = useState(false);
   const [notes, setNotes] = useState(item.notes);
   const [saving, setSaving] = useState(false);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -323,6 +324,8 @@ function ChecklistItemRow({
     }
   }, [item.id, onUpdate]);
 
+  const hasGuide = item.guide && item.guide.length > 0;
+
   return (
     <div className="group border-b border-neutral-100 last:border-b-0">
       {/* Main row */}
@@ -346,14 +349,42 @@ function ChecklistItemRow({
 
         {/* Label + actions */}
         <div className="flex-1 min-w-0">
-          <p
-            className={`text-body cursor-pointer select-none transition-colors ${
-              item.is_checked ? 'line-through text-neutral-400' : 'text-black'
-            }`}
-            onClick={handleToggle}
-          >
-            {item.label}
-          </p>
+          <div className="flex items-start gap-2">
+            <p
+              className={`text-body cursor-pointer select-none transition-colors ${
+                item.is_checked ? 'line-through text-neutral-400' : 'text-black'
+              }`}
+              onClick={handleToggle}
+            >
+              {item.label}
+            </p>
+
+            {/* Info toggle arrow */}
+            {hasGuide && (
+              <button
+                onClick={() => setShowGuide(!showGuide)}
+                className="mt-1 flex-shrink-0 w-4 h-4 flex items-center justify-center text-neutral-300 hover:text-black transition-colors"
+                aria-label={showGuide ? 'Hide info' : 'More info'}
+              >
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${showGuide ? 'rotate-180' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            )}
+          </div>
+
+          {/* Guide text — expandable */}
+          {showGuide && hasGuide && (
+            <p className="text-body-sm text-neutral-500 mt-2 leading-relaxed max-w-xl">
+              {item.guide}
+            </p>
+          )}
 
           {/* Notes toggle + delete for custom items */}
           <div className="flex items-center gap-4 mt-1">
