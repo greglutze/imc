@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Badge } from './ui';
 import type { I2StyleProfile, ProjectConcept } from '../lib/api';
 
@@ -114,20 +115,8 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
       {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
         <div className="border-b border-neutral-200 px-8 py-10">
           <SectionLabel>Mood Map</SectionLabel>
-          <div className="mt-5 flex flex-wrap gap-3">
-            {concept.mood_keywords.map((mood, i) => {
-              // Alternate between sizes for visual weight variation
-              const sizes = ['text-[28px]', 'text-[22px]', 'text-[32px]', 'text-[20px]', 'text-[26px]'];
-              const size = sizes[i % sizes.length];
-              return (
-                <span
-                  key={i}
-                  className={`${size} font-bold tracking-tight text-black leading-none py-2 px-1`}
-                >
-                  {mood}
-                </span>
-              );
-            })}
+          <div className="mt-5">
+            <MoodConstellation moods={concept.mood_keywords} />
           </div>
         </div>
       )}
@@ -157,6 +146,141 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
         </div>
       )}
     </div>
+  );
+}
+
+/** Deterministic hash for consistent node placement across renders */
+function hashStr(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+interface MoodNode {
+  label: string;
+  x: number;
+  y: number;
+  r: number;
+}
+
+function MoodConstellation({ moods }: { moods: string[] }) {
+  const WIDTH = 900;
+  const HEIGHT = 340;
+  const PADDING = 70;
+
+  const nodes: MoodNode[] = useMemo(() => {
+    if (moods.length === 0) return [];
+
+    // Size variation based on index
+    const sizes = [28, 22, 26, 20, 24, 30, 18, 25];
+
+    // Place nodes using golden-angle spiral for even distribution
+    const cx = WIDTH / 2;
+    const cy = HEIGHT / 2;
+    const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+    const maxRadius = Math.min(WIDTH / 2 - PADDING, HEIGHT / 2 - PADDING);
+
+    return moods.map((mood, i) => {
+      const hash = hashStr(mood);
+      const r = sizes[i % sizes.length];
+
+      if (moods.length === 1) {
+        return { label: mood, x: cx, y: cy, r };
+      }
+
+      // Spiral layout with hash-based jitter
+      const angle = i * goldenAngle + (hash % 100) * 0.01;
+      const dist = maxRadius * Math.sqrt((i + 0.5) / moods.length) * 0.85;
+      const jitterX = ((hash % 40) - 20);
+      const jitterY = (((hash >> 4) % 40) - 20);
+
+      const x = Math.max(PADDING, Math.min(WIDTH - PADDING, cx + Math.cos(angle) * dist + jitterX));
+      const y = Math.max(PADDING - 10, Math.min(HEIGHT - PADDING + 10, cy + Math.sin(angle) * dist + jitterY));
+
+      return { label: mood, x, y, r };
+    });
+  }, [moods]);
+
+  // Build edges: connect each node to its 2 nearest neighbors
+  const edges: Array<[number, number]> = useMemo(() => {
+    if (nodes.length < 2) return [];
+    const result: Array<[number, number]> = [];
+    const seen = new Set<string>();
+
+    for (let i = 0; i < nodes.length; i++) {
+      const distances = nodes
+        .map((n, j) => ({
+          j,
+          d: Math.hypot(n.x - nodes[i].x, n.y - nodes[i].y),
+        }))
+        .filter((item) => item.j !== i)
+        .sort((a, b) => a.d - b.d);
+
+      const connections = Math.min(2, distances.length);
+      for (let k = 0; k < connections; k++) {
+        const key = [Math.min(i, distances[k].j), Math.max(i, distances[k].j)].join('-');
+        if (!seen.has(key)) {
+          seen.add(key);
+          result.push([i, distances[k].j]);
+        }
+      }
+    }
+    return result;
+  }, [nodes]);
+
+  if (nodes.length === 0) return null;
+
+  return (
+    <svg
+      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+      className="w-full"
+      style={{ maxHeight: '340px' }}
+    >
+      {/* Connection lines */}
+      {edges.map(([a, b], i) => (
+        <line
+          key={`edge-${i}`}
+          x1={nodes[a].x}
+          y1={nodes[a].y}
+          x2={nodes[b].x}
+          y2={nodes[b].y}
+          stroke="#e5e5e5"
+          strokeWidth="1"
+        />
+      ))}
+
+      {/* Nodes */}
+      {nodes.map((node, i) => (
+        <g key={i}>
+          <circle
+            cx={node.x}
+            cy={node.y}
+            r={node.r}
+            fill="white"
+            stroke="#d4d4d4"
+            strokeWidth="1"
+          />
+          <circle
+            cx={node.x}
+            cy={node.y}
+            r={node.r - 3}
+            fill="#fafafa"
+            stroke="none"
+          />
+          <text
+            x={node.x}
+            y={node.y + node.r + 14}
+            textAnchor="middle"
+            className="text-[11px] font-bold uppercase tracking-widest"
+            fill="#171717"
+          >
+            {node.label}
+          </text>
+        </g>
+      ))}
+    </svg>
   );
 }
 
