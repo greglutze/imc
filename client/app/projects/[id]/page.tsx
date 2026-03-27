@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
@@ -36,6 +36,7 @@ export default function ProjectPage() {
   const [pageLoading, setPageLoading] = useState(true);
   const [reportVersion, setReportVersion] = useState(1);
   const [totalVersions, setTotalVersions] = useState(1);
+  const autoResearchTriggered = useRef(false);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -95,6 +96,22 @@ export default function ProjectPage() {
     loadProject();
   }, [isAuthenticated, id]);
 
+  // Auto-run research when switching to Research tab with concept ready but no report
+  useEffect(() => {
+    if (
+      activeTab === 'report' &&
+      conceptReady &&
+      !report &&
+      !researchRunning &&
+      !pageLoading &&
+      !autoResearchTriggered.current &&
+      id
+    ) {
+      autoResearchTriggered.current = true;
+      handleRunResearch();
+    }
+  }, [activeTab, conceptReady, report, researchRunning, pageLoading, id]);
+
   // Send message to concept conversation via API
   const handleSendMessage = useCallback(async (content: string) => {
     if (!id) return;
@@ -128,7 +145,6 @@ export default function ProjectPage() {
     if (!id) return;
 
     setResearchRunning(true);
-    setActiveTab('report');
 
     try {
       const reportData = await api.runResearch(id);
@@ -202,7 +218,6 @@ export default function ProjectPage() {
                   loading={loading}
                   conceptReady={conceptReady}
                   concept={concept}
-                  onRunResearch={handleRunResearch}
                 />
               )}
 
@@ -232,30 +247,45 @@ export default function ProjectPage() {
                 </div>
               )}
 
-              {!researchRunning && !report && (
+              {!researchRunning && !report && !conceptReady && (
                 <div className="px-8 py-16 max-w-2xl">
                   <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
                   <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-                    No Research Yet
+                    No Concept Yet
                   </p>
                   <p className="text-body-lg text-black mt-5 max-w-sm">
-                    Complete the concept interview first, then run market research
-                    to generate your intelligence report.
+                    Complete the concept interview first. Market research will run
+                    automatically when you return here.
                   </p>
                 </div>
               )}
 
               {!researchRunning && report && (
-                <ResearchReport
-                  report={report.report}
-                  confidence={report.confidence}
-                  version={reportVersion}
-                  totalVersions={totalVersions}
-                  artistName={artistName}
-                  createdAt={new Date().toISOString()}
-                  onVersionChange={handleVersionChange}
-                  projectId={id}
-                />
+                <>
+                  {/* Re-run button at top */}
+                  <div className="px-8 pt-6 pb-0 flex items-center justify-between max-w-[1400px]">
+                    <div />
+                    <button
+                      onClick={() => {
+                        autoResearchTriggered.current = false;
+                        handleRunResearch();
+                      }}
+                      className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+                    >
+                      Re-run Research
+                    </button>
+                  </div>
+                  <ResearchReport
+                    report={report.report}
+                    confidence={report.confidence}
+                    version={reportVersion}
+                    totalVersions={totalVersions}
+                    artistName={artistName}
+                    createdAt={new Date().toISOString()}
+                    onVersionChange={handleVersionChange}
+                    projectId={id}
+                  />
+                </>
               )}
             </>
           )}

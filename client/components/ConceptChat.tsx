@@ -10,7 +10,6 @@ interface ConceptChatProps {
   loading?: boolean;
   conceptReady?: boolean;
   concept?: ProjectConcept | null;
-  onRunResearch?: () => void;
 }
 
 export default function ConceptChat({
@@ -19,7 +18,6 @@ export default function ConceptChat({
   loading = false,
   conceptReady = false,
   concept,
-  onRunResearch,
 }: ConceptChatProps) {
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -160,14 +158,7 @@ export default function ConceptChat({
               <ConceptField label="Tracks" value={String(concept.track_count)} />
             </div>
 
-            <p className="text-body-sm text-neutral-500 mt-4 mb-5">{concept.creative_direction}</p>
-
-            <button
-              onClick={onRunResearch}
-              className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-6 rounded-sm hover:bg-neutral-800 transition-colors duration-fast"
-            >
-              Run Market Research
-            </button>
+            <p className="text-body-sm text-neutral-500 mt-4">{concept.creative_direction}</p>
           </div>
         </div>
       )}

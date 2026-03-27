@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Tabs } from '../../../../components/ui';
 import StyleProfile from '../../../../components/StyleProfile';
@@ -28,6 +28,7 @@ export default function PromptsPage() {
   const [report, setReport] = useState<I1Report | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const autoGenerateTriggered = useRef(false);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -72,6 +73,21 @@ export default function PromptsPage() {
 
     loadData();
   }, [isAuthenticated, id]);
+
+  // Auto-generate prompts on first visit if concept exists but no prompts
+  useEffect(() => {
+    if (
+      !pageLoading &&
+      !generating &&
+      !hasPrompts &&
+      project?.concept?.genre_primary &&
+      !autoGenerateTriggered.current &&
+      id
+    ) {
+      autoGenerateTriggered.current = true;
+      handleGenerate();
+    }
+  }, [pageLoading, generating, hasPrompts, project, id]);
 
   // Generate prompts via API
   const handleGenerate = useCallback(async () => {
@@ -120,33 +136,7 @@ export default function PromptsPage() {
     );
   }
 
-  // No prompts yet — show generate CTA
-  if (!hasPrompts && !generating) {
-    return (
-      <div className="animate-fade-in h-full flex flex-col">
-        <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
-
-        <div className="max-w-[1400px] px-10 py-16">
-          <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
-          <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-            Generate Prompts
-          </p>
-          <p className="text-body-lg text-black mt-5 max-w-md">
-            Create Suno and Udio prompts based on your concept and market research.
-            Style profiles, vocalist personas, and track-by-track prompt sheets.
-          </p>
-          <button
-            onClick={handleGenerate}
-            className="mt-8 bg-black text-white text-label font-bold uppercase tracking-widest h-12 px-8 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
-          >
-            Generate Prompts
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Generating state
+  // Generating state (first time or regenerate all)
   if (generating) {
     return (
       <div className="animate-fade-in h-full flex flex-col">
@@ -171,6 +161,26 @@ export default function PromptsPage() {
     );
   }
 
+  // No concept yet — can't generate
+  if (!hasPrompts && !project?.concept?.genre_primary) {
+    return (
+      <div className="animate-fade-in h-full flex flex-col">
+        <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
+
+        <div className="max-w-[1400px] px-10 py-16">
+          <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
+          <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+            No Concept Yet
+          </p>
+          <p className="text-body-lg text-black mt-5 max-w-md">
+            Complete the concept interview first. Prompts will generate
+            automatically when you return here.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const tabs = [
     { id: 'style', label: 'Style Profile' },
     { id: 'tracks', label: 'Demo Prompts', count: tracks.length },
@@ -183,14 +193,29 @@ export default function PromptsPage() {
 
       {/* Moodboard active indicator + Tabs */}
       <div className="max-w-[1400px] mx-auto w-full px-10">
-        {project?.moodboard_brief && (
-          <div className="flex items-center gap-2 pt-3 pb-1">
-            <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-            <span className="text-micro font-bold uppercase tracking-widest text-neutral-400">
-              Moodboard active
-            </span>
+        <div className="flex items-center justify-between pt-3 pb-1">
+          <div className="flex items-center gap-4">
+            {project?.moodboard_brief && (
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                <span className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+                  Moodboard active
+                </span>
+              </div>
+            )}
           </div>
-        )}
+          {hasPrompts && (
+            <button
+              onClick={() => {
+                autoGenerateTriggered.current = false;
+                handleGenerate();
+              }}
+              className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+            >
+              Regenerate All
+            </button>
+          )}
+        </div>
         <Tabs tabs={tabs} activeTab={activeTab} onTabChange={(tabId) => setActiveTab(tabId as I2View)} />
       </div>
 
