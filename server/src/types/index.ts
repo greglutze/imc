@@ -232,7 +232,9 @@ export interface Project {
   org_id: string;
   status: 'draft' | 'research' | 'prompting' | 'analysis' | 'complete';
   artist_name: string | null;
+  image_url: string | null;
   concept: ProjectConcept;
+  moodboard_brief: MoodboardBrief | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -300,6 +302,32 @@ export interface ChecklistSummary {
   total: number;
   checked: number;
   by_category: Record<ChecklistCategory, { total: number; checked: number }>;
+}
+
+// Moodboard types
+
+export interface MoodboardImage {
+  id: string;
+  project_id: string;
+  image_data: string;
+  sort_order: number;
+  created_at: Date;
+}
+
+export interface MoodboardBrief {
+  tempo_feel: string;
+  texture: string;
+  atmosphere: string;
+  emotional_register: string;
+  production_era: string | null;
+  arrangement_density: 'sparse' | 'moderate' | 'dense';
+  dynamic_range: 'compressed' | 'moderate' | 'wide';
+  sonic_references: string[];
+  confidence: 'high' | 'medium' | 'low';
+  prose: string;
+  flagged_elements: string[];
+  version: number;
+  previous_prose: string | null;
 }
 
 export interface AudioFile {

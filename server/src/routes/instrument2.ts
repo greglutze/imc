@@ -16,7 +16,7 @@ router.post(
       const { projectId } = req.params;
 
       const projectResult = await pool.query(
-        'SELECT id, concept FROM projects WHERE id = $1 AND org_id = $2',
+        'SELECT id, concept, moodboard_brief FROM projects WHERE id = $1 AND org_id = $2',
         [projectId, user.org_id]
       );
 
@@ -44,7 +44,8 @@ router.post(
       const reportId = latestI1Result.rows.length > 0 ? latestI1Result.rows[0].id : null;
       const report = latestI1Result.rows.length > 0 ? (latestI1Result.rows[0].report as I1Report) : null;
 
-      const prompts = await generatePrompts(concept, report);
+      const moodboardBrief = project.moodboard_brief || null;
+      const prompts = await generatePrompts(concept, report, moodboardBrief);
 
       const versionResult = await pool.query(
         'SELECT COUNT(*) FROM instrument2_prompts WHERE project_id = $1',
@@ -197,7 +198,7 @@ router.post(
       const projectId = promptsRecord.project_id;
 
       const projectResult = await pool.query(
-        'SELECT concept FROM projects WHERE id = $1',
+        'SELECT concept, moodboard_brief FROM projects WHERE id = $1',
         [projectId]
       );
 
@@ -207,6 +208,7 @@ router.post(
       }
 
       const concept = projectResult.rows[0].concept as ProjectConcept;
+      const moodboardBrief = projectResult.rows[0].moodboard_brief || null;
 
       const latestI1Result = await pool.query(
         `SELECT report FROM instrument1_reports
@@ -222,7 +224,7 @@ router.post(
         tracks: promptsRecord.tracks,
       };
 
-      const newTrack = await regenerateTrack(concept, report, trackNum, currentPrompts);
+      const newTrack = await regenerateTrack(concept, report, trackNum, currentPrompts, moodboardBrief);
 
       const updatedTracks = currentPrompts.tracks.map((t: { track_number: number }) =>
         t.track_number === trackNum ? newTrack : t

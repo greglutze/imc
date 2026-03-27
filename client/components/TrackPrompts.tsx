@@ -17,7 +17,7 @@ export default function TrackPrompts({ tracks, onRegenerateTrack, regenerating }
       <div className="border-b border-neutral-200 px-8 py-10">
         <div className="flex items-center gap-4">
           <span className="text-heading font-bold font-mono text-neutral-200">T</span>
-          <h3 className="text-heading font-bold text-black">Track Prompts</h3>
+          <h3 className="text-heading font-bold text-black">Demo Prompts</h3>
         </div>
         <p className="text-body text-neutral-500 mt-3 max-w-lg">
           Copy these prompts directly into Suno or Udio. Each track is tuned to your style profile and market research.

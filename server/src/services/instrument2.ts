@@ -5,6 +5,7 @@ import {
   I2StyleProfile,
   I2VocalistPersona,
   I2Track,
+  MoodboardBrief,
 } from '../types';
 
 const PROMPT_ENGINEERING_SYSTEM_PROMPT = `You are IMC's prompt engineering system. You translate artist concepts and market intelligence into precision-engineered prompts for AI music generation platforms (Suno and Udio).
@@ -25,6 +26,7 @@ CRITICAL RULES:
 - Each track should have a distinct identity within the project's sonic universe
 - Structure notation uses: [Intro] [Verse] [Pre-Chorus] [Chorus] [Bridge] [Outro] [Drop] [Break]
 - If market data is available, use the sonic blueprint to inform production choices
+- If a visual moodboard brief is provided, treat it as the atmospheric north star for the project. Let it shape the texture, mood, and production character of every prompt. The moodboard brief represents the artist's visual world translated into sonic language — it should infuse every aspect of the output without overriding the artist's explicit concept direction.
 
 Return JSON:
 {
@@ -57,6 +59,7 @@ Generate exactly the number of tracks specified in track_count. Be creative but 
 interface PromptContext {
   concept: ProjectConcept;
   report: I1Report | null;
+  moodboardBrief: MoodboardBrief | null;
 }
 
 function contextToPrompt(context: PromptContext): string {
@@ -69,6 +72,22 @@ Artist Concept:
 - Target Audience: ${context.concept.target_audience}
 - Mood Keywords: ${context.concept.mood_keywords.join(', ')}
 - Track Count: ${context.concept.track_count}`;
+
+  // Append moodboard brief if available
+  const moodboardSection = context.moodboardBrief ? `
+
+Visual Moodboard — Sonic Brief:
+${context.moodboardBrief.prose}
+
+Moodboard Atmospheric Details:
+- Tempo Feel: ${context.moodboardBrief.tempo_feel}
+- Texture: ${context.moodboardBrief.texture}
+- Atmosphere: ${context.moodboardBrief.atmosphere}
+- Emotional Register: ${context.moodboardBrief.emotional_register}
+- Arrangement Density: ${context.moodboardBrief.arrangement_density}
+- Dynamic Range: ${context.moodboardBrief.dynamic_range}${context.moodboardBrief.production_era ? `\n- Production Era: ${context.moodboardBrief.production_era}` : ''}${context.moodboardBrief.sonic_references.length > 0 ? `\n- Sonic References: ${context.moodboardBrief.sonic_references.join(', ')}` : ''}
+
+This moodboard brief represents the visual world of the project translated into sonic language. Let it shape the texture, production character, atmosphere, and [Sound Design] sections of every prompt.` : '';
 
   if (context.report) {
     const sonicBlueprint = context.report.sonic_blueprint;
@@ -102,23 +121,24 @@ Audience Profile:
 Genre Landscape: ${context.report.market_overview.genre_landscape}
 Growth Trend: ${context.report.market_overview.growth_trend}
 
-Use this market intelligence to inform your prompt generation. The sonic blueprint and comparable artists data will help ensure the prompts produce commercially viable music aligned with market positioning.`;
+Use this market intelligence to inform your prompt generation. The sonic blueprint and comparable artists data will help ensure the prompts produce commercially viable music aligned with market positioning.${moodboardSection}`;
   }
 
-  return `${basePrompt}
+  return `${basePrompt}${moodboardSection}
 
-No market research data available. Generate prompts based solely on the artist concept provided.`;
+No market research data available. Generate prompts based on the artist concept${context.moodboardBrief ? ' and visual moodboard brief' : ''} provided.`;
 }
 
 export async function generatePrompts(
   concept: ProjectConcept,
-  report: I1Report | null
+  report: I1Report | null,
+  moodboardBrief?: MoodboardBrief | null
 ): Promise<{
   style_profile: I2StyleProfile;
   vocalist_persona: I2VocalistPersona;
   tracks: I2Track[];
 }> {
-  const context: PromptContext = { concept, report };
+  const context: PromptContext = { concept, report, moodboardBrief: moodboardBrief || null };
   const prompt = contextToPrompt(context);
 
   const defaultResponse = {
@@ -181,9 +201,10 @@ export async function regenerateTrack(
   concept: ProjectConcept,
   report: I1Report | null,
   trackNumber: number,
-  currentPrompts: { style_profile: I2StyleProfile; vocalist_persona: I2VocalistPersona; tracks: I2Track[] }
+  currentPrompts: { style_profile: I2StyleProfile; vocalist_persona: I2VocalistPersona; tracks: I2Track[] },
+  moodboardBrief?: MoodboardBrief | null
 ): Promise<I2Track> {
-  const context: PromptContext = { concept, report };
+  const context: PromptContext = { concept, report, moodboardBrief: moodboardBrief || null };
   const basePrompt = contextToPrompt(context);
 
   const styleContext = `

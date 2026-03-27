@@ -8,6 +8,7 @@ export interface Project {
   image_url: string | null;
   status: 'draft' | 'research' | 'prompting' | 'analysis' | 'complete';
   concept: ProjectConcept | null;
+  moodboard_brief: MoodboardBrief | null;
   created_at: string;
   updated_at: string;
 }
@@ -141,6 +142,37 @@ export interface Instrument2Prompts {
   vocalist_persona: I2VocalistPersona;
   tracks: I2Track[];
   created_at: string;
+}
+
+/* ———————— Moodboard Types ———————— */
+
+export interface MoodboardImage {
+  id: string;
+  image_data?: string;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface MoodboardBrief {
+  tempo_feel: string;
+  texture: string;
+  atmosphere: string;
+  emotional_register: string;
+  production_era: string | null;
+  arrangement_density: 'sparse' | 'moderate' | 'dense';
+  dynamic_range: 'compressed' | 'moderate' | 'wide';
+  sonic_references: string[];
+  confidence: 'high' | 'medium' | 'low';
+  prose: string;
+  flagged_elements: string[];
+  version: number;
+  previous_prose: string | null;
+}
+
+export interface MoodboardResponse {
+  images: MoodboardImage[];
+  brief: MoodboardBrief | null;
+  count: number;
 }
 
 /* ———————— IMC 00: Checklist Types ———————— */
@@ -387,6 +419,42 @@ class ApiClient {
 
   async getChecklistSummary(projectId: string): Promise<{ total: number; checked: number }> {
     return this.request(`/api/checklist/${projectId}/summary`);
+  }
+
+  /* — Moodboard — */
+
+  async getMoodboard(projectId: string): Promise<MoodboardResponse> {
+    return this.request(`/api/moodboard/${projectId}`);
+  }
+
+  async getMoodboardThumbnails(projectId: string): Promise<MoodboardImage[]> {
+    return this.request(`/api/moodboard/${projectId}/thumbnails`);
+  }
+
+  async uploadMoodboardImages(projectId: string, images: string[]): Promise<{ images: MoodboardImage[]; count: number }> {
+    return this.request(`/api/moodboard/${projectId}/images`, {
+      method: 'POST',
+      body: JSON.stringify({ images }),
+    });
+  }
+
+  async deleteMoodboardImage(projectId: string, imageId: string): Promise<{ deleted: boolean; count: number }> {
+    return this.request(`/api/moodboard/${projectId}/images/${imageId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async analyzeMoodboard(projectId: string): Promise<{ brief: MoodboardBrief }> {
+    return this.request(`/api/moodboard/${projectId}/analyze`, {
+      method: 'POST',
+    });
+  }
+
+  async flagMoodboardElement(projectId: string, element: string, flagged: boolean): Promise<{ brief: MoodboardBrief }> {
+    return this.request(`/api/moodboard/${projectId}/brief/flag`, {
+      method: 'PATCH',
+      body: JSON.stringify({ element, flagged }),
+    });
   }
 }
 

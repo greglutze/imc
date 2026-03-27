@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
 app.use(cors());
 
 // Health check
@@ -186,6 +186,37 @@ async function migrate(): Promise<void> {
       console.log('Adding image_url column to projects...');
       await pool.query(`ALTER TABLE projects ADD COLUMN image_url text DEFAULT NULL`);
       console.log('image_url column added.');
+    }
+
+    // Moodboard migration: images table + brief column
+    const moodboardTableCheck = await pool.query(
+      `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'moodboard_images')`
+    );
+    if (!moodboardTableCheck.rows[0].exists) {
+      console.log('Running moodboard migration...');
+      await pool.query(`
+        CREATE TABLE moodboard_images (
+          id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+          project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+          image_data text NOT NULL,
+          sort_order integer NOT NULL DEFAULT 0,
+          created_at timestamptz DEFAULT now()
+        );
+        CREATE INDEX idx_moodboard_images_project_id ON moodboard_images(project_id);
+      `);
+      console.log('Moodboard images table created.');
+    }
+
+    const moodboardBriefCheck = await pool.query(
+      `SELECT EXISTS (
+        SELECT FROM information_schema.columns
+        WHERE table_name = 'projects' AND column_name = 'moodboard_brief'
+      )`
+    );
+    if (!moodboardBriefCheck.rows[0].exists) {
+      console.log('Adding moodboard_brief column to projects...');
+      await pool.query(`ALTER TABLE projects ADD COLUMN moodboard_brief jsonb DEFAULT NULL`);
+      console.log('moodboard_brief column added.');
     }
   } catch (err) {
     console.error('Migration error:', err);

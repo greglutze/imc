@@ -56,3 +56,47 @@ export async function analyze(
 
   throw new Error('Unexpected response type from Claude API');
 }
+
+export async function analyzeImages(
+  systemPrompt: string,
+  imageDataUrls: string[],
+  textPrompt: string
+): Promise<string> {
+  const imageBlocks: Anthropic.Messages.ImageBlockParam[] = imageDataUrls.map((dataUrl) => {
+    // Extract media type and base64 data from data URL
+    const match = dataUrl.match(/^data:(image\/(?:jpeg|png|gif|webp));base64,(.+)$/);
+    if (!match) {
+      throw new Error('Invalid image data URL format');
+    }
+    return {
+      type: 'image' as const,
+      source: {
+        type: 'base64' as const,
+        media_type: match[1] as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+        data: match[2],
+      },
+    };
+  });
+
+  const response = await getClient().messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 4096,
+    system: systemPrompt,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          ...imageBlocks,
+          { type: 'text' as const, text: textPrompt },
+        ],
+      },
+    ],
+  });
+
+  const content = response.content[0];
+  if (content.type === 'text') {
+    return content.text;
+  }
+
+  throw new Error('Unexpected response type from Claude API');
+}

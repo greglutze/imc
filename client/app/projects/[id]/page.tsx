@@ -4,12 +4,13 @@ import { useState, useCallback, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
+import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
 import { api } from '../../../lib/api';
 import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project } from '../../../lib/api';
 
-type ViewState = 'concept' | 'report';
+type ViewState = 'concept' | 'moodboard' | 'report';
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +20,7 @@ export default function ProjectPage() {
 
   // Read ?tab= param to determine initial view
   const tabParam = searchParams.get('tab');
-  const initialTab: ViewState = tabParam === 'research' ? 'report' : 'concept';
+  const initialTab: ViewState = tabParam === 'research' ? 'report' : tabParam === 'moodboard' ? 'moodboard' : 'concept';
   const [activeTab, setActiveTab] = useState<ViewState>(initialTab);
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [loading, setLoading] = useState(false);
@@ -169,8 +170,8 @@ export default function ProjectPage() {
         projectId={id}
         artistName={artistName}
         imageUrl={project?.image_url}
-        activePage={activeTab === 'report' ? 'research' : 'concept'}
-        onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : 'concept')}
+        activePage={activeTab === 'report' ? 'research' : activeTab === 'moodboard' ? 'moodboard' : 'concept'}
+        onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : page === 'moodboard' ? 'moodboard' : 'concept')}
       />
 
       {/* Content area */}
@@ -185,6 +186,10 @@ export default function ProjectPage() {
               concept={concept}
               onRunResearch={handleRunResearch}
             />
+          )}
+
+          {activeTab === 'moodboard' && (
+            <VisualMoodboard projectId={id} />
           )}
 
           {activeTab === 'report' && (

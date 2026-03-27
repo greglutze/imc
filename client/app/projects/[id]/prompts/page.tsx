@@ -181,8 +181,16 @@ export default function PromptsPage() {
     <div className="animate-fade-in h-full flex flex-col">
       <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
-      {/* Tabs */}
+      {/* Moodboard active indicator + Tabs */}
       <div className="max-w-[1400px] mx-auto w-full px-10">
+        {project?.moodboard_brief && (
+          <div className="flex items-center gap-2 pt-3 pb-1">
+            <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+            <span className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+              Moodboard active
+            </span>
+          </div>
+        )}
         <Tabs tabs={tabs} activeTab={activeTab} onTabChange={(tabId) => setActiveTab(tabId as I2View)} />
       </div>
 
