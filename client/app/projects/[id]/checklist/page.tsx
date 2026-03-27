@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { api, type ChecklistItem, type ChecklistSummary } from '../../../../lib/api';
 import Checklist from '../../../../components/Checklist';
+import ProjectNav from '../../../../components/ProjectNav';
 
 export default function ChecklistPage() {
   const params = useParams();
@@ -54,21 +55,7 @@ export default function ChecklistPage() {
 
   return (
     <div className="animate-fade-in">
-      {/* Breadcrumb nav */}
-      <div className="border-b border-neutral-200">
-        <div className="max-w-[1400px] px-8 h-14 flex items-center gap-3">
-          <a
-            href={`/projects/${projectId}`}
-            className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors"
-          >
-            {projectName}
-          </a>
-          <span className="text-micro text-neutral-300">/</span>
-          <span className="text-micro font-bold uppercase tracking-widest text-black">
-            Checklist
-          </span>
-        </div>
-      </div>
+      <ProjectNav projectId={projectId} artistName={projectName} activePage="checklist" />
 
       {/* Checklist component */}
       <div className="max-w-[1400px]">

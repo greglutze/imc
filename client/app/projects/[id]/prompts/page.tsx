@@ -2,9 +2,10 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Badge, Tabs } from '../../../../components/ui';
+import { Tabs } from '../../../../components/ui';
 import StyleProfile from '../../../../components/StyleProfile';
 import TrackPrompts from '../../../../components/TrackPrompts';
+import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
 import type { I2StyleProfile, I2VocalistPersona, I2Track, Project } from '../../../../lib/api';
@@ -113,26 +114,7 @@ export default function PromptsPage() {
   if (!hasPrompts && !generating) {
     return (
       <div className="animate-fade-in h-full flex flex-col">
-        {/* Page header */}
-        <div className="border-b border-neutral-200">
-          <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <a href="/" className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast flex items-center gap-2">
-                <span className="text-body">&#8592;</span>
-                IMC
-              </a>
-              <span className="text-neutral-200">/</span>
-              <a href={`/projects/${id}`} className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast">
-                {artistName}
-              </a>
-              <span className="text-neutral-200">/</span>
-              <span className="text-micro font-bold uppercase tracking-widest text-black">
-                Prompts
-              </span>
-            </div>
-            <span className="text-micro font-mono text-neutral-300">Instrument 02</span>
-          </div>
-        </div>
+        <ProjectNav projectId={id} artistName={artistName} activePage="prompts" />
 
         <div className="max-w-[1400px] px-10 py-16">
           <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
@@ -158,28 +140,7 @@ export default function PromptsPage() {
   if (generating) {
     return (
       <div className="animate-fade-in h-full flex flex-col">
-        <div className="border-b border-neutral-200">
-          <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <a href="/" className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast flex items-center gap-2">
-                <span className="text-body">&#8592;</span>
-                IMC
-              </a>
-              <span className="text-neutral-200">/</span>
-              <span className="text-micro font-bold uppercase tracking-widest text-black">
-                {artistName}
-              </span>
-              <span className="text-neutral-200">/</span>
-              <span className="text-micro font-bold uppercase tracking-widest text-black">
-                Prompts
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="blue">Generating</Badge>
-              <span className="text-micro font-mono text-neutral-300">Instrument 02</span>
-            </div>
-          </div>
-        </div>
+        <ProjectNav projectId={id} artistName={artistName} activePage="prompts" />
 
         <div className="max-w-[1400px] mx-auto px-10 py-16">
           <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
@@ -207,31 +168,7 @@ export default function PromptsPage() {
 
   return (
     <div className="animate-fade-in h-full flex flex-col">
-      {/* Page header */}
-      <div className="border-b border-neutral-200">
-        <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <a href="/" className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast flex items-center gap-2">
-              <span className="text-body">&#8592;</span>
-              IMC
-            </a>
-            <span className="text-neutral-200">/</span>
-            <a href={`/projects/${id}`} className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast">
-              {artistName}
-            </a>
-            <span className="text-neutral-200">/</span>
-            <span className="text-micro font-bold uppercase tracking-widest text-black">
-              Prompts
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Badge variant="blue">Complete</Badge>
-            <span className="text-micro font-mono text-neutral-300">
-              Instrument 02
-            </span>
-          </div>
-        </div>
-      </div>
+      <ProjectNav projectId={id} artistName={artistName} activePage="prompts" />
 
       {/* Tabs */}
       <div className="max-w-[1400px] mx-auto w-full px-10">

@@ -2,9 +2,9 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Tabs } from '../../../components/ui';
 import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
+import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
 import { api } from '../../../lib/api';
 import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project } from '../../../lib/api';
@@ -156,63 +156,14 @@ export default function ProjectPage() {
     );
   }
 
-  const tabs = [
-    { id: 'concept', label: 'Concept', count: messages.length > 0 ? Math.ceil(messages.length / 2) : undefined },
-    { id: 'report', label: 'Research', count: report ? totalVersions : undefined },
-  ];
-
   return (
     <div className="animate-fade-in h-full flex flex-col">
-      {/* Page header */}
-      <div className="border-b border-neutral-200">
-        <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <a href="/" className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast flex items-center gap-2">
-              <span className="text-body">&#8592;</span>
-              IMC
-            </a>
-            <span className="text-neutral-200">/</span>
-            <span className="text-micro font-bold uppercase tracking-widest text-black">
-              {artistName}
-            </span>
-            {activeTab === 'report' && (
-              <>
-                <span className="text-neutral-200">/</span>
-                <button
-                  onClick={() => setActiveTab('concept')}
-                  className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-                >
-                  Concept
-                </button>
-                <span className="text-neutral-200">/</span>
-                <span className="text-micro font-bold uppercase tracking-widest text-black">
-                  Research
-                </span>
-              </>
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            <a
-              href={`/projects/${id}/checklist`}
-              className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-            >
-              Checklist
-            </a>
-            <span className="text-neutral-200">|</span>
-            <a
-              href={`/projects/${id}/prompts`}
-              className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-            >
-              Prompts
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="max-w-[1400px] mx-auto w-full px-10">
-        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={(tabId) => setActiveTab(tabId as ViewState)} />
-      </div>
+      <ProjectNav
+        projectId={id}
+        artistName={artistName}
+        activePage={activeTab === 'report' ? 'research' : 'concept'}
+        onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : 'concept')}
+      />
 
       {/* Content area */}
       <div className="flex-1 overflow-y-auto">
@@ -280,3 +231,4 @@ export default function ProjectPage() {
     </div>
   );
 }
+
