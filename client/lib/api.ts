@@ -5,6 +5,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 export interface Project {
   id: string;
   artist_name: string | null;
+  image_url: string | null;
   status: 'draft' | 'research' | 'prompting' | 'analysis' | 'complete';
   concept: ProjectConcept | null;
   created_at: string;
@@ -285,10 +286,10 @@ class ApiClient {
     return this.request('/api/projects');
   }
 
-  async createProject(artistName?: string): Promise<Project> {
+  async createProject(artistName?: string, imageUrl?: string): Promise<Project> {
     return this.request('/api/projects', {
       method: 'POST',
-      body: JSON.stringify({ artist_name: artistName }),
+      body: JSON.stringify({ artist_name: artistName, image_url: imageUrl }),
     });
   }
 

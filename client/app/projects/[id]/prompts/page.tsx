@@ -5,12 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { Tabs } from '../../../../components/ui';
 import StyleProfile from '../../../../components/StyleProfile';
 import TrackPrompts from '../../../../components/TrackPrompts';
+import VocalistPersona from '../../../../components/VocalistPersona';
 import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
 import type { I2StyleProfile, I2VocalistPersona, I2Track, Project } from '../../../../lib/api';
 
-type I2View = 'style' | 'tracks';
+type I2View = 'style' | 'tracks' | 'vocalist';
 
 export default function PromptsPage() {
   const { id } = useParams<{ id: string }>();
@@ -114,7 +115,7 @@ export default function PromptsPage() {
   if (!hasPrompts && !generating) {
     return (
       <div className="animate-fade-in h-full flex flex-col">
-        <ProjectNav projectId={id} artistName={artistName} activePage="prompts" />
+        <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
         <div className="max-w-[1400px] px-10 py-16">
           <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
@@ -140,7 +141,7 @@ export default function PromptsPage() {
   if (generating) {
     return (
       <div className="animate-fade-in h-full flex flex-col">
-        <ProjectNav projectId={id} artistName={artistName} activePage="prompts" />
+        <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
         <div className="max-w-[1400px] mx-auto px-10 py-16">
           <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
@@ -164,11 +165,12 @@ export default function PromptsPage() {
   const tabs = [
     { id: 'style', label: 'Style Profile' },
     { id: 'tracks', label: 'Tracks', count: tracks.length },
+    { id: 'vocalist', label: 'Vocalist Persona' },
   ];
 
   return (
     <div className="animate-fade-in h-full flex flex-col">
-      <ProjectNav projectId={id} artistName={artistName} activePage="prompts" />
+      <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
       {/* Tabs */}
       <div className="max-w-[1400px] mx-auto w-full px-10">
@@ -178,11 +180,8 @@ export default function PromptsPage() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1400px] mx-auto">
-          {activeTab === 'style' && styleProfile && vocalistPersona && (
-            <StyleProfile
-              styleProfile={styleProfile}
-              vocalistPersona={vocalistPersona}
-            />
+          {activeTab === 'style' && styleProfile && (
+            <StyleProfile styleProfile={styleProfile} />
           )}
 
           {activeTab === 'tracks' && (
@@ -191,6 +190,10 @@ export default function PromptsPage() {
               onRegenerateTrack={handleRegenerate}
               regenerating={regenerating}
             />
+          )}
+
+          {activeTab === 'vocalist' && vocalistPersona && (
+            <VocalistPersona vocalistPersona={vocalistPersona} />
           )}
         </div>
       </div>

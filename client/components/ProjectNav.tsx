@@ -1,15 +1,18 @@
 'use client';
 
+/* eslint-disable @next/next/no-img-element */
+
 type NavPage = 'checklist' | 'concept' | 'research' | 'prompts';
 
 interface ProjectNavProps {
   projectId: string;
   artistName: string;
+  imageUrl?: string | null;
   activePage: NavPage;
   onNavigate?: (page: NavPage) => void;
 }
 
-export default function ProjectNav({ projectId, artistName, activePage, onNavigate }: ProjectNavProps) {
+export default function ProjectNav({ projectId, artistName, imageUrl, activePage, onNavigate }: ProjectNavProps) {
   const links: Array<{ key: NavPage; label: string; href: string }> = [
     { key: 'checklist', label: 'Checklist', href: `/projects/${projectId}/checklist` },
     { key: 'concept', label: 'Concept', href: `/projects/${projectId}` },
@@ -29,6 +32,11 @@ export default function ProjectNav({ projectId, artistName, activePage, onNaviga
             IMC
           </a>
           <span className="text-neutral-200">/</span>
+          {imageUrl && (
+            <div className="w-6 h-6 rounded-sm overflow-hidden border border-neutral-200 shrink-0">
+              <img src={imageUrl} alt={artistName} className="w-full h-full object-cover object-top" />
+            </div>
+          )}
           <span className="text-micro font-bold uppercase tracking-widest text-black">
             {artistName}
           </span>

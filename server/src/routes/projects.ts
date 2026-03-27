@@ -24,13 +24,13 @@ router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
 router.post('/', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const user = req.user!;
-    const { artist_name } = req.body;
+    const { artist_name, image_url } = req.body;
 
     const projectResult = await pool.query(
-      `INSERT INTO projects (user_id, org_id, status, artist_name, concept, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+      `INSERT INTO projects (user_id, org_id, status, artist_name, image_url, concept, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
        RETURNING *`,
-      [user.id, user.org_id, 'draft', artist_name || null, JSON.stringify({})]
+      [user.id, user.org_id, 'draft', artist_name || null, image_url || null, JSON.stringify({})]
     );
 
     const project = projectResult.rows[0];
@@ -102,7 +102,7 @@ router.put('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const user = req.user!;
     const { id } = req.params;
-    const { artist_name, status, concept } = req.body;
+    const { artist_name, status, concept, image_url } = req.body;
 
     const checkResult = await pool.query(
       'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
@@ -131,6 +131,11 @@ router.put('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
     if (concept !== undefined) {
       updates.push(`concept = $${paramCount++}`);
       values.push(JSON.stringify(concept));
+    }
+
+    if (image_url !== undefined) {
+      updates.push(`image_url = $${paramCount++}`);
+      values.push(image_url);
     }
 
     updates.push(`updated_at = NOW()`);

@@ -16,10 +16,11 @@ Given the artist concept and market data, generate:
 3. Individual track prompts optimized for both Suno and Udio
 
 CRITICAL RULES:
+- NEVER include real person names, band names, or artist names in ANY Suno prompt or Udio prompt. Describe the sound, style, and aesthetic using descriptive language only. For example, instead of "vocals like Sam Carter" write "soaring clean vocals with aggressive screamed passages". This applies to suno_prompt fields, udio_prompt fields, and the vocalist_persona vocal_character/delivery_style fields. The reference_vocalists and reference_artists fields in the data model are for internal context only and must NEVER appear in any prompt text.
 - Suno prompts use bracketed category tags. Max 1000 words. Format each prompt as a continuous string of bracketed sections:
   [Genres: ...] [Moods: ...] [Instrumentation: ... — include exclusions like "no guitar, no 808"] [Tempo: BPM range, feel description — "played not programmed"] [Vocal Style: specific character — include what NOT to do] [Production: aesthetic description — reference textures, recording approach, analog vs digital] [Structure: section-by-section flow in plain language, not bracket notation] [Sound Design: evocative scene-setting — describe the physical space and emotional landscape the listener inhabits]
   Be poetic and specific in each category. Use em dashes for contrast and exclusions. Each section should read like a creative brief, not a tag list.
-- Udio prompts are more narrative. Describe the sound in natural language. Include production style, era references, sonic textures. Max ~500 chars.
+- Udio prompts are more narrative. Describe the sound in natural language. Include production style, era references, sonic textures. Max ~500 chars. Do NOT reference any real artists or bands by name.
 - Maintain 80%+ genre consistency across tracks while allowing creative variation
 - Each track should have a distinct identity within the project's sonic universe
 - Structure notation uses: [Intro] [Verse] [Pre-Chorus] [Chorus] [Bridge] [Outro] [Drop] [Break]
@@ -207,7 +208,7 @@ ${currentPrompts.tracks
   )
   .join('\n\n')}
 
-Now regenerate Track ${trackNumber} keeping the style consistent with the rest of the project. Return a JSON object with these exact fields:
+Now regenerate Track ${trackNumber} keeping the style consistent with the rest of the project. CRITICAL: Do NOT include any real person, band, or artist names in the suno_prompt or udio_prompt. Use descriptive language only. Return a JSON object with these exact fields:
 {
   "track_number": ${trackNumber},
   "title": "Track title",

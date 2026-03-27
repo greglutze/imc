@@ -14,6 +14,7 @@ export default function ChecklistPage() {
   const [summary, setSummary] = useState<ChecklistSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [projectName, setProjectName] = useState<string>('');
+  const [projectImage, setProjectImage] = useState<string | null>(null);
 
   const loadChecklist = useCallback(async () => {
     try {
@@ -32,6 +33,7 @@ export default function ChecklistPage() {
     // Also load project name
     api.getProject(projectId).then((p) => {
       setProjectName(p.artist_name || 'Untitled');
+      setProjectImage(p.image_url || null);
     }).catch(console.error);
   }, [projectId, loadChecklist]);
 
@@ -55,7 +57,7 @@ export default function ChecklistPage() {
 
   return (
     <div className="animate-fade-in">
-      <ProjectNav projectId={projectId} artistName={projectName} activePage="checklist" />
+      <ProjectNav projectId={projectId} artistName={projectName} imageUrl={projectImage} activePage="checklist" />
 
       {/* Checklist component */}
       <div className="max-w-[1400px]">

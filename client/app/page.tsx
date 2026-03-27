@@ -134,9 +134,16 @@ export default function Home() {
                 <Badge variant="green">Active Project</Badge>
               </div>
               <a href={`/projects/${activeProject.id}`} className="block hover:opacity-80 transition-opacity duration-fast">
-                <h1 className="text-[120px] leading-[0.9] font-bold tracking-tight text-black -ml-1">
-                  {activeProject.artist_name || 'Untitled'}
-                </h1>
+                <div className="flex items-end gap-6">
+                  {activeProject.image_url && (
+                    <div className="w-24 h-24 rounded-sm overflow-hidden border border-neutral-200 shrink-0">
+                      <img src={activeProject.image_url} alt={activeProject.artist_name || 'Artist'} className="w-full h-full object-cover object-top" />
+                    </div>
+                  )}
+                  <h1 className="text-[120px] leading-[0.9] font-bold tracking-tight text-black -ml-1">
+                    {activeProject.artist_name || 'Untitled'}
+                  </h1>
+                </div>
               </a>
               <p className="text-body-lg text-neutral-500 mt-8 max-w-md">
                 {activeProject.concept?.creative_direction || 'No concept defined yet. Start the concept interview to begin.'}

@@ -48,7 +48,7 @@ export default function NewProjectPage() {
     setError('');
 
     try {
-      const result = await api.createProject(artistName || undefined);
+      const result = await api.createProject(artistName || undefined, imagePreview || undefined);
       // result may have { project, conversation_id } shape from backend
       const projectId = (result as any).project?.id || result.id;
       router.push(`/projects/${projectId}`);

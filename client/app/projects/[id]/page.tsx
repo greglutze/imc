@@ -161,6 +161,7 @@ export default function ProjectPage() {
       <ProjectNav
         projectId={id}
         artistName={artistName}
+        imageUrl={project?.image_url}
         activePage={activeTab === 'report' ? 'research' : 'concept'}
         onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : 'concept')}
       />

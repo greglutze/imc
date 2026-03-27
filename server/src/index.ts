@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(cors());
 
 // Health check
@@ -174,6 +174,18 @@ async function migrate(): Promise<void> {
       console.log('Adding guide column to checklist_items...');
       await pool.query(`ALTER TABLE checklist_items ADD COLUMN guide text DEFAULT ''`);
       console.log('Guide column added.');
+    }
+    // Add image_url column to projects if missing
+    const imageColCheck = await pool.query(
+      `SELECT EXISTS (
+        SELECT FROM information_schema.columns
+        WHERE table_name = 'projects' AND column_name = 'image_url'
+      )`
+    );
+    if (!imageColCheck.rows[0].exists) {
+      console.log('Adding image_url column to projects...');
+      await pool.query(`ALTER TABLE projects ADD COLUMN image_url text DEFAULT NULL`);
+      console.log('image_url column added.');
     }
   } catch (err) {
     console.error('Migration error:', err);
