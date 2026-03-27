@@ -17,7 +17,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
     { key: 'checklist', label: 'Checklist', href: `/projects/${projectId}/checklist` },
     { key: 'concept', label: 'Concept', href: `/projects/${projectId}` },
     { key: 'research', label: 'Research', href: `/projects/${projectId}` },
-    { key: 'prompts', label: 'Prompts', href: `/projects/${projectId}/prompts` },
+    { key: 'prompts', label: 'Sound Engine', href: `/projects/${projectId}/prompts` },
   ];
 
   return (

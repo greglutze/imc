@@ -173,7 +173,7 @@ export default function PromptsPage() {
 
   const tabs = [
     { id: 'style', label: 'Style Profile' },
-    { id: 'tracks', label: 'Tracks', count: tracks.length },
+    { id: 'tracks', label: 'Demo Prompts', count: tracks.length },
     { id: 'vocalist', label: 'Vocalist Persona' },
   ];
 
