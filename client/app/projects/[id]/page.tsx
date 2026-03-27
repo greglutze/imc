@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
 import ProjectNav from '../../../components/ProjectNav';
@@ -14,9 +14,13 @@ type ViewState = 'concept' | 'report';
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isAuthenticated, loading: authLoading } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<ViewState>('concept');
+  // Read ?tab= param to determine initial view
+  const tabParam = searchParams.get('tab');
+  const initialTab: ViewState = tabParam === 'research' ? 'report' : 'concept';
+  const [activeTab, setActiveTab] = useState<ViewState>(initialTab);
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [conceptReady, setConceptReady] = useState(false);
@@ -68,7 +72,10 @@ export default function ProjectPage() {
             setReport({ report: reportData.report, confidence: reportData.confidence });
             setReportVersion(reportData.version);
             setTotalVersions(reportData.version);
-            setActiveTab('report');
+            // Only auto-switch to research if no explicit tab was requested
+            if (!tabParam) {
+              setActiveTab('report');
+            }
           } catch {
             // No report yet
           }
