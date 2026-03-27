@@ -9,7 +9,7 @@ import VocalistPersona from '../../../../components/VocalistPersona';
 import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
-import type { I2StyleProfile, I2VocalistPersona, I2Track, Project } from '../../../../lib/api';
+import type { I2StyleProfile, I2VocalistPersona, I2Track, Project, I1Report } from '../../../../lib/api';
 
 type I2View = 'style' | 'tracks' | 'vocalist';
 
@@ -25,6 +25,7 @@ export default function PromptsPage() {
   const [vocalistPersona, setVocalistPersona] = useState<I2VocalistPersona | null>(null);
   const [tracks, setTracks] = useState<I2Track[]>([]);
   const [promptsId, setPromptsId] = useState<string | null>(null);
+  const [report, setReport] = useState<I1Report | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
 
@@ -53,6 +54,14 @@ export default function PromptsPage() {
           setPromptsId(prompts.id);
         } catch {
           // No prompts yet — will show generate button
+        }
+
+        // Try to load research report for style profile enrichment
+        try {
+          const reportData = await api.getReport(id);
+          setReport(reportData.report);
+        } catch {
+          // No report yet — style profile will render without market data
         }
       } catch (err) {
         console.error('Failed to load prompts data:', err);
@@ -181,7 +190,11 @@ export default function PromptsPage() {
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1400px] mx-auto">
           {activeTab === 'style' && styleProfile && (
-            <StyleProfile styleProfile={styleProfile} />
+            <StyleProfile
+              styleProfile={styleProfile}
+              concept={project?.concept || undefined}
+              sonicBlueprint={report?.sonic_blueprint || undefined}
+            />
           )}
 
           {activeTab === 'tracks' && (
