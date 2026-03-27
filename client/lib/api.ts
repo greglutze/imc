@@ -142,6 +142,34 @@ export interface Instrument2Prompts {
   created_at: string;
 }
 
+/* ———————— IMC 00: Checklist Types ———————— */
+
+export type ChecklistCategory = 'creative' | 'legal' | 'business' | 'distribution';
+
+export interface ChecklistItem {
+  id: string;
+  project_id: string;
+  category: ChecklistCategory;
+  label: string;
+  is_default: boolean;
+  is_checked: boolean;
+  notes: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ChecklistSummary {
+  total: number;
+  checked: number;
+  by_category: Record<ChecklistCategory, { total: number; checked: number }>;
+}
+
+export interface ChecklistResponse {
+  items: ChecklistItem[];
+  summary: ChecklistSummary;
+}
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -326,6 +354,37 @@ class ApiClient {
     return this.request(`/api/instrument2/regenerate-track/${id}/${trackNumber}`, {
       method: 'POST',
     });
+  }
+  /* — IMC 00: Checklist — */
+
+  async getChecklist(projectId: string): Promise<ChecklistResponse> {
+    return this.request(`/api/checklist/${projectId}`);
+  }
+
+  async toggleChecklistItem(itemId: string): Promise<ChecklistItem> {
+    return this.request(`/api/checklist/${itemId}/toggle`, { method: 'PATCH' });
+  }
+
+  async updateChecklistNotes(itemId: string, notes: string): Promise<ChecklistItem> {
+    return this.request(`/api/checklist/${itemId}/notes`, {
+      method: 'PATCH',
+      body: JSON.stringify({ notes }),
+    });
+  }
+
+  async addChecklistItem(projectId: string, category: ChecklistCategory, label: string): Promise<ChecklistItem> {
+    return this.request(`/api/checklist/${projectId}/items`, {
+      method: 'POST',
+      body: JSON.stringify({ category, label }),
+    });
+  }
+
+  async deleteChecklistItem(itemId: string): Promise<{ deleted: boolean }> {
+    return this.request(`/api/checklist/${itemId}`, { method: 'DELETE' });
+  }
+
+  async getChecklistSummary(projectId: string): Promise<{ total: number; checked: number }> {
+    return this.request(`/api/checklist/${projectId}/summary`);
   }
 }
 

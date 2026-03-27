@@ -135,8 +135,32 @@ async function migrate(): Promise<void> {
         CREATE INDEX idx_audio_files_user_id ON audio_files(user_id);
       `);
       console.log('Migration complete.');
-    } else {
-      console.log('Database already migrated.');
+    }
+
+    // IMC 00 checklist migration
+    const checklistCheck = await pool.query(
+      `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'checklist_items')`
+    );
+    if (!checklistCheck.rows[0].exists) {
+      console.log('Running checklist migration...');
+      await pool.query(`
+        CREATE TABLE checklist_items (
+          id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+          project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+          category text NOT NULL CHECK (category IN ('creative', 'legal', 'business', 'distribution')),
+          label text NOT NULL,
+          is_default boolean NOT NULL DEFAULT true,
+          is_checked boolean NOT NULL DEFAULT false,
+          notes text DEFAULT '',
+          sort_order integer NOT NULL DEFAULT 0,
+          created_at timestamptz DEFAULT now(),
+          updated_at timestamptz DEFAULT now()
+        );
+
+        CREATE INDEX idx_checklist_items_project_id ON checklist_items(project_id);
+        CREATE INDEX idx_checklist_items_category ON checklist_items(project_id, category);
+      `);
+      console.log('Checklist migration complete.');
     }
   } catch (err) {
     console.error('Migration error:', err);

@@ -1,7 +1,25 @@
 'use client';
 
+import { useState } from 'react';
 import { Badge } from './ui';
 import type { I2StyleProfile, I2VocalistPersona } from '../lib/api';
+
+function buildVocalPrompt(persona: I2VocalistPersona): string {
+  const parts: string[] = [];
+  if (persona.vocal_character) {
+    parts.push(`[Vocal Style: ${persona.vocal_character}]`);
+  }
+  if (persona.delivery_style) {
+    parts.push(`[Vocal Delivery: ${persona.delivery_style}]`);
+  }
+  if (persona.reference_vocalists.length > 0) {
+    parts.push(`[Vocal References: ${persona.reference_vocalists.join(', ')}]`);
+  }
+  if (persona.tone_keywords.length > 0) {
+    parts.push(`[Vocal Tone: ${persona.tone_keywords.join(', ')}]`);
+  }
+  return parts.join('\n');
+}
 
 interface StyleProfileProps {
   styleProfile: I2StyleProfile;
@@ -84,10 +102,8 @@ export default function StyleProfile({ styleProfile, vocalistPersona }: StylePro
                 <p className="text-body text-black font-bold mt-1">{vocalistPersona.delivery_style}</p>
               </div>
             </div>
-          </div>
 
-          <div className="col-span-7 px-8 py-10">
-            <div className="mb-8">
+            <div className="mt-8">
               <SectionLabel>Reference Vocalists</SectionLabel>
               <div className="mt-3 space-y-2">
                 {vocalistPersona.reference_vocalists.map((v, i) => (
@@ -99,7 +115,7 @@ export default function StyleProfile({ styleProfile, vocalistPersona }: StylePro
               </div>
             </div>
 
-            <div>
+            <div className="mt-6">
               <SectionLabel>Tone Keywords</SectionLabel>
               <div className="flex flex-wrap gap-2 mt-3">
                 {vocalistPersona.tone_keywords.map((kw, i) => (
@@ -108,8 +124,55 @@ export default function StyleProfile({ styleProfile, vocalistPersona }: StylePro
               </div>
             </div>
           </div>
+
+          <div className="col-span-7 px-8 py-10">
+            <VocalPromptBlock vocalistPersona={vocalistPersona} />
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function VocalPromptBlock({ vocalistPersona }: { vocalistPersona: I2VocalistPersona }) {
+  const [copied, setCopied] = useState(false);
+  const prompt = buildVocalPrompt(vocalistPersona);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(prompt);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea');
+      textarea.value = prompt;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <SectionLabel>Suno Vocal Prompt</SectionLabel>
+        <button
+          onClick={handleCopy}
+          className="text-caption font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm border border-neutral-200 hover:border-neutral-400 transition-colors"
+        >
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+      <pre className="bg-neutral-50 border border-neutral-200 rounded-sm p-6 text-body font-mono text-black whitespace-pre-wrap leading-relaxed">
+        {prompt}
+      </pre>
+      <p className="text-caption text-neutral-400 mt-3">
+        Paste directly into Suno&apos;s vocal style field
+      </p>
     </div>
   );
 }

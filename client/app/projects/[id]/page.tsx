@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Tabs, Badge } from '../../../components/ui';
+import { Tabs } from '../../../components/ui';
 import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
 import { useAuth } from '../../../lib/auth-context';
@@ -192,10 +192,19 @@ export default function ProjectPage() {
             )}
           </div>
           <div className="flex items-center gap-3">
-            <Badge variant="green">Active</Badge>
-            <span className="text-micro font-mono text-neutral-300">
-              Instrument 01
-            </span>
+            <a
+              href={`/projects/${id}/checklist`}
+              className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+            >
+              Checklist
+            </a>
+            <span className="text-neutral-200">|</span>
+            <a
+              href={`/projects/${id}/prompts`}
+              className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+            >
+              Prompts
+            </a>
           </div>
         </div>
       </div>

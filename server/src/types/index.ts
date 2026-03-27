@@ -278,6 +278,29 @@ export interface Instrument3Analysis {
   created_at: Date;
 }
 
+// IMC 00 — Artist Checklist types
+
+export type ChecklistCategory = 'creative' | 'legal' | 'business' | 'distribution';
+
+export interface ChecklistItem {
+  id: string;
+  project_id: string;
+  category: ChecklistCategory;
+  label: string;
+  is_default: boolean;
+  is_checked: boolean;
+  notes: string;
+  sort_order: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ChecklistSummary {
+  total: number;
+  checked: number;
+  by_category: Record<ChecklistCategory, { total: number; checked: number }>;
+}
+
 export interface AudioFile {
   id: string;
   project_id: string;

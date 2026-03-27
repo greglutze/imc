@@ -134,7 +134,7 @@ export default function PromptsPage() {
           </div>
         </div>
 
-        <div className="max-w-[1400px] mx-auto px-10 py-16">
+        <div className="max-w-[1400px] px-10 py-16">
           <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
           <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
             Generate Prompts

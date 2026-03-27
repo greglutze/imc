@@ -36,6 +36,8 @@ export async function getConceptResponse(
   let conceptReady = false;
   let extractedConcept: ProjectConcept | null = null;
 
+  let cleanResponse = response;
+
   if (response.includes('CONCEPT_READY')) {
     conceptReady = true;
 
@@ -47,10 +49,23 @@ export async function getConceptResponse(
         console.error('Failed to parse concept JSON:', e);
       }
     }
+
+    // Strip CONCEPT_READY marker and JSON block from the displayed response
+    cleanResponse = response
+      .replace(/CONCEPT_READY/g, '')
+      .replace(/```json\s*\{[\s\S]*?\}\s*```/g, '')
+      .replace(/```\s*\{[\s\S]*?\}\s*```/g, '')
+      .replace(/\{[\s\S]*"genre_primary"[\s\S]*\}/g, '')
+      .trim();
+
+    // If stripping left nothing meaningful, add a clean message
+    if (!cleanResponse || cleanResponse.length < 10) {
+      cleanResponse = "Got it — I've locked in your concept. You're ready to run market research.";
+    }
   }
 
   return {
-    response,
+    response: cleanResponse,
     conceptReady,
     extractedConcept,
   };

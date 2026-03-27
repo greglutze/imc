@@ -151,6 +151,12 @@ export default function Home() {
                 </p>
                 <div className="space-y-6">
                   <InstrumentRow
+                    number="00"
+                    name="Launch Checklist"
+                    status="Active"
+                    statusColor="green"
+                  />
+                  <InstrumentRow
                     number="01"
                     name="Market Research"
                     status={activeProject.status === 'draft' ? 'Pending' : 'Complete'}
@@ -218,8 +224,14 @@ export default function Home() {
               <div className="col-span-3 flex flex-col justify-end">
                 <div className="flex items-center gap-3">
                   <a
-                    href={`/projects/${activeProject.id}`}
+                    href={`/projects/${activeProject.id}/checklist`}
                     className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
+                  >
+                    Checklist
+                  </a>
+                  <a
+                    href={`/projects/${activeProject.id}`}
+                    className="bg-white text-black border border-neutral-200 text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:border-black transition-colors duration-fast inline-flex items-center"
                   >
                     Open Project
                   </a>
