@@ -109,6 +109,37 @@ export default function ConceptChat({
         </div>
       </div>
 
+      {/* Input — always visible so the artist can refine the concept */}
+      <form onSubmit={handleSubmit} className="px-8 py-5">
+        <div className="max-w-2xl bg-neutral-50 rounded-sm px-5 py-4 flex items-end gap-3">
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={conceptReady ? "Refine your concept — changes will update the extracted concept..." : "Describe your artist concept..."}
+            disabled={loading}
+            rows={1}
+            className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
+            style={{ minHeight: '36px', maxHeight: '120px' }}
+          />
+          <button
+            type="submit"
+            disabled={!input.trim() || loading}
+            className={`
+              text-label font-bold uppercase tracking-widest px-5 h-9 rounded-sm
+              transition-colors duration-fast shrink-0
+              ${input.trim() && !loading
+                ? 'bg-black text-white hover:bg-neutral-800'
+                : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
+              }
+            `}
+          >
+            Send
+          </button>
+        </div>
+      </form>
+
       {/* Concept extracted card */}
       {conceptReady && concept && (
         <div className="border-t border-neutral-200 px-8 py-6 bg-neutral-50">
@@ -140,37 +171,6 @@ export default function ConceptChat({
           </div>
         </div>
       )}
-
-      {/* Input — always visible so the artist can refine the concept */}
-      <form onSubmit={handleSubmit} className="px-8 py-5">
-        <div className="max-w-2xl bg-neutral-50 rounded-sm px-5 py-4 flex items-end gap-3">
-          <textarea
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={conceptReady ? "Refine your concept — changes will update the extracted concept..." : "Describe your artist concept..."}
-            disabled={loading}
-            rows={1}
-            className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
-            style={{ minHeight: '36px', maxHeight: '120px' }}
-          />
-          <button
-            type="submit"
-            disabled={!input.trim() || loading}
-            className={`
-              text-label font-bold uppercase tracking-widest px-5 h-9 rounded-sm
-              transition-colors duration-fast shrink-0
-              ${input.trim() && !loading
-                ? 'bg-black text-white hover:bg-neutral-800'
-                : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
-              }
-            `}
-          >
-            Send
-          </button>
-        </div>
-      </form>
     </div>
   );
 }
