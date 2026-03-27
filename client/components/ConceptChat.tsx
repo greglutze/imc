@@ -141,46 +141,58 @@ export default function ConceptChat({
         </div>
       )}
 
-      {/* Input — rounded grey container */}
-      {!conceptReady && (
-        <form onSubmit={handleSubmit} className="px-8 py-5">
-          <div className="max-w-2xl bg-neutral-50 rounded-sm px-5 py-4 flex items-end gap-3">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Describe your artist concept..."
-              disabled={loading}
-              rows={1}
-              className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
-              style={{ minHeight: '36px', maxHeight: '120px' }}
-            />
-            <button
-              type="submit"
-              disabled={!input.trim() || loading}
-              className={`
-                text-label font-bold uppercase tracking-widest px-5 h-9 rounded-sm
-                transition-colors duration-fast shrink-0
-                ${input.trim() && !loading
-                  ? 'bg-black text-white hover:bg-neutral-800'
-                  : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
-                }
-              `}
-            >
-              Send
-            </button>
-          </div>
-        </form>
-      )}
+      {/* Input — always visible so the artist can refine the concept */}
+      <form onSubmit={handleSubmit} className="px-8 py-5">
+        <div className="max-w-2xl bg-neutral-50 rounded-sm px-5 py-4 flex items-end gap-3">
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={conceptReady ? "Refine your concept — changes will update the extracted concept..." : "Describe your artist concept..."}
+            disabled={loading}
+            rows={1}
+            className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
+            style={{ minHeight: '36px', maxHeight: '120px' }}
+          />
+          <button
+            type="submit"
+            disabled={!input.trim() || loading}
+            className={`
+              text-label font-bold uppercase tracking-widest px-5 h-9 rounded-sm
+              transition-colors duration-fast shrink-0
+              ${input.trim() && !loading
+                ? 'bg-black text-white hover:bg-neutral-800'
+                : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
+              }
+            `}
+          >
+            Send
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
 
 /* ———————— Sub-components ———————— */
 
+/** Strip CONCEPT_READY markers and raw JSON from display text */
+function cleanMessageContent(content: string): string {
+  return content
+    .replace(/CONCEPT_READY/gi, '')
+    .replace(/```(?:json)?\s*\{[\s\S]*?\}\s*```/g, '')
+    .replace(/\{[\s\S]*?"genre_primary"[\s\S]*?\}/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 function MessageBlock({ message, index }: { message: ConversationMessage; index: number }) {
   const isUser = message.role === 'user';
+  const displayContent = isUser ? message.content : cleanMessageContent(message.content);
+
+  // Don't render if the cleaned content is empty
+  if (!displayContent) return null;
 
   return (
     <div className="flex items-start gap-4">
@@ -192,7 +204,7 @@ function MessageBlock({ message, index }: { message: ConversationMessage; index:
           {isUser ? 'You' : 'IMC'}
         </p>
         <div className="text-body text-neutral-700 leading-relaxed whitespace-pre-wrap">
-          {message.content}
+          {displayContent}
         </div>
       </div>
 

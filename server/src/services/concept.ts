@@ -11,9 +11,14 @@ Ask focused questions to understand:
 - Mood and sonic keywords
 - How many tracks they're planning
 
-Be direct. No filler. One question at a time. Build on their answers. When you have enough signal across all six areas, say "CONCEPT_READY" followed by a JSON block with the extracted concept:
+Be direct. No filler. One question at a time. Build on their answers. When you have enough signal across all six areas, respond with a brief conversational summary of what you've locked in (2-3 sentences reflecting back the artist's vision), then on a new line write "CONCEPT_READY" followed by the JSON block:
 
+CONCEPT_READY
 {"genre_primary": "...", "genre_secondary": [...], "reference_artists": [...], "creative_direction": "...", "target_audience": "...", "mood_keywords": [...], "track_count": N}
+
+IMPORTANT: Always include a conversational message BEFORE "CONCEPT_READY". Never start your response with CONCEPT_READY directly.
+
+The conversation continues after concept extraction — the artist can always come back to refine their concept. If they send more messages after extraction, engage naturally and if the concept should change, output a new CONCEPT_READY block with the updated concept.
 
 Don't force the conversation — if they give you rich answers, you can cover multiple areas fast. If they're vague, probe deeper. Speak like an experienced A&R: confident, knowledgeable, never condescending.`;
 
@@ -50,12 +55,12 @@ export async function getConceptResponse(
       }
     }
 
-    // Strip CONCEPT_READY marker and JSON block from the displayed response
+    // Strip CONCEPT_READY marker and any JSON block (with or without markdown fences)
     cleanResponse = response
-      .replace(/CONCEPT_READY/g, '')
-      .replace(/```json\s*\{[\s\S]*?\}\s*```/g, '')
-      .replace(/```\s*\{[\s\S]*?\}\s*```/g, '')
-      .replace(/\{[\s\S]*"genre_primary"[\s\S]*\}/g, '')
+      .replace(/CONCEPT_READY/gi, '')
+      .replace(/```(?:json)?\s*\{[\s\S]*?\}\s*```/g, '')
+      .replace(/\{[\s\S]*?"genre_primary"[\s\S]*?\}/g, '')
+      .replace(/\n{3,}/g, '\n\n')
       .trim();
 
     // If stripping left nothing meaningful, add a clean message
