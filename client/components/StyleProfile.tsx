@@ -158,48 +158,118 @@ function hashStr(s: string): number {
   return Math.abs(h);
 }
 
+/**
+ * Classify a mood keyword into an emotional temperature.
+ * Warm/intense moods (aggressive, heavy, angry, chaotic, etc.) get warm colors.
+ * Cool/calm moods (hopeful, peaceful, atmospheric, etc.) get cool colors.
+ * Neutral/ambiguous moods get a grey tone.
+ */
+type MoodTemp = 'warm' | 'cool' | 'neutral';
+
+function classifyMood(mood: string): MoodTemp {
+  const lower = mood.toLowerCase();
+
+  const warmWords = [
+    'aggressive', 'heavy', 'angry', 'rage', 'intense', 'chaotic', 'brutal',
+    'fierce', 'violent', 'dark', 'gritty', 'raw', 'explosive', 'furious',
+    'fire', 'loud', 'harsh', 'crushing', 'punishing', 'destructive',
+    'ferocious', 'unrelenting', 'abrasive', 'volatile', 'menacing',
+    'energetic', 'powerful', 'driving', 'urgent', 'defiant', 'rebellious',
+  ];
+
+  const coolWords = [
+    'hopeful', 'peaceful', 'calm', 'serene', 'atmospheric', 'ambient',
+    'dreamy', 'gentle', 'soft', 'ethereal', 'positive', 'uplifting',
+    'healing', 'warm', 'tender', 'soothing', 'reflective', 'introspective',
+    'meditative', 'tranquil', 'bliss', 'comfort', 'faith', 'grace',
+    'light', 'bright', 'clean', 'open', 'spacious', 'airy', 'lush',
+    'mental health', 'vulnerable', 'emotional', 'cathartic',
+  ];
+
+  for (const w of warmWords) {
+    if (lower.includes(w)) return 'warm';
+  }
+  for (const w of coolWords) {
+    if (lower.includes(w)) return 'cool';
+  }
+  return 'neutral';
+}
+
+interface MoodColor {
+  fill: string;
+  stroke: string;
+  line: string;
+  text: string;
+}
+
+const MOOD_COLORS: Record<MoodTemp, MoodColor> = {
+  warm: {
+    fill: '#FFF7ED',     // orange-50
+    stroke: '#FB923C',   // orange-400
+    line: '#FDBA74',     // orange-300
+    text: '#C2410C',     // orange-700
+  },
+  cool: {
+    fill: '#F0FDF4',     // green-50
+    stroke: '#4ADE80',   // green-400
+    line: '#86EFAC',     // green-300
+    text: '#15803D',     // green-700
+  },
+  neutral: {
+    fill: '#F9FAFB',     // gray-50
+    stroke: '#D1D5DB',   // gray-300
+    line: '#E5E7EB',     // gray-200
+    text: '#374151',     // gray-700
+  },
+};
+
 interface MoodNode {
   label: string;
   x: number;
   y: number;
   r: number;
+  temp: MoodTemp;
 }
 
 function MoodConstellation({ moods }: { moods: string[] }) {
   const WIDTH = 900;
-  const HEIGHT = 340;
-  const PADDING = 70;
+  const HEIGHT = 440;
+  const PADDING = 90;
 
   const nodes: MoodNode[] = useMemo(() => {
     if (moods.length === 0) return [];
 
-    // Size variation based on index
-    const sizes = [28, 22, 26, 20, 24, 30, 18, 25];
-
-    // Place nodes using golden-angle spiral for even distribution
+    const sizes = [32, 26, 30, 24, 28, 34, 22, 29];
     const cx = WIDTH / 2;
     const cy = HEIGHT / 2;
     const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-    const maxRadius = Math.min(WIDTH / 2 - PADDING, HEIGHT / 2 - PADDING);
+
+    // Use the full available space for distribution
+    const radiusX = (WIDTH / 2) - PADDING;
+    const radiusY = (HEIGHT / 2) - PADDING;
 
     return moods.map((mood, i) => {
       const hash = hashStr(mood);
       const r = sizes[i % sizes.length];
+      const temp = classifyMood(mood);
 
       if (moods.length === 1) {
-        return { label: mood, x: cx, y: cy, r };
+        return { label: mood, x: cx, y: cy, r, temp };
       }
 
-      // Spiral layout with hash-based jitter
-      const angle = i * goldenAngle + (hash % 100) * 0.01;
-      const dist = maxRadius * Math.sqrt((i + 0.5) / moods.length) * 0.85;
-      const jitterX = ((hash % 40) - 20);
-      const jitterY = (((hash >> 4) % 40) - 20);
+      // Wider spiral distribution using elliptical scaling
+      const angle = i * goldenAngle + (hash % 100) * 0.02;
+      const normalizedDist = Math.sqrt((i + 0.5) / moods.length);
+      const dist = normalizedDist * 0.95;
+      const jitterX = ((hash % 50) - 25);
+      const jitterY = (((hash >> 4) % 50) - 25);
 
-      const x = Math.max(PADDING, Math.min(WIDTH - PADDING, cx + Math.cos(angle) * dist + jitterX));
-      const y = Math.max(PADDING - 10, Math.min(HEIGHT - PADDING + 10, cy + Math.sin(angle) * dist + jitterY));
+      const x = Math.max(PADDING, Math.min(WIDTH - PADDING,
+        cx + Math.cos(angle) * dist * radiusX + jitterX));
+      const y = Math.max(PADDING, Math.min(HEIGHT - PADDING,
+        cy + Math.sin(angle) * dist * radiusY + jitterY));
 
-      return { label: mood, x, y, r };
+      return { label: mood, x, y, r, temp };
     });
   }, [moods]);
 
@@ -236,50 +306,70 @@ function MoodConstellation({ moods }: { moods: string[] }) {
     <svg
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       className="w-full"
-      style={{ maxHeight: '340px' }}
+      style={{ maxHeight: '440px' }}
     >
-      {/* Connection lines */}
-      {edges.map(([a, b], i) => (
-        <line
-          key={`edge-${i}`}
-          x1={nodes[a].x}
-          y1={nodes[a].y}
-          x2={nodes[b].x}
-          y2={nodes[b].y}
-          stroke="#e5e5e5"
-          strokeWidth="1"
-        />
-      ))}
+      {/* Connection lines — colored by the source node */}
+      {edges.map(([a, b], i) => {
+        const colA = MOOD_COLORS[nodes[a].temp];
+        const colB = MOOD_COLORS[nodes[b].temp];
+        // Blend: if both same temp use that color, otherwise use neutral
+        const lineColor = nodes[a].temp === nodes[b].temp ? colA.line : '#E5E7EB';
+        return (
+          <line
+            key={`edge-${i}`}
+            x1={nodes[a].x}
+            y1={nodes[a].y}
+            x2={nodes[b].x}
+            y2={nodes[b].y}
+            stroke={lineColor}
+            strokeWidth="1.5"
+          />
+        );
+      })}
 
       {/* Nodes */}
-      {nodes.map((node, i) => (
-        <g key={i}>
-          <circle
-            cx={node.x}
-            cy={node.y}
-            r={node.r}
-            fill="white"
-            stroke="#d4d4d4"
-            strokeWidth="1"
-          />
-          <circle
-            cx={node.x}
-            cy={node.y}
-            r={node.r - 3}
-            fill="#fafafa"
-            stroke="none"
-          />
-          <text
-            x={node.x}
-            y={node.y + node.r + 14}
-            textAnchor="middle"
-            className="text-[11px] font-bold uppercase tracking-widest"
-            fill="#171717"
-          >
-            {node.label}
-          </text>
-        </g>
-      ))}
+      {nodes.map((node, i) => {
+        const colors = MOOD_COLORS[node.temp];
+        return (
+          <g key={i}>
+            {/* Outer ring */}
+            <circle
+              cx={node.x}
+              cy={node.y}
+              r={node.r}
+              fill={colors.fill}
+              stroke={colors.stroke}
+              strokeWidth="1.5"
+            />
+            {/* Inner fill */}
+            <circle
+              cx={node.x}
+              cy={node.y}
+              r={node.r - 4}
+              fill={colors.fill}
+              stroke="none"
+            />
+            {/* Small accent dot at center */}
+            <circle
+              cx={node.x}
+              cy={node.y}
+              r={3}
+              fill={colors.stroke}
+              opacity="0.4"
+            />
+            {/* Label */}
+            <text
+              x={node.x}
+              y={node.y + node.r + 16}
+              textAnchor="middle"
+              style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}
+              fill={colors.text}
+            >
+              {node.label}
+            </text>
+          </g>
+        );
+      })}
     </svg>
   );
 }
