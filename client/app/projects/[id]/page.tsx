@@ -6,11 +6,13 @@ import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
 import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
+import { Tabs } from '../../../components/ui';
 import { useAuth } from '../../../lib/auth-context';
 import { api } from '../../../lib/api';
 import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project } from '../../../lib/api';
 
-type ViewState = 'concept' | 'moodboard' | 'report';
+type ViewState = 'concept' | 'report';
+type ConceptSubTab = 'interview' | 'moodboard';
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,8 +22,10 @@ export default function ProjectPage() {
 
   // Read ?tab= param to determine initial view
   const tabParam = searchParams.get('tab');
-  const initialTab: ViewState = tabParam === 'research' ? 'report' : tabParam === 'moodboard' ? 'moodboard' : 'concept';
+  const initialTab: ViewState = tabParam === 'research' ? 'report' : 'concept';
+  const initialSubTab: ConceptSubTab = tabParam === 'moodboard' ? 'moodboard' : 'interview';
   const [activeTab, setActiveTab] = useState<ViewState>(initialTab);
+  const [conceptSubTab, setConceptSubTab] = useState<ConceptSubTab>(initialSubTab);
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [conceptReady, setConceptReady] = useState(false);
@@ -170,26 +174,42 @@ export default function ProjectPage() {
         projectId={id}
         artistName={artistName}
         imageUrl={project?.image_url}
-        activePage={activeTab === 'report' ? 'research' : activeTab === 'moodboard' ? 'moodboard' : 'concept'}
-        onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : page === 'moodboard' ? 'moodboard' : 'concept')}
+        activePage={activeTab === 'report' ? 'research' : 'concept'}
+        onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : 'concept')}
       />
 
       {/* Content area */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1400px] mx-auto">
           {activeTab === 'concept' && (
-            <ConceptChat
-              messages={messages}
-              onSend={handleSendMessage}
-              loading={loading}
-              conceptReady={conceptReady}
-              concept={concept}
-              onRunResearch={handleRunResearch}
-            />
-          )}
+            <>
+              {/* Concept sub-tabs: Interview / Moodboard */}
+              <div className="max-w-[1400px] mx-auto w-full px-10">
+                <Tabs
+                  tabs={[
+                    { id: 'interview', label: 'Interview' },
+                    { id: 'moodboard', label: 'Moodboard' },
+                  ]}
+                  activeTab={conceptSubTab}
+                  onTabChange={(tabId) => setConceptSubTab(tabId as ConceptSubTab)}
+                />
+              </div>
 
-          {activeTab === 'moodboard' && (
-            <VisualMoodboard projectId={id} />
+              {conceptSubTab === 'interview' && (
+                <ConceptChat
+                  messages={messages}
+                  onSend={handleSendMessage}
+                  loading={loading}
+                  conceptReady={conceptReady}
+                  concept={concept}
+                  onRunResearch={handleRunResearch}
+                />
+              )}
+
+              {conceptSubTab === 'moodboard' && (
+                <VisualMoodboard projectId={id} />
+              )}
+            </>
           )}
 
           {activeTab === 'report' && (

@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-type NavPage = 'checklist' | 'concept' | 'moodboard' | 'research' | 'prompts';
+type NavPage = 'checklist' | 'concept' | 'research' | 'prompts';
 
 interface ProjectNavProps {
   projectId: string;
@@ -16,7 +16,6 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
   const links: Array<{ key: NavPage; label: string; href: string }> = [
     { key: 'checklist', label: 'Checklist', href: `/projects/${projectId}/checklist` },
     { key: 'concept', label: 'Concept', href: `/projects/${projectId}?tab=concept` },
-    { key: 'moodboard', label: 'Moodboard', href: `/projects/${projectId}?tab=moodboard` },
     { key: 'research', label: 'Research', href: `/projects/${projectId}?tab=research` },
     { key: 'prompts', label: 'Sound Engine', href: `/projects/${projectId}/prompts` },
   ];
@@ -49,7 +48,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
             const activeClass = isActive ? 'text-black bg-neutral-100' : 'text-neutral-400 hover:text-black';
 
             // If onNavigate is provided and this is concept/research, use button for in-page nav
-            if (onNavigate && (link.key === 'concept' || link.key === 'moodboard' || link.key === 'research')) {
+            if (onNavigate && (link.key === 'concept' || link.key === 'research')) {
               return (
                 <button
                   key={link.key}
