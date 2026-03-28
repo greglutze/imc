@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ProjectNav from '../../../../../components/ProjectNav';
 import { useAuth } from '../../../../../lib/auth-context';
+import { useUpload } from '../../../../../lib/upload-context';
 import { api } from '../../../../../lib/api';
 import type { ShareProjectWithTracks, ShareTrack, Project } from '../../../../../lib/api';
 
@@ -36,17 +37,19 @@ export default function ShareManagePage() {
   const { id, shareId } = useParams<{ id: string; shareId: string }>();
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
+  const { addUploads, uploads, onBatchComplete } = useUpload();
 
   const [share, setShare] = useState<ShareProjectWithTracks | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounterRef = useRef(0);
 
   // Editing states
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleValue, setTitleValue] = useState('');
   const [editingTrackId, setEditingTrackId] = useState<string | null>(null);
   const [trackTitleValue, setTrackTitleValue] = useState('');
-  const [uploading, setUploading] = useState(false);
   const [uploadingArtwork, setUploadingArtwork] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -175,26 +178,57 @@ export default function ShareManagePage() {
     setTimeout(() => setCopied(false), 2000);
   }, [share]);
 
-  const handleUploadTracks = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = e.target.files;
-    if (!fileList || fileList.length === 0 || !id || !shareId) return;
-    setUploading(true);
-    setUploadError(null);
-
-    try {
-      for (let i = 0; i < fileList.length; i++) {
-        await api.uploadShareTrack(id, shareId, fileList[i]);
-      }
-      await loadData();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Upload failed';
-      console.error('Failed to upload tracks:', msg);
-      setUploadError(msg);
-    } finally {
-      setUploading(false);
-      if (audioInputRef.current) audioInputRef.current.value = '';
+  const handleUploadFiles = useCallback((files: File[]) => {
+    if (!id || !shareId || files.length === 0) return;
+    const audioFiles = files.filter(f => f.type.startsWith('audio/') || f.name.match(/\.(mp3|wav|flac|aac|ogg|m4a|wma|aiff)$/i));
+    if (audioFiles.length === 0) {
+      setUploadError('No audio files found. Supported: MP3, WAV, FLAC, AAC, OGG, M4A, AIFF');
+      return;
     }
-  }, [id, shareId, loadData]);
+    setUploadError(null);
+    addUploads(id, shareId, audioFiles);
+  }, [id, shareId, addUploads]);
+
+  const handleUploadTracks = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+    handleUploadFiles(Array.from(fileList));
+    if (audioInputRef.current) audioInputRef.current.value = '';
+  }, [handleUploadFiles]);
+
+  // Drag and drop handlers
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current++;
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setIsDragging(true);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current--;
+    if (dragCounterRef.current === 0) {
+      setIsDragging(false);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    dragCounterRef.current = 0;
+
+    const files = Array.from(e.dataTransfer.files);
+    handleUploadFiles(files);
+  }, [handleUploadFiles]);
 
   const handleUploadArtwork = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -332,6 +366,18 @@ export default function ShareManagePage() {
     audioRef.current.currentTime = ratio * duration;
   }, [duration]);
 
+  // Reload track data when background uploads complete for this share
+  useEffect(() => {
+    onBatchComplete.current = (projectId: string, sid: string) => {
+      if (projectId === id && sid === shareId) {
+        loadData();
+      }
+    };
+    return () => {
+      onBatchComplete.current = null;
+    };
+  }, [id, shareId, loadData, onBatchComplete]);
+
   // Cleanup audio on unmount
   useEffect(() => {
     return () => {
@@ -420,10 +466,9 @@ export default function ShareManagePage() {
               </span>
               <button
                 onClick={() => audioInputRef.current?.click()}
-                disabled={uploading}
-                className="px-4 py-1.5 bg-black text-white text-micro font-bold uppercase tracking-widest rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50"
+                className="px-4 py-1.5 bg-black text-white text-micro font-bold uppercase tracking-widest rounded-sm hover:bg-neutral-800 transition-colors duration-fast"
               >
-                {uploading ? 'Uploading...' : 'Upload Tracks'}
+                Upload Tracks
               </button>
               <input
                 ref={audioInputRef}
@@ -445,11 +490,26 @@ export default function ShareManagePage() {
               </div>
             )}
 
-            {/* Track list */}
+            {/* Track list / drop zone */}
+            <div
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              className="relative"
+            >
+              {/* Drag overlay */}
+              {isDragging && (
+                <div className="absolute inset-0 z-10 border-2 border-dashed border-black rounded-sm bg-neutral-50/90 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-display font-bold text-black mb-2">+</span>
+                  <span className="text-label font-bold uppercase tracking-widest text-black">Drop audio files here</span>
+                </div>
+              )}
+
             {share.tracks.length === 0 ? (
               <div className="border border-dashed border-neutral-300 rounded-sm p-12 text-center">
                 <p className="text-body text-neutral-500 mb-1">No tracks yet.</p>
-                <p className="text-small text-neutral-400">Upload audio files to share.</p>
+                <p className="text-small text-neutral-400">Drag audio files here or click Upload Tracks.</p>
               </div>
             ) : (
               <div className="space-y-1">
@@ -575,6 +635,7 @@ export default function ShareManagePage() {
                 </div>
               );
             })()}
+            </div>
           </div>
 
           {/* Right column: artwork + settings */}
