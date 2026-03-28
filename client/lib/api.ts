@@ -215,6 +215,62 @@ export interface LyricAdvisorResponse {
   advisorMessage: LyricSessionMessage;
 }
 
+/* ———————— IMC Share Types ———————— */
+
+export interface ShareProject {
+  id: string;
+  project_id: string;
+  title: string;
+  slug: string;
+  artwork_url: string | null;
+  is_public: boolean;
+  password_hash: string | null;
+  downloads_enabled: boolean;
+  theme: 'dark' | 'light';
+  total_plays: number;
+  unique_listeners: number;
+  download_count: number;
+  last_listened_at: string | null;
+  created_at: string;
+  updated_at: string;
+  track_count?: number;
+}
+
+export interface ShareTrack {
+  id: string;
+  share_project_id: string;
+  title: string;
+  original_filename: string;
+  storage_key: string;
+  format: string;
+  duration_ms: number | null;
+  file_size_bytes: number | null;
+  sort_order: number;
+  play_count: number;
+  created_at: string;
+}
+
+export interface ShareProjectWithTracks extends ShareProject {
+  tracks: ShareTrack[];
+}
+
+export interface PublicShareData {
+  id: string;
+  title: string;
+  artwork_url: string | null;
+  theme: 'dark' | 'light';
+  downloads_enabled: boolean;
+  password_required: boolean;
+  tracks: Array<{
+    id: string;
+    title: string;
+    storage_key: string;
+    format: string;
+    duration_ms: number | null;
+    sort_order: number;
+  }>;
+}
+
 /* ———————— IMC 00: Checklist Types ———————— */
 
 export type ChecklistCategory = 'creative' | 'legal' | 'business' | 'distribution';
@@ -550,6 +606,132 @@ class ApiClient {
   async deleteLyricSession(projectId: string, sessionId: string): Promise<{ deleted: boolean }> {
     return this.request(`/api/lyric-advisor/${projectId}/session/${sessionId}`, {
       method: 'DELETE',
+    });
+  }
+
+  /* — IMC Share — */
+
+  async getShareProjects(projectId: string): Promise<{ projects: ShareProject[] }> {
+    return this.request(`/api/share/${projectId}`);
+  }
+
+  async createShareProject(projectId: string, title?: string): Promise<ShareProject> {
+    return this.request(`/api/share/${projectId}`, {
+      method: 'POST',
+      body: JSON.stringify({ title }),
+    });
+  }
+
+  async getShareProject(projectId: string, shareId: string): Promise<ShareProjectWithTracks> {
+    return this.request(`/api/share/${projectId}/share/${shareId}`);
+  }
+
+  async updateShareProject(projectId: string, shareId: string, data: {
+    title?: string;
+    is_public?: boolean;
+    downloads_enabled?: boolean;
+    theme?: 'dark' | 'light';
+  }): Promise<ShareProject> {
+    return this.request(`/api/share/${projectId}/share/${shareId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async setSharePassword(projectId: string, shareId: string, password: string | null): Promise<{ password_set: boolean }> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/password`, {
+      method: 'PATCH',
+      body: JSON.stringify({ password }),
+    });
+  }
+
+  async regenerateShareLink(projectId: string, shareId: string): Promise<ShareProject> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/regenerate`, {
+      method: 'POST',
+    });
+  }
+
+  async uploadShareArtwork(projectId: string, shareId: string, imageData: string, filename?: string): Promise<{ artwork_url: string }> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/artwork`, {
+      method: 'POST',
+      body: JSON.stringify({ image_data: imageData, filename }),
+    });
+  }
+
+  async uploadShareTracks(projectId: string, shareId: string, files: Array<{ data: string; filename: string; content_type: string }>): Promise<{ tracks: ShareTrack[] }> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/tracks`, {
+      method: 'POST',
+      body: JSON.stringify({ files }),
+    });
+  }
+
+  async renameShareTrack(projectId: string, shareId: string, trackId: string, title: string): Promise<ShareTrack> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/tracks/${trackId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ title }),
+    });
+  }
+
+  async reorderShareTracks(projectId: string, shareId: string, trackIds: string[]): Promise<{ tracks: ShareTrack[] }> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/reorder`, {
+      method: 'PATCH',
+      body: JSON.stringify({ track_ids: trackIds }),
+    });
+  }
+
+  async deleteShareTrack(projectId: string, shareId: string, trackId: string): Promise<{ deleted: boolean }> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/tracks/${trackId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async deleteShareProject(projectId: string, shareId: string): Promise<{ deleted: boolean }> {
+    return this.request(`/api/share/${projectId}/share/${shareId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  /* — Public Share (no auth) — */
+
+  async getPublicShare(slug: string, shareToken?: string): Promise<PublicShareData> {
+    const headers: Record<string, string> = {};
+    if (shareToken) {
+      headers['x-share-token'] = shareToken;
+    }
+    const token = this.getToken();
+    const allHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...headers,
+    };
+    if (token) {
+      allHeaders['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(`${API_BASE}/api/s/${slug}`, { headers: allHeaders });
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ message: res.statusText }));
+      throw new Error(error.message || error.error || `API error: ${res.status}`);
+    }
+    return res.json();
+  }
+
+  async verifySharePassword(slug: string, password: string): Promise<{ verified: boolean; token: string }> {
+    const res = await fetch(`${API_BASE}/api/s/${slug}/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ message: res.statusText }));
+      throw new Error(error.message || error.error || `API error: ${res.status}`);
+    }
+    return res.json();
+  }
+
+  async recordTrackPlay(slug: string, trackId: string): Promise<void> {
+    await fetch(`${API_BASE}/api/s/${slug}/play/${trackId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }

@@ -218,6 +218,51 @@ async function migrate(): Promise<void> {
       await pool.query(`ALTER TABLE projects ADD COLUMN moodboard_brief jsonb DEFAULT NULL`);
       console.log('moodboard_brief column added.');
     }
+    // IMC Share migration
+    const shareProjectsCheck = await pool.query(
+      `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'share_projects')`
+    );
+    if (!shareProjectsCheck.rows[0].exists) {
+      console.log('Running share projects migration...');
+      await pool.query(`
+        CREATE TABLE share_projects (
+          id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+          project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+          title text NOT NULL,
+          slug text UNIQUE NOT NULL,
+          artwork_url text,
+          is_public boolean NOT NULL DEFAULT false,
+          password_hash text,
+          downloads_enabled boolean NOT NULL DEFAULT false,
+          theme text NOT NULL DEFAULT 'dark' CHECK (theme IN ('dark', 'light')),
+          total_plays integer NOT NULL DEFAULT 0,
+          unique_listeners integer NOT NULL DEFAULT 0,
+          download_count integer NOT NULL DEFAULT 0,
+          last_listened_at timestamptz,
+          created_at timestamptz DEFAULT now(),
+          updated_at timestamptz DEFAULT now()
+        );
+        CREATE INDEX idx_share_projects_project_id ON share_projects(project_id);
+        CREATE UNIQUE INDEX idx_share_projects_slug ON share_projects(slug);
+
+        CREATE TABLE share_tracks (
+          id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+          share_project_id uuid NOT NULL REFERENCES share_projects(id) ON DELETE CASCADE,
+          title text NOT NULL,
+          original_filename text NOT NULL,
+          storage_key text NOT NULL,
+          format text NOT NULL,
+          duration_ms integer,
+          file_size_bytes bigint,
+          sort_order integer NOT NULL DEFAULT 0,
+          play_count integer NOT NULL DEFAULT 0,
+          created_at timestamptz DEFAULT now()
+        );
+        CREATE INDEX idx_share_tracks_project_id ON share_tracks(share_project_id);
+      `);
+      console.log('Share projects and tracks tables created.');
+    }
+
     // Lyric Advisor migration
     const lyricSessionsCheck = await pool.query(
       `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'lyric_sessions')`

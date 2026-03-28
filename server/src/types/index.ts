@@ -330,6 +330,40 @@ export interface MoodboardBrief {
   previous_prose: string | null;
 }
 
+// IMC Share types
+
+export interface ShareProject {
+  id: string;
+  project_id: string;
+  title: string;
+  slug: string;
+  artwork_url: string | null;
+  is_public: boolean;
+  password_hash: string | null;
+  downloads_enabled: boolean;
+  theme: 'dark' | 'light';
+  total_plays: number;
+  unique_listeners: number;
+  download_count: number;
+  last_listened_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ShareTrack {
+  id: string;
+  share_project_id: string;
+  title: string;
+  original_filename: string;
+  storage_key: string;
+  format: string;
+  duration_ms: number | null;
+  file_size_bytes: number | null;
+  sort_order: number;
+  play_count: number;
+  created_at: Date;
+}
+
 // Lyric Advisor types
 
 export type LyricSessionEntryMode = 'paste' | 'conversation' | 'vibe';

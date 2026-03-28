@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-type NavPage = 'checklist' | 'concept' | 'research' | 'prompts' | 'lyrics';
+type NavPage = 'checklist' | 'concept' | 'research' | 'prompts' | 'lyrics' | 'share';
 
 interface ProjectNavProps {
   projectId: string;
@@ -19,6 +19,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
     { key: 'research', label: 'Research', href: `/projects/${projectId}?tab=research` },
     { key: 'prompts', label: 'Sound Engine', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'Lyric Advisor', href: `/projects/${projectId}/lyrics` },
+    { key: 'share', label: 'Share', href: `/projects/${projectId}/share` },
   ];
 
   return (
