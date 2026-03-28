@@ -169,10 +169,19 @@ export default function ShareManagePage() {
 
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i];
-        const buffer = await file.arrayBuffer();
-        const base64 = btoa(
-          new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
-        );
+        // Use FileReader for efficient base64 encoding (avoids O(n²) btoa+reduce)
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            // Strip the "data:...;base64," prefix to get raw base64
+            const commaIdx = result.indexOf(',');
+            resolve(commaIdx >= 0 ? result.substring(commaIdx + 1) : result);
+          };
+          reader.onerror = () => reject(new Error('Failed to read file'));
+          reader.readAsDataURL(file);
+        });
+
         files.push({
           data: base64,
           filename: file.name,
