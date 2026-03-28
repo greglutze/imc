@@ -167,29 +167,9 @@ export default function ShareManagePage() {
     setUploadError(null);
 
     try {
-      const files: Array<{ data: string; filename: string; content_type: string }> = [];
-
       for (let i = 0; i < fileList.length; i++) {
-        const file = fileList[i];
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            const result = reader.result as string;
-            const commaIdx = result.indexOf(',');
-            resolve(commaIdx >= 0 ? result.substring(commaIdx + 1) : result);
-          };
-          reader.onerror = () => reject(new Error('Failed to read file'));
-          reader.readAsDataURL(file);
-        });
-
-        files.push({
-          data: base64,
-          filename: file.name,
-          content_type: file.type || 'audio/mpeg',
-        });
+        await api.uploadShareTrack(id, shareId, fileList[i]);
       }
-
-      await api.uploadShareTracks(id, shareId, files);
       await loadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Upload failed';
@@ -205,15 +185,10 @@ export default function ShareManagePage() {
     const file = e.target.files?.[0];
     if (!file || !id || !shareId) return;
     setUploadingArtwork(true);
+    setUploadError(null);
 
     try {
-      const reader = new FileReader();
-      const dataUrl = await new Promise<string>((resolve) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      });
-
-      const result = await api.uploadShareArtwork(id, shareId, dataUrl, file.name);
+      const result = await api.uploadShareArtwork(id, shareId, file);
       setShare((prev) => prev ? { ...prev, artwork_url: result.artwork_url } : prev);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Artwork upload failed';

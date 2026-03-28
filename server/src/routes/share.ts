@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import express from 'express';
 import crypto from 'crypto';
 import pool from '../config/database';
 import { authMiddleware } from '../middleware/auth';
@@ -271,7 +272,43 @@ authRouter.post('/:projectId/share/:shareId/artwork', async (req: AuthRequest, r
   }
 });
 
-// Upload tracks (audio files as base64)
+// Upload artwork (raw binary)
+authRouter.post(
+  '/:projectId/share/:shareId/artwork/upload',
+  express.raw({ limit: '10mb', type: ['image/*', 'application/octet-stream'] }),
+  async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const user = req.user!;
+      const { projectId, shareId } = req.params;
+      const filename = decodeURIComponent((req.headers['x-filename'] as string) || 'artwork.jpg');
+      const contentType = req.headers['content-type'] || 'image/jpeg';
+
+      const projectCheck = await pool.query(
+        'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
+        [projectId, user.org_id]
+      );
+      if (projectCheck.rows.length === 0) {
+        res.status(403).json({ error: 'Not authorized' });
+        return;
+      }
+
+      const buffer = req.body as Buffer;
+      const result = await uploadArtwork(buffer, filename, contentType);
+
+      await pool.query(
+        'UPDATE share_projects SET artwork_url = $1, updated_at = NOW() WHERE id = $2 AND project_id = $3',
+        [result.url, shareId, projectId]
+      );
+
+      res.json({ artwork_url: result.url });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+);
+
+// Upload tracks (audio files as base64 — legacy)
 authRouter.post('/:projectId/share/:shareId/tracks', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const user = req.user!;
@@ -328,6 +365,63 @@ authRouter.post('/:projectId/share/:shareId/tracks', async (req: AuthRequest, re
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Upload single track (raw binary)
+authRouter.post(
+  '/:projectId/share/:shareId/tracks/upload',
+  express.raw({ limit: '50mb', type: ['audio/*', 'video/*', 'application/octet-stream'] }),
+  async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const user = req.user!;
+      const { projectId, shareId } = req.params;
+      const filename = decodeURIComponent((req.headers['x-filename'] as string) || 'track.mp3');
+      const contentType = req.headers['content-type'] || 'audio/mpeg';
+
+      const projectCheck = await pool.query(
+        'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
+        [projectId, user.org_id]
+      );
+      if (projectCheck.rows.length === 0) {
+        res.status(403).json({ error: 'Not authorized' });
+        return;
+      }
+
+      // Check track limit
+      const countResult = await pool.query(
+        'SELECT COUNT(*) FROM share_tracks WHERE share_project_id = $1',
+        [shareId]
+      );
+      const currentCount = parseInt(countResult.rows[0].count, 10);
+      if (currentCount >= 50) {
+        res.status(400).json({ error: 'Maximum 50 tracks per project' });
+        return;
+      }
+
+      const buffer = req.body as Buffer;
+      const storageResult = await uploadFile(buffer, filename, contentType);
+
+      const ext = filename.split('.').pop()?.toLowerCase() || 'mp3';
+      const title = cleanFilename(filename);
+
+      const trackResult = await pool.query(
+        `INSERT INTO share_tracks (share_project_id, title, original_filename, storage_key, format, file_size_bytes, sort_order)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING id, share_project_id, title, original_filename, format, file_size_bytes, sort_order, play_count, created_at`,
+        [shareId, title, filename, storageResult.url, ext, buffer.length, currentCount]
+      );
+
+      await pool.query(
+        'UPDATE share_projects SET updated_at = NOW() WHERE id = $1',
+        [shareId]
+      );
+
+      res.json(trackResult.rows[0]);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+);
 
 // Rename a track
 authRouter.patch('/:projectId/share/:shareId/tracks/:trackId', async (req: AuthRequest, res: Response): Promise<void> => {

@@ -651,18 +651,52 @@ class ApiClient {
     });
   }
 
-  async uploadShareArtwork(projectId: string, shareId: string, imageData: string, filename?: string): Promise<{ artwork_url: string }> {
-    return this.request(`/api/share/${projectId}/share/${shareId}/artwork`, {
+  async uploadShareArtwork(projectId: string, shareId: string, file: File): Promise<{ artwork_url: string }> {
+    const token = this.getToken();
+    const headers: Record<string, string> = {
+      'Content-Type': file.type || 'image/jpeg',
+      'X-Filename': encodeURIComponent(file.name),
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(`${API_BASE}/api/share/${projectId}/share/${shareId}/artwork/upload`, {
       method: 'POST',
-      body: JSON.stringify({ image_data: imageData, filename }),
+      headers,
+      body: file,
     });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ message: res.statusText }));
+      throw new Error(error.message || `Upload failed: ${res.status}`);
+    }
+
+    return res.json();
   }
 
-  async uploadShareTracks(projectId: string, shareId: string, files: Array<{ data: string; filename: string; content_type: string }>): Promise<{ tracks: ShareTrack[] }> {
-    return this.request(`/api/share/${projectId}/share/${shareId}/tracks`, {
+  async uploadShareTrack(projectId: string, shareId: string, file: File): Promise<ShareTrack> {
+    const token = this.getToken();
+    const headers: Record<string, string> = {
+      'Content-Type': file.type || 'audio/mpeg',
+      'X-Filename': encodeURIComponent(file.name),
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(`${API_BASE}/api/share/${projectId}/share/${shareId}/tracks/upload`, {
       method: 'POST',
-      body: JSON.stringify({ files }),
+      headers,
+      body: file,
     });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ message: res.statusText }));
+      throw new Error(error.message || `Upload failed: ${res.status}`);
+    }
+
+    return res.json();
   }
 
   async renameShareTrack(projectId: string, shareId: string, trackId: string, title: string): Promise<ShareTrack> {
