@@ -113,7 +113,7 @@ authRouter.get('/:projectId/share/:shareId', async (req: AuthRequest, res: Respo
     }
 
     const tracksResult = await pool.query(
-      'SELECT * FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
+      'SELECT id, share_project_id, title, original_filename, format, duration_ms, file_size_bytes, sort_order, play_count, created_at FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
       [shareId]
     );
 
@@ -310,7 +310,7 @@ authRouter.post('/:projectId/share/:shareId/tracks', async (req: AuthRequest, re
       const trackResult = await pool.query(
         `INSERT INTO share_tracks (share_project_id, title, original_filename, storage_key, format, file_size_bytes, sort_order)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
-         RETURNING *`,
+         RETURNING id, share_project_id, title, original_filename, format, file_size_bytes, sort_order, play_count, created_at`,
         [shareId, title, file.filename, storageResult.url, ext, buffer.length, currentCount + i]
       );
 
@@ -383,7 +383,7 @@ authRouter.patch('/:projectId/share/:shareId/reorder', async (req: AuthRequest, 
     }
 
     const tracksResult = await pool.query(
-      'SELECT * FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
+      'SELECT id, share_project_id, title, original_filename, format, duration_ms, file_size_bytes, sort_order, play_count, created_at FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
       [shareId]
     );
 

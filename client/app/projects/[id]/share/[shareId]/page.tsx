@@ -46,6 +46,7 @@ export default function ShareManagePage() {
   const [passwordValue, setPasswordValue] = useState('');
   const [copied, setCopied] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const audioInputRef = useRef<HTMLInputElement>(null);
   const artworkInputRef = useRef<HTMLInputElement>(null);
@@ -163,18 +164,17 @@ export default function ShareManagePage() {
     const fileList = e.target.files;
     if (!fileList || fileList.length === 0 || !id || !shareId) return;
     setUploading(true);
+    setUploadError(null);
 
     try {
       const files: Array<{ data: string; filename: string; content_type: string }> = [];
 
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i];
-        // Use FileReader for efficient base64 encoding (avoids O(n²) btoa+reduce)
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => {
             const result = reader.result as string;
-            // Strip the "data:...;base64," prefix to get raw base64
             const commaIdx = result.indexOf(',');
             resolve(commaIdx >= 0 ? result.substring(commaIdx + 1) : result);
           };
@@ -191,8 +191,10 @@ export default function ShareManagePage() {
 
       await api.uploadShareTracks(id, shareId, files);
       await loadData();
-    } catch (err) {
-      console.error('Failed to upload tracks:', err);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Upload failed';
+      console.error('Failed to upload tracks:', msg);
+      setUploadError(msg);
     } finally {
       setUploading(false);
       if (audioInputRef.current) audioInputRef.current.value = '';
@@ -213,8 +215,10 @@ export default function ShareManagePage() {
 
       const result = await api.uploadShareArtwork(id, shareId, dataUrl, file.name);
       setShare((prev) => prev ? { ...prev, artwork_url: result.artwork_url } : prev);
-    } catch (err) {
-      console.error('Failed to upload artwork:', err);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Artwork upload failed';
+      console.error('Failed to upload artwork:', msg);
+      setUploadError(msg);
     } finally {
       setUploadingArtwork(false);
       if (artworkInputRef.current) artworkInputRef.current.value = '';
@@ -380,6 +384,16 @@ export default function ShareManagePage() {
                 className="hidden"
               />
             </div>
+
+            {/* Upload error */}
+            {uploadError && (
+              <div className="mb-4 px-4 py-3 border border-red-200 rounded-sm bg-red-50">
+                <div className="flex items-center justify-between">
+                  <span className="text-small text-red-600">{uploadError}</span>
+                  <button onClick={() => setUploadError(null)} className="text-red-400 hover:text-red-600 text-small">×</button>
+                </div>
+              </div>
+            )}
 
             {/* Track list */}
             {share.tracks.length === 0 ? (
