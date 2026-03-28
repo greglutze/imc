@@ -74,21 +74,6 @@ export default function PromptsPage() {
     loadData();
   }, [isAuthenticated, id]);
 
-  // Auto-generate prompts on first visit if concept exists but no prompts
-  useEffect(() => {
-    if (
-      !pageLoading &&
-      !generating &&
-      !hasPrompts &&
-      project?.concept?.genre_primary &&
-      !autoGenerateTriggered.current &&
-      id
-    ) {
-      autoGenerateTriggered.current = true;
-      handleGenerate();
-    }
-  }, [pageLoading, generating, hasPrompts, project, id]);
-
   // Generate prompts via API
   const handleGenerate = useCallback(async () => {
     if (!id) return;
@@ -123,7 +108,24 @@ export default function PromptsPage() {
   }, [promptsId]);
 
   const artistName = project?.artist_name || 'Untitled';
-  const hasPrompts = styleProfile && tracks.length > 0;
+  const conceptExists = !!project?.concept?.genre_primary;
+  const hasPrompts = !!(styleProfile && tracks.length > 0);
+
+  // Auto-generate prompts on first visit if concept exists but no prompts
+  useEffect(() => {
+    if (
+      !pageLoading &&
+      !generating &&
+      !hasPrompts &&
+      conceptExists &&
+      !autoGenerateTriggered.current &&
+      id
+    ) {
+      autoGenerateTriggered.current = true;
+      handleGenerate();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageLoading, generating, hasPrompts, conceptExists, id]);
 
   if (authLoading || pageLoading) {
     return (

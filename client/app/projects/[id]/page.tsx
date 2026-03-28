@@ -96,22 +96,6 @@ export default function ProjectPage() {
     loadProject();
   }, [isAuthenticated, id]);
 
-  // Auto-run research when switching to Research tab with concept ready but no report
-  useEffect(() => {
-    if (
-      activeTab === 'report' &&
-      conceptReady &&
-      !report &&
-      !researchRunning &&
-      !pageLoading &&
-      !autoResearchTriggered.current &&
-      id
-    ) {
-      autoResearchTriggered.current = true;
-      handleRunResearch();
-    }
-  }, [activeTab, conceptReady, report, researchRunning, pageLoading, id]);
-
   // Send message to concept conversation via API
   const handleSendMessage = useCallback(async (content: string) => {
     if (!id) return;
@@ -157,6 +141,23 @@ export default function ProjectPage() {
       setResearchRunning(false);
     }
   }, [id]);
+
+  // Auto-run research when switching to Research tab with concept ready but no report
+  useEffect(() => {
+    if (
+      activeTab === 'report' &&
+      conceptReady &&
+      !report &&
+      !researchRunning &&
+      !pageLoading &&
+      !autoResearchTriggered.current &&
+      id
+    ) {
+      autoResearchTriggered.current = true;
+      handleRunResearch();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, conceptReady, report, researchRunning, pageLoading, id]);
 
   // Load a specific report version
   const handleVersionChange = useCallback(async (version: number) => {
