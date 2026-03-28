@@ -49,6 +49,7 @@ function TrackCard({
   isRegenerating: boolean;
 }) {
   const [copiedField, setCopiedField] = useState<'suno' | 'udio' | null>(null);
+  const sunoWordCount = track.suno_prompt.trim() ? track.suno_prompt.trim().split(/\s+/).length : 0;
 
   const handleCopy = async (text: string, field: 'suno' | 'udio') => {
     try {
@@ -89,7 +90,12 @@ function TrackCard({
         {/* Suno prompt */}
         <div className="border border-neutral-200 rounded-sm p-5">
           <div className="flex items-center justify-between mb-3">
-            <Badge variant="orange">Suno</Badge>
+            <div className="flex items-center gap-3">
+              <Badge variant="orange">Suno</Badge>
+              <span className={`text-caption font-mono ${sunoWordCount > 1000 ? 'text-signal-red' : 'text-neutral-300'}`}>
+                {sunoWordCount}/1000 words
+              </span>
+            </div>
             <button
               onClick={() => handleCopy(track.suno_prompt, 'suno')}
               className="text-label font-bold uppercase tracking-widest text-neutral-300 hover:text-black transition-colors duration-fast"

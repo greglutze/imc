@@ -8,6 +8,12 @@ import {
   MoodboardBrief,
 } from '../types';
 
+function truncateToWords(text: string, maxWords: number): string {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= maxWords) return text;
+  return words.slice(0, maxWords).join(' ');
+}
+
 const PROMPT_ENGINEERING_SYSTEM_PROMPT = `You are IMC's prompt engineering system. You translate artist concepts and market intelligence into precision-engineered prompts for AI music generation platforms (Suno and Udio).
 
 Given the artist concept and market data, generate:
@@ -178,7 +184,7 @@ export async function generatePrompts(
           tracks: (parsed.tracks || []).map((t: any, idx: number) => ({
             track_number: idx + 1,
             title: t.title || `Track ${idx + 1}`,
-            suno_prompt: t.suno_prompt || '',
+            suno_prompt: truncateToWords(t.suno_prompt || '', 1000),
             udio_prompt: t.udio_prompt || '',
             structure:
               t.structure ||
@@ -261,7 +267,7 @@ Now regenerate Track ${trackNumber} keeping the style consistent with the rest o
         return {
           track_number: trackNumber,
           title: parsed.title || `Track ${trackNumber}`,
-          suno_prompt: parsed.suno_prompt || '',
+          suno_prompt: truncateToWords(parsed.suno_prompt || '', 1000),
           udio_prompt: parsed.udio_prompt || '',
           structure:
             parsed.structure ||
