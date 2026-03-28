@@ -8,10 +8,9 @@ import {
   MoodboardBrief,
 } from '../types';
 
-function truncateToWords(text: string, maxWords: number): string {
-  const words = text.trim().split(/\s+/);
-  if (words.length <= maxWords) return text;
-  return words.slice(0, maxWords).join(' ');
+function truncateToChars(text: string, maxChars: number): string {
+  if (text.length <= maxChars) return text;
+  return text.slice(0, maxChars);
 }
 
 const PROMPT_ENGINEERING_SYSTEM_PROMPT = `You are IMC's prompt engineering system. You translate artist concepts and market intelligence into precision-engineered prompts for AI music generation platforms (Suno and Udio).
@@ -24,7 +23,7 @@ Given the artist concept and market data, generate:
 
 CRITICAL RULES:
 - NEVER include real person names, band names, or artist names in ANY Suno prompt or Udio prompt. Describe the sound, style, and aesthetic using descriptive language only. For example, instead of "vocals like Sam Carter" write "soaring clean vocals with aggressive screamed passages". This applies to suno_prompt fields, udio_prompt fields, and the vocalist_persona vocal_character/delivery_style fields. The reference_vocalists and reference_artists fields in the data model are for internal context only and must NEVER appear in any prompt text.
-- Suno prompts use bracketed category tags. Max 1000 words. Format each prompt as a continuous string of bracketed sections:
+- Suno prompts use bracketed category tags. Max 1000 characters. Format each prompt as a continuous string of bracketed sections:
   [Genres: ...] [Moods: ...] [Instrumentation: ... — include exclusions like "no guitar, no 808"] [Tempo: BPM range, feel description — "played not programmed"] [Vocal Style: specific character — include what NOT to do] [Production: aesthetic description — reference textures, recording approach, analog vs digital] [Structure: section-by-section flow in plain language, not bracket notation] [Sound Design: evocative scene-setting — describe the physical space and emotional landscape the listener inhabits]
   Be poetic and specific in each category. Use em dashes for contrast and exclusions. Each section should read like a creative brief, not a tag list.
 - Udio prompts are more narrative. Describe the sound in natural language. Include production style, era references, sonic textures. Max ~500 chars. Do NOT reference any real artists or bands by name.
@@ -184,7 +183,7 @@ export async function generatePrompts(
           tracks: (parsed.tracks || []).map((t: any, idx: number) => ({
             track_number: idx + 1,
             title: t.title || `Track ${idx + 1}`,
-            suno_prompt: truncateToWords(t.suno_prompt || '', 1000),
+            suno_prompt: truncateToChars(t.suno_prompt || '', 1000),
             udio_prompt: t.udio_prompt || '',
             structure:
               t.structure ||
@@ -267,7 +266,7 @@ Now regenerate Track ${trackNumber} keeping the style consistent with the rest o
         return {
           track_number: trackNumber,
           title: parsed.title || `Track ${trackNumber}`,
-          suno_prompt: truncateToWords(parsed.suno_prompt || '', 1000),
+          suno_prompt: truncateToChars(parsed.suno_prompt || '', 1000),
           udio_prompt: parsed.udio_prompt || '',
           structure:
             parsed.structure ||
