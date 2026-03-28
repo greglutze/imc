@@ -241,7 +241,7 @@ export interface ShareTrack {
   share_project_id: string;
   title: string;
   original_filename: string;
-  storage_key: string;
+  dropbox_url: string;
   format: string;
   duration_ms: number | null;
   file_size_bytes: number | null;
@@ -264,7 +264,7 @@ export interface PublicShareData {
   tracks: Array<{
     id: string;
     title: string;
-    storage_key: string;
+    dropbox_url: string;
     format: string;
     duration_ms: number | null;
     sort_order: number;
@@ -675,28 +675,18 @@ class ApiClient {
     return res.json();
   }
 
-  async uploadShareTrack(projectId: string, shareId: string, file: File): Promise<ShareTrack> {
-    const token = this.getToken();
-    const headers: Record<string, string> = {
-      'Content-Type': file.type || 'audio/mpeg',
-      'X-Filename': encodeURIComponent(file.name),
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const res = await fetch(`${API_BASE}/api/share/${projectId}/share/${shareId}/tracks/upload`, {
+  async addShareTrack(projectId: string, shareId: string, dropboxUrl: string, title?: string): Promise<ShareTrack> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/tracks`, {
       method: 'POST',
-      headers,
-      body: file,
+      body: JSON.stringify({ dropbox_url: dropboxUrl, title }),
     });
+  }
 
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({ message: res.statusText }));
-      throw new Error(error.message || `Upload failed: ${res.status}`);
-    }
-
-    return res.json();
+  async addShareTracksBatch(projectId: string, shareId: string, links: Array<{ dropbox_url: string; title?: string }>): Promise<{ tracks: ShareTrack[] }> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/tracks/batch`, {
+      method: 'POST',
+      body: JSON.stringify({ links }),
+    });
   }
 
   async renameShareTrack(projectId: string, shareId: string, trackId: string, title: string): Promise<ShareTrack> {

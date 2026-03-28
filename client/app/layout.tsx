@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { AuthProvider } from '../lib/auth-context';
-import { UploadProvider } from '../lib/upload-context';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -17,7 +16,6 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-white text-neutral-900 font-sans">
         <AuthProvider>
-        <UploadProvider>
           <div className="flex h-screen">
             {/* Sidebar — slim, editorial */}
             <aside className="w-14 bg-white border-r border-neutral-200 flex flex-col items-center hidden lg:flex">
@@ -47,7 +45,6 @@ export default function RootLayout({
               </main>
             </div>
           </div>
-        </UploadProvider>
         </AuthProvider>
       </body>
     </html>

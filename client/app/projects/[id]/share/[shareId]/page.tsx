@@ -6,18 +6,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ProjectNav from '../../../../../components/ProjectNav';
 import { useAuth } from '../../../../../lib/auth-context';
-import { useUpload } from '../../../../../lib/upload-context';
 import { api } from '../../../../../lib/api';
 import type { ShareProjectWithTracks, ShareTrack, Project } from '../../../../../lib/api';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
-function formatBytes(bytes: number | null): string {
-  if (!bytes) return '—';
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 function formatDuration(ms: number | null): string {
   if (!ms) return '—';
@@ -37,13 +27,10 @@ export default function ShareManagePage() {
   const { id, shareId } = useParams<{ id: string; shareId: string }>();
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
-  const { addUploads, uploads, onBatchComplete } = useUpload();
 
   const [share, setShare] = useState<ShareProjectWithTracks | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragCounterRef = useRef(0);
 
   // Editing states
   const [editingTitle, setEditingTitle] = useState(false);
@@ -57,7 +44,11 @@ export default function ShareManagePage() {
   const [passwordValue, setPasswordValue] = useState('');
   const [copied, setCopied] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [addError, setAddError] = useState<string | null>(null);
+
+  // Add track via Dropbox link
+  const [dropboxInput, setDropboxInput] = useState('');
+  const [addingTrack, setAddingTrack] = useState(false);
 
   // Player state
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
@@ -66,7 +57,6 @@ export default function ShareManagePage() {
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const audioInputRef = useRef<HTMLInputElement>(null);
   const artworkInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -178,63 +168,44 @@ export default function ShareManagePage() {
     setTimeout(() => setCopied(false), 2000);
   }, [share]);
 
-  const handleUploadFiles = useCallback((files: File[]) => {
-    if (!id || !shareId || files.length === 0) return;
-    const audioFiles = files.filter(f => f.type.startsWith('audio/') || f.name.match(/\.(mp3|wav|flac|aac|ogg|m4a|wma|aiff)$/i));
-    if (audioFiles.length === 0) {
-      setUploadError('No audio files found. Supported: MP3, WAV, FLAC, AAC, OGG, M4A, AIFF');
+  // Add track by pasting a Dropbox link
+  const handleAddTrack = useCallback(async () => {
+    if (!id || !shareId || !dropboxInput.trim()) return;
+
+    // Support pasting multiple links (one per line)
+    const lines = dropboxInput.trim().split('\n').map(l => l.trim()).filter(Boolean);
+    const dropboxLinks = lines.filter(l => l.includes('dropbox.com') || l.includes('dropboxusercontent.com'));
+
+    if (dropboxLinks.length === 0) {
+      setAddError('Please paste a Dropbox shared link. Right-click a file in Dropbox and choose "Copy link."');
       return;
     }
-    setUploadError(null);
-    addUploads(id, shareId, audioFiles);
-  }, [id, shareId, addUploads]);
 
-  const handleUploadTracks = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = e.target.files;
-    if (!fileList || fileList.length === 0) return;
-    handleUploadFiles(Array.from(fileList));
-    if (audioInputRef.current) audioInputRef.current.value = '';
-  }, [handleUploadFiles]);
+    setAddingTrack(true);
+    setAddError(null);
 
-  // Drag and drop handlers
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dragCounterRef.current++;
-    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
-      setIsDragging(true);
+    try {
+      if (dropboxLinks.length === 1) {
+        const track = await api.addShareTrack(id, shareId, dropboxLinks[0]);
+        setShare((prev) => prev ? { ...prev, tracks: [...prev.tracks, track] } : prev);
+      } else {
+        const result = await api.addShareTracksBatch(id, shareId, dropboxLinks.map(url => ({ dropbox_url: url })));
+        setShare((prev) => prev ? { ...prev, tracks: [...prev.tracks, ...result.tracks] } : prev);
+      }
+      setDropboxInput('');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to add track';
+      setAddError(msg);
+    } finally {
+      setAddingTrack(false);
     }
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dragCounterRef.current--;
-    if (dragCounterRef.current === 0) {
-      setIsDragging(false);
-    }
-  }, []);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    dragCounterRef.current = 0;
-
-    const files = Array.from(e.dataTransfer.files);
-    handleUploadFiles(files);
-  }, [handleUploadFiles]);
+  }, [id, shareId, dropboxInput]);
 
   const handleUploadArtwork = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !id || !shareId) return;
     setUploadingArtwork(true);
-    setUploadError(null);
+    setAddError(null);
 
     try {
       const result = await api.uploadShareArtwork(id, shareId, file);
@@ -242,7 +213,7 @@ export default function ShareManagePage() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Artwork upload failed';
       console.error('Failed to upload artwork:', msg);
-      setUploadError(msg);
+      setAddError(msg);
     } finally {
       setUploadingArtwork(false);
       if (artworkInputRef.current) artworkInputRef.current.value = '';
@@ -316,14 +287,13 @@ export default function ShareManagePage() {
     }
   }, [share, id, shareId, loadData]);
 
-  // ── Audio player ──
-
-  const getTrackAudioUrl = useCallback((trackId: string) => {
-    const token = api.getToken();
-    return `${API_BASE}/api/share/${id}/share/${shareId}/tracks/${trackId}/audio${token ? `?token=${token}` : ''}`;
-  }, [id, shareId]);
+  // ── Audio player (streams directly from Dropbox) ──
 
   const handlePlayTrack = useCallback((trackId: string) => {
+    if (!share) return;
+    const track = share.tracks.find(t => t.id === trackId);
+    if (!track) return;
+
     // If clicking the same track, toggle play/pause
     if (playingTrackId === trackId && audioRef.current) {
       if (isPlaying) {
@@ -342,8 +312,8 @@ export default function ShareManagePage() {
       audioRef.current = null;
     }
 
-    const audioUrl = getTrackAudioUrl(trackId);
-    const audio = new Audio(audioUrl);
+    // Stream directly from Dropbox
+    const audio = new Audio(track.dropbox_url);
     audioRef.current = audio;
 
     audio.addEventListener('timeupdate', () => setCurrentTime(audio.currentTime));
@@ -357,7 +327,7 @@ export default function ShareManagePage() {
     setIsPlaying(true);
     setCurrentTime(0);
     setDuration(0);
-  }, [playingTrackId, isPlaying, getTrackAudioUrl]);
+  }, [share, playingTrackId, isPlaying]);
 
   const handleSeek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current || !duration) return;
@@ -365,18 +335,6 @@ export default function ShareManagePage() {
     const ratio = (e.clientX - rect.left) / rect.width;
     audioRef.current.currentTime = ratio * duration;
   }, [duration]);
-
-  // Reload track data when background uploads complete for this share
-  useEffect(() => {
-    onBatchComplete.current = (projectId: string, sid: string) => {
-      if (projectId === id && sid === shareId) {
-        loadData();
-      }
-    };
-    return () => {
-      onBatchComplete.current = null;
-    };
-  }, [id, shareId, loadData, onBatchComplete]);
 
   // Cleanup audio on unmount
   useEffect(() => {
@@ -459,57 +417,50 @@ export default function ShareManagePage() {
               )}
             </div>
 
-            {/* Upload tracks */}
-            <div className="flex items-center justify-between mb-5">
-              <span className="text-label font-bold uppercase tracking-widest text-neutral-400">
-                Tracks ({share.tracks.length})
-              </span>
-              <button
-                onClick={() => audioInputRef.current?.click()}
-                className="px-4 py-1.5 bg-black text-white text-micro font-bold uppercase tracking-widest rounded-sm hover:bg-neutral-800 transition-colors duration-fast"
-              >
-                Upload Tracks
-              </button>
-              <input
-                ref={audioInputRef}
-                type="file"
-                accept="audio/*"
-                multiple
-                onChange={handleUploadTracks}
-                className="hidden"
-              />
+            {/* Add track via Dropbox link */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-label font-bold uppercase tracking-widest text-neutral-400">
+                  Tracks ({share.tracks.length})
+                </span>
+              </div>
+              <div className="flex items-stretch gap-2">
+                <textarea
+                  value={dropboxInput}
+                  onChange={(e) => setDropboxInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAddTrack(); } }}
+                  placeholder="Paste Dropbox link(s) here — one per line for multiple tracks"
+                  className="flex-1 text-small bg-neutral-50 border border-neutral-200 rounded-sm px-3 py-2.5 outline-none focus:border-neutral-400 resize-none min-h-[42px]"
+                  rows={dropboxInput.includes('\n') ? 3 : 1}
+                />
+                <button
+                  onClick={handleAddTrack}
+                  disabled={addingTrack || !dropboxInput.trim()}
+                  className="px-4 py-2 bg-black text-white text-micro font-bold uppercase tracking-widest rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50 shrink-0 self-end"
+                >
+                  {addingTrack ? 'Adding...' : 'Add'}
+                </button>
+              </div>
+              <p className="text-micro text-neutral-400 mt-1.5">
+                In Dropbox, right-click a file → Copy link → paste here. Shift+Enter for multiple lines.
+              </p>
             </div>
 
-            {/* Upload error */}
-            {uploadError && (
+            {/* Error */}
+            {addError && (
               <div className="mb-4 px-4 py-3 border border-red-200 rounded-sm bg-red-50">
                 <div className="flex items-center justify-between">
-                  <span className="text-small text-red-600">{uploadError}</span>
-                  <button onClick={() => setUploadError(null)} className="text-red-400 hover:text-red-600 text-small">×</button>
+                  <span className="text-small text-red-600">{addError}</span>
+                  <button onClick={() => setAddError(null)} className="text-red-400 hover:text-red-600 text-small">×</button>
                 </div>
               </div>
             )}
 
-            {/* Track list / drop zone */}
-            <div
-              onDragEnter={handleDragEnter}
-              onDragLeave={handleDragLeave}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              className="relative"
-            >
-              {/* Drag overlay */}
-              {isDragging && (
-                <div className="absolute inset-0 z-10 border-2 border-dashed border-black rounded-sm bg-neutral-50/90 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-display font-bold text-black mb-2">+</span>
-                  <span className="text-label font-bold uppercase tracking-widest text-black">Drop audio files here</span>
-                </div>
-              )}
-
+            {/* Track list */}
             {share.tracks.length === 0 ? (
               <div className="border border-dashed border-neutral-300 rounded-sm p-12 text-center">
                 <p className="text-body text-neutral-500 mb-1">No tracks yet.</p>
-                <p className="text-small text-neutral-400">Drag audio files here or click Upload Tracks.</p>
+                <p className="text-small text-neutral-400">Paste a Dropbox link above to add your first track.</p>
               </div>
             ) : (
               <div className="space-y-1">
@@ -558,11 +509,8 @@ export default function ShareManagePage() {
                     </div>
 
                     {/* Meta */}
-                    <span className="text-micro text-neutral-400 shrink-0">
-                      {formatBytes(track.file_size_bytes)}
-                    </span>
-                    <span className="text-micro text-neutral-400 shrink-0">
-                      {formatDuration(track.duration_ms)}
+                    <span className="text-micro text-neutral-400 shrink-0 uppercase">
+                      {track.format}
                     </span>
                     <span className="text-micro text-neutral-400 shrink-0">
                       {track.play_count} play{track.play_count !== 1 ? 's' : ''}
@@ -635,7 +583,6 @@ export default function ShareManagePage() {
                 </div>
               );
             })()}
-            </div>
           </div>
 
           {/* Right column: artwork + settings */}
@@ -739,7 +686,6 @@ export default function ShareManagePage() {
                   <button
                     onClick={() => {
                       if (share.password_hash) {
-                        // Remove password
                         handleSetPassword();
                       } else {
                         setShowPasswordInput(!showPasswordInput);
@@ -798,7 +744,7 @@ export default function ShareManagePage() {
             <div>
               {showDeleteConfirm ? (
                 <div className="border border-red-200 rounded-sm p-4">
-                  <p className="text-small text-red-600 mb-3">Delete this share link and all its tracks? This can't be undone.</p>
+                  <p className="text-small text-red-600 mb-3">Delete this share link and all its tracks? This can&apos;t be undone.</p>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleDeleteProject}

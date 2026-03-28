@@ -10,7 +10,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 interface PublicTrack {
   id: string;
   title: string;
-  storage_key: string;
+  dropbox_url: string;
   format: string;
   duration_ms: number | null;
   sort_order: number;
@@ -107,7 +107,7 @@ export default function ListenerPage() {
       audioRef.current.pause();
     }
 
-    const audio = new Audio(track.storage_key);
+    const audio = new Audio(track.dropbox_url);
     audioRef.current = audio;
 
     audio.addEventListener('timeupdate', () => setCurrentTime(audio.currentTime));
@@ -272,7 +272,7 @@ export default function ListenerPage() {
                 </span>
                 {share.downloads_enabled && (
                   <a
-                    href={track.storage_key}
+                    href={track.dropbox_url}
                     download={`${track.title}.${track.format}`}
                     onClick={(e) => e.stopPropagation()}
                     className={`text-micro ${textSecondary} ${isDark ? 'hover:text-white' : 'hover:text-black'} transition-colors duration-fast`}

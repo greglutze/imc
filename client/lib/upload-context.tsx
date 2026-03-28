@@ -37,9 +37,15 @@ export function UploadProvider({ children }: { children: ReactNode }) {
     if (processingRef.current) return;
     processingRef.current = true;
 
+    let lastProjectId = '';
+    let lastShareId = '';
+
     while (queueRef.current.length > 0) {
       const item = queueRef.current[0];
       if (!item) break;
+
+      lastProjectId = item.projectId;
+      lastShareId = item.shareId;
 
       // Mark as uploading
       setUploads(prev => prev.map(u => u.id === item.id ? { ...u, status: 'uploading' as UploadStatus } : u));
@@ -49,6 +55,7 @@ export function UploadProvider({ children }: { children: ReactNode }) {
         setUploads(prev => prev.map(u => u.id === item.id ? { ...u, status: 'done' as UploadStatus } : u));
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : 'Upload failed';
+        console.error('Upload failed for', item.file.name, msg);
         setUploads(prev => prev.map(u => u.id === item.id ? { ...u, status: 'error' as UploadStatus, error: msg } : u));
       }
 
@@ -57,18 +64,14 @@ export function UploadProvider({ children }: { children: ReactNode }) {
 
     processingRef.current = false;
 
-    // Notify the manage page that uploads finished
-    setUploads(prev => {
-      const lastDone = prev.filter(u => u.status === 'done');
-      if (lastDone.length > 0 && onBatchComplete.current) {
-        const last = lastDone[lastDone.length - 1];
-        onBatchComplete.current(last.projectId, last.shareId);
-      }
-      return prev;
-    });
+    // Notify the manage page that uploads finished (outside of setState to avoid side-effect issues)
+    if (lastProjectId && lastShareId && onBatchComplete.current) {
+      onBatchComplete.current(lastProjectId, lastShareId);
+    }
   }, []);
 
   const addUploads = useCallback((projectId: string, shareId: string, files: File[]) => {
+    console.log('[UploadContext] addUploads called:', { projectId, shareId, fileCount: files.length, fileNames: files.map(f => f.name) });
     const newItems: UploadItem[] = files.map(file => ({
       id: `upload-${++uploadIdCounter}`,
       file,

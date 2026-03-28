@@ -1,11 +1,10 @@
 import { Router, Request, Response } from 'express';
 import express from 'express';
 import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
 import pool from '../config/database';
 import { authMiddleware } from '../middleware/auth';
 import { AuthRequest } from '../types';
-import { uploadFile, uploadArtwork, deleteFile } from '../services/storage';
+import { uploadArtwork } from '../services/storage';
 
 const router = Router();
 
@@ -13,12 +12,51 @@ function generateSlug(): string {
   return crypto.randomBytes(6).toString('base64url').toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 10);
 }
 
-function cleanFilename(filename: string): string {
-  return filename
-    .replace(/\.[^.]+$/, '') // remove extension
-    .replace(/[_-]/g, ' ')  // replace underscores/dashes with spaces
-    .replace(/\s+/g, ' ')   // normalize whitespace
-    .trim();
+/**
+ * Convert a Dropbox shared link to a direct download/streaming URL.
+ * e.g. https://www.dropbox.com/scl/fi/.../file.mp3?rlkey=abc&dl=0
+ *   → https://dl.dropboxusercontent.com/scl/fi/.../file.mp3?rlkey=abc&dl=1
+ */
+function toDropboxDirectUrl(url: string): string {
+  let direct = url.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+  direct = direct.replace(/[?&]dl=0/, (m) => m[0] + 'dl=1');
+  if (!direct.includes('dl=1')) {
+    direct += (direct.includes('?') ? '&' : '?') + 'dl=1';
+  }
+  return direct;
+}
+
+/**
+ * Extract a clean track title from a Dropbox URL or filename.
+ */
+function titleFromUrl(url: string): string {
+  try {
+    const pathname = new URL(url).pathname;
+    const filename = decodeURIComponent(pathname.split('/').pop() || 'Untitled');
+    return filename
+      .replace(/\.[^.]+$/, '')  // remove extension
+      .replace(/[_-]/g, ' ')   // replace underscores/dashes with spaces
+      .replace(/\s+/g, ' ')    // normalize whitespace
+      .trim() || 'Untitled';
+  } catch {
+    return 'Untitled';
+  }
+}
+
+/**
+ * Extract file extension from a Dropbox URL.
+ */
+function formatFromUrl(url: string): string {
+  try {
+    const pathname = new URL(url).pathname;
+    const ext = pathname.split('.').pop()?.toLowerCase();
+    if (ext && ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'wma', 'aiff'].includes(ext)) {
+      return ext;
+    }
+  } catch {
+    // ignore
+  }
+  return 'mp3';
 }
 
 // ── Authenticated routes (artist dashboard) ──
@@ -115,7 +153,7 @@ authRouter.get('/:projectId/share/:shareId', async (req: AuthRequest, res: Respo
     }
 
     const tracksResult = await pool.query(
-      'SELECT id, share_project_id, title, original_filename, format, duration_ms, file_size_bytes, sort_order, play_count, created_at FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
+      'SELECT id, share_project_id, title, original_filename, dropbox_url, format, duration_ms, file_size_bytes, sort_order, play_count, created_at FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
       [shareId]
     );
 
@@ -192,7 +230,6 @@ authRouter.patch('/:projectId/share/:shareId/password', async (req: AuthRequest,
       return;
     }
 
-    // If password is null/empty, remove password protection
     const hash = password ? crypto.createHash('sha256').update(password).digest('hex') : null;
 
     await pool.query(
@@ -235,45 +272,7 @@ authRouter.post('/:projectId/share/:shareId/regenerate', async (req: AuthRequest
   }
 });
 
-// Upload artwork
-authRouter.post('/:projectId/share/:shareId/artwork', async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    const user = req.user!;
-    const { projectId, shareId } = req.params;
-    const { image_data, filename } = req.body;
-
-    const projectCheck = await pool.query(
-      'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
-      [projectId, user.org_id]
-    );
-    if (projectCheck.rows.length === 0) {
-      res.status(403).json({ error: 'Not authorized' });
-      return;
-    }
-
-    // image_data is a data URL
-    const match = image_data.match(/^data:(image\/\w+);base64,(.+)$/);
-    if (!match) {
-      res.status(400).json({ error: 'Invalid image data' });
-      return;
-    }
-
-    const buffer = Buffer.from(match[2], 'base64');
-    const result = await uploadArtwork(buffer, filename || 'artwork.jpg', match[1]);
-
-    await pool.query(
-      'UPDATE share_projects SET artwork_url = $1, updated_at = NOW() WHERE id = $2 AND project_id = $3',
-      [result.url, shareId, projectId]
-    );
-
-    res.json({ artwork_url: result.url });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Upload artwork (raw binary)
+// Upload artwork (raw binary — artwork is small, still OK to store in DB)
 authRouter.post(
   '/:projectId/share/:shareId/artwork/upload',
   express.raw({ limit: '10mb', type: ['image/*', 'application/octet-stream'] }),
@@ -309,12 +308,23 @@ authRouter.post(
   }
 );
 
-// Upload tracks (audio files as base64 — legacy)
+// Add track via Dropbox link
 authRouter.post('/:projectId/share/:shareId/tracks', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const user = req.user!;
     const { projectId, shareId } = req.params;
-    const { files } = req.body; // Array of { data, filename, content_type }
+    const { dropbox_url, title } = req.body;
+
+    if (!dropbox_url || typeof dropbox_url !== 'string') {
+      res.status(400).json({ error: 'dropbox_url is required' });
+      return;
+    }
+
+    // Validate it looks like a Dropbox link
+    if (!dropbox_url.includes('dropbox.com') && !dropbox_url.includes('dropboxusercontent.com')) {
+      res.status(400).json({ error: 'Please provide a Dropbox shared link' });
+      return;
+    }
 
     const projectCheck = await pool.query(
       'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
@@ -331,27 +341,80 @@ authRouter.post('/:projectId/share/:shareId/tracks', async (req: AuthRequest, re
       [shareId]
     );
     const currentCount = parseInt(countResult.rows[0].count, 10);
-    if (currentCount + files.length > 50) {
+    if (currentCount >= 50) {
+      res.status(400).json({ error: 'Maximum 50 tracks per project' });
+      return;
+    }
+
+    const directUrl = toDropboxDirectUrl(dropbox_url);
+    const trackTitle = title || titleFromUrl(dropbox_url);
+    const format = formatFromUrl(dropbox_url);
+
+    const trackResult = await pool.query(
+      `INSERT INTO share_tracks (share_project_id, title, dropbox_url, format, sort_order)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, share_project_id, title, original_filename, dropbox_url, format, duration_ms, file_size_bytes, sort_order, play_count, created_at`,
+      [shareId, trackTitle, directUrl, format, currentCount]
+    );
+
+    await pool.query(
+      'UPDATE share_projects SET updated_at = NOW() WHERE id = $1',
+      [shareId]
+    );
+
+    res.json(trackResult.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Add multiple tracks via Dropbox links
+authRouter.post('/:projectId/share/:shareId/tracks/batch', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const user = req.user!;
+    const { projectId, shareId } = req.params;
+    const { links } = req.body; // Array of { dropbox_url, title? }
+
+    if (!Array.isArray(links) || links.length === 0) {
+      res.status(400).json({ error: 'links array is required' });
+      return;
+    }
+
+    const projectCheck = await pool.query(
+      'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
+      [projectId, user.org_id]
+    );
+    if (projectCheck.rows.length === 0) {
+      res.status(403).json({ error: 'Not authorized' });
+      return;
+    }
+
+    const countResult = await pool.query(
+      'SELECT COUNT(*) FROM share_tracks WHERE share_project_id = $1',
+      [shareId]
+    );
+    const currentCount = parseInt(countResult.rows[0].count, 10);
+    if (currentCount + links.length > 50) {
       res.status(400).json({ error: 'Maximum 50 tracks per project' });
       return;
     }
 
     const tracks = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const buffer = Buffer.from(file.data, 'base64');
-      const storageResult = await uploadFile(buffer, file.filename, file.content_type);
+    for (let i = 0; i < links.length; i++) {
+      const { dropbox_url, title } = links[i];
+      if (!dropbox_url || !dropbox_url.includes('dropbox')) continue;
 
-      const ext = file.filename.split('.').pop()?.toLowerCase() || 'mp3';
-      const title = cleanFilename(file.filename);
+      const directUrl = toDropboxDirectUrl(dropbox_url);
+      const trackTitle = title || titleFromUrl(dropbox_url);
+      const format = formatFromUrl(dropbox_url);
 
       const trackResult = await pool.query(
-        `INSERT INTO share_tracks (share_project_id, title, original_filename, storage_key, format, file_size_bytes, sort_order)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
-         RETURNING id, share_project_id, title, original_filename, format, file_size_bytes, sort_order, play_count, created_at`,
-        [shareId, title, file.filename, storageResult.url, ext, buffer.length, currentCount + i]
+        `INSERT INTO share_tracks (share_project_id, title, dropbox_url, format, sort_order)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id, share_project_id, title, original_filename, dropbox_url, format, duration_ms, file_size_bytes, sort_order, play_count, created_at`,
+        [shareId, trackTitle, directUrl, format, currentCount + i]
       );
-
       tracks.push(trackResult.rows[0]);
     }
 
@@ -361,128 +424,6 @@ authRouter.post('/:projectId/share/:shareId/tracks', async (req: AuthRequest, re
     );
 
     res.json({ tracks });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Upload single track (raw binary)
-authRouter.post(
-  '/:projectId/share/:shareId/tracks/upload',
-  express.raw({ limit: '50mb', type: ['audio/*', 'video/*', 'application/octet-stream'] }),
-  async (req: AuthRequest, res: Response): Promise<void> => {
-    try {
-      const user = req.user!;
-      const { projectId, shareId } = req.params;
-      const filename = decodeURIComponent((req.headers['x-filename'] as string) || 'track.mp3');
-      const contentType = req.headers['content-type'] || 'audio/mpeg';
-
-      const projectCheck = await pool.query(
-        'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
-        [projectId, user.org_id]
-      );
-      if (projectCheck.rows.length === 0) {
-        res.status(403).json({ error: 'Not authorized' });
-        return;
-      }
-
-      // Check track limit
-      const countResult = await pool.query(
-        'SELECT COUNT(*) FROM share_tracks WHERE share_project_id = $1',
-        [shareId]
-      );
-      const currentCount = parseInt(countResult.rows[0].count, 10);
-      if (currentCount >= 50) {
-        res.status(400).json({ error: 'Maximum 50 tracks per project' });
-        return;
-      }
-
-      const buffer = req.body as Buffer;
-      const storageResult = await uploadFile(buffer, filename, contentType);
-
-      const ext = filename.split('.').pop()?.toLowerCase() || 'mp3';
-      const title = cleanFilename(filename);
-
-      const trackResult = await pool.query(
-        `INSERT INTO share_tracks (share_project_id, title, original_filename, storage_key, format, file_size_bytes, sort_order)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
-         RETURNING id, share_project_id, title, original_filename, format, file_size_bytes, sort_order, play_count, created_at`,
-        [shareId, title, filename, storageResult.url, ext, buffer.length, currentCount]
-      );
-
-      await pool.query(
-        'UPDATE share_projects SET updated_at = NOW() WHERE id = $1',
-        [shareId]
-      );
-
-      res.json(trackResult.rows[0]);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  }
-);
-
-// Stream track audio (on main router — auth via query param since Audio element can't set headers)
-router.get('/share/:projectId/share/:shareId/tracks/:trackId/audio', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { projectId, shareId, trackId } = req.params;
-
-    // Auth via query param (Audio element can't set Authorization header)
-    const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '');
-    if (!token) {
-      res.status(401).json({ error: 'Not authorized' });
-      return;
-    }
-
-    let decoded: { org_id: string };
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET || '') as { org_id: string };
-    } catch {
-      res.status(401).json({ error: 'Invalid token' });
-      return;
-    }
-
-    const projectCheck = await pool.query(
-      'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
-      [projectId, decoded.org_id]
-    );
-    if (projectCheck.rows.length === 0) {
-      res.status(403).json({ error: 'Not authorized' });
-      return;
-    }
-
-    const trackResult = await pool.query(
-      'SELECT storage_key, format, original_filename FROM share_tracks WHERE id = $1 AND share_project_id = $2',
-      [trackId, shareId]
-    );
-    if (trackResult.rows.length === 0) {
-      res.status(404).json({ error: 'Track not found' });
-      return;
-    }
-
-    const storageKey: string = trackResult.rows[0].storage_key;
-
-    // If storage_key is a data URL (stub storage), decode and stream the buffer
-    if (storageKey.startsWith('data:')) {
-      const match = storageKey.match(/^data:([^;]+);base64,(.+)$/);
-      if (!match) {
-        res.status(500).json({ error: 'Invalid storage data' });
-        return;
-      }
-      const contentType = match[1];
-      const buffer = Buffer.from(match[2], 'base64');
-
-      res.setHeader('Content-Type', contentType);
-      res.setHeader('Content-Length', buffer.length);
-      res.setHeader('Accept-Ranges', 'bytes');
-      res.send(buffer);
-      return;
-    }
-
-    // When R2/S3 is configured, redirect to signed URL
-    res.redirect(storageKey);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
@@ -524,7 +465,7 @@ authRouter.patch('/:projectId/share/:shareId/reorder', async (req: AuthRequest, 
   try {
     const user = req.user!;
     const { projectId, shareId } = req.params;
-    const { track_ids } = req.body; // Array of track IDs in new order
+    const { track_ids } = req.body;
 
     const projectCheck = await pool.query(
       'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
@@ -543,7 +484,7 @@ authRouter.patch('/:projectId/share/:shareId/reorder', async (req: AuthRequest, 
     }
 
     const tracksResult = await pool.query(
-      'SELECT id, share_project_id, title, original_filename, format, duration_ms, file_size_bytes, sort_order, play_count, created_at FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
+      'SELECT id, share_project_id, title, original_filename, dropbox_url, format, duration_ms, file_size_bytes, sort_order, play_count, created_at FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
       [shareId]
     );
 
@@ -569,18 +510,10 @@ authRouter.delete('/:projectId/share/:shareId/tracks/:trackId', async (req: Auth
       return;
     }
 
-    const trackResult = await pool.query(
-      'SELECT storage_key FROM share_tracks WHERE id = $1 AND share_project_id = $2',
+    await pool.query(
+      'DELETE FROM share_tracks WHERE id = $1 AND share_project_id = $2',
       [trackId, shareId]
     );
-
-    if (trackResult.rows.length > 0) {
-      await deleteFile(trackResult.rows[0].storage_key);
-      await pool.query(
-        'DELETE FROM share_tracks WHERE id = $1 AND share_project_id = $2',
-        [trackId, shareId]
-      );
-    }
 
     res.json({ deleted: true });
   } catch (err) {
@@ -660,7 +593,7 @@ publicRouter.get('/s/:slug', async (req: Request, res: Response): Promise<void> 
     }
 
     const tracksResult = await pool.query(
-      'SELECT id, title, storage_key, format, duration_ms, sort_order FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
+      'SELECT id, title, dropbox_url, format, duration_ms, sort_order FROM share_tracks WHERE share_project_id = $1 ORDER BY sort_order ASC',
       [share.id]
     );
 
@@ -724,65 +657,6 @@ publicRouter.post('/s/:slug/play/:trackId', async (req: Request, res: Response):
     );
 
     res.json({ ok: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Stream track audio (public)
-publicRouter.get('/s/:slug/tracks/:trackId/audio', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { slug, trackId } = req.params;
-
-    // Verify the share is public
-    const shareResult = await pool.query(
-      'SELECT id, is_public, password_hash FROM share_projects WHERE slug = $1',
-      [slug]
-    );
-    if (shareResult.rows.length === 0 || !shareResult.rows[0].is_public) {
-      res.status(404).json({ error: 'Not found' });
-      return;
-    }
-
-    // If password-protected, verify token
-    const share = shareResult.rows[0];
-    if (share.password_hash) {
-      const token = req.headers['x-share-token'];
-      if (!token || token !== share.password_hash) {
-        res.status(403).json({ error: 'Password required' });
-        return;
-      }
-    }
-
-    const trackResult = await pool.query(
-      'SELECT storage_key, format FROM share_tracks WHERE id = $1 AND share_project_id = $2',
-      [trackId, share.id]
-    );
-    if (trackResult.rows.length === 0) {
-      res.status(404).json({ error: 'Track not found' });
-      return;
-    }
-
-    const storageKey: string = trackResult.rows[0].storage_key;
-
-    if (storageKey.startsWith('data:')) {
-      const match = storageKey.match(/^data:([^;]+);base64,(.+)$/);
-      if (!match) {
-        res.status(500).json({ error: 'Invalid storage data' });
-        return;
-      }
-      const contentType = match[1];
-      const buffer = Buffer.from(match[2], 'base64');
-
-      res.setHeader('Content-Type', contentType);
-      res.setHeader('Content-Length', buffer.length);
-      res.setHeader('Accept-Ranges', 'bytes');
-      res.send(buffer);
-      return;
-    }
-
-    res.redirect(storageKey);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
