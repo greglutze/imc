@@ -9,6 +9,8 @@ import { useAuth } from '../../../../../lib/auth-context';
 import { api } from '../../../../../lib/api';
 import type { ShareProjectWithTracks, ShareTrack, Project } from '../../../../../lib/api';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 function formatBytes(bytes: number | null): string {
   if (!bytes) return '—';
   if (bytes < 1024) return `${bytes} B`;
@@ -22,6 +24,12 @@ function formatDuration(ms: number | null): string {
   const m = Math.floor(s / 60);
   const sec = s % 60;
   return `${m}:${sec.toString().padStart(2, '0')}`;
+}
+
+function formatTime(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 export default function ShareManagePage() {
@@ -47,6 +55,13 @@ export default function ShareManagePage() {
   const [copied, setCopied] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+
+  // Player state
+  const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const audioInputRef = useRef<HTMLInputElement>(null);
   const artworkInputRef = useRef<HTMLInputElement>(null);
@@ -267,6 +282,66 @@ export default function ShareManagePage() {
     }
   }, [share, id, shareId, loadData]);
 
+  // ── Audio player ──
+
+  const getTrackAudioUrl = useCallback((trackId: string) => {
+    const token = api.getToken();
+    return `${API_BASE}/api/share/${id}/share/${shareId}/tracks/${trackId}/audio${token ? `?token=${token}` : ''}`;
+  }, [id, shareId]);
+
+  const handlePlayTrack = useCallback((trackId: string) => {
+    // If clicking the same track, toggle play/pause
+    if (playingTrackId === trackId && audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
+      return;
+    }
+
+    // Stop current audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    const audioUrl = getTrackAudioUrl(trackId);
+    const audio = new Audio(audioUrl);
+    audioRef.current = audio;
+
+    audio.addEventListener('timeupdate', () => setCurrentTime(audio.currentTime));
+    audio.addEventListener('loadedmetadata', () => setDuration(audio.duration));
+    audio.addEventListener('ended', () => {
+      setIsPlaying(false);
+    });
+
+    audio.play();
+    setPlayingTrackId(trackId);
+    setIsPlaying(true);
+    setCurrentTime(0);
+    setDuration(0);
+  }, [playingTrackId, isPlaying, getTrackAudioUrl]);
+
+  const handleSeek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    audioRef.current.currentTime = ratio * duration;
+  }, [duration]);
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
   if (authLoading || pageLoading) {
     return (
       <div className="min-h-screen bg-white">
@@ -378,13 +453,25 @@ export default function ShareManagePage() {
               </div>
             ) : (
               <div className="space-y-1">
-                {share.tracks.map((track: ShareTrack, idx: number) => (
+                {share.tracks.map((track: ShareTrack, idx: number) => {
+                  const isActiveTrack = playingTrackId === track.id;
+                  return (
                   <div
                     key={track.id}
-                    className="flex items-center gap-3 px-4 py-3 border border-neutral-200 rounded-sm group hover:border-neutral-300 transition-colors duration-fast"
+                    className={`flex items-center gap-3 px-4 py-3 border rounded-sm group transition-colors duration-fast ${isActiveTrack ? 'border-black bg-neutral-50' : 'border-neutral-200 hover:border-neutral-300'}`}
                   >
+                    {/* Play/Pause button */}
+                    <button
+                      onClick={() => handlePlayTrack(track.id)}
+                      className={`w-7 h-7 flex items-center justify-center rounded-full shrink-0 transition-colors duration-fast ${isActiveTrack ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-black'}`}
+                    >
+                      <span className="text-[10px] leading-none">
+                        {isActiveTrack && isPlaying ? '▮▮' : '▶'}
+                      </span>
+                    </button>
+
                     {/* Order */}
-                    <span className="text-micro text-neutral-400 w-5 text-center shrink-0">
+                    <span className="text-micro text-neutral-400 w-4 text-center shrink-0">
                       {idx + 1}
                     </span>
 
@@ -447,9 +534,47 @@ export default function ShareManagePage() {
                       ×
                     </button>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
+
+            {/* Player bar */}
+            {playingTrackId && share.tracks.length > 0 && (() => {
+              const activeTrack = share.tracks.find((t) => t.id === playingTrackId);
+              if (!activeTrack) return null;
+              return (
+                <div className="mt-6 border border-neutral-200 rounded-sm px-5 py-4">
+                  <div className="flex items-center gap-4 mb-3">
+                    <button
+                      onClick={() => handlePlayTrack(playingTrackId)}
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-black text-white shrink-0"
+                    >
+                      <span className="text-[11px] leading-none">
+                        {isPlaying ? '▮▮' : '▶'}
+                      </span>
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-body font-bold text-black truncate block">
+                        {activeTrack.title}
+                      </span>
+                    </div>
+                    <span className="text-micro text-neutral-400 shrink-0">
+                      {formatTime(currentTime)} / {formatTime(duration || 0)}
+                    </span>
+                  </div>
+                  <div
+                    className="w-full h-1.5 bg-neutral-200 rounded-full cursor-pointer"
+                    onClick={handleSeek}
+                  >
+                    <div
+                      className="h-full bg-black rounded-full transition-all duration-100"
+                      style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
+                    />
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Right column: artwork + settings */}

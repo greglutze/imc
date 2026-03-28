@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import express from 'express';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import pool from '../config/database';
 import { authMiddleware } from '../middleware/auth';
 import { AuthRequest } from '../types';
@@ -423,6 +424,71 @@ authRouter.post(
   }
 );
 
+// Stream track audio (on main router — auth via query param since Audio element can't set headers)
+router.get('/share/:projectId/share/:shareId/tracks/:trackId/audio', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { projectId, shareId, trackId } = req.params;
+
+    // Auth via query param (Audio element can't set Authorization header)
+    const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '');
+    if (!token) {
+      res.status(401).json({ error: 'Not authorized' });
+      return;
+    }
+
+    let decoded: { org_id: string };
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET || '') as { org_id: string };
+    } catch {
+      res.status(401).json({ error: 'Invalid token' });
+      return;
+    }
+
+    const projectCheck = await pool.query(
+      'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
+      [projectId, decoded.org_id]
+    );
+    if (projectCheck.rows.length === 0) {
+      res.status(403).json({ error: 'Not authorized' });
+      return;
+    }
+
+    const trackResult = await pool.query(
+      'SELECT storage_key, format, original_filename FROM share_tracks WHERE id = $1 AND share_project_id = $2',
+      [trackId, shareId]
+    );
+    if (trackResult.rows.length === 0) {
+      res.status(404).json({ error: 'Track not found' });
+      return;
+    }
+
+    const storageKey: string = trackResult.rows[0].storage_key;
+
+    // If storage_key is a data URL (stub storage), decode and stream the buffer
+    if (storageKey.startsWith('data:')) {
+      const match = storageKey.match(/^data:([^;]+);base64,(.+)$/);
+      if (!match) {
+        res.status(500).json({ error: 'Invalid storage data' });
+        return;
+      }
+      const contentType = match[1];
+      const buffer = Buffer.from(match[2], 'base64');
+
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Length', buffer.length);
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.send(buffer);
+      return;
+    }
+
+    // When R2/S3 is configured, redirect to signed URL
+    res.redirect(storageKey);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Rename a track
 authRouter.patch('/:projectId/share/:shareId/tracks/:trackId', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -658,6 +724,65 @@ publicRouter.post('/s/:slug/play/:trackId', async (req: Request, res: Response):
     );
 
     res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Stream track audio (public)
+publicRouter.get('/s/:slug/tracks/:trackId/audio', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { slug, trackId } = req.params;
+
+    // Verify the share is public
+    const shareResult = await pool.query(
+      'SELECT id, is_public, password_hash FROM share_projects WHERE slug = $1',
+      [slug]
+    );
+    if (shareResult.rows.length === 0 || !shareResult.rows[0].is_public) {
+      res.status(404).json({ error: 'Not found' });
+      return;
+    }
+
+    // If password-protected, verify token
+    const share = shareResult.rows[0];
+    if (share.password_hash) {
+      const token = req.headers['x-share-token'];
+      if (!token || token !== share.password_hash) {
+        res.status(403).json({ error: 'Password required' });
+        return;
+      }
+    }
+
+    const trackResult = await pool.query(
+      'SELECT storage_key, format FROM share_tracks WHERE id = $1 AND share_project_id = $2',
+      [trackId, share.id]
+    );
+    if (trackResult.rows.length === 0) {
+      res.status(404).json({ error: 'Track not found' });
+      return;
+    }
+
+    const storageKey: string = trackResult.rows[0].storage_key;
+
+    if (storageKey.startsWith('data:')) {
+      const match = storageKey.match(/^data:([^;]+);base64,(.+)$/);
+      if (!match) {
+        res.status(500).json({ error: 'Invalid storage data' });
+        return;
+      }
+      const contentType = match[1];
+      const buffer = Buffer.from(match[2], 'base64');
+
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Length', buffer.length);
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.send(buffer);
+      return;
+    }
+
+    res.redirect(storageKey);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
