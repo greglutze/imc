@@ -175,7 +175,7 @@ export interface MoodboardResponse {
   count: number;
 }
 
-/* ———————— Lyric Advisor Types ———————— */
+/* ———————— LyriCol Types ———————— */
 
 export type LyricEntryMode = 'paste' | 'conversation' | 'vibe';
 
@@ -553,7 +553,7 @@ class ApiClient {
     });
   }
 
-  /* — Lyric Advisor — */
+  /* — LyriCol — */
 
   async getLyricSessions(projectId: string): Promise<{ sessions: LyricSessionListItem[] }> {
     return this.request(`/api/lyric-advisor/${projectId}`);

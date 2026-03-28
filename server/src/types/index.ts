@@ -364,7 +364,7 @@ export interface ShareTrack {
   created_at: Date;
 }
 
-// Lyric Advisor types
+// LyriCol types
 
 export type LyricSessionEntryMode = 'paste' | 'conversation' | 'vibe';
 

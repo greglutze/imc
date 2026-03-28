@@ -79,7 +79,7 @@ export default function LyricAdvisorPage() {
           <div className="flex items-start justify-between mb-12">
             <div>
               <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-                Lyric Advisor
+                LyriCol
               </p>
               <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
                 Write Better Lyrics

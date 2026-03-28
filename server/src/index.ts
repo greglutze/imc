@@ -263,7 +263,7 @@ async function migrate(): Promise<void> {
       console.log('Share projects and tracks tables created.');
     }
 
-    // Lyric Advisor migration
+    // LyriCol migration
     const lyricSessionsCheck = await pool.query(
       `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'lyric_sessions')`
     );
