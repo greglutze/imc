@@ -218,6 +218,28 @@ async function migrate(): Promise<void> {
       await pool.query(`ALTER TABLE projects ADD COLUMN moodboard_brief jsonb DEFAULT NULL`);
       console.log('moodboard_brief column added.');
     }
+    // Lyric Advisor migration
+    const lyricSessionsCheck = await pool.query(
+      `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'lyric_sessions')`
+    );
+    if (!lyricSessionsCheck.rows[0].exists) {
+      console.log('Running lyric sessions migration...');
+      await pool.query(`
+        CREATE TABLE lyric_sessions (
+          id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+          project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+          title text,
+          lyrics text NOT NULL DEFAULT '',
+          messages jsonb DEFAULT '[]',
+          entry_mode text NOT NULL DEFAULT 'conversation' CHECK (entry_mode IN ('paste', 'conversation', 'vibe')),
+          vibe_context text,
+          created_at timestamptz DEFAULT now(),
+          updated_at timestamptz DEFAULT now()
+        );
+        CREATE INDEX idx_lyric_sessions_project_id ON lyric_sessions(project_id);
+      `);
+      console.log('Lyric sessions table created.');
+    }
   } catch (err) {
     console.error('Migration error:', err);
   }

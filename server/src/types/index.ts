@@ -330,6 +330,30 @@ export interface MoodboardBrief {
   previous_prose: string | null;
 }
 
+// Lyric Advisor types
+
+export type LyricSessionEntryMode = 'paste' | 'conversation' | 'vibe';
+
+export interface LyricSessionMessage {
+  role: 'user' | 'advisor';
+  content: string;
+  type: 'chat' | 'rhyme' | 'synonym' | 'structure' | 'coherence' | 'nudge';
+  dismissed?: boolean;
+  timestamp: string;
+}
+
+export interface LyricSession {
+  id: string;
+  project_id: string;
+  title: string | null;
+  lyrics: string;
+  messages: LyricSessionMessage[];
+  entry_mode: LyricSessionEntryMode;
+  vibe_context: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface AudioFile {
   id: string;
   project_id: string;

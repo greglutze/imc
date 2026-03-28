@@ -6,6 +6,7 @@ import instrument2Routes from './instrument2';
 import instrument3Routes from './instrument3';
 import checklistRoutes from './checklist';
 import moodboardRoutes from './moodboard';
+import lyricAdvisorRoutes from './lyricAdvisor';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/instrument2', instrument2Routes);
 router.use('/instrument3', instrument3Routes);
 router.use('/checklist', checklistRoutes);
 router.use('/moodboard', moodboardRoutes);
+router.use('/lyric-advisor', lyricAdvisorRoutes);
 
 export default router;

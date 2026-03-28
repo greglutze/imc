@@ -175,6 +175,46 @@ export interface MoodboardResponse {
   count: number;
 }
 
+/* ———————— Lyric Advisor Types ———————— */
+
+export type LyricEntryMode = 'paste' | 'conversation' | 'vibe';
+
+export interface LyricSessionMessage {
+  role: 'user' | 'advisor';
+  content: string;
+  type: 'chat' | 'rhyme' | 'synonym' | 'structure' | 'coherence' | 'nudge';
+  dismissed?: boolean;
+  timestamp: string;
+}
+
+export interface LyricSession {
+  id: string;
+  project_id: string;
+  title: string | null;
+  lyrics: string;
+  messages: LyricSessionMessage[];
+  entry_mode: LyricEntryMode;
+  vibe_context: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LyricSessionListItem {
+  id: string;
+  project_id: string;
+  title: string | null;
+  entry_mode: LyricEntryMode;
+  lyrics_preview: string;
+  message_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LyricAdvisorResponse {
+  userMessage: LyricSessionMessage;
+  advisorMessage: LyricSessionMessage;
+}
+
 /* ———————— IMC 00: Checklist Types ———————— */
 
 export type ChecklistCategory = 'creative' | 'legal' | 'business' | 'distribution';
@@ -454,6 +494,62 @@ class ApiClient {
     return this.request(`/api/moodboard/${projectId}/brief/flag`, {
       method: 'PATCH',
       body: JSON.stringify({ element, flagged }),
+    });
+  }
+
+  /* — Lyric Advisor — */
+
+  async getLyricSessions(projectId: string): Promise<{ sessions: LyricSessionListItem[] }> {
+    return this.request(`/api/lyric-advisor/${projectId}`);
+  }
+
+  async getLyricSession(projectId: string, sessionId: string): Promise<LyricSession> {
+    return this.request(`/api/lyric-advisor/${projectId}/session/${sessionId}`);
+  }
+
+  async createLyricSession(projectId: string, data: {
+    entry_mode: LyricEntryMode;
+    title?: string;
+    lyrics?: string;
+    vibe_context?: string;
+  }): Promise<LyricSession> {
+    return this.request(`/api/lyric-advisor/${projectId}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async saveLyrics(projectId: string, sessionId: string, lyrics: string): Promise<{ id: string; lyrics: string; title: string | null; updated_at: string }> {
+    return this.request(`/api/lyric-advisor/${projectId}/session/${sessionId}/lyrics`, {
+      method: 'PATCH',
+      body: JSON.stringify({ lyrics }),
+    });
+  }
+
+  async updateLyricSessionTitle(projectId: string, sessionId: string, title: string): Promise<LyricSession> {
+    return this.request(`/api/lyric-advisor/${projectId}/session/${sessionId}/title`, {
+      method: 'PATCH',
+      body: JSON.stringify({ title }),
+    });
+  }
+
+  async sendAdvisorMessage(projectId: string, sessionId: string, content: string, type: string = 'chat'): Promise<LyricAdvisorResponse> {
+    return this.request(`/api/lyric-advisor/${projectId}/session/${sessionId}/message`, {
+      method: 'POST',
+      body: JSON.stringify({ content, type }),
+    });
+  }
+
+  async dismissAdvisorMessage(projectId: string, sessionId: string, messageIndex: number): Promise<{ dismissed: boolean }> {
+    return this.request(`/api/lyric-advisor/${projectId}/session/${sessionId}/dismiss`, {
+      method: 'PATCH',
+      body: JSON.stringify({ messageIndex }),
+    });
+  }
+
+  async deleteLyricSession(projectId: string, sessionId: string): Promise<{ deleted: boolean }> {
+    return this.request(`/api/lyric-advisor/${projectId}/session/${sessionId}`, {
+      method: 'DELETE',
     });
   }
 }
