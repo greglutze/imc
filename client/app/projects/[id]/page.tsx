@@ -11,7 +11,9 @@ import { useAuth } from '../../../lib/auth-context';
 import { api } from '../../../lib/api';
 import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project } from '../../../lib/api';
 
-type ViewState = 'concept' | 'report';
+/* eslint-disable @next/next/no-img-element */
+
+type ViewState = 'home' | 'concept' | 'report';
 type ConceptSubTab = 'interview' | 'moodboard';
 
 export default function ProjectPage() {
@@ -22,7 +24,7 @@ export default function ProjectPage() {
 
   // Read ?tab= param to determine initial view
   const tabParam = searchParams.get('tab');
-  const initialTab: ViewState = tabParam === 'research' ? 'report' : 'concept';
+  const initialTab: ViewState = tabParam === 'research' ? 'report' : tabParam === 'concept' ? 'concept' : tabParam === 'moodboard' ? 'concept' : 'home';
   const initialSubTab: ConceptSubTab = tabParam === 'moodboard' ? 'moodboard' : 'interview';
   const [activeTab, setActiveTab] = useState<ViewState>(initialTab);
   const [conceptSubTab, setConceptSubTab] = useState<ConceptSubTab>(initialSubTab);
@@ -37,6 +39,12 @@ export default function ProjectPage() {
   const [reportVersion, setReportVersion] = useState(1);
   const [totalVersions, setTotalVersions] = useState(1);
   const autoResearchTriggered = useRef(false);
+
+  // Index page data
+  const [checklistSummary, setChecklistSummary] = useState<{ total: number; checked: number } | null>(null);
+  const [hasPrompts, setHasPrompts] = useState(false);
+  const [lyricSessionCount, setLyricSessionCount] = useState(0);
+  const [shareCount, setShareCount] = useState(0);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -78,14 +86,16 @@ export default function ProjectPage() {
             setReport({ report: reportData.report, confidence: reportData.confidence });
             setReportVersion(reportData.version);
             setTotalVersions(reportData.version);
-            // Only auto-switch to research if no explicit tab was requested
-            if (!tabParam) {
-              setActiveTab('report');
-            }
           } catch {
             // No report yet
           }
         }
+
+        // Load index page data (non-blocking)
+        api.getChecklistSummary(id).then(setChecklistSummary).catch(() => {});
+        api.getPrompts(id).then(() => setHasPrompts(true)).catch(() => {});
+        api.getLyricSessions(id).then(res => setLyricSessionCount(res.sessions.length)).catch(() => {});
+        api.getShareProjects(id).then(res => setShareCount(res.projects.length)).catch(() => {});
       } catch (err) {
         console.error('Failed to load project:', err);
       } finally {
@@ -117,7 +127,6 @@ export default function ProjectPage() {
       }
     } catch (err) {
       console.error('Failed to send message:', err);
-      // Remove the optimistic user message on error
       setMessages(prev => prev.slice(0, -1));
     } finally {
       setLoading(false);
@@ -185,6 +194,234 @@ export default function ProjectPage() {
     );
   }
 
+  // ──────────────────────────────────────────
+  // PROJECT INDEX / HOME VIEW
+  // ──────────────────────────────────────────
+  if (activeTab === 'home') {
+    const statusLabel = project?.status === 'draft' ? 'In Development' : project?.status === 'complete' ? 'Complete' : 'In Progress';
+    const createdDate = project ? new Date(project.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+
+    // Build instrument cards for the grid
+    const instruments = [
+      {
+        number: '00',
+        name: 'Checklist',
+        description: 'Launch readiness tracker. Milestones, deliverables, and dependencies.',
+        href: `/projects/${id}/checklist`,
+        status: checklistSummary ? `${checklistSummary.checked}/${checklistSummary.total}` : '—',
+        statusLabel: checklistSummary && checklistSummary.checked === checklistSummary.total && checklistSummary.total > 0 ? 'Complete' : 'Active',
+        color: 'green' as const,
+      },
+      {
+        number: '01',
+        name: 'Concept',
+        description: 'Artist identity interview and visual moodboard. The creative foundation.',
+        href: `/projects/${id}?tab=concept`,
+        status: conceptReady ? 'Defined' : 'Pending',
+        statusLabel: conceptReady ? 'Complete' : 'Start Interview',
+        color: conceptReady ? 'green' as const : 'yellow' as const,
+      },
+      {
+        number: '02',
+        name: 'Research',
+        description: 'Market intelligence, comparable artists, audience profile, and sonic blueprint.',
+        href: `/projects/${id}?tab=research`,
+        status: report ? `v${reportVersion}` : 'Pending',
+        statusLabel: report ? 'Complete' : conceptReady ? 'Ready' : 'Needs Concept',
+        color: report ? 'green' as const : conceptReady ? 'yellow' as const : 'neutral' as const,
+      },
+      {
+        number: '03',
+        name: 'Sonic Engine',
+        description: 'AI-generated Suno & Udio prompts tuned to your style profile and market data.',
+        href: `/projects/${id}/prompts`,
+        status: hasPrompts ? 'Generated' : 'Pending',
+        statusLabel: hasPrompts ? 'Complete' : 'Needs Research',
+        color: hasPrompts ? 'green' as const : 'neutral' as const,
+      },
+      {
+        number: '04',
+        name: 'LyriCol',
+        description: 'Collaborative lyric advisor. Paste lyrics, talk through ideas, find the right words.',
+        href: `/projects/${id}/lyrics`,
+        status: lyricSessionCount > 0 ? `${lyricSessionCount} sessions` : '—',
+        statusLabel: lyricSessionCount > 0 ? 'Active' : 'Start',
+        color: lyricSessionCount > 0 ? 'green' as const : 'neutral' as const,
+      },
+      {
+        number: '05',
+        name: 'Share',
+        description: 'Private listening rooms with Dropbox-linked audio, analytics, and password protection.',
+        href: `/projects/${id}/share`,
+        status: shareCount > 0 ? `${shareCount} shares` : '—',
+        statusLabel: shareCount > 0 ? 'Active' : 'Create',
+        color: shareCount > 0 ? 'green' as const : 'neutral' as const,
+      },
+    ];
+
+    return (
+      <div className="animate-fade-in h-full flex flex-col">
+        {/* Minimal top bar */}
+        <div className="border-b border-neutral-200">
+          <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center">
+            <a
+              href="/"
+              className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast flex items-center gap-2"
+            >
+              <span className="text-body">&#8592;</span>
+              IMC
+            </a>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+          {/* Hero section */}
+          <div className="max-w-[1400px] mx-auto px-10">
+            <div className="grid grid-cols-12 gap-x-8 pt-16 pb-12 border-b border-neutral-200">
+              {/* Left: Artist info */}
+              <div className="col-span-7">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className={`w-2 h-2 rounded-full ${project?.status === 'complete' ? 'bg-green-500' : 'bg-yellow-500'}`} />
+                  <span className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+                    {statusLabel}
+                  </span>
+                </div>
+
+                <h1 className="text-[96px] leading-[0.88] font-bold tracking-tight text-black">
+                  {artistName}
+                </h1>
+
+                {concept?.creative_direction && (
+                  <p className="text-body-lg text-neutral-500 mt-8 max-w-lg leading-relaxed">
+                    {concept.creative_direction}
+                  </p>
+                )}
+
+                {/* Meta row */}
+                <div className="flex items-center gap-6 mt-8">
+                  {concept?.genre_primary && (
+                    <span className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+                      {concept.genre_primary}
+                    </span>
+                  )}
+                  {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
+                    <span className="text-micro uppercase tracking-widest text-neutral-300">
+                      {concept.mood_keywords.slice(0, 3).join(' / ')}
+                    </span>
+                  )}
+                  <span className="text-micro font-mono text-neutral-300">
+                    {createdDate}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right: Artist image */}
+              <div className="col-span-5 flex justify-end">
+                {project?.image_url ? (
+                  <div className="w-full max-w-[400px] aspect-square overflow-hidden rounded-sm">
+                    <img
+                      src={project.image_url}
+                      alt={artistName}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full max-w-[400px] aspect-square bg-neutral-50 rounded-sm flex items-center justify-center">
+                    <span className="text-[120px] font-bold text-neutral-100">
+                      {artistName.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Concept excerpt bar */}
+            {concept && (
+              <div className="grid grid-cols-12 gap-x-8 py-10 border-b border-neutral-200">
+                <div className="col-span-4">
+                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
+                    Artist Concept
+                  </p>
+                  <blockquote className="text-[28px] leading-[1.15] font-bold text-black tracking-tight">
+                    &ldquo;{concept.creative_direction.length > 100
+                      ? concept.creative_direction.slice(0, 100) + '...'
+                      : concept.creative_direction}&rdquo;
+                  </blockquote>
+                </div>
+                <div className="col-span-4">
+                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
+                    Influences
+                  </p>
+                  <div className="space-y-2">
+                    {concept.reference_artists.slice(0, 4).map((artist, i) => (
+                      <p key={i} className="text-body font-bold text-black">{artist}</p>
+                    ))}
+                  </div>
+                </div>
+                <div className="col-span-4">
+                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
+                    Tracks
+                  </p>
+                  <p className="text-[64px] leading-none font-bold text-black">
+                    {String(concept.track_count).padStart(2, '0')}
+                  </p>
+                  <p className="text-body-sm text-neutral-400 mt-1">planned</p>
+                </div>
+              </div>
+            )}
+
+            {/* Instruments grid */}
+            <div className="py-12">
+              <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
+                Instruments
+              </p>
+              <div className="grid grid-cols-3 gap-4">
+                {instruments.map((inst) => (
+                  <a
+                    key={inst.number}
+                    href={inst.href}
+                    className="group border border-neutral-200 rounded-sm p-6 hover:border-black transition-all duration-200 relative overflow-hidden"
+                  >
+                    {/* Number watermark */}
+                    <span className="absolute top-3 right-4 text-[48px] font-bold text-neutral-100 leading-none group-hover:text-neutral-200 transition-colors">
+                      {inst.number}
+                    </span>
+
+                    <div className="relative">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className={`w-1.5 h-1.5 rounded-full ${
+                          inst.color === 'green' ? 'bg-green-500' :
+                          inst.color === 'yellow' ? 'bg-yellow-500' :
+                          'bg-neutral-300'
+                        }`} />
+                        <span className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+                          {inst.statusLabel}
+                        </span>
+                      </div>
+
+                      <h3 className="text-heading-sm font-bold text-black group-hover:text-black mb-2">
+                        {inst.name}
+                      </h3>
+                      <p className="text-body-sm text-neutral-500 leading-relaxed">
+                        {inst.description}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer spacer */}
+            <div className="h-12" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ──────────────────────────────────────────
+  // CONCEPT / RESEARCH VIEWS
+  // ──────────────────────────────────────────
   return (
     <div className="animate-fade-in h-full flex flex-col">
       <ProjectNav
@@ -294,4 +531,3 @@ export default function ProjectPage() {
     </div>
   );
 }
-

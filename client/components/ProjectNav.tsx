@@ -34,14 +34,19 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
             IMC
           </a>
           <span className="text-neutral-200">/</span>
-          {imageUrl && (
-            <div className="w-6 h-6 rounded-sm overflow-hidden border border-neutral-200 shrink-0">
-              <img src={imageUrl} alt={artistName} className="w-full h-full object-cover object-top" />
-            </div>
-          )}
-          <span className="text-micro font-bold uppercase tracking-widest text-black">
-            {artistName}
-          </span>
+          <a
+            href={`/projects/${projectId}`}
+            className="flex items-center gap-2 hover:opacity-70 transition-opacity duration-fast"
+          >
+            {imageUrl && (
+              <div className="w-6 h-6 rounded-sm overflow-hidden border border-neutral-200 shrink-0">
+                <img src={imageUrl} alt={artistName} className="w-full h-full object-cover object-top" />
+              </div>
+            )}
+            <span className="text-micro font-bold uppercase tracking-widest text-black">
+              {artistName}
+            </span>
+          </a>
         </div>
         <nav className="flex items-center gap-1">
           {links.map((link) => {
