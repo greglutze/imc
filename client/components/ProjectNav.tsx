@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-type NavPage = 'checklist' | 'concept' | 'research' | 'prompts' | 'lyrics' | 'share';
+type NavPage = 'home' | 'checklist' | 'concept' | 'research' | 'prompts' | 'lyrics' | 'share';
 
 interface ProjectNavProps {
   projectId: string;

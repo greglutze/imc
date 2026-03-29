@@ -263,18 +263,16 @@ export default function ProjectPage() {
 
     return (
       <div className="animate-fade-in h-full flex flex-col">
-        {/* Minimal top bar */}
-        <div className="border-b border-neutral-200">
-          <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center">
-            <a
-              href="/"
-              className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast flex items-center gap-2"
-            >
-              <span className="text-body">&#8592;</span>
-              IMC
-            </a>
-          </div>
-        </div>
+        <ProjectNav
+          projectId={id}
+          artistName={artistName}
+          imageUrl={project?.image_url}
+          activePage="home"
+          onNavigate={(page) => {
+            if (page === 'concept') setActiveTab('concept');
+            else if (page === 'research') setActiveTab('report');
+          }}
+        />
 
         <div className="flex-1 overflow-y-auto">
           {/* Hero section */}
