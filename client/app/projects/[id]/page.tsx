@@ -293,12 +293,6 @@ export default function ProjectPage() {
                   {artistName}
                 </h1>
 
-                {concept?.creative_direction && (
-                  <p className="text-body-lg text-neutral-500 mt-8 max-w-lg leading-relaxed">
-                    {concept.creative_direction}
-                  </p>
-                )}
-
                 {/* Meta row */}
                 <div className="flex items-center gap-6 mt-8">
                   {concept?.genre_primary && (
@@ -353,9 +347,12 @@ export default function ProjectPage() {
                     Artist Concept
                   </p>
                   <blockquote className="text-[28px] leading-[1.15] font-bold text-black tracking-tight">
-                    &ldquo;{concept.creative_direction.length > 100
-                      ? concept.creative_direction.slice(0, 100) + '...'
-                      : concept.creative_direction}&rdquo;
+                    &ldquo;{(() => {
+                      const dir = concept.creative_direction.length > 100
+                        ? concept.creative_direction.slice(0, 100) + '...'
+                        : concept.creative_direction;
+                      return dir.charAt(0).toUpperCase() + dir.slice(1).toLowerCase();
+                    })()}&rdquo;
                   </blockquote>
                 </div>
                 <div className="col-span-4">
@@ -364,7 +361,16 @@ export default function ProjectPage() {
                   </p>
                   <div className="space-y-2">
                     {concept.reference_artists.slice(0, 4).map((artist, i) => (
-                      <p key={i} className="text-body font-bold text-black">{artist}</p>
+                      <a
+                        key={i}
+                        href={`https://open.spotify.com/search/${encodeURIComponent(artist)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-body font-bold text-black hover:text-green-600 transition-colors duration-fast"
+                      >
+                        {artist}
+                        <span className="text-neutral-300 ml-1.5 text-caption">&#8599;</span>
+                      </a>
                     ))}
                   </div>
                 </div>
@@ -398,9 +404,7 @@ export default function ProjectPage() {
                   {moodboardImages.slice(0, 6).map((img, i) => (
                     <div
                       key={img.id}
-                      className={`overflow-hidden rounded-sm ${
-                        i === 0 ? 'col-span-2 row-span-2 aspect-square' : 'aspect-square'
-                      }`}
+                      className="overflow-hidden rounded-sm aspect-square"
                     >
                       {img.image_data && (
                         <img
@@ -412,13 +416,6 @@ export default function ProjectPage() {
                     </div>
                   ))}
                 </div>
-                {project?.moodboard_brief?.prose && (
-                  <p className="text-body-sm text-neutral-500 mt-4 max-w-2xl leading-relaxed italic">
-                    &ldquo;{project.moodboard_brief.prose.length > 200
-                      ? project.moodboard_brief.prose.slice(0, 200) + '...'
-                      : project.moodboard_brief.prose}&rdquo;
-                  </p>
-                )}
               </div>
             )}
 
