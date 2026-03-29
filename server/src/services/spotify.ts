@@ -124,6 +124,10 @@ async function spotifyRequest(
   return response.json();
 }
 
+// ──────────────────────────────────────────
+// Search endpoints (these work without extended quota)
+// ──────────────────────────────────────────
+
 export async function searchArtists(query: string, limit: number = 20): Promise<SpotifyArtist[]> {
   const data = (await spotifyRequest(
     `/search?type=artist&q=${encodeURIComponent(query)}&limit=${limit}`
@@ -149,55 +153,12 @@ export async function searchArtists(query: string, limit: number = 20): Promise<
   });
 }
 
-export async function getArtist(id: string): Promise<SpotifyArtist> {
-  const artist = (await spotifyRequest(`/artists/${id}`)) as {
-    id: string;
-    name: string;
-    genres: string[];
-    popularity: number;
-    followers: { total: number };
-    images: Array<{ url: string }>;
-  };
-
-  return {
-    id: artist.id,
-    name: artist.name,
-    genres: artist.genres,
-    popularity: artist.popularity,
-    followers: artist.followers.total,
-    images: artist.images,
-  };
-}
-
-export async function getRelatedArtists(id: string): Promise<SpotifyArtist[]> {
-  const data = (await spotifyRequest(`/artists/${id}/related-artists`)) as { artists: unknown[] };
-
-  return data.artists.map((item: unknown) => {
-    const artist = item as {
-      id: string;
-      name: string;
-      genres: string[];
-      popularity: number;
-      followers: { total: number };
-      images: Array<{ url: string }>;
-    };
-    return {
-      id: artist.id,
-      name: artist.name,
-      genres: artist.genres,
-      popularity: artist.popularity,
-      followers: artist.followers.total,
-      images: artist.images,
-    };
-  });
-}
-
-export async function getArtistTopTracks(id: string, market: string = 'US'): Promise<SpotifyTrack[]> {
+export async function searchTracks(query: string, limit: number = 20): Promise<SpotifyTrack[]> {
   const data = (await spotifyRequest(
-    `/artists/${id}/top-tracks?market=${market}`
-  )) as { tracks: unknown[] };
+    `/search?type=track&q=${encodeURIComponent(query)}&limit=${limit}`
+  )) as { tracks: { items: unknown[] } };
 
-  return data.tracks.map((item: unknown) => {
+  return data.tracks.items.map((item: unknown) => {
     const track = item as {
       id: string;
       name: string;
@@ -222,33 +183,85 @@ export async function searchPlaylists(query: string, limit: number = 20): Promis
     `/search?type=playlist&q=${encodeURIComponent(query)}&limit=${limit}`
   )) as { playlists: { items: unknown[] } };
 
-  return data.playlists.items.map((item: unknown) => {
-    const playlist = item as {
-      id: string;
-      name: string;
-      description: string;
-      tracks: { total: number };
-      owner: { display_name: string };
-      images: Array<{ url: string }>;
-    };
-    return {
-      id: playlist.id,
-      name: playlist.name,
-      description: playlist.description,
-      tracks_total: playlist.tracks.total,
-      owner: playlist.owner,
-      images: playlist.images,
-    };
-  });
+  return data.playlists.items
+    .filter((item: unknown) => item !== null)
+    .map((item: unknown) => {
+      const playlist = item as {
+        id: string;
+        name: string;
+        description: string;
+        tracks: { total: number };
+        owner: { display_name: string };
+        images: Array<{ url: string }>;
+      };
+      return {
+        id: playlist.id,
+        name: playlist.name,
+        description: playlist.description || '',
+        tracks_total: playlist.tracks.total,
+        owner: playlist.owner,
+        images: playlist.images,
+      };
+    });
 }
 
-export async function getAudioFeatures(trackIds: string[]): Promise<SpotifyAudioFeatures[]> {
-  const data = (await spotifyRequest(
-    `/audio-features?ids=${trackIds.join(',')}`
-  )) as { audio_features: unknown[] };
+// ──────────────────────────────────────────
+// Search-based alternatives for restricted endpoints
+// ──────────────────────────────────────────
 
-  return data.audio_features.map((item: unknown) => {
-    const features = item as SpotifyAudioFeatures;
-    return features;
-  });
+/**
+ * Find related artists by searching for genre + similar terms.
+ * Replaces the restricted /artists/{id}/related-artists endpoint.
+ */
+export async function findRelatedArtists(
+  referenceArtists: SpotifyArtist[],
+  genre: string
+): Promise<SpotifyArtist[]> {
+  const seen = new Set(referenceArtists.map((a) => a.id));
+  const related: SpotifyArtist[] = [];
+
+  // Strategy 1: Search by genre keywords
+  const genreTerms = genre.split(/[\s,]+/).filter((t) => t.length > 2);
+  if (genreTerms.length > 0) {
+    try {
+      const genreResults = await searchArtists(`genre:"${genre}"`, 20);
+      for (const artist of genreResults) {
+        if (!seen.has(artist.id)) {
+          seen.add(artist.id);
+          related.push(artist);
+        }
+      }
+    } catch (e) {
+      console.warn('[Spotify] Genre search fallback failed:', e instanceof Error ? e.message : e);
+    }
+  }
+
+  // Strategy 2: Search each reference artist name individually for more variety
+  for (const ref of referenceArtists.slice(0, 3)) {
+    try {
+      const results = await searchArtists(ref.name, 5);
+      for (const artist of results) {
+        if (!seen.has(artist.id)) {
+          seen.add(artist.id);
+          related.push(artist);
+        }
+      }
+    } catch (e) {
+      console.warn(`[Spotify] Individual artist search failed for ${ref.name}:`, e instanceof Error ? e.message : e);
+    }
+  }
+
+  return related;
+}
+
+/**
+ * Find tracks by searching for artist name + genre.
+ * Replaces the restricted /artists/{id}/top-tracks endpoint.
+ */
+export async function findArtistTracks(
+  artistName: string,
+  genre?: string
+): Promise<SpotifyTrack[]> {
+  const query = genre ? `artist:"${artistName}" genre:"${genre}"` : `artist:"${artistName}"`;
+  return searchTracks(query, 10);
 }

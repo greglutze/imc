@@ -1,13 +1,13 @@
 import { analyze } from './ai';
 import {
   searchArtists,
-  getRelatedArtists,
-  getArtistTopTracks,
+  searchTracks,
   searchPlaylists,
-  getAudioFeatures,
+  findRelatedArtists,
+  findArtistTracks,
   SpotifyArtist,
+  SpotifyTrack,
   SpotifyPlaylist,
-  SpotifyAudioFeatures,
 } from './spotify';
 import { ProjectConcept, I1Report, I1Confidence } from '../types';
 
@@ -75,7 +75,7 @@ interface MarketResearchContext {
   concept: ProjectConcept;
   referenceArtists: SpotifyArtist[];
   relatedArtists: SpotifyArtist[];
-  audioFeatures: SpotifyAudioFeatures[];
+  referenceTracks: SpotifyTrack[];
   targetPlaylists: SpotifyPlaylist[];
   sourcesUsed: string[];
   sourcesFailed: string[];
@@ -86,7 +86,7 @@ async function buildMarketContext(concept: ProjectConcept): Promise<MarketResear
     concept,
     referenceArtists: [],
     relatedArtists: [],
-    audioFeatures: [],
+    referenceTracks: [],
     targetPlaylists: [],
     sourcesUsed: [],
     sourcesFailed: [],
@@ -96,6 +96,7 @@ async function buildMarketContext(concept: ProjectConcept): Promise<MarketResear
   console.log('[Research] Reference artists:', concept.reference_artists);
   console.log('[Research] Genres:', concept.genre_primary, concept.genre_secondary);
 
+  // Source 1: Search for reference artists
   try {
     const query = concept.reference_artists.join(' ');
     console.log('[Research] Searching Spotify for reference artists:', query);
@@ -109,55 +110,44 @@ async function buildMarketContext(concept: ProjectConcept): Promise<MarketResear
     context.sourcesFailed.push('Spotify reference artists search');
   }
 
-  const artistIds = context.referenceArtists.map((a) => a.id).slice(0, 5);
-
-  for (const artistId of artistIds) {
-    try {
-      const related = await getRelatedArtists(artistId);
-      console.log(`[Research] ✓ Found ${related.length} related artists for ${artistId}`);
-      context.relatedArtists.push(...related);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      console.error(`[Research] ✗ Related artists failed for ${artistId}:`, msg);
+  // Source 2: Find related artists via genre search (replaces restricted /related-artists endpoint)
+  try {
+    console.log('[Research] Finding related artists via search...');
+    const related = await findRelatedArtists(context.referenceArtists, concept.genre_primary);
+    context.relatedArtists = related;
+    console.log(`[Research] ✓ Found ${related.length} related artists via search`);
+    if (related.length > 0) {
+      context.sourcesUsed.push('Spotify related artists (via search)');
+    } else {
+      context.sourcesFailed.push('Spotify related artists (via search)');
     }
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('[Research] ✗ Related artists search failed:', msg);
+    context.sourcesFailed.push('Spotify related artists (via search)');
   }
 
-  if (context.relatedArtists.length > 0) {
-    console.log(`[Research] ✓ Total related artists: ${context.relatedArtists.length}`);
-    context.sourcesUsed.push('Spotify related artists');
-  } else {
-    console.warn('[Research] ✗ No related artists found (0 results from', artistIds.length, 'lookups)');
-    context.sourcesFailed.push('Spotify related artists');
-  }
-
-  const trackIds: string[] = [];
-
+  // Source 3: Find tracks by reference artists (replaces restricted /top-tracks endpoint)
   for (const artist of context.referenceArtists.slice(0, 3)) {
     try {
-      const tracks = await getArtistTopTracks(artist.id);
-      console.log(`[Research] ✓ Top tracks for ${artist.name}: ${tracks.length}`);
-      trackIds.push(...tracks.slice(0, 3).map((t) => t.id));
+      const tracks = await findArtistTracks(artist.name, concept.genre_primary);
+      console.log(`[Research] ✓ Tracks for ${artist.name}: ${tracks.length}`);
+      context.referenceTracks.push(...tracks.slice(0, 5));
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      console.error(`[Research] ✗ Top tracks failed for ${artist.name}:`, msg);
+      console.error(`[Research] ✗ Track search failed for ${artist.name}:`, msg);
     }
   }
 
-  if (trackIds.length > 0) {
-    try {
-      const features = await getAudioFeatures(trackIds);
-      context.audioFeatures = features.filter((f) => f !== null);
-      console.log(`[Research] ✓ Audio features: ${context.audioFeatures.length}/${trackIds.length} tracks`);
-      context.sourcesUsed.push('Spotify audio features');
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      console.error('[Research] ✗ Audio features failed:', msg);
-      context.sourcesFailed.push('Spotify audio features');
-    }
+  if (context.referenceTracks.length > 0) {
+    console.log(`[Research] ✓ Total reference tracks: ${context.referenceTracks.length}`);
+    context.sourcesUsed.push('Spotify track search');
   } else {
-    console.warn('[Research] Skipping audio features — no track IDs available');
+    console.warn('[Research] ✗ No reference tracks found');
+    context.sourcesFailed.push('Spotify track search');
   }
 
+  // Source 4: Search playlists for genre
   const genreQuery = `${concept.genre_primary} ${concept.genre_secondary[0] || ''}`.trim();
 
   try {
@@ -179,22 +169,22 @@ async function buildMarketContext(concept: ProjectConcept): Promise<MarketResear
 
 function contextToPrompt(context: MarketResearchContext): string {
   const artistSummary = context.referenceArtists
-    .map((a) => `${a.name} (popularity: ${a.popularity}, followers: ${a.followers})`)
+    .map((a) => `${a.name} (popularity: ${a.popularity}, followers: ${a.followers}, genres: ${a.genres.join(', ')})`)
     .join('\n');
 
   const relatedSummary = context.relatedArtists
-    .slice(0, 10)
-    .map((a) => `${a.name} (${a.genres.join(', ')})`)
+    .slice(0, 15)
+    .map((a) => `${a.name} (popularity: ${a.popularity}, genres: ${a.genres.join(', ')})`)
     .join('\n');
 
-  const audioFeaturesSummary =
-    context.audioFeatures.length > 0
-      ? `Average audio features: Danceability ${(context.audioFeatures.reduce((a, f) => a + f.danceability, 0) / context.audioFeatures.length).toFixed(2)}, Energy ${(context.audioFeatures.reduce((a, f) => a + f.energy, 0) / context.audioFeatures.length).toFixed(2)}, Tempo ${(context.audioFeatures.reduce((a, f) => a + f.tempo, 0) / context.audioFeatures.length).toFixed(0)}`
-      : 'No audio features data';
+  const trackSummary = context.referenceTracks
+    .slice(0, 15)
+    .map((t) => `${t.name} (popularity: ${t.popularity}, duration: ${Math.round(t.duration_ms / 1000)}s, album: ${t.album.name})`)
+    .join('\n');
 
   const playlistSummary = context.targetPlaylists
     .slice(0, 10)
-    .map((p) => `${p.name} (${p.tracks_total} tracks)`)
+    .map((p) => `${p.name} (${p.tracks_total} tracks, by ${p.owner.display_name})`)
     .join('\n');
 
   return `
@@ -210,11 +200,11 @@ Artist Concept:
 Reference Artists Found:
 ${artistSummary || 'No data'}
 
-Related Artists (Sample):
+Related Artists in Genre (Sample):
 ${relatedSummary || 'No data'}
 
-Audio Features Analysis:
-${audioFeaturesSummary}
+Reference Tracks Found:
+${trackSummary || 'No data'}
 
 Target Genre Playlists:
 ${playlistSummary || 'No data'}
