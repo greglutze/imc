@@ -54,9 +54,11 @@ async function getAccessToken(): Promise<string> {
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
   if (!clientId || !clientSecret) {
+    console.error('[Spotify] Credentials missing — SPOTIFY_CLIENT_ID:', clientId ? 'set' : 'MISSING', 'SPOTIFY_CLIENT_SECRET:', clientSecret ? 'set' : 'MISSING');
     throw new Error('Spotify credentials not configured');
   }
 
+  console.log('[Spotify] Requesting access token...');
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
   const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -69,12 +71,15 @@ async function getAccessToken(): Promise<string> {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to get Spotify access token: ${response.statusText}`);
+    const body = await response.text().catch(() => '(no body)');
+    console.error(`[Spotify] Token request failed: ${response.status} ${response.statusText}`, body);
+    throw new Error(`Failed to get Spotify access token: ${response.status} ${response.statusText} — ${body}`);
   }
 
   const data = (await response.json()) as { access_token: string; expires_in: number };
   cachedToken = data.access_token;
   tokenExpiry = now + (data.expires_in * 1000) - 60000;
+  console.log('[Spotify] Access token obtained, expires in', data.expires_in, 'seconds');
 
   return cachedToken;
 }
@@ -83,6 +88,7 @@ async function spotifyRequest(
   endpoint: string,
   options?: RequestInit
 ): Promise<unknown> {
+  console.log(`[Spotify] Request: GET /v1${endpoint}`);
   let token = await getAccessToken();
 
   let response = await fetch(`https://api.spotify.com/v1${endpoint}`, {
@@ -94,6 +100,7 @@ async function spotifyRequest(
   });
 
   if (response.status === 401) {
+    console.warn('[Spotify] 401 — refreshing token and retrying...');
     cachedToken = null;
     tokenExpiry = 0;
     token = await getAccessToken();
@@ -108,9 +115,12 @@ async function spotifyRequest(
   }
 
   if (!response.ok) {
-    throw new Error(`Spotify API error: ${response.status} ${response.statusText}`);
+    const body = await response.text().catch(() => '(no body)');
+    console.error(`[Spotify] API error on ${endpoint}: ${response.status} ${response.statusText}`, body);
+    throw new Error(`Spotify API error: ${response.status} ${response.statusText} — ${body}`);
   }
 
+  console.log(`[Spotify] ✓ ${endpoint} — ${response.status}`);
   return response.json();
 }
 

@@ -92,12 +92,20 @@ async function buildMarketContext(concept: ProjectConcept): Promise<MarketResear
     sourcesFailed: [],
   };
 
+  console.log('[Research] Building market context for:', concept.artist_name || 'unknown artist');
+  console.log('[Research] Reference artists:', concept.reference_artists);
+  console.log('[Research] Genres:', concept.genre_primary, concept.genre_secondary);
+
   try {
-    const refArtists = await searchArtists(concept.reference_artists.join(' '), 10);
+    const query = concept.reference_artists.join(' ');
+    console.log('[Research] Searching Spotify for reference artists:', query);
+    const refArtists = await searchArtists(query, 10);
     context.referenceArtists = refArtists;
+    console.log(`[Research] ✓ Found ${refArtists.length} reference artists:`, refArtists.map((a) => a.name));
     context.sourcesUsed.push('Spotify reference artists search');
   } catch (e) {
-    console.error('Failed to search reference artists:', e);
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('[Research] ✗ Reference artists search failed:', msg);
     context.sourcesFailed.push('Spotify reference artists search');
   }
 
@@ -106,15 +114,19 @@ async function buildMarketContext(concept: ProjectConcept): Promise<MarketResear
   for (const artistId of artistIds) {
     try {
       const related = await getRelatedArtists(artistId);
+      console.log(`[Research] ✓ Found ${related.length} related artists for ${artistId}`);
       context.relatedArtists.push(...related);
     } catch (e) {
-      console.error(`Failed to get related artists for ${artistId}:`, e);
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(`[Research] ✗ Related artists failed for ${artistId}:`, msg);
     }
   }
 
   if (context.relatedArtists.length > 0) {
+    console.log(`[Research] ✓ Total related artists: ${context.relatedArtists.length}`);
     context.sourcesUsed.push('Spotify related artists');
   } else {
+    console.warn('[Research] ✗ No related artists found (0 results from', artistIds.length, 'lookups)');
     context.sourcesFailed.push('Spotify related artists');
   }
 
@@ -123,9 +135,11 @@ async function buildMarketContext(concept: ProjectConcept): Promise<MarketResear
   for (const artist of context.referenceArtists.slice(0, 3)) {
     try {
       const tracks = await getArtistTopTracks(artist.id);
+      console.log(`[Research] ✓ Top tracks for ${artist.name}: ${tracks.length}`);
       trackIds.push(...tracks.slice(0, 3).map((t) => t.id));
     } catch (e) {
-      console.error(`Failed to get top tracks for ${artist.name}:`, e);
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(`[Research] ✗ Top tracks failed for ${artist.name}:`, msg);
     }
   }
 
@@ -133,23 +147,32 @@ async function buildMarketContext(concept: ProjectConcept): Promise<MarketResear
     try {
       const features = await getAudioFeatures(trackIds);
       context.audioFeatures = features.filter((f) => f !== null);
+      console.log(`[Research] ✓ Audio features: ${context.audioFeatures.length}/${trackIds.length} tracks`);
       context.sourcesUsed.push('Spotify audio features');
     } catch (e) {
-      console.error('Failed to get audio features:', e);
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error('[Research] ✗ Audio features failed:', msg);
       context.sourcesFailed.push('Spotify audio features');
     }
+  } else {
+    console.warn('[Research] Skipping audio features — no track IDs available');
   }
 
   const genreQuery = `${concept.genre_primary} ${concept.genre_secondary[0] || ''}`.trim();
 
   try {
+    console.log('[Research] Searching playlists for genre:', genreQuery);
     const playlists = await searchPlaylists(genreQuery, 15);
     context.targetPlaylists = playlists;
+    console.log(`[Research] ✓ Found ${playlists.length} genre playlists`);
     context.sourcesUsed.push('Spotify genre playlists');
   } catch (e) {
-    console.error('Failed to search playlists:', e);
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('[Research] ✗ Genre playlists failed:', msg);
     context.sourcesFailed.push('Spotify genre playlists');
   }
+
+  console.log('[Research] Context built — sources used:', context.sourcesUsed, 'failed:', context.sourcesFailed);
 
   return context;
 }
