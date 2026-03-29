@@ -9,7 +9,7 @@ import ProjectNav from '../../../components/ProjectNav';
 import { Tabs } from '../../../components/ui';
 import { useAuth } from '../../../lib/auth-context';
 import { api } from '../../../lib/api';
-import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project } from '../../../lib/api';
+import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage } from '../../../lib/api';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -45,6 +45,7 @@ export default function ProjectPage() {
   const [hasPrompts, setHasPrompts] = useState(false);
   const [lyricSessionCount, setLyricSessionCount] = useState(0);
   const [shareCount, setShareCount] = useState(0);
+  const [moodboardImages, setMoodboardImages] = useState<MoodboardImage[]>([]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -96,6 +97,7 @@ export default function ProjectPage() {
         api.getPrompts(id).then(() => setHasPrompts(true)).catch(() => {});
         api.getLyricSessions(id).then(res => setLyricSessionCount(res.sessions.length)).catch(() => {});
         api.getShareProjects(id).then(res => setShareCount(res.projects.length)).catch(() => {});
+        api.getMoodboardThumbnails(id).then(setMoodboardImages).catch(() => {});
       } catch (err) {
         console.error('Failed to load project:', err);
       } finally {
@@ -315,7 +317,7 @@ export default function ProjectPage() {
                 </div>
               </div>
 
-              {/* Right: Artist image */}
+              {/* Right: Artist image or moodboard hero */}
               <div className="col-span-5 flex justify-end">
                 {project?.image_url ? (
                   <div className="w-full max-w-[400px] aspect-square overflow-hidden rounded-sm">
@@ -323,6 +325,14 @@ export default function ProjectPage() {
                       src={project.image_url}
                       alt={artistName}
                       className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                ) : moodboardImages.length > 0 && moodboardImages[0].image_data ? (
+                  <div className="w-full max-w-[400px] aspect-square overflow-hidden rounded-sm">
+                    <img
+                      src={moodboardImages[0].image_data}
+                      alt={`${artistName} moodboard`}
+                      className="w-full h-full object-cover"
                     />
                   </div>
                 ) : (
@@ -367,6 +377,48 @@ export default function ProjectPage() {
                   </p>
                   <p className="text-body-sm text-neutral-400 mt-1">planned</p>
                 </div>
+              </div>
+            )}
+
+            {/* Moodboard grid */}
+            {moodboardImages.length > 0 && (
+              <div className="py-12 border-b border-neutral-200">
+                <div className="flex items-center justify-between mb-6">
+                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+                    Visual Moodboard
+                  </p>
+                  <a
+                    href={`/projects/${id}?tab=moodboard`}
+                    className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+                  >
+                    Edit
+                  </a>
+                </div>
+                <div className="grid grid-cols-6 gap-2">
+                  {moodboardImages.slice(0, 6).map((img, i) => (
+                    <div
+                      key={img.id}
+                      className={`overflow-hidden rounded-sm ${
+                        i === 0 ? 'col-span-2 row-span-2 aspect-square' : 'aspect-square'
+                      }`}
+                    >
+                      {img.image_data && (
+                        <img
+                          src={img.image_data}
+                          alt={`Moodboard ${i + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {project?.moodboard_brief?.prose && (
+                  <p className="text-body-sm text-neutral-500 mt-4 max-w-2xl leading-relaxed italic">
+                    &ldquo;{project.moodboard_brief.prose.length > 200
+                      ? project.moodboard_brief.prose.slice(0, 200) + '...'
+                      : project.moodboard_brief.prose}&rdquo;
+                  </p>
+                )}
               </div>
             )}
 
