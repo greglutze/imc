@@ -133,24 +133,26 @@ export async function searchArtists(query: string, limit: number = 20): Promise<
     `/search?type=artist&q=${encodeURIComponent(query)}&limit=${limit}`
   )) as { artists: { items: unknown[] } };
 
-  return data.artists.items.map((item: unknown) => {
-    const artist = item as {
-      id: string;
-      name: string;
-      genres: string[];
-      popularity: number;
-      followers: { total: number };
-      images: Array<{ url: string }>;
-    };
-    return {
-      id: artist.id,
-      name: artist.name,
-      genres: artist.genres,
-      popularity: artist.popularity,
-      followers: artist.followers.total,
-      images: artist.images,
-    };
-  });
+  return data.artists.items
+    .filter((item: unknown) => item !== null && item !== undefined)
+    .map((item: unknown) => {
+      const artist = item as {
+        id: string;
+        name: string;
+        genres: string[];
+        popularity: number;
+        followers: { total: number } | null;
+        images: Array<{ url: string }>;
+      };
+      return {
+        id: artist.id,
+        name: artist.name,
+        genres: artist.genres || [],
+        popularity: artist.popularity || 0,
+        followers: artist.followers?.total ?? 0,
+        images: artist.images || [],
+      };
+    });
 }
 
 export async function searchTracks(query: string, limit: number = 20): Promise<SpotifyTrack[]> {
@@ -158,24 +160,26 @@ export async function searchTracks(query: string, limit: number = 20): Promise<S
     `/search?type=track&q=${encodeURIComponent(query)}&limit=${limit}`
   )) as { tracks: { items: unknown[] } };
 
-  return data.tracks.items.map((item: unknown) => {
-    const track = item as {
-      id: string;
-      name: string;
-      popularity: number;
-      duration_ms: number;
-      album: { name: string; release_date: string };
-      preview_url: string | null;
-    };
-    return {
-      id: track.id,
-      name: track.name,
-      popularity: track.popularity,
-      duration_ms: track.duration_ms,
-      album: track.album,
-      preview_url: track.preview_url,
-    };
-  });
+  return data.tracks.items
+    .filter((item: unknown) => item !== null && item !== undefined)
+    .map((item: unknown) => {
+      const track = item as {
+        id: string;
+        name: string;
+        popularity: number;
+        duration_ms: number;
+        album: { name: string; release_date: string } | null;
+        preview_url: string | null;
+      };
+      return {
+        id: track.id,
+        name: track.name,
+        popularity: track.popularity || 0,
+        duration_ms: track.duration_ms || 0,
+        album: track.album || { name: 'Unknown', release_date: '' },
+        preview_url: track.preview_url,
+      };
+    });
 }
 
 export async function searchPlaylists(query: string, limit: number = 20): Promise<SpotifyPlaylist[]> {
@@ -184,23 +188,23 @@ export async function searchPlaylists(query: string, limit: number = 20): Promis
   )) as { playlists: { items: unknown[] } };
 
   return data.playlists.items
-    .filter((item: unknown) => item !== null)
+    .filter((item: unknown) => item !== null && item !== undefined)
     .map((item: unknown) => {
       const playlist = item as {
         id: string;
         name: string;
         description: string;
-        tracks: { total: number };
-        owner: { display_name: string };
+        tracks: { total: number } | null;
+        owner: { display_name: string } | null;
         images: Array<{ url: string }>;
       };
       return {
         id: playlist.id,
         name: playlist.name,
         description: playlist.description || '',
-        tracks_total: playlist.tracks.total,
-        owner: playlist.owner,
-        images: playlist.images,
+        tracks_total: playlist.tracks?.total ?? 0,
+        owner: playlist.owner || { display_name: 'Unknown' },
+        images: playlist.images || [],
       };
     });
 }
@@ -220,11 +224,10 @@ export async function findRelatedArtists(
   const seen = new Set(referenceArtists.map((a) => a.id));
   const related: SpotifyArtist[] = [];
 
-  // Strategy 1: Search by genre keywords
-  const genreTerms = genre.split(/[\s,]+/).filter((t) => t.length > 2);
-  if (genreTerms.length > 0) {
+  // Strategy 1: Search by genre keywords (plain text, no special syntax)
+  if (genre) {
     try {
-      const genreResults = await searchArtists(`genre:"${genre}"`, 20);
+      const genreResults = await searchArtists(genre, 20);
       for (const artist of genreResults) {
         if (!seen.has(artist.id)) {
           seen.add(artist.id);
@@ -260,8 +263,7 @@ export async function findRelatedArtists(
  */
 export async function findArtistTracks(
   artistName: string,
-  genre?: string
+  _genre?: string
 ): Promise<SpotifyTrack[]> {
-  const query = genre ? `artist:"${artistName}" genre:"${genre}"` : `artist:"${artistName}"`;
-  return searchTracks(query, 10);
+  return searchTracks(artistName, 10);
 }
