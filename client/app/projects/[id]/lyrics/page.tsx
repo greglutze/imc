@@ -259,29 +259,6 @@ export default function LyricAdvisorPage() {
             </div>
           )}
 
-          {/* Quick start options - compact row */}
-          <div className="mb-12">
-            <p className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-3">
-              Or start from scratch
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => handleNewBlankSession('paste')}
-                disabled={creating !== null}
-                className="text-caption font-bold uppercase tracking-widest text-neutral-500 bg-white border border-neutral-200 px-4 py-2 rounded-sm hover:border-black hover:text-black transition-colors duration-fast disabled:opacity-50"
-              >
-                Paste Lyrics
-              </button>
-              <button
-                onClick={() => handleNewBlankSession('vibe')}
-                disabled={creating !== null}
-                className="text-caption font-bold uppercase tracking-widest text-neutral-500 bg-white border border-neutral-200 px-4 py-2 rounded-sm hover:border-black hover:text-black transition-colors duration-fast disabled:opacity-50"
-              >
-                Describe a Vibe
-              </button>
-            </div>
-          </div>
-
           {/* Previous sessions */}
           {sessions.length > 0 && (
             <div>
