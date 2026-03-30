@@ -2,7 +2,7 @@ import { Router, Response } from 'express';
 import pool from '../config/database';
 import { authMiddleware } from '../middleware/auth';
 import { AuthRequest, LyricSessionMessage } from '../types';
-import { advisorChat } from '../services/lyricAdvisor';
+import { advisorChat, generateLyricThemes } from '../services/lyricAdvisor';
 
 const router = Router();
 router.use(authMiddleware);
@@ -331,6 +331,50 @@ router.delete('/:projectId/session/:sessionId', async (req: AuthRequest, res: Re
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Generate lyric themes from project data
+router.get('/:projectId/themes', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const user = req.user!;
+    const { projectId } = req.params;
+
+    const projectResult = await pool.query(
+      'SELECT id, concept, moodboard_brief FROM projects WHERE id = $1 AND org_id = $2',
+      [projectId, user.org_id]
+    );
+    if (projectResult.rows.length === 0) {
+      res.status(403).json({ error: 'Project not found or not authorized' });
+      return;
+    }
+
+    const project = projectResult.rows[0];
+
+    // Fetch tracks from instrument2_prompts if they exist
+    let tracks: Array<{ track_number: number; title: string; suno_prompt: string; udio_prompt: string; structure: string; notes: string }> = [];
+    try {
+      const tracksResult = await pool.query(
+        `SELECT tracks FROM instrument2_prompts WHERE project_id = $1 ORDER BY version DESC LIMIT 1`,
+        [projectId]
+      );
+      if (tracksResult.rows.length > 0 && tracksResult.rows[0].tracks) {
+        tracks = tracksResult.rows[0].tracks;
+      }
+    } catch (_e) {
+      console.log('[LyriCol] No tracks found for theme generation');
+    }
+
+    const themes = await generateLyricThemes(
+      project.concept,
+      project.moodboard_brief,
+      tracks
+    );
+
+    res.json({ themes });
+  } catch (err) {
+    console.error('[LyriCol] Theme generation failed:', err);
+    res.status(500).json({ error: 'Failed to generate themes' });
   }
 });
 

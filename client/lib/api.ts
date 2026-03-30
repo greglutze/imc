@@ -210,6 +210,15 @@ export interface LyricSessionListItem {
   updated_at: string;
 }
 
+export interface LyricTheme {
+  id: string;
+  title: string;
+  subtitle: string;
+  mood: string;
+  vibe_context: string;
+  track_inspiration?: { title: string; notes: string } | null;
+}
+
 export interface LyricAdvisorResponse {
   userMessage: LyricSessionMessage;
   advisorMessage: LyricSessionMessage;
@@ -557,6 +566,10 @@ class ApiClient {
 
   async getLyricSessions(projectId: string): Promise<{ sessions: LyricSessionListItem[] }> {
     return this.request(`/api/lyric-advisor/${projectId}`);
+  }
+
+  async getLyricThemes(projectId: string): Promise<{ themes: LyricTheme[] }> {
+    return this.request(`/api/lyric-advisor/${projectId}/themes`);
   }
 
   async getLyricSession(projectId: string, sessionId: string): Promise<LyricSession> {
