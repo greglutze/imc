@@ -10,35 +10,8 @@ import type {
   LyricTheme,
   Project,
   MoodboardBrief,
+  MoodboardImage,
 } from '../../../../lib/api';
-
-const MOOD_COLORS: Record<string, string> = {
-  intense: '#FF3B30',
-  raw: '#FF6B35',
-  aggressive: '#FF453A',
-  explosive: '#FF2D55',
-  defiant: '#FF375F',
-  reflective: '#5856D6',
-  melancholic: '#7B61FF',
-  vulnerable: '#AF52DE',
-  haunted: '#8944AB',
-  nostalgic: '#5E5CE6',
-  conflicted: '#FF9500',
-  anxious: '#FFCC00',
-  restless: '#FF9F0A',
-  urgent: '#FF6B00',
-  desperate: '#FF5722',
-  hopeful: '#34C759',
-  euphoric: '#30D158',
-  transcendent: '#00C7BE',
-  liberating: '#32D74B',
-  empowered: '#00C853',
-};
-
-function getMoodColor(mood: string): string {
-  const lower = mood.toLowerCase();
-  return MOOD_COLORS[lower] || '#000000';
-}
 
 export default function LyricAdvisorPage() {
   const { id } = useParams<{ id: string }>();
@@ -49,6 +22,7 @@ export default function LyricAdvisorPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [themes, setThemes] = useState<LyricTheme[]>([]);
   const [moodboard, setMoodboard] = useState<MoodboardBrief | null>(null);
+  const [moodboardImages, setMoodboardImages] = useState<MoodboardImage[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
   const [themesLoading, setThemesLoading] = useState(false);
   const [creating, setCreating] = useState<string | null>(null);
@@ -64,12 +38,14 @@ export default function LyricAdvisorPage() {
 
     const loadData = async () => {
       try {
-        const [proj, sessionsData] = await Promise.all([
+        const [proj, sessionsData, thumbnails] = await Promise.all([
           api.getProject(id),
           api.getLyricSessions(id),
+          api.getMoodboardThumbnails(id).catch(() => []),
         ]);
         setProject(proj);
         setSessions(sessionsData.sessions);
+        setMoodboardImages(thumbnails);
         if (proj.moodboard_brief) {
           setMoodboard(proj.moodboard_brief as MoodboardBrief);
         }
@@ -130,6 +106,13 @@ export default function LyricAdvisorPage() {
     }
   }, [id, creating, router]);
 
+  // Map moodboard images to themes — one image per theme, cycling if fewer images
+  const getImageForTheme = (index: number): string | null => {
+    if (moodboardImages.length === 0) return null;
+    const img = moodboardImages[index % moodboardImages.length];
+    return img?.image_data || null;
+  };
+
   const artistName = project?.artist_name || 'Untitled';
 
   if (authLoading || pageLoading) {
@@ -151,7 +134,7 @@ export default function LyricAdvisorPage() {
 
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1400px] mx-auto px-10 py-10">
-          {/* Header with sonic brief context */}
+          {/* Header */}
           <div className="mb-10">
             <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
               LyriCol
@@ -159,45 +142,18 @@ export default function LyricAdvisorPage() {
             <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
               Write Better Lyrics
             </p>
-            {moodboard?.prose && (
+            {moodboard?.prose ? (
               <p className="text-body text-neutral-500 mt-4 max-w-2xl leading-relaxed italic">
                 &ldquo;{moodboard.prose}&rdquo;
               </p>
-            )}
-            {moodboard && !moodboard.prose && (
+            ) : (
               <p className="text-body-lg text-neutral-500 mt-3 max-w-md">
                 A creative collaborator that helps you find the right words — without writing them for you.
               </p>
             )}
           </div>
 
-          {/* Sonic brief chips */}
-          {moodboard && (
-            <div className="flex flex-wrap gap-2 mb-10">
-              {moodboard.atmosphere && (
-                <span className="px-3 py-1.5 bg-neutral-100 rounded-sm text-caption text-neutral-600 uppercase tracking-wider font-medium">
-                  {moodboard.atmosphere}
-                </span>
-              )}
-              {moodboard.texture && (
-                <span className="px-3 py-1.5 bg-neutral-100 rounded-sm text-caption text-neutral-600 uppercase tracking-wider font-medium">
-                  {moodboard.texture}
-                </span>
-              )}
-              {moodboard.emotional_register && (
-                <span className="px-3 py-1.5 bg-neutral-100 rounded-sm text-caption text-neutral-600 uppercase tracking-wider font-medium">
-                  {moodboard.emotional_register}
-                </span>
-              )}
-              {moodboard.tempo_feel && (
-                <span className="px-3 py-1.5 bg-neutral-100 rounded-sm text-caption text-neutral-600 uppercase tracking-wider font-medium">
-                  {moodboard.tempo_feel}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Theme cards */}
+          {/* Theme cards with moodboard images */}
           {hasConcept && (
             <div className="mb-12">
               <p className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-4">
@@ -207,54 +163,63 @@ export default function LyricAdvisorPage() {
               {themesLoading ? (
                 <div className="grid grid-cols-3 gap-4">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="border border-neutral-100 rounded-sm p-6 animate-pulse">
-                      <div className="h-3 w-16 bg-neutral-100 rounded mb-3" />
-                      <div className="h-5 w-3/4 bg-neutral-100 rounded mb-2" />
-                      <div className="h-4 w-full bg-neutral-50 rounded" />
-                    </div>
+                    <div key={i} className="aspect-[4/3] bg-neutral-100 rounded-sm animate-pulse" />
                   ))}
                 </div>
               ) : themes.length > 0 ? (
                 <div className="grid grid-cols-3 gap-4">
-                  {themes.map((theme) => (
-                    <button
-                      key={theme.id}
-                      onClick={() => handleThemeSelect(theme)}
-                      disabled={creating !== null}
-                      className="text-left border border-neutral-200 rounded-sm p-6 hover:border-black transition-all duration-fast group relative overflow-hidden"
-                    >
-                      {/* Mood indicator */}
-                      <div className="flex items-center gap-2 mb-3">
-                        <span
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: getMoodColor(theme.mood) }}
-                        />
-                        <span className="text-micro font-bold uppercase tracking-widest text-neutral-400">
-                          {theme.mood}
-                        </span>
-                      </div>
+                  {themes.map((theme, index) => {
+                    const imageUrl = getImageForTheme(index);
+                    return (
+                      <button
+                        key={theme.id}
+                        onClick={() => handleThemeSelect(theme)}
+                        disabled={creating !== null}
+                        className="text-left rounded-sm overflow-hidden group relative aspect-[4/3] cursor-pointer"
+                        style={{ minHeight: '200px' }}
+                      >
+                        {/* Background image or dark fallback */}
+                        {imageUrl ? (
+                          <img
+                            src={imageUrl}
+                            alt=""
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-neutral-900" />
+                        )}
 
-                      <p className="text-heading-sm font-bold text-black group-hover:text-black mb-1">
-                        {theme.title}
-                      </p>
-                      <p className="text-body-sm text-neutral-500 leading-snug">
-                        {theme.subtitle}
-                      </p>
+                        {/* Gradient overlay for text legibility */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 group-hover:from-black/90 group-hover:via-black/40 transition-all duration-300" />
 
-                      {/* Loading state */}
-                      {creating === theme.id && (
-                        <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-                          <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                        {/* Content */}
+                        <div className="absolute inset-0 p-5 flex flex-col justify-end">
+                          <p className="text-[22px] leading-tight font-bold text-white drop-shadow-sm">
+                            {theme.title}
+                          </p>
+                          <p className="text-[13px] leading-snug text-white/70 mt-1.5">
+                            {theme.subtitle}
+                          </p>
                         </div>
-                      )}
-                    </button>
-                  ))}
+
+                        {/* Hover border */}
+                        <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-sm transition-all duration-300" />
+
+                        {/* Loading state */}
+                        {creating === theme.id && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               ) : null}
             </div>
           )}
 
-          {/* Quick start options (always available) */}
+          {/* Quick start options */}
           <div className="mb-12">
             <p className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-4">
               {hasConcept && themes.length > 0 ? 'Or start from scratch' : 'New Session'}
@@ -340,7 +305,7 @@ export default function LyricAdvisorPage() {
             </div>
           )}
 
-          {/* Empty state: no concept yet */}
+          {/* Empty state */}
           {!hasConcept && (
             <div className="border border-dashed border-neutral-300 rounded-sm p-8 text-center mt-4">
               <p className="text-body text-neutral-500">
