@@ -64,6 +64,17 @@ export default function LyricSessionPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, sending]);
 
+  // Auto-send opening prompt when session has vibe_context (from theme selection) and no messages yet
+  const hasAutoSent = useRef(false);
+  useEffect(() => {
+    if (!session || hasAutoSent.current || messages.length > 0 || sending) return;
+    if (session.entry_mode === 'vibe' && session.vibe_context) {
+      hasAutoSent.current = true;
+      // Send the vibe context as the first message to kick off the conversation
+      handleSend(session.vibe_context, 'chat');
+    }
+  }, [session, messages.length, sending, handleSend]);
+
   // Auto-save lyrics with 500ms debounce
   const saveLyrics = useCallback(async (text: string) => {
     if (!id || !sessionId) return;

@@ -137,20 +137,48 @@ export default function LyricAdvisorPage() {
           {/* Header */}
           <div className="mb-10">
             <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-              LyriCol
+              Lyric Collaborator
             </p>
             <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
-              Write Better Lyrics
+              LyriCol
             </p>
             {moodboard?.prose ? (
-              <p className="text-body text-neutral-500 mt-4 max-w-2xl leading-relaxed italic">
-                &ldquo;{moodboard.prose}&rdquo;
-              </p>
+              <div className="mt-5 max-w-2xl">
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    moodboard.atmosphere && { label: 'Atmosphere', value: moodboard.atmosphere },
+                    moodboard.texture && { label: 'Texture', value: moodboard.texture },
+                    moodboard.emotional_register && { label: 'Emotion', value: moodboard.emotional_register },
+                    moodboard.tempo_feel && { label: 'Tempo', value: moodboard.tempo_feel },
+                  ].filter(Boolean).map((item: any) => (
+                    <span key={item.label} className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-600 text-[13px] px-3 py-1.5 rounded-sm">
+                      <span className="font-bold text-neutral-400 uppercase tracking-wider text-[10px]">{item.label}</span>
+                      <span>{item.value}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
             ) : (
               <p className="text-body-lg text-neutral-500 mt-3 max-w-md">
                 A creative collaborator that helps you find the right words — without writing them for you.
               </p>
             )}
+          </div>
+
+          {/* New Session button */}
+          <div className="mb-10">
+            <button
+              onClick={() => handleNewBlankSession('conversation')}
+              disabled={creating !== null}
+              className="inline-flex items-center gap-2 bg-black text-white text-label font-bold uppercase tracking-widest px-6 py-3 rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50"
+            >
+              {creating === 'conversation' ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <span className="text-[18px] leading-none">+</span>
+              )}
+              New Session
+            </button>
           </div>
 
           {/* Theme cards with moodboard images */}
@@ -219,49 +247,25 @@ export default function LyricAdvisorPage() {
             </div>
           )}
 
-          {/* Quick start options */}
+          {/* Quick start options - compact row */}
           <div className="mb-12">
-            <p className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-4">
-              {hasConcept && themes.length > 0 ? 'Or start from scratch' : 'New Session'}
+            <p className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-3">
+              Or start from scratch
             </p>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="flex gap-3">
               <button
                 onClick={() => handleNewBlankSession('paste')}
                 disabled={creating !== null}
-                className="text-left border border-neutral-200 rounded-sm p-6 hover:border-black transition-colors duration-fast group"
+                className="text-caption font-bold uppercase tracking-widest text-neutral-500 bg-white border border-neutral-200 px-4 py-2 rounded-sm hover:border-black hover:text-black transition-colors duration-fast disabled:opacity-50"
               >
-                <p className="text-heading-sm font-bold text-black group-hover:text-black">
-                  Paste Lyrics
-                </p>
-                <p className="text-body-sm text-neutral-500 mt-2">
-                  Have a draft? Paste it in and get feedback.
-                </p>
+                Paste Lyrics
               </button>
-
-              <button
-                onClick={() => handleNewBlankSession('conversation')}
-                disabled={creating !== null}
-                className="text-left border border-neutral-200 rounded-sm p-6 hover:border-black transition-colors duration-fast group"
-              >
-                <p className="text-heading-sm font-bold text-black group-hover:text-black">
-                  Start a Conversation
-                </p>
-                <p className="text-body-sm text-neutral-500 mt-2">
-                  Talk about the song — concept, mood, or where you're stuck.
-                </p>
-              </button>
-
               <button
                 onClick={() => handleNewBlankSession('vibe')}
                 disabled={creating !== null}
-                className="text-left border border-neutral-200 rounded-sm p-6 hover:border-black transition-colors duration-fast group"
+                className="text-caption font-bold uppercase tracking-widest text-neutral-500 bg-white border border-neutral-200 px-4 py-2 rounded-sm hover:border-black hover:text-black transition-colors duration-fast disabled:opacity-50"
               >
-                <p className="text-heading-sm font-bold text-black group-hover:text-black">
-                  Describe the Vibe
-                </p>
-                <p className="text-body-sm text-neutral-500 mt-2">
-                  Set the atmosphere and emotional tone before writing.
-                </p>
+                Describe a Vibe
               </button>
             </div>
           </div>
