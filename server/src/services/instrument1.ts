@@ -4,9 +4,6 @@ import {
   searchPlaylists,
   findRelatedArtists,
   findArtistTracks,
-  SpotifyArtist,
-  SpotifyTrack,
-  SpotifyPlaylist,
 } from './spotify';
 import { ProjectConcept, I1Report, I1Confidence } from '../types';
 
