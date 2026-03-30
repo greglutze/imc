@@ -1,7 +1,6 @@
 import { analyze } from './ai';
 import {
   searchArtists,
-  searchTracks,
   searchPlaylists,
   findRelatedArtists,
   findArtistTracks,
@@ -92,7 +91,7 @@ async function buildMarketContext(concept: ProjectConcept): Promise<MarketResear
     sourcesFailed: [],
   };
 
-  console.log('[Research] Building market context for:', concept.artist_name || 'unknown artist');
+  console.log('[Research] Building market context for:', concept.reference_artists[0] || 'unknown artist');
   console.log('[Research] Reference artists:', concept.reference_artists);
   console.log('[Research] Genres:', concept.genre_primary, concept.genre_secondary);
 
