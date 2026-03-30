@@ -334,14 +334,32 @@ router.delete('/:projectId/session/:sessionId', async (req: AuthRequest, res: Re
   }
 });
 
-// Generate lyric themes from project data
+// Ensure lyric_themes column exists (runs once)
+let themesColumnEnsured = false;
+async function ensureThemesColumn(): Promise<void> {
+  if (themesColumnEnsured) return;
+  try {
+    await pool.query(`
+      ALTER TABLE projects ADD COLUMN IF NOT EXISTS lyric_themes jsonb DEFAULT NULL
+    `);
+    themesColumnEnsured = true;
+  } catch (_e) {
+    // Column might already exist, that's fine
+    themesColumnEnsured = true;
+  }
+}
+
+// Get lyric themes (cached) or generate new ones
 router.get('/:projectId/themes', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const user = req.user!;
     const { projectId } = req.params;
+    const regenerate = req.query.regenerate === 'true';
+
+    await ensureThemesColumn();
 
     const projectResult = await pool.query(
-      'SELECT id, concept, moodboard_brief FROM projects WHERE id = $1 AND org_id = $2',
+      'SELECT id, concept, moodboard_brief, lyric_themes FROM projects WHERE id = $1 AND org_id = $2',
       [projectId, user.org_id]
     );
     if (projectResult.rows.length === 0) {
@@ -350,6 +368,12 @@ router.get('/:projectId/themes', async (req: AuthRequest, res: Response): Promis
     }
 
     const project = projectResult.rows[0];
+
+    // Return cached themes if available and not regenerating
+    if (!regenerate && project.lyric_themes && Array.isArray(project.lyric_themes) && project.lyric_themes.length > 0) {
+      res.json({ themes: project.lyric_themes });
+      return;
+    }
 
     // Fetch tracks from instrument2_prompts if they exist
     let tracks: Array<{ track_number: number; title: string; suno_prompt: string; udio_prompt: string; structure: string; notes: string }> = [];
@@ -369,6 +393,12 @@ router.get('/:projectId/themes', async (req: AuthRequest, res: Response): Promis
       project.concept,
       project.moodboard_brief,
       tracks
+    );
+
+    // Cache the generated themes
+    await pool.query(
+      'UPDATE projects SET lyric_themes = $1 WHERE id = $2',
+      [JSON.stringify(themes), projectId]
     );
 
     res.json({ themes });

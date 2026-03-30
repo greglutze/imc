@@ -568,8 +568,9 @@ class ApiClient {
     return this.request(`/api/lyric-advisor/${projectId}`);
   }
 
-  async getLyricThemes(projectId: string): Promise<{ themes: LyricTheme[] }> {
-    return this.request(`/api/lyric-advisor/${projectId}/themes`);
+  async getLyricThemes(projectId: string, regenerate = false): Promise<{ themes: LyricTheme[] }> {
+    const qs = regenerate ? '?regenerate=true' : '';
+    return this.request(`/api/lyric-advisor/${projectId}/themes${qs}`);
   }
 
   async getLyricSession(projectId: string, sessionId: string): Promise<LyricSession> {

@@ -60,23 +60,23 @@ export default function LyricAdvisorPage() {
   }, [isAuthenticated, id]);
 
   // Load themes after project data is available
+  const loadThemes = useCallback(async (regenerate = false) => {
+    if (!id) return;
+    setThemesLoading(true);
+    try {
+      const result = await api.getLyricThemes(id, regenerate);
+      setThemes(result.themes);
+    } catch (err) {
+      console.error('Failed to load themes:', err);
+    } finally {
+      setThemesLoading(false);
+    }
+  }, [id]);
+
   useEffect(() => {
     if (!project?.concept || !id) return;
-
-    const loadThemes = async () => {
-      setThemesLoading(true);
-      try {
-        const result = await api.getLyricThemes(id);
-        setThemes(result.themes);
-      } catch (err) {
-        console.error('Failed to load themes:', err);
-      } finally {
-        setThemesLoading(false);
-      }
-    };
-
     loadThemes();
-  }, [project, id]);
+  }, [project, id, loadThemes]);
 
   const handleThemeSelect = useCallback(async (theme: LyricTheme) => {
     if (!id || creating) return;
@@ -186,9 +186,19 @@ export default function LyricAdvisorPage() {
           {/* Theme cards with moodboard images */}
           {hasConcept && (
             <div className="mb-12">
-              <p className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-4">
-                Starting Points
-              </p>
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
+                  Starting Points
+                </p>
+                {themes.length > 0 && !themesLoading && (
+                  <button
+                    onClick={() => loadThemes(true)}
+                    className="text-caption font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+                  >
+                    &#x21bb; Regenerate
+                  </button>
+                )}
+              </div>
 
               {themesLoading ? (
                 <div className="grid grid-cols-3 gap-4">
