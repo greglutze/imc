@@ -150,7 +150,6 @@ export default function LyricAdvisorPage() {
                     if (moodboard.atmosphere) pills.push({ label: 'Atmosphere', value: moodboard.atmosphere });
                     if (moodboard.texture) pills.push({ label: 'Texture', value: moodboard.texture });
                     if (moodboard.emotional_register) pills.push({ label: 'Emotion', value: moodboard.emotional_register });
-                    if (moodboard.tempo_feel) pills.push({ label: 'Tempo', value: moodboard.tempo_feel });
                     return pills.map((item) => (
                       <span key={item.label} className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-600 text-[13px] px-3 py-1.5 rounded-sm">
                         <span className="font-bold text-neutral-400 uppercase tracking-wider text-[10px]">{item.label}</span>
@@ -159,6 +158,14 @@ export default function LyricAdvisorPage() {
                     ));
                   })()}
                 </div>
+                {moodboard.tempo_feel && (
+                  <div className="mt-2">
+                    <span className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-600 text-[13px] px-3 py-1.5 rounded-sm">
+                      <span className="font-bold text-neutral-400 uppercase tracking-wider text-[10px]">Tempo</span>
+                      <span>{moodboard.tempo_feel}</span>
+                    </span>
+                  </div>
+                )}
               </div>
             ) : (
               <p className="text-body-lg text-neutral-500 mt-3 max-w-md">
