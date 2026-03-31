@@ -5,7 +5,7 @@ import pool from './config/database';
 import apiRoutes from './routes';
 import { authMiddleware } from './middleware/auth';
 import { AuthRequest } from './types';
-import { uploadArtwork } from './services/storage';
+// uploadArtwork no longer needed — artwork stored as bytea
 
 dotenv.config();
 
@@ -25,7 +25,6 @@ app.post(
       const authReq = req as AuthRequest;
       const user = authReq.user!;
       const { projectId, shareId } = req.params;
-      const filename = decodeURIComponent((req.headers['x-filename'] as string) || 'artwork.jpg');
       const contentType = req.headers['content-type'] || 'image/jpeg';
 
       const projectCheck = await pool.query(
@@ -43,20 +42,45 @@ app.post(
         return;
       }
 
-      const result = await uploadArtwork(buffer, filename, contentType);
-
+      // Store artwork binary in DB as bytea, serve via dedicated endpoint
+      const artworkUrl = `/api/share/artwork/${shareId}`;
       await pool.query(
-        'UPDATE share_projects SET artwork_url = $1, updated_at = NOW() WHERE id = $2 AND project_id = $3',
-        [result.url, shareId, projectId]
+        `UPDATE share_projects
+         SET artwork_data = $1, artwork_content_type = $2,
+             artwork_url = $3, updated_at = NOW()
+         WHERE id = $4 AND project_id = $5`,
+        [buffer, contentType, artworkUrl, shareId, projectId]
       );
 
-      res.json({ artwork_url: result.url });
+      res.json({ artwork_url: artworkUrl });
     } catch (err) {
       console.error('Artwork upload error:', err);
       res.status(500).json({ error: 'Artwork upload failed: ' + (err instanceof Error ? err.message : String(err)) });
     }
   }
 );
+
+// Serve artwork images (public — needed for share pages)
+app.get('/api/share/artwork/:shareId', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { shareId } = req.params;
+    const result = await pool.query(
+      'SELECT artwork_data, artwork_content_type FROM share_projects WHERE id = $1',
+      [shareId]
+    );
+    if (result.rows.length === 0 || !result.rows[0].artwork_data) {
+      res.status(404).json({ error: 'Not found' });
+      return;
+    }
+    const { artwork_data, artwork_content_type } = result.rows[0];
+    res.set('Content-Type', artwork_content_type);
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.send(artwork_data);
+  } catch (err) {
+    console.error('Artwork serve error:', err);
+    res.status(500).json({ error: 'Failed to serve artwork' });
+  }
+});
 
 // JSON body parser for all other routes
 app.use(express.json({ limit: '50mb' }));
@@ -309,6 +333,22 @@ async function migrate(): Promise<void> {
         CREATE INDEX idx_share_tracks_project_id ON share_tracks(share_project_id);
       `);
       console.log('Share projects and tracks tables created.');
+    }
+
+    // Add artwork_data bytea column if missing
+    const artworkDataCheck = await pool.query(
+      `SELECT EXISTS (
+        SELECT FROM information_schema.columns
+        WHERE table_name = 'share_projects' AND column_name = 'artwork_data'
+      )`
+    );
+    if (!artworkDataCheck.rows[0].exists) {
+      console.log('Adding artwork_data columns to share_projects...');
+      await pool.query(`
+        ALTER TABLE share_projects ADD COLUMN artwork_data bytea;
+        ALTER TABLE share_projects ADD COLUMN artwork_content_type text;
+      `);
+      console.log('artwork_data columns added.');
     }
 
     // LyriCol migration
