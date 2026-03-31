@@ -28,8 +28,14 @@ export default function ResearchReport({
       <div className="border-b border-neutral-200 px-8 py-10">
         <div className="flex items-start justify-between">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+              Market Intelligence &amp; Audience Analysis
+            </p>
+            <h2 className="text-[64px] leading-[0.9] font-bold tracking-tight text-black">
+              {artistName}
+            </h2>
+            <div className="flex items-center gap-3 mt-4">
+              <p className="text-body-sm text-neutral-500">
                 Market Research Report — v{version}
               </p>
               {totalVersions > 1 && onVersionChange && (
@@ -50,18 +56,6 @@ export default function ResearchReport({
                 </div>
               )}
             </div>
-            <h2 className="text-[64px] leading-[0.9] font-bold tracking-tight text-black">
-              {artistName}
-            </h2>
-            {createdAt && (
-              <p className="text-caption text-neutral-400 mt-3 font-mono">
-                {new Date(createdAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
-            )}
           </div>
           <div className="text-right">
             <p className="text-[48px] leading-none font-bold font-mono text-black">
