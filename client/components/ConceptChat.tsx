@@ -48,16 +48,24 @@ export default function ConceptChat({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Chat header */}
-      <div className="px-8 py-5 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
-            Concept
-          </p>
+      {/* Editorial header */}
+      <div className="px-8 pt-10 pb-6 shrink-0">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+              AI Creative Director
+            </p>
+            <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
+              Concept
+            </p>
+            <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
+              Define your artist identity — genre, influences, mood, and creative direction.
+            </p>
+          </div>
           {conceptReady ? (
             <Badge variant="green">Concept Extracted</Badge>
           ) : (
-            <Signal color="violet" label="AI Creative Director" pulse={loading} />
+            <Signal color="violet" label="Active" pulse={loading} />
           )}
         </div>
       </div>
@@ -65,12 +73,7 @@ export default function ConceptChat({
       {/* Messages — editorial style, not bubbles */}
       <div className="flex-1 overflow-y-auto px-8 py-6">
         {messages.length === 0 && !loading && (
-          <div className="py-8 max-w-2xl">
-            <p className="text-body-lg text-neutral-500">
-              Start a conversation with the AI creative director.
-              Genre, influences, mood, vision — define your artist.
-            </p>
-          </div>
+          <div className="py-4 max-w-2xl" />
         )}
 
         <div className="space-y-8 max-w-2xl">
