@@ -13,19 +13,6 @@ interface TrackPromptsProps {
 export default function TrackPrompts({ tracks, onRegenerateTrack, regenerating }: TrackPromptsProps) {
   return (
     <div className="animate-fade-in">
-      {/* Section header */}
-      <div className="border-b border-neutral-200 px-8 py-10">
-        <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-          Sonic Engine
-        </p>
-        <h2 className="text-[64px] leading-[0.9] font-bold tracking-tight text-black">
-          Demo Prompts
-        </h2>
-        <p className="text-body text-neutral-500 mt-4 max-w-lg">
-          Copy these prompts directly into Suno or Udio. Each track is tuned to your style profile and market research.
-        </p>
-      </div>
-
       {/* Track cards */}
       <div className="divide-y divide-neutral-200">
         {tracks.map((track) => (

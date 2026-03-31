@@ -21,16 +21,6 @@ interface StyleProfileProps {
 export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: StyleProfileProps) {
   return (
     <div className="animate-fade-in">
-      {/* Header */}
-      <div className="border-b border-neutral-200 px-8 py-10">
-        <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-          Instrument 02
-        </p>
-        <h2 className="text-[64px] leading-[0.9] font-bold tracking-tight text-black">
-          Style Profile
-        </h2>
-      </div>
-
       {/* Production Aesthetic — hero block */}
       <div className="border-b border-neutral-200 px-8 py-12">
         <SectionLabel>Production Aesthetic</SectionLabel>
