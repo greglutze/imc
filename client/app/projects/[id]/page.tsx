@@ -322,10 +322,10 @@ export default function ProjectPage() {
                       {concept.mood_keywords.slice(0, 3).join(' / ')}
                     </span>
                   )}
-                  <span className="text-micro font-mono text-neutral-300">
-                    {createdDate}
-                  </span>
                 </div>
+                <span className="text-micro font-mono text-neutral-300 mt-3 block">
+                  {createdDate}
+                </span>
               </div>
 
               {/* Right: Artist image or moodboard hero */}
