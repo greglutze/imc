@@ -8,7 +8,7 @@ import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
 import { api } from '../../../lib/api';
-import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack } from '../../../lib/api';
+import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track } from '../../../lib/api';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -44,6 +44,7 @@ export default function ProjectPage() {
   const [moodboardImages, setMoodboardImages] = useState<MoodboardImage[]>([]);
   const [latestTrack, setLatestTrack] = useState<ShareTrack | null>(null);
   const [latestShareProject, setLatestShareProject] = useState<ShareProject | null>(null);
+  const [demoTracks, setDemoTracks] = useState<I2Track[]>([]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -92,7 +93,12 @@ export default function ProjectPage() {
 
         // Load index page data (non-blocking)
         api.getChecklistSummary(id).then(setChecklistSummary).catch(() => {});
-        api.getPrompts(id).then(() => setHasPrompts(true)).catch(() => {});
+        api.getPrompts(id).then(prompts => {
+          setHasPrompts(true);
+          if (prompts.tracks && prompts.tracks.length > 0) {
+            setDemoTracks(prompts.tracks);
+          }
+        }).catch(() => {});
         api.getLyricSessions(id).then(res => setLyricSessionCount(res.sessions.length)).catch(() => {});
         api.getShareProjects(id).then(res => {
           setShareCount(res.projects.length);
@@ -386,13 +392,46 @@ export default function ProjectPage() {
                   </div>
                 </div>
                 <div className="col-span-4">
-                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
-                    Tracks
-                  </p>
-                  <p className="text-[64px] leading-none font-bold text-black">
-                    {String(concept.track_count).padStart(2, '0')}
-                  </p>
-                  <p className="text-body-sm text-neutral-400 mt-1">planned</p>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+                      Demo Prompts
+                    </p>
+                    {demoTracks.length > 0 && (
+                      <a
+                        href={`/projects/${id}/prompts`}
+                        className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+                      >
+                        View All
+                      </a>
+                    )}
+                  </div>
+                  {demoTracks.length > 0 ? (
+                    <div className="space-y-2">
+                      {demoTracks.slice(0, 4).map((t) => (
+                        <a
+                          key={t.track_number}
+                          href={`/projects/${id}/prompts`}
+                          className="flex items-baseline gap-2 group"
+                        >
+                          <span className="text-caption font-mono text-neutral-300">
+                            {String(t.track_number).padStart(2, '0')}
+                          </span>
+                          <span className="text-body font-bold text-black group-hover:text-neutral-600 transition-colors duration-fast truncate">
+                            {t.title}
+                          </span>
+                        </a>
+                      ))}
+                      {demoTracks.length > 4 && (
+                        <p className="text-caption text-neutral-400 mt-1">
+                          +{demoTracks.length - 4} more
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-body-sm text-neutral-400">
+                      {concept.track_count} tracks planned
+                    </p>
+                  )}
                 </div>
               </div>
             )}
