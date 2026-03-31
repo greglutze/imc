@@ -172,7 +172,7 @@ export default function Home() {
                         )}
                       </div>
 
-                      {/* Name + concept */}
+                      {/* Name + concept + date */}
                       <div className="flex-1 min-w-0">
                         <h2 className="text-heading-sm font-bold text-black group-hover:text-black truncate">
                           {project.artist_name || 'Untitled'}
@@ -184,6 +184,9 @@ export default function Home() {
                         ) : (
                           <p className="text-body-sm text-neutral-400 mt-1">No concept defined</p>
                         )}
+                        <span className="text-micro font-mono text-neutral-300 mt-1.5 block">
+                          {createdDate}
+                        </span>
                       </div>
 
                       {/* Genre pill */}
@@ -197,11 +200,6 @@ export default function Home() {
                       <div className="shrink-0 w-24 text-right">
                         <Signal color={statusColor as 'green' | 'yellow' | 'neutral'} label={statusLabel} />
                       </div>
-
-                      {/* Date */}
-                      <span className="text-micro font-mono text-neutral-300 shrink-0 w-28 text-right">
-                        {createdDate}
-                      </span>
 
                       {/* Arrow */}
                       <span className="text-neutral-300 group-hover:text-black transition-colors shrink-0">
