@@ -186,19 +186,29 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       />
 
       {/* Editorial header */}
-      <div className="px-8 pt-10 pb-8">
-        <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-          Visual References &amp; Sonic Brief
-        </p>
-        <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
-          Audio Visuals
-        </p>
-        <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
-          {images.length > 0
-            ? `${imageCount} images defining the look and sound of your project.`
-            : 'Upload images that capture the visual world of your music — photos, textures, artwork, anything that feels right.'
-          }
-        </p>
+      <div className="px-8 pt-10 pb-8 flex items-start justify-between">
+        <div>
+          <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+            Visual References &amp; Sonic Brief
+          </p>
+          <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
+            Audio Visuals
+          </p>
+          <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
+            {images.length > 0
+              ? `${imageCount} images defining the look and sound of your project.`
+              : 'Upload images that capture the visual world of your music — photos, textures, artwork, anything that feels right.'
+            }
+          </p>
+        </div>
+        {images.length > 0 && images.length < 30 && (
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast shrink-0 mt-6"
+          >
+            + Add Images
+          </button>
+        )}
       </div>
 
       {/* Upload area / Grid */}
@@ -226,7 +236,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         {/* Image grid — loose masonry-style, no square crop */}
         {images.length > 0 && (
           <>
-            <div className="columns-3 gap-4 space-y-4">
+            <div className="columns-4 gap-6 space-y-6">
               {images.map((img) => (
                 <div
                   key={img.id}
@@ -269,27 +279,19 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
               ))}
             </div>
 
-            {/* Add more + upload status */}
-            <div className="mt-6 flex items-center gap-4">
-              {images.length < 30 && (
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-                >
-                  + Add Images
-                </button>
-              )}
-              {uploading && (
+            {/* Upload status */}
+            {uploading && (
+              <div className="mt-4">
                 <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
                   Uploading...
                 </p>
-              )}
-              {images.length > 0 && images.length < 5 && !brief && (
-                <p className="text-body-sm text-neutral-400">
-                  Add more images for a richer sonic brief
-                </p>
-              )}
-            </div>
+              </div>
+            )}
+            {images.length > 0 && images.length < 5 && !brief && (
+              <p className="text-body-sm text-neutral-400 mt-4">
+                Add more images for a richer sonic brief
+              </p>
+            )}
           </>
         )}
       </div>
