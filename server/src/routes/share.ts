@@ -275,7 +275,7 @@ authRouter.post('/:projectId/share/:shareId/regenerate', async (req: AuthRequest
 // Upload artwork (raw binary — artwork is small, still OK to store in DB)
 authRouter.post(
   '/:projectId/share/:shareId/artwork/upload',
-  express.raw({ limit: '10mb', type: ['image/*', 'application/octet-stream'] }),
+  express.raw({ limit: '10mb', type: () => true }),
   async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const user = req.user!;
@@ -293,8 +293,20 @@ authRouter.post(
       }
 
       const buffer = req.body as Buffer;
+      if (!buffer || !Buffer.isBuffer(buffer) || buffer.length === 0) {
+        console.error('Artwork upload: body is not a valid buffer', {
+          type: typeof req.body,
+          isBuffer: Buffer.isBuffer(req.body),
+          length: buffer?.length,
+        });
+        res.status(400).json({ error: 'No image data received' });
+        return;
+      }
+
       const result = await uploadArtwork(buffer, filename, contentType);
 
+      // Store the URL — for large images the base64 data URL can be huge,
+      // so store a reference to the key instead if needed
       await pool.query(
         'UPDATE share_projects SET artwork_url = $1, updated_at = NOW() WHERE id = $2 AND project_id = $3',
         [result.url, shareId, projectId]
@@ -302,8 +314,8 @@ authRouter.post(
 
       res.json({ artwork_url: result.url });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Internal server error' });
+      console.error('Artwork upload error:', err);
+      res.status(500).json({ error: 'Artwork upload failed' });
     }
   }
 );
