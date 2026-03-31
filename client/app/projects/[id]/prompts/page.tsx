@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Tabs } from '../../../../components/ui';
 import StyleProfile from '../../../../components/StyleProfile';
 import TrackPrompts from '../../../../components/TrackPrompts';
 import VocalistPersona from '../../../../components/VocalistPersona';
@@ -193,18 +192,19 @@ export default function PromptsPage() {
     <div className="animate-fade-in h-full flex flex-col">
       <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
-      {/* Moodboard active indicator + Tabs */}
+      {/* Editorial header */}
       <div className="max-w-[1400px] mx-auto w-full px-10">
-        <div className="flex items-center justify-between pt-3 pb-1">
-          <div className="flex items-center gap-4">
-            {project?.moodboard_brief && (
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                <span className="text-micro font-bold uppercase tracking-widest text-neutral-400">
-                  Moodboard active
-                </span>
-              </div>
-            )}
+        <div className="pt-10 pb-6 flex items-start justify-between">
+          <div>
+            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+              AI-Generated Suno &amp; Udio Prompts
+            </p>
+            <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
+              Sonic Engine
+            </p>
+            <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
+              Style profiles, vocalist personas, and per-track prompts tuned to your concept and market data.
+            </p>
           </div>
           {hasPrompts && (
             <button
@@ -212,13 +212,37 @@ export default function PromptsPage() {
                 autoGenerateTriggered.current = false;
                 handleGenerate();
               }}
-              className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+              className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast shrink-0 mt-6"
             >
               Regenerate All
             </button>
           )}
         </div>
-        <Tabs tabs={tabs} activeTab={activeTab} onTabChange={(tabId) => setActiveTab(tabId as I2View)} />
+
+        {/* Sub-navigation tabs */}
+        <div className="flex items-center gap-6 border-b border-neutral-200 pb-0">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as I2View)}
+                className={`
+                  text-label font-bold uppercase tracking-widest pb-3 transition-colors duration-fast
+                  ${isActive
+                    ? 'text-black border-b-2 border-black -mb-px'
+                    : 'text-neutral-400 hover:text-black'
+                  }
+                `}
+              >
+                {tab.label}
+                {tab.count !== undefined && (
+                  <span className="ml-1.5 text-neutral-300">{tab.count}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Content */}
