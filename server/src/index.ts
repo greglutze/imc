@@ -10,8 +10,14 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(express.json({ limit: '50mb' }));
 app.use(cors());
+// Skip JSON body parsing for raw binary upload routes (artwork, audio)
+app.use((req, res, next) => {
+  if (req.path.includes('/artwork/upload') || req.path.includes('/tracks/upload')) {
+    return next();
+  }
+  express.json({ limit: '50mb' })(req, res, next);
+});
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response): void => {
