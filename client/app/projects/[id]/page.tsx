@@ -203,7 +203,7 @@ export default function ProjectPage() {
     const instruments = [
       {
         number: '01',
-        name: 'Interview',
+        name: 'Concept',
         description: 'AI creative director session. Define genre, influences, mood, and vision.',
         href: `/projects/${id}?tab=interview`,
         status: conceptReady ? 'Defined' : 'Pending',
@@ -212,7 +212,7 @@ export default function ProjectPage() {
       },
       {
         number: '02',
-        name: 'Moodboard',
+        name: 'Audio Visuals',
         description: 'Visual references and sonic brief. Curate the look and feel of your project.',
         href: `/projects/${id}?tab=moodboard`,
         status: moodboardImages.length > 0 ? `${moodboardImages.length} images` : '—',
@@ -386,7 +386,7 @@ export default function ProjectPage() {
               <div className="py-12 border-b border-neutral-200">
                 <div className="flex items-center justify-between mb-6">
                   <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
-                    Visual Moodboard
+                    Audio Visuals
                   </p>
                   <a
                     href={`/projects/${id}?tab=moodboard`}

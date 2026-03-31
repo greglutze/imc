@@ -52,7 +52,7 @@ export default function ConceptChat({
       <div className="px-8 py-5 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
-            Interview
+            Concept
           </p>
           {conceptReady ? (
             <Badge variant="green">Concept Extracted</Badge>

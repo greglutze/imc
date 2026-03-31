@@ -188,7 +188,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       {/* Section header */}
       <div className="px-8 pt-6 pb-2 flex items-center justify-between">
         <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
-          Visual Moodboard
+          Audio Visuals
         </p>
         {images.length > 0 && (
           <p className="text-micro font-bold uppercase tracking-widest text-neutral-300">
