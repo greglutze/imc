@@ -236,7 +236,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         {/* Image grid — loose masonry-style, no square crop */}
         {images.length > 0 && (
           <>
-            <div className="columns-4 gap-6 space-y-6">
+            <div className="grid grid-cols-4 gap-6 items-start">
               {images.map((img) => (
                 <div
                   key={img.id}
