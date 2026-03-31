@@ -298,7 +298,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Sonic Brief */}
       {(brief || analyzing) && (
-        <div className="border-t border-neutral-200 px-8 py-8">
+        <div className="border-t border-neutral-200 px-8 py-8 bg-neutral-50">
           {analyzing && (
             <div className="max-w-2xl">
               <p className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-3">
