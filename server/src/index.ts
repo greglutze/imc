@@ -11,13 +11,56 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
-// Skip JSON body parsing for raw binary upload routes (artwork, audio)
-app.use((req, res, next) => {
-  if (req.path.includes('/artwork/upload') || req.path.includes('/tracks/upload')) {
-    return next();
+
+// Register artwork upload BEFORE json parser so the body isn't consumed
+import { authMiddleware } from './middleware/auth';
+import { AuthRequest } from './types';
+import { uploadArtwork } from './services/storage';
+
+app.post(
+  '/api/share/:projectId/share/:shareId/artwork/upload',
+  authMiddleware,
+  express.raw({ limit: '10mb', type: () => true }),
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const authReq = req as AuthRequest;
+      const user = authReq.user!;
+      const { projectId, shareId } = req.params;
+      const filename = decodeURIComponent((req.headers['x-filename'] as string) || 'artwork.jpg');
+      const contentType = req.headers['content-type'] || 'image/jpeg';
+
+      const projectCheck = await pool.query(
+        'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
+        [projectId, user.org_id]
+      );
+      if (projectCheck.rows.length === 0) {
+        res.status(403).json({ error: 'Not authorized' });
+        return;
+      }
+
+      const buffer = req.body as Buffer;
+      if (!buffer || !Buffer.isBuffer(buffer) || buffer.length === 0) {
+        res.status(400).json({ error: 'No image data received. Body type: ' + typeof req.body });
+        return;
+      }
+
+      const result = await uploadArtwork(buffer, filename, contentType);
+
+      await pool.query(
+        'UPDATE share_projects SET artwork_url = $1, updated_at = NOW() WHERE id = $2 AND project_id = $3',
+        [result.url, shareId, projectId]
+      );
+
+      res.json({ artwork_url: result.url });
+    } catch (err) {
+      console.error('Artwork upload error:', err);
+      res.status(500).json({ error: 'Artwork upload failed: ' + (err instanceof Error ? err.message : String(err)) });
+    }
   }
-  express.json({ limit: '50mb' })(req, res, next);
-});
+);
+
+// JSON body parser for all other routes
+app.use(express.json({ limit: '50mb' }));
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response): void => {
