@@ -666,19 +666,44 @@ class ApiClient {
   }
 
   async uploadShareArtwork(projectId: string, shareId: string, file: File): Promise<{ artwork_url: string }> {
-    // Convert file to base64 and send as JSON to avoid body parser conflicts
-    const arrayBuffer = await file.arrayBuffer();
-    const base64 = btoa(
-      new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
-    );
+    // Resize image client-side to max 1200px and compress as JPEG
+    const base64 = await this.resizeImage(file, 1200, 0.85);
 
     return this.request(`/api/share/${projectId}/share/${shareId}/artwork/upload`, {
       method: 'POST',
       body: JSON.stringify({
         data: base64,
-        contentType: file.type || 'image/jpeg',
+        contentType: 'image/jpeg',
         filename: file.name,
       }),
+    });
+  }
+
+  private resizeImage(file: File, maxSize: number, quality: number): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxSize || height > maxSize) {
+          if (width > height) {
+            height = Math.round((height * maxSize) / width);
+            width = maxSize;
+          } else {
+            width = Math.round((width * maxSize) / height);
+            height = maxSize;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, width, height);
+        // Export as JPEG, strip the data:image/jpeg;base64, prefix
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl.split(',')[1]);
+      };
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
     });
   }
 
