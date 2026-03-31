@@ -185,21 +185,25 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         className="hidden"
       />
 
-      {/* Section header */}
-      <div className="px-8 pt-6 pb-2 flex items-center justify-between">
-        <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
+      {/* Editorial header */}
+      <div className="px-8 pt-10 pb-8">
+        <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+          Visual References &amp; Sonic Brief
+        </p>
+        <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
           Audio Visuals
         </p>
-        {images.length > 0 && (
-          <p className="text-micro font-bold uppercase tracking-widest text-neutral-300">
-            {imageCount} / 30
-          </p>
-        )}
+        <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
+          {images.length > 0
+            ? `${imageCount} images defining the look and sound of your project.`
+            : 'Upload images that capture the visual world of your music — photos, textures, artwork, anything that feels right.'
+          }
+        </p>
       </div>
 
       {/* Upload area / Grid */}
       <div
-        className={`px-8 py-4 ${dragOver ? 'bg-neutral-50' : ''} transition-colors duration-fast`}
+        className={`px-8 pb-8 ${dragOver ? 'bg-neutral-50' : ''} transition-colors duration-fast`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -207,26 +211,26 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         {/* Empty state */}
         {images.length === 0 && !uploading && (
           <div
-            className="border-2 border-dashed border-neutral-200 rounded-sm py-12 px-8 text-center cursor-pointer hover:border-neutral-400 transition-colors duration-fast"
+            className="border-2 border-dashed border-neutral-200 rounded-sm py-16 px-8 text-center cursor-pointer hover:border-neutral-400 transition-colors duration-fast"
             onClick={() => fileInputRef.current?.click()}
           >
-            <p className="text-body-lg font-bold text-neutral-300">
-              Upload images that represent your project
+            <p className="text-[28px] font-bold text-neutral-200 tracking-tight">
+              Drop images here
             </p>
-            <p className="text-body-sm text-neutral-400 mt-2">
-              Drag and drop or click to browse. JPG, PNG, WEBP — up to 30 images.
+            <p className="text-body text-neutral-400 mt-3">
+              or click to browse. JPG, PNG, WEBP — up to 30 images.
             </p>
           </div>
         )}
 
-        {/* Image grid */}
+        {/* Image grid — loose masonry-style, no square crop */}
         {images.length > 0 && (
           <>
-            <div className="grid grid-cols-4 gap-0">
+            <div className="columns-3 gap-4 space-y-4">
               {images.map((img) => (
                 <div
                   key={img.id}
-                  className="relative aspect-square group"
+                  className="relative group break-inside-avoid"
                   onMouseLeave={() => {
                     if (deleteConfirm === img.id) setDeleteConfirm(null);
                   }}
@@ -234,7 +238,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                   <img
                     src={img.image_data}
                     alt=""
-                    className="w-full h-full object-cover"
+                    className="w-full rounded-sm"
                   />
                   {/* Delete button — hover */}
                   <button
@@ -263,34 +267,30 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                   )}
                 </div>
               ))}
-
-              {/* Add more tile */}
-              {images.length < 30 && (
-                <div
-                  className="aspect-square border-2 border-dashed border-neutral-200 flex items-center justify-center cursor-pointer hover:border-neutral-400 transition-colors duration-fast"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <span className="text-[32px] text-neutral-300 leading-none">+</span>
-                </div>
-              )}
             </div>
 
-            {/* Upload status */}
-            {uploading && (
-              <div className="mt-3">
+            {/* Add more + upload status */}
+            <div className="mt-6 flex items-center gap-4">
+              {images.length < 30 && (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+                >
+                  + Add Images
+                </button>
+              )}
+              {uploading && (
                 <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
                   Uploading...
                 </p>
-              </div>
-            )}
+              )}
+              {images.length > 0 && images.length < 5 && !brief && (
+                <p className="text-body-sm text-neutral-400">
+                  Add more images for a richer sonic brief
+                </p>
+              )}
+            </div>
           </>
-        )}
-
-        {/* Partial state warning */}
-        {images.length > 0 && images.length < 5 && !brief && (
-          <p className="text-body text-neutral-400 mt-4">
-            Add more images for a richer sonic brief
-          </p>
         )}
       </div>
 
