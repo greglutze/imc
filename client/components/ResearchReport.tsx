@@ -72,33 +72,6 @@ export default function ResearchReport({
         </div>
       </div>
 
-      {/* Confidence strip */}
-      <div className="border-b border-neutral-200 px-8 py-6">
-        <div className="grid grid-cols-4 gap-6">
-          <ConfidenceMeter value={confidence.overall_score} label="Overall" />
-          <ConfidenceMeter value={confidence.data_completeness} label="Data Completeness" />
-          <div>
-            <p className="text-caption text-neutral-400 mb-2">Sources Used</p>
-            <div className="flex flex-wrap gap-1.5">
-              {confidence.sources_used.map((s, i) => (
-                <Badge key={i} variant="green">{s}</Badge>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="text-caption text-neutral-400 mb-2">Sources Failed</p>
-            <div className="flex flex-wrap gap-1.5">
-              {confidence.sources_failed.length > 0 ? (
-                confidence.sources_failed.map((s, i) => (
-                  <Badge key={i} variant="red">{s}</Badge>
-                ))
-              ) : (
-                <Badge variant="green">None</Badge>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Market Overview — full-width editorial */}
       <div className="border-b border-neutral-200">
