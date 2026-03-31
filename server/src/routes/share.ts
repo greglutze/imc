@@ -296,6 +296,14 @@ authRouter.post('/:projectId/share/:shareId/artwork/upload', async (req: AuthReq
     const buffer = Buffer.from(data, 'base64');
     const artworkUrl = `/api/share/artwork/${shareId}`;
 
+    // Ensure artwork columns exist (migration may not have run yet)
+    try {
+      await pool.query(`ALTER TABLE share_projects ADD COLUMN IF NOT EXISTS artwork_data bytea`);
+      await pool.query(`ALTER TABLE share_projects ADD COLUMN IF NOT EXISTS artwork_content_type text`);
+    } catch (_migrationErr) {
+      // columns already exist, ignore
+    }
+
     await pool.query(
       `UPDATE share_projects
        SET artwork_data = $1, artwork_content_type = $2,
@@ -307,7 +315,8 @@ authRouter.post('/:projectId/share/:shareId/artwork/upload', async (req: AuthReq
     res.json({ artwork_url: artworkUrl });
   } catch (err) {
     console.error('Artwork upload error:', err);
-    res.status(500).json({ error: 'Artwork upload failed' });
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ error: `Artwork upload failed: ${msg}` });
   }
 });
 
