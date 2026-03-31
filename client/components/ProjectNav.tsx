@@ -19,7 +19,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
     { key: 'research', label: 'Research', href: `/projects/${projectId}?tab=research` },
     { key: 'prompts', label: 'Sonic Engine', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'LyriCol', href: `/projects/${projectId}/lyrics` },
-    { key: 'share', label: 'Share', href: `/projects/${projectId}/share` },
+    { key: 'share', label: 'Tracks', href: `/projects/${projectId}/share` },
   ];
 
   return (

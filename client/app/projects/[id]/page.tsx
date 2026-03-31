@@ -264,7 +264,7 @@ export default function ProjectPage() {
       },
       {
         number: '06',
-        name: 'Share',
+        name: 'Tracks',
         description: 'Private listening rooms with Dropbox-linked audio, analytics, and password protection.',
         href: `/projects/${id}/share`,
         status: shareCount > 0 ? `${shareCount} shares` : '—',

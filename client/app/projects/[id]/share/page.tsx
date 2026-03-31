@@ -84,7 +84,7 @@ export default function SharePage() {
         <div className="flex items-center justify-between mb-12">
           <div>
             <h1 className="text-display font-bold tracking-tight text-black mb-2">
-              Share
+              Tracks
             </h1>
             <p className="text-body text-neutral-500">
               Create private listening links to share your music before release.
