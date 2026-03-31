@@ -202,15 +202,6 @@ export default function ProjectPage() {
     // Build instrument cards for the grid
     const instruments = [
       {
-        number: '00',
-        name: 'Checklist',
-        description: 'Launch readiness tracker. Milestones, deliverables, and dependencies.',
-        href: `/projects/${id}/checklist`,
-        status: checklistSummary ? `${checklistSummary.checked}/${checklistSummary.total}` : '—',
-        statusLabel: checklistSummary && checklistSummary.checked === checklistSummary.total && checklistSummary.total > 0 ? 'Complete' : 'Active',
-        color: 'green' as const,
-      },
-      {
         number: '01',
         name: 'Concept',
         description: 'Artist identity interview and visual moodboard. The creative foundation.',
