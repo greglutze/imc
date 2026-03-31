@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-type NavPage = 'home' | 'checklist' | 'concept' | 'research' | 'prompts' | 'lyrics' | 'share';
+type NavPage = 'home' | 'checklist' | 'concept' | 'interview' | 'moodboard' | 'research' | 'prompts' | 'lyrics' | 'share';
 
 interface ProjectNavProps {
   projectId: string;
@@ -14,7 +14,8 @@ interface ProjectNavProps {
 
 export default function ProjectNav({ projectId, artistName, imageUrl, activePage, onNavigate }: ProjectNavProps) {
   const links: Array<{ key: NavPage; label: string; href: string }> = [
-    { key: 'concept', label: 'Concept', href: `/projects/${projectId}?tab=concept` },
+    { key: 'interview', label: 'Interview', href: `/projects/${projectId}?tab=interview` },
+    { key: 'moodboard', label: 'Moodboard', href: `/projects/${projectId}?tab=moodboard` },
     { key: 'research', label: 'Research', href: `/projects/${projectId}?tab=research` },
     { key: 'prompts', label: 'Sonic Engine', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'LyriCol', href: `/projects/${projectId}/lyrics` },
@@ -54,7 +55,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
             const activeClass = isActive ? 'text-black bg-neutral-100' : 'text-neutral-400 hover:text-black';
 
             // If onNavigate is provided and this is concept/research, use button for in-page nav
-            if (onNavigate && (link.key === 'concept' || link.key === 'research')) {
+            if (onNavigate && (link.key === 'interview' || link.key === 'moodboard' || link.key === 'research')) {
               return (
                 <button
                   key={link.key}

@@ -12,7 +12,7 @@ import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Proje
 
 /* eslint-disable @next/next/no-img-element */
 
-type ViewState = 'home' | 'concept' | 'report';
+type ViewState = 'home' | 'interview' | 'moodboard' | 'report';
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +22,7 @@ export default function ProjectPage() {
 
   // Read ?tab= param to determine initial view
   const tabParam = searchParams.get('tab');
-  const initialTab: ViewState = tabParam === 'research' ? 'report' : tabParam === 'concept' ? 'concept' : tabParam === 'moodboard' ? 'concept' : 'home';
+  const initialTab: ViewState = tabParam === 'research' ? 'report' : tabParam === 'interview' ? 'interview' : tabParam === 'concept' ? 'interview' : tabParam === 'moodboard' ? 'moodboard' : 'home';
   const [activeTab, setActiveTab] = useState<ViewState>(initialTab);
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [loading, setLoading] = useState(false);
@@ -203,15 +203,24 @@ export default function ProjectPage() {
     const instruments = [
       {
         number: '01',
-        name: 'Concept',
-        description: 'Artist identity interview and visual moodboard. The creative foundation.',
-        href: `/projects/${id}?tab=concept`,
+        name: 'Interview',
+        description: 'AI creative director session. Define genre, influences, mood, and vision.',
+        href: `/projects/${id}?tab=interview`,
         status: conceptReady ? 'Defined' : 'Pending',
         statusLabel: conceptReady ? 'Complete' : 'Start Interview',
         color: conceptReady ? 'green' as const : 'yellow' as const,
       },
       {
         number: '02',
+        name: 'Moodboard',
+        description: 'Visual references and sonic brief. Curate the look and feel of your project.',
+        href: `/projects/${id}?tab=moodboard`,
+        status: moodboardImages.length > 0 ? `${moodboardImages.length} images` : '—',
+        statusLabel: moodboardImages.length > 0 ? 'Active' : 'Start',
+        color: moodboardImages.length > 0 ? 'green' as const : 'neutral' as const,
+      },
+      {
+        number: '03',
         name: 'Research',
         description: 'Market intelligence, comparable artists, audience profile, and sonic blueprint.',
         href: `/projects/${id}?tab=research`,
@@ -220,7 +229,7 @@ export default function ProjectPage() {
         color: report ? 'green' as const : conceptReady ? 'yellow' as const : 'neutral' as const,
       },
       {
-        number: '03',
+        number: '04',
         name: 'Sonic Engine',
         description: 'AI-generated Suno & Udio prompts tuned to your style profile and market data.',
         href: `/projects/${id}/prompts`,
@@ -229,7 +238,7 @@ export default function ProjectPage() {
         color: hasPrompts ? 'green' as const : 'neutral' as const,
       },
       {
-        number: '04',
+        number: '05',
         name: 'LyriCol',
         description: 'Collaborative lyric advisor. Paste lyrics, talk through ideas, find the right words.',
         href: `/projects/${id}/lyrics`,
@@ -238,7 +247,7 @@ export default function ProjectPage() {
         color: lyricSessionCount > 0 ? 'green' as const : 'neutral' as const,
       },
       {
-        number: '05',
+        number: '06',
         name: 'Share',
         description: 'Private listening rooms with Dropbox-linked audio, analytics, and password protection.',
         href: `/projects/${id}/share`,
@@ -256,7 +265,8 @@ export default function ProjectPage() {
           imageUrl={project?.image_url}
           activePage="home"
           onNavigate={(page) => {
-            if (page === 'concept') setActiveTab('concept');
+            if (page === 'interview') setActiveTab('interview');
+            else if (page === 'moodboard') setActiveTab('moodboard');
             else if (page === 'research') setActiveTab('report');
           }}
         />
@@ -462,32 +472,28 @@ export default function ProjectPage() {
         projectId={id}
         artistName={artistName}
         imageUrl={project?.image_url}
-        activePage={activeTab === 'report' ? 'research' : 'concept'}
-        onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : 'concept')}
+        activePage={activeTab === 'report' ? 'research' : activeTab === 'moodboard' ? 'moodboard' : 'interview'}
+        onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : page === 'moodboard' ? 'moodboard' : 'interview')}
       />
 
       {/* Content area */}
       <div className="flex-1 overflow-hidden">
-        <div className={activeTab === 'concept' ? 'h-full' : 'h-full overflow-y-auto'}>
+        <div className={activeTab === 'interview' ? 'h-full' : 'h-full overflow-y-auto'}>
           <div className="max-w-[1400px] mx-auto h-full">
-          {activeTab === 'concept' && (
-            <div className="flex h-full">
-              {/* Left: Interview chat */}
-              <div className="w-1/2 h-full border-r border-neutral-200">
-                <ConceptChat
-                  messages={messages}
-                  onSend={handleSendMessage}
-                  loading={loading}
-                  conceptReady={conceptReady}
-                  concept={concept}
-                />
-              </div>
-
-              {/* Right: Visual Moodboard + Sonic Brief */}
-              <div className="w-1/2 h-full overflow-y-auto">
-                <VisualMoodboard projectId={id} />
-              </div>
+          {activeTab === 'interview' && (
+            <div className="h-full">
+              <ConceptChat
+                messages={messages}
+                onSend={handleSendMessage}
+                loading={loading}
+                conceptReady={conceptReady}
+                concept={concept}
+              />
             </div>
+          )}
+
+          {activeTab === 'moodboard' && (
+            <VisualMoodboard projectId={id} />
           )}
 
           {activeTab === 'report' && (
