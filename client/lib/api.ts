@@ -666,27 +666,20 @@ class ApiClient {
   }
 
   async uploadShareArtwork(projectId: string, shareId: string, file: File): Promise<{ artwork_url: string }> {
-    const token = this.getToken();
-    const headers: Record<string, string> = {
-      'Content-Type': file.type || 'image/jpeg',
-      'X-Filename': encodeURIComponent(file.name),
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
+    // Convert file to base64 and send as JSON to avoid body parser conflicts
+    const arrayBuffer = await file.arrayBuffer();
+    const base64 = btoa(
+      new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
 
-    const res = await fetch(`${API_BASE}/api/share/${projectId}/share/${shareId}/artwork/upload`, {
+    return this.request(`/api/share/${projectId}/share/${shareId}/artwork/upload`, {
       method: 'POST',
-      headers,
-      body: file,
+      body: JSON.stringify({
+        data: base64,
+        contentType: file.type || 'image/jpeg',
+        filename: file.name,
+      }),
     });
-
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({ message: res.statusText }));
-      throw new Error(error.message || `Upload failed: ${res.status}`);
-    }
-
-    return res.json();
   }
 
   async addShareTrack(projectId: string, shareId: string, dropboxUrl: string, title?: string): Promise<ShareTrack> {
