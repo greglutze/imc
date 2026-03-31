@@ -51,7 +51,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
         <nav className="flex items-center gap-1">
           {links.map((link) => {
             const isActive = activePage === link.key;
-            const baseClass = `text-label font-bold uppercase tracking-widest px-3 py-1 rounded-sm transition-colors duration-fast`;
+            const baseClass = `text-micro font-bold uppercase tracking-widest px-3 py-1 rounded-sm transition-colors duration-fast`;
             const activeClass = isActive ? 'text-black bg-neutral-100' : 'text-neutral-400 hover:text-black';
 
             // If onNavigate is provided and this is concept/research, use button for in-page nav
