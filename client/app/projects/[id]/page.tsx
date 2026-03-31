@@ -22,8 +22,18 @@ export default function ProjectPage() {
 
   // Read ?tab= param to determine initial view
   const tabParam = searchParams.get('tab');
-  const initialTab: ViewState = tabParam === 'research' ? 'report' : tabParam === 'interview' ? 'interview' : tabParam === 'concept' ? 'interview' : tabParam === 'moodboard' ? 'moodboard' : 'home';
-  const [activeTab, setActiveTab] = useState<ViewState>(initialTab);
+  const tabFromParam = (param: string | null): ViewState => {
+    if (param === 'research') return 'report';
+    if (param === 'interview' || param === 'concept') return 'interview';
+    if (param === 'moodboard') return 'moodboard';
+    return 'home';
+  };
+  const [activeTab, setActiveTab] = useState<ViewState>(tabFromParam(tabParam));
+
+  // Sync tab state when URL params change (e.g. browser refresh, back/forward)
+  useEffect(() => {
+    setActiveTab(tabFromParam(tabParam));
+  }, [tabParam]);
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [conceptReady, setConceptReady] = useState(false);
