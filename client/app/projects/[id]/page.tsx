@@ -392,19 +392,9 @@ export default function ProjectPage() {
                   </div>
                 </div>
                 <div className="col-span-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
-                      Demo Prompts
-                    </p>
-                    {demoTracks.length > 0 && (
-                      <a
-                        href={`/projects/${id}/prompts`}
-                        className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-                      >
-                        View All
-                      </a>
-                    )}
-                  </div>
+                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
+                    Demo Prompts
+                  </p>
                   {demoTracks.length > 0 ? (
                     <div className="space-y-2">
                       {demoTracks.slice(0, 4).map((t) => (
@@ -422,9 +412,12 @@ export default function ProjectPage() {
                         </a>
                       ))}
                       {demoTracks.length > 4 && (
-                        <p className="text-caption text-neutral-400 mt-1">
-                          +{demoTracks.length - 4} more
-                        </p>
+                        <a
+                          href={`/projects/${id}/prompts`}
+                          className="text-caption text-neutral-400 hover:text-black transition-colors duration-fast mt-1 block"
+                        >
+                          View all
+                        </a>
                       )}
                     </div>
                   ) : (
