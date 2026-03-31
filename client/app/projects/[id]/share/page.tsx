@@ -79,25 +79,32 @@ export default function SharePage() {
         imageUrl={project?.image_url}
         activePage="share"
       />
-      <div className="max-w-[1400px] mx-auto px-10 py-12">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h1 className="text-display font-bold tracking-tight text-black mb-2">
-              Tracks
-            </h1>
-            <p className="text-body text-neutral-500">
-              Create private listening links to share your music before release.
-            </p>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Editorial header */}
+        <div className="px-8 pt-10 pb-8">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+                Private Listening Links &amp; Distribution
+              </p>
+              <h2 className="text-[40px] leading-[0.9] font-bold tracking-tight text-black">
+                Tracks
+              </h2>
+              <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
+                Create private listening links to share your music before release.
+              </p>
+            </div>
+            <button
+              onClick={handleCreate}
+              disabled={creating}
+              className="px-5 py-2.5 bg-black text-white text-label font-bold uppercase tracking-widest rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50"
+            >
+              {creating ? 'Creating...' : '+ New Share Link'}
+            </button>
           </div>
-          <button
-            onClick={handleCreate}
-            disabled={creating}
-            className="px-5 py-2.5 bg-black text-white text-label font-bold uppercase tracking-widest rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50"
-          >
-            {creating ? 'Creating...' : 'New Share Link'}
-          </button>
         </div>
+
+        <div className="px-8 pb-12">
 
         {/* Share projects list */}
         {shares.length === 0 ? (
@@ -151,6 +158,7 @@ export default function SharePage() {
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
