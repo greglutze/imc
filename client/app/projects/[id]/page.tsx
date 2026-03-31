@@ -6,7 +6,6 @@ import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
 import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
-import { Tabs } from '../../../components/ui';
 import { useAuth } from '../../../lib/auth-context';
 import { api } from '../../../lib/api';
 import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage } from '../../../lib/api';
@@ -14,7 +13,6 @@ import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Proje
 /* eslint-disable @next/next/no-img-element */
 
 type ViewState = 'home' | 'concept' | 'report';
-type ConceptSubTab = 'interview' | 'moodboard';
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -25,9 +23,7 @@ export default function ProjectPage() {
   // Read ?tab= param to determine initial view
   const tabParam = searchParams.get('tab');
   const initialTab: ViewState = tabParam === 'research' ? 'report' : tabParam === 'concept' ? 'concept' : tabParam === 'moodboard' ? 'concept' : 'home';
-  const initialSubTab: ConceptSubTab = tabParam === 'moodboard' ? 'moodboard' : 'interview';
   const [activeTab, setActiveTab] = useState<ViewState>(initialTab);
-  const [conceptSubTab, setConceptSubTab] = useState<ConceptSubTab>(initialSubTab);
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [conceptReady, setConceptReady] = useState(false);
@@ -483,20 +479,12 @@ export default function ProjectPage() {
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1400px] mx-auto">
           {activeTab === 'concept' && (
-            <>
-              {/* Concept sub-tabs: Interview / Moodboard */}
-              <div className="max-w-[1400px] mx-auto w-full px-10">
-                <Tabs
-                  tabs={[
-                    { id: 'interview', label: 'Interview' },
-                    { id: 'moodboard', label: 'Moodboard' },
-                  ]}
-                  activeTab={conceptSubTab}
-                  onTabChange={(tabId) => setConceptSubTab(tabId as ConceptSubTab)}
-                />
-              </div>
+            <div>
+              {/* Top section: Moodboard images + brief */}
+              <VisualMoodboard projectId={id} />
 
-              {conceptSubTab === 'interview' && (
+              {/* Bottom section: Interview chat */}
+              <div className="border-t border-neutral-200">
                 <ConceptChat
                   messages={messages}
                   onSend={handleSendMessage}
@@ -504,12 +492,8 @@ export default function ProjectPage() {
                   conceptReady={conceptReady}
                   concept={concept}
                 />
-              )}
-
-              {conceptSubTab === 'moodboard' && (
-                <VisualMoodboard projectId={id} />
-              )}
-            </>
+              </div>
+            </div>
           )}
 
           {activeTab === 'report' && (

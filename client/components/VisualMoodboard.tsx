@@ -185,9 +185,21 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         className="hidden"
       />
 
+      {/* Section header */}
+      <div className="px-8 pt-6 pb-2 flex items-center justify-between">
+        <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
+          Visual Moodboard
+        </p>
+        {images.length > 0 && (
+          <p className="text-micro font-bold uppercase tracking-widest text-neutral-300">
+            {imageCount} / 30
+          </p>
+        )}
+      </div>
+
       {/* Upload area / Grid */}
       <div
-        className={`px-8 py-8 ${dragOver ? 'bg-neutral-50' : ''} transition-colors duration-fast`}
+        className={`px-8 py-4 ${dragOver ? 'bg-neutral-50' : ''} transition-colors duration-fast`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -195,13 +207,13 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         {/* Empty state */}
         {images.length === 0 && !uploading && (
           <div
-            className="border-2 border-dashed border-neutral-200 rounded-sm py-20 px-8 text-center cursor-pointer hover:border-neutral-400 transition-colors duration-fast"
+            className="border-2 border-dashed border-neutral-200 rounded-sm py-12 px-8 text-center cursor-pointer hover:border-neutral-400 transition-colors duration-fast"
             onClick={() => fileInputRef.current?.click()}
           >
-            <p className="text-[28px] leading-[1.2] font-bold text-neutral-300 tracking-tight">
+            <p className="text-body-lg font-bold text-neutral-300">
               Upload images that represent your project
             </p>
-            <p className="text-body text-neutral-400 mt-3">
+            <p className="text-body-sm text-neutral-400 mt-2">
               Drag and drop or click to browse. JPG, PNG, WEBP — up to 30 images.
             </p>
           </div>
@@ -263,17 +275,14 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
               )}
             </div>
 
-            {/* Image count + upload status */}
-            <div className="flex items-center justify-between mt-4">
-              <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
-                {imageCount} / 30 images
-              </p>
-              {uploading && (
+            {/* Upload status */}
+            {uploading && (
+              <div className="mt-3">
                 <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
                   Uploading...
                 </p>
-              )}
-            </div>
+              </div>
+            )}
           </>
         )}
 

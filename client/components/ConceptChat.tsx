@@ -47,18 +47,13 @@ export default function ConceptChat({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col">
       {/* Chat header */}
-      <div className="border-b border-neutral-200 px-8 py-5 flex items-center justify-between">
-        <div>
-          <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
-            Instrument 01
-          </p>
-          <p className="text-heading-sm font-bold text-black mt-1">
-            Concept Interview
-          </p>
-        </div>
+      <div className="px-8 py-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
+          <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
+            Interview
+          </p>
           {conceptReady ? (
             <Badge variant="green">Concept Extracted</Badge>
           ) : (
@@ -68,16 +63,12 @@ export default function ConceptChat({
       </div>
 
       {/* Messages — editorial style, not bubbles */}
-      <div className="flex-1 overflow-y-auto px-8 py-6">
+      <div className="px-8 py-6">
         {messages.length === 0 && !loading && (
-          <div className="py-16 max-w-2xl">
-            <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
-            <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-              Define Your Artist
-            </p>
-            <p className="text-body-lg text-black mt-5 max-w-sm">
+          <div className="py-8 max-w-2xl">
+            <p className="text-body-lg text-neutral-500">
               Start a conversation with the AI creative director.
-              Genre, influences, mood, vision.
+              Genre, influences, mood, vision — define your artist.
             </p>
           </div>
         )}
