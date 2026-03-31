@@ -3,6 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './config/database';
 import apiRoutes from './routes';
+import { authMiddleware } from './middleware/auth';
+import { AuthRequest } from './types';
+import { uploadArtwork } from './services/storage';
 
 dotenv.config();
 
@@ -13,10 +16,6 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 
 // Register artwork upload BEFORE json parser so the body isn't consumed
-import { authMiddleware } from './middleware/auth';
-import { AuthRequest } from './types';
-import { uploadArtwork } from './services/storage';
-
 app.post(
   '/api/share/:projectId/share/:shareId/artwork/upload',
   authMiddleware,

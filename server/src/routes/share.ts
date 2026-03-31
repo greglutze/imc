@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import pool from '../config/database';
 import { authMiddleware } from '../middleware/auth';
 import { AuthRequest } from '../types';
-import { uploadArtwork } from '../services/storage';
+// uploadArtwork moved to index.ts
 
 const router = Router();
 
@@ -272,53 +272,7 @@ authRouter.post('/:projectId/share/:shareId/regenerate', async (req: AuthRequest
   }
 });
 
-// Upload artwork (raw binary — artwork is small, still OK to store in DB)
-authRouter.post(
-  '/:projectId/share/:shareId/artwork/upload',
-  express.raw({ limit: '10mb', type: () => true }),
-  async (req: AuthRequest, res: Response): Promise<void> => {
-    try {
-      const user = req.user!;
-      const { projectId, shareId } = req.params;
-      const filename = decodeURIComponent((req.headers['x-filename'] as string) || 'artwork.jpg');
-      const contentType = req.headers['content-type'] || 'image/jpeg';
-
-      const projectCheck = await pool.query(
-        'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
-        [projectId, user.org_id]
-      );
-      if (projectCheck.rows.length === 0) {
-        res.status(403).json({ error: 'Not authorized' });
-        return;
-      }
-
-      const buffer = req.body as Buffer;
-      if (!buffer || !Buffer.isBuffer(buffer) || buffer.length === 0) {
-        console.error('Artwork upload: body is not a valid buffer', {
-          type: typeof req.body,
-          isBuffer: Buffer.isBuffer(req.body),
-          length: buffer?.length,
-        });
-        res.status(400).json({ error: 'No image data received' });
-        return;
-      }
-
-      const result = await uploadArtwork(buffer, filename, contentType);
-
-      // Store the URL — for large images the base64 data URL can be huge,
-      // so store a reference to the key instead if needed
-      await pool.query(
-        'UPDATE share_projects SET artwork_url = $1, updated_at = NOW() WHERE id = $2 AND project_id = $3',
-        [result.url, shareId, projectId]
-      );
-
-      res.json({ artwork_url: result.url });
-    } catch (err) {
-      console.error('Artwork upload error:', err);
-      res.status(500).json({ error: 'Artwork upload failed' });
-    }
-  }
-);
+// Artwork upload route is registered in index.ts (before JSON parser)
 
 // Add track via Dropbox link
 authRouter.post('/:projectId/share/:shareId/tracks', async (req: AuthRequest, res: Response): Promise<void> => {
