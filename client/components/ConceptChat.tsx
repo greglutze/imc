@@ -47,9 +47,9 @@ export default function ConceptChat({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       {/* Chat header */}
-      <div className="px-8 py-5 flex items-center justify-between">
+      <div className="px-8 py-5 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
             Interview
@@ -63,7 +63,7 @@ export default function ConceptChat({
       </div>
 
       {/* Messages — editorial style, not bubbles */}
-      <div className="px-8 py-6">
+      <div className="flex-1 overflow-y-auto px-8 py-6">
         {messages.length === 0 && !loading && (
           <div className="py-8 max-w-2xl">
             <p className="text-body-lg text-neutral-500">
@@ -99,7 +99,7 @@ export default function ConceptChat({
       </div>
 
       {/* Input — always visible so the artist can refine the concept */}
-      <form onSubmit={handleSubmit} className="px-8 py-5">
+      <form onSubmit={handleSubmit} className="px-8 py-5 shrink-0 border-t border-neutral-100">
         <div className="max-w-2xl bg-neutral-50 rounded-sm px-5 py-4 flex items-end gap-3">
           <textarea
             ref={inputRef}
@@ -131,7 +131,7 @@ export default function ConceptChat({
 
       {/* Concept extracted card */}
       {conceptReady && concept && (
-        <div className="border-t border-neutral-200 px-8 py-6 bg-neutral-50">
+        <div className="border-t border-neutral-200 px-8 py-6 bg-neutral-50 shrink-0">
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-4">
               <Signal color="green" />

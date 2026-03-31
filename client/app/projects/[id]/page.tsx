@@ -476,15 +476,13 @@ export default function ProjectPage() {
       />
 
       {/* Content area */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-[1400px] mx-auto">
+      <div className="flex-1 overflow-hidden">
+        <div className={activeTab === 'concept' ? 'h-full' : 'h-full overflow-y-auto'}>
+          <div className="max-w-[1400px] mx-auto h-full">
           {activeTab === 'concept' && (
-            <div>
-              {/* Top section: Moodboard images + brief */}
-              <VisualMoodboard projectId={id} />
-
-              {/* Bottom section: Interview chat */}
-              <div className="border-t border-neutral-200">
+            <div className="flex h-full">
+              {/* Left: Interview chat */}
+              <div className="w-1/2 h-full border-r border-neutral-200">
                 <ConceptChat
                   messages={messages}
                   onSend={handleSendMessage}
@@ -492,6 +490,11 @@ export default function ProjectPage() {
                   conceptReady={conceptReady}
                   concept={concept}
                 />
+              </div>
+
+              {/* Right: Visual Moodboard + Sonic Brief */}
+              <div className="w-1/2 h-full overflow-y-auto">
+                <VisualMoodboard projectId={id} />
               </div>
             </div>
           )}
@@ -557,6 +560,7 @@ export default function ProjectPage() {
               )}
             </>
           )}
+          </div>
         </div>
       </div>
     </div>
