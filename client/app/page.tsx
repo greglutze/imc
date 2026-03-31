@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Badge, Signal } from '../components/ui';
+import { Signal } from '../components/ui';
 import { useAuth } from '../lib/auth-context';
 import { api, type Project } from '../lib/api';
 
@@ -98,12 +98,10 @@ export default function Home() {
     );
   }
 
-  const activeProject = projects.length > 0 ? projects[0] : null;
-
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in h-full flex flex-col">
       {/* Masthead */}
-      <div className="border-b border-neutral-200">
+      <div className="border-b border-neutral-200 shrink-0">
         <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
           <div>
             <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
@@ -118,197 +116,133 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-10">
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-[1400px] mx-auto px-10">
 
-        {loadingProjects ? (
-          <div className="py-32 text-center">
-            <p className="text-[120px] leading-[0.85] font-bold text-neutral-100">...</p>
-            <p className="text-body text-neutral-400 mt-4">Loading projects</p>
-          </div>
-        ) : activeProject ? (
-          <>
-            {/* Hero — active project */}
-            <div className="py-16 border-b border-neutral-200">
-              <div className="flex items-center gap-3 mb-6">
-                <Signal color="green" />
-                <Badge variant="green">Active Project</Badge>
-              </div>
-              <a href={`/projects/${activeProject.id}`} className="block hover:opacity-80 transition-opacity duration-fast">
-                <div className="flex items-end gap-6">
-                  {activeProject.image_url && (
-                    <div className="w-24 h-24 rounded-sm overflow-hidden border border-neutral-200 shrink-0">
-                      <img src={activeProject.image_url} alt={activeProject.artist_name || 'Artist'} className="w-full h-full object-cover object-top" />
-                    </div>
-                  )}
-                  <h1 className="text-[120px] leading-[0.9] font-bold tracking-tight text-black -ml-1">
-                    {activeProject.artist_name || 'Untitled'}
+          {loadingProjects ? (
+            <div className="py-32 text-center">
+              <p className="text-[120px] leading-[0.85] font-bold text-neutral-100">...</p>
+              <p className="text-body text-neutral-400 mt-4">Loading projects</p>
+            </div>
+          ) : projects.length > 0 ? (
+            <>
+              {/* Header row */}
+              <div className="flex items-end justify-between pt-16 pb-10">
+                <div>
+                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-3">
+                    Projects
+                  </p>
+                  <h1 className="text-[64px] leading-[0.9] font-bold tracking-tight text-black">
+                    {String(projects.length).padStart(2, '0')}
                   </h1>
                 </div>
-              </a>
-              <p className="text-body-lg text-neutral-500 mt-8 max-w-md">
-                {activeProject.concept?.creative_direction || 'No concept defined yet. Start the concept interview to begin.'}
+                <a
+                  href="/projects/new"
+                  className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
+                >
+                  + New Project
+                </a>
+              </div>
+
+              {/* Project list */}
+              <div className="border-t border-neutral-200">
+                {projects.map((project) => {
+                  const statusLabel = project.status === 'draft' ? 'Draft' : project.status === 'complete' ? 'Complete' : 'In Progress';
+                  const statusColor = project.status === 'complete' ? 'green' : project.status === 'draft' ? 'neutral' : 'yellow';
+                  const createdDate = new Date(project.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                  return (
+                    <a
+                      key={project.id}
+                      href={`/projects/${project.id}`}
+                      className="group flex items-center gap-6 py-6 border-b border-neutral-200 hover:bg-neutral-50 -mx-4 px-4 rounded-sm transition-colors duration-fast"
+                    >
+                      {/* Artist image or initial */}
+                      <div className="w-16 h-16 rounded-sm overflow-hidden bg-neutral-100 shrink-0 flex items-center justify-center">
+                        {project.image_url ? (
+                          <img
+                            src={project.image_url}
+                            alt={project.artist_name || 'Artist'}
+                            className="w-full h-full object-cover object-top"
+                          />
+                        ) : (
+                          <span className="text-[28px] font-bold text-neutral-300">
+                            {(project.artist_name || 'U').charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Name + concept */}
+                      <div className="flex-1 min-w-0">
+                        <h2 className="text-heading-sm font-bold text-black group-hover:text-black truncate">
+                          {project.artist_name || 'Untitled'}
+                        </h2>
+                        {project.concept?.creative_direction ? (
+                          <p className="text-body-sm text-neutral-500 mt-1 truncate">
+                            {project.concept.creative_direction}
+                          </p>
+                        ) : (
+                          <p className="text-body-sm text-neutral-400 mt-1">No concept defined</p>
+                        )}
+                      </div>
+
+                      {/* Genre pill */}
+                      {project.concept?.genre_primary && (
+                        <span className="text-micro font-bold uppercase tracking-widest text-neutral-400 bg-neutral-100 px-3 py-1.5 rounded-sm shrink-0">
+                          {project.concept.genre_primary}
+                        </span>
+                      )}
+
+                      {/* Status */}
+                      <div className="shrink-0 w-24 text-right">
+                        <Signal color={statusColor as 'green' | 'yellow' | 'neutral'} label={statusLabel} />
+                      </div>
+
+                      {/* Date */}
+                      <span className="text-micro font-mono text-neutral-300 shrink-0 w-28 text-right">
+                        {createdDate}
+                      </span>
+
+                      {/* Arrow */}
+                      <span className="text-neutral-300 group-hover:text-black transition-colors shrink-0">
+                        &#8599;
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+
+              {/* Bottom spacer */}
+              <div className="h-16" />
+            </>
+          ) : (
+            /* No projects yet */
+            <div className="py-32">
+              <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">00</p>
+              <p className="text-[48px] leading-[1.1] font-bold text-black mt-6 tracking-tight">
+                No Projects Yet
               </p>
+              <p className="text-body-lg text-neutral-500 mt-4 max-w-md">
+                Create your first project to start defining an artist concept and running market research.
+              </p>
+              <a
+                href="/projects/new"
+                className="mt-8 bg-black text-white text-label font-bold uppercase tracking-widest h-12 px-8 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
+              >
+                New Project
+              </a>
             </div>
-
-            {/* Pipeline status */}
-            <div className="grid grid-cols-12 gap-x-6 border-b border-neutral-200">
-              <div className="col-span-4 py-10 border-r border-neutral-200 pr-6">
-                <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
-                  Pipeline
-                </p>
-                <div className="space-y-6">
-                  <InstrumentRow
-                    number="00"
-                    name="Launch Checklist"
-                    status="Active"
-                    statusColor="green"
-                  />
-                  <InstrumentRow
-                    number="01"
-                    name="Market Research"
-                    status={activeProject.status === 'draft' ? 'Pending' : 'Complete'}
-                    statusColor={activeProject.status === 'draft' ? 'neutral' : 'green'}
-                  />
-                  <InstrumentRow
-                    number="02"
-                    name="Prompt Generation"
-                    status={activeProject.status === 'prompting' ? 'Complete' : activeProject.status === 'research' ? 'Ready' : 'Pending'}
-                    statusColor={activeProject.status === 'prompting' ? 'green' : activeProject.status === 'research' ? 'yellow' : 'neutral'}
-                  />
-                  <InstrumentRow
-                    number="03"
-                    name="Track Analysis"
-                    status="On Hold"
-                    statusColor="neutral"
-                  />
-                </div>
-              </div>
-
-              {/* Concept excerpt */}
-              <div className="col-span-4 py-10 border-r border-neutral-200 pr-6">
-                <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
-                  Artist Concept
-                </p>
-                {activeProject.concept?.genre_primary ? (
-                  <>
-                    <blockquote className="text-heading font-bold text-black leading-tight">
-                      &ldquo;{activeProject.concept.creative_direction?.slice(0, 80)}...&rdquo;
-                    </blockquote>
-                    <div className="mt-8 space-y-3">
-                      <DetailRow label="Genre" value={activeProject.concept.genre_primary} />
-                      <DetailRow label="Influences" value={activeProject.concept.reference_artists?.slice(0, 3).join(', ') || '—'} />
-                      <DetailRow label="Mood" value={activeProject.concept.mood_keywords?.slice(0, 3).join(', ') || '—'} />
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-body text-neutral-400">Not defined yet</p>
-                )}
-              </div>
-
-              {/* Status */}
-              <div className="col-span-4 py-10">
-                <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
-                  Status
-                </p>
-                <p className="text-heading font-bold text-black capitalize">{activeProject.status}</p>
-                <p className="text-body-sm text-neutral-400 mt-2">
-                  Created {new Date(activeProject.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                </p>
-              </div>
-            </div>
-
-            {/* Bottom strip */}
-            <div className="grid grid-cols-12 gap-x-6 py-16">
-              <div className="col-span-3">
-                <p className="text-[96px] leading-none font-bold text-black">
-                  {String(projects.length).padStart(2, '0')}
-                </p>
-                <p className="text-body-sm text-neutral-400 mt-2">
-                  {projects.length === 1 ? 'Active project' : 'Projects'}
-                </p>
-              </div>
-              <div className="col-span-6" />
-              <div className="col-span-3 flex flex-col justify-end">
-                <div className="flex items-center gap-3">
-                  <a
-                    href={`/projects/${activeProject.id}/checklist`}
-                    className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
-                  >
-                    Checklist
-                  </a>
-                  <a
-                    href={`/projects/${activeProject.id}`}
-                    className="bg-white text-black border border-neutral-200 text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:border-black transition-colors duration-fast inline-flex items-center"
-                  >
-                    Open Project
-                  </a>
-                  <a
-                    href="/projects/new"
-                    className="bg-white text-black border border-neutral-200 text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:border-black transition-colors duration-fast inline-flex items-center"
-                  >
-                    New Project
-                  </a>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          /* No projects yet */
-          <div className="py-32">
-            <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">00</p>
-            <p className="text-[48px] leading-[1.1] font-bold text-black mt-6 tracking-tight">
-              No Projects Yet
-            </p>
-            <p className="text-body-lg text-neutral-500 mt-4 max-w-md">
-              Create your first project to start defining an artist concept and running market research.
-            </p>
-            <a
-              href="/projects/new"
-              className="mt-8 bg-black text-white text-label font-bold uppercase tracking-widest h-12 px-8 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
-            >
-              New Project
-            </a>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Colophon */}
-      <div className="border-t border-neutral-200">
+      <div className="border-t border-neutral-200 shrink-0">
         <div className="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
           <p className="text-micro font-mono text-neutral-300">IMC v0.1.0</p>
           <p className="text-micro font-mono text-neutral-300">Music Intelligence Platform</p>
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ———————— Editorial Components ———————— */
-
-function InstrumentRow({ number, name, status, statusColor }: {
-  number: string;
-  name: string;
-  status: string;
-  statusColor: 'green' | 'yellow' | 'red' | 'neutral';
-}) {
-  return (
-    <div className="flex items-start gap-4">
-      <span className="text-heading font-bold text-neutral-200 font-mono">{number}</span>
-      <div className="flex-1 pt-1">
-        <p className="text-body font-bold text-black">{name}</p>
-        <div className="mt-1">
-          <Signal color={statusColor} label={status} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline justify-between border-b border-neutral-100 pb-2">
-      <span className="text-caption text-neutral-400">{label}</span>
-      <span className="text-body-sm text-black font-bold">{value}</span>
     </div>
   );
 }
