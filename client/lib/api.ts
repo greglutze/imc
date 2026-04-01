@@ -270,6 +270,17 @@ export interface ShareTrack {
   created_at: string;
 }
 
+export interface TrackAnnotation {
+  id: string;
+  share_track_id: string;
+  timestamp_ms: number;
+  content: string;
+  author_name: string | null;
+  resolved: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ShareProjectWithTracks extends ShareProject {
   tracks: ShareTrack[];
 }
@@ -766,6 +777,32 @@ class ApiClient {
 
   async deleteShareProject(projectId: string, shareId: string): Promise<{ deleted: boolean }> {
     return this.request(`/api/share/${projectId}/share/${shareId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  /* — Track Annotations — */
+
+  async getTrackAnnotations(projectId: string, shareId: string, trackId: string): Promise<{ annotations: TrackAnnotation[] }> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/tracks/${trackId}/annotations`);
+  }
+
+  async addTrackAnnotation(projectId: string, shareId: string, trackId: string, data: { timestamp_ms: number; content: string; author_name?: string }): Promise<TrackAnnotation> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/tracks/${trackId}/annotations`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateTrackAnnotation(projectId: string, shareId: string, trackId: string, annotationId: string, data: { content?: string; resolved?: boolean }): Promise<TrackAnnotation> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/tracks/${trackId}/annotations/${annotationId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteTrackAnnotation(projectId: string, shareId: string, trackId: string, annotationId: string): Promise<{ ok: boolean }> {
+    return this.request(`/api/share/${projectId}/share/${shareId}/tracks/${trackId}/annotations/${annotationId}`, {
       method: 'DELETE',
     });
   }

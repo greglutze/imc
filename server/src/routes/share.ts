@@ -674,6 +674,110 @@ publicRouter.post('/s/:slug/play/:trackId', async (req: Request, res: Response):
   }
 });
 
+// ── Track Annotations ──
+
+// List annotations for a track
+authRouter.get('/:projectId/share/:shareId/tracks/:trackId/annotations', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { trackId } = req.params;
+
+    const result = await pool.query(
+      `SELECT id, share_track_id, timestamp_ms, content, author_name, resolved, created_at, updated_at
+       FROM track_annotations
+       WHERE share_track_id = $1
+       ORDER BY timestamp_ms ASC`,
+      [trackId]
+    );
+
+    res.json({ annotations: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Add annotation to a track
+authRouter.post('/:projectId/share/:shareId/tracks/:trackId/annotations', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { trackId } = req.params;
+    const { timestamp_ms, content, author_name } = req.body;
+
+    if (typeof timestamp_ms !== 'number' || !content?.trim()) {
+      res.status(400).json({ error: 'timestamp_ms (number) and content (string) are required' });
+      return;
+    }
+
+    const result = await pool.query(
+      `INSERT INTO track_annotations (share_track_id, timestamp_ms, content, author_name)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [trackId, Math.round(timestamp_ms), content.trim(), author_name || null]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update annotation (content or resolved status)
+authRouter.patch('/:projectId/share/:shareId/tracks/:trackId/annotations/:annotationId', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { annotationId } = req.params;
+    const { content, resolved } = req.body;
+
+    const updates: string[] = [];
+    const values: (string | boolean)[] = [];
+    let idx = 1;
+
+    if (content !== undefined) {
+      updates.push(`content = $${idx++}`);
+      values.push(content.trim());
+    }
+    if (resolved !== undefined) {
+      updates.push(`resolved = $${idx++}`);
+      values.push(resolved);
+    }
+
+    if (updates.length === 0) {
+      res.status(400).json({ error: 'Nothing to update' });
+      return;
+    }
+
+    updates.push(`updated_at = now()`);
+    values.push(annotationId);
+
+    const result = await pool.query(
+      `UPDATE track_annotations SET ${updates.join(', ')} WHERE id = $${idx} RETURNING *`,
+      values
+    );
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Annotation not found' });
+      return;
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete annotation
+authRouter.delete('/:projectId/share/:shareId/tracks/:trackId/annotations/:annotationId', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { annotationId } = req.params;
+
+    await pool.query('DELETE FROM track_annotations WHERE id = $1', [annotationId]);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Combine both routers
 router.use('/share', authRouter);
 router.use(publicRouter);

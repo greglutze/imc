@@ -348,6 +348,27 @@ async function migrate(): Promise<void> {
       `);
       console.log('Lyric sessions table created.');
     }
+    // Track annotations migration
+    const annotationsCheck = await pool.query(
+      `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'track_annotations')`
+    );
+    if (!annotationsCheck.rows[0].exists) {
+      console.log('Running track annotations migration...');
+      await pool.query(`
+        CREATE TABLE track_annotations (
+          id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+          share_track_id uuid NOT NULL REFERENCES share_tracks(id) ON DELETE CASCADE,
+          timestamp_ms integer NOT NULL,
+          content text NOT NULL,
+          author_name text,
+          resolved boolean NOT NULL DEFAULT false,
+          created_at timestamptz DEFAULT now(),
+          updated_at timestamptz DEFAULT now()
+        );
+        CREATE INDEX idx_track_annotations_track_id ON track_annotations(share_track_id);
+      `);
+      console.log('Track annotations table created.');
+    }
   } catch (err) {
     console.error('Migration error:', err);
   }

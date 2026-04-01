@@ -9,6 +9,7 @@ import { useAuth } from '../../../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../../../lib/api';
 import type { ShareProjectWithTracks, ShareTrack, Project } from '../../../../../lib/api';
 import SharePreview from '../../../../../components/SharePreview';
+import TrackAnnotations from '../../../../../components/TrackAnnotations';
 
 function formatDuration(ms: number | null): string {
   if (!ms) return '—';
@@ -633,6 +634,22 @@ export default function ShareManagePage() {
                 </div>
               );
             })()}
+
+            {/* Track Annotations — appears when a track is active */}
+            {playingTrackId && (
+              <TrackAnnotations
+                projectId={id}
+                shareId={shareId}
+                trackId={playingTrackId}
+                trackTitle={share.tracks.find((t) => t.id === playingTrackId)?.title || ''}
+                currentTimeMs={Math.round(currentTime * 1000)}
+                onSeek={(ms) => {
+                  if (audioRef.current) {
+                    audioRef.current.currentTime = ms / 1000;
+                  }
+                }}
+              />
+            )}
           </div>
 
           {/* Right column: settings / preview toggle */}
