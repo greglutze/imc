@@ -8,6 +8,7 @@ import ProjectNav from '../../../../../components/ProjectNav';
 import { useAuth } from '../../../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../../../lib/api';
 import type { ShareProjectWithTracks, ShareTrack, Project } from '../../../../../lib/api';
+import SharePreview from '../../../../../components/SharePreview';
 
 function formatDuration(ms: number | null): string {
   if (!ms) return '—';
@@ -45,6 +46,7 @@ export default function ShareManagePage() {
   const [copied, setCopied] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
+  const [rightPanel, setRightPanel] = useState<'settings' | 'preview'>('settings');
 
   // Add track via Dropbox link
   const [dropboxInput, setDropboxInput] = useState('');
@@ -633,8 +635,41 @@ export default function ShareManagePage() {
             })()}
           </div>
 
-          {/* Right column: artwork + settings */}
+          {/* Right column: settings / preview toggle */}
           <div className="space-y-8">
+            {/* Panel toggle */}
+            <div className="flex items-center gap-0 border border-neutral-200 rounded-sm overflow-hidden">
+              <button
+                onClick={() => setRightPanel('settings')}
+                className={`flex-1 py-2 text-micro font-bold uppercase tracking-widest transition-colors duration-fast ${rightPanel === 'settings' ? 'bg-black text-white' : 'text-neutral-400 hover:text-black'}`}
+              >
+                Settings
+              </button>
+              <button
+                onClick={() => setRightPanel('preview')}
+                className={`flex-1 py-2 text-micro font-bold uppercase tracking-widest transition-colors duration-fast ${rightPanel === 'preview' ? 'bg-black text-white' : 'text-neutral-400 hover:text-black'}`}
+              >
+                Preview
+              </button>
+            </div>
+
+            {rightPanel === 'preview' ? (
+              <SharePreview
+                title={share.title}
+                artworkUrl={share.artwork_url}
+                theme={share.theme || 'dark'}
+                tracks={share.tracks.map((t) => ({
+                  id: t.id,
+                  title: t.title,
+                  format: t.format,
+                  sort_order: t.sort_order,
+                }))}
+                downloadsEnabled={share.downloads_enabled}
+                isPublic={share.is_public}
+                passwordProtected={!!share.password_hash}
+              />
+            ) : (
+            <>
             {/* Artwork */}
             <div>
               <span className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-3 block">
@@ -818,6 +853,8 @@ export default function ShareManagePage() {
                 </button>
               )}
             </div>
+            </>
+            )}
           </div>
         </div>
       </div>
