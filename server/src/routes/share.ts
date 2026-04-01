@@ -1,5 +1,4 @@
 import { Router, Request, Response } from 'express';
-import express from 'express';
 import crypto from 'crypto';
 import pool from '../config/database';
 import { authMiddleware } from '../middleware/auth';
