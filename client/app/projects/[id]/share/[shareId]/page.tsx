@@ -350,8 +350,34 @@ export default function ShareManagePage() {
     return (
       <div className="min-h-screen bg-white">
         <ProjectNav projectId={id} artistName="..." activePage="share" />
-        <div className="max-w-[1400px] mx-auto px-10 py-20">
-          <div className="text-neutral-400 text-label uppercase tracking-widest">Loading...</div>
+        <div className="max-w-[1400px] mx-auto px-10 py-12">
+          <div className="h-3 w-24 bg-neutral-100 rounded-sm animate-pulse mb-8" />
+          <div className="grid grid-cols-[1fr_340px] gap-12">
+            <div>
+              <div className="h-12 w-64 bg-neutral-100 rounded-sm animate-pulse mb-8" />
+              <div className="h-3 w-20 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+              <div className="space-y-1">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-3 px-4 py-3 border border-neutral-200 rounded-sm">
+                    <div className="w-7 h-7 rounded-full bg-neutral-100 animate-pulse shrink-0" />
+                    <div className="w-4 h-3 bg-neutral-100 rounded-sm animate-pulse" />
+                    <div className="flex-1 h-4 bg-neutral-100 rounded-sm animate-pulse" />
+                    <div className="w-10 h-3 bg-neutral-50 rounded-sm animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-8">
+              <div>
+                <div className="h-3 w-16 bg-neutral-100 rounded-sm animate-pulse mb-3" />
+                <div className="aspect-square bg-neutral-100 rounded-sm animate-pulse" />
+              </div>
+              <div>
+                <div className="h-3 w-20 bg-neutral-100 rounded-sm animate-pulse mb-3" />
+                <div className="h-9 w-full bg-neutral-100 rounded-sm animate-pulse" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -442,7 +468,7 @@ export default function ShareManagePage() {
                 </button>
               </div>
               <p className="text-micro text-neutral-400 mt-1.5">
-                In Dropbox, right-click a file → Copy link → paste here. Shift+Enter for multiple lines.
+                Right-click a file in Dropbox → Copy link → paste here. Multiple links? Shift+Enter for new lines.
               </p>
             </div>
 
@@ -458,89 +484,111 @@ export default function ShareManagePage() {
 
             {/* Track list */}
             {share.tracks.length === 0 ? (
-              <div className="border border-dashed border-neutral-300 rounded-sm p-12 text-center">
-                <p className="text-body text-neutral-500 mb-1">No tracks yet.</p>
-                <p className="text-small text-neutral-400">Paste a Dropbox link above to add your first track.</p>
+              <div className="border-2 border-dashed border-neutral-200 rounded-sm py-16 px-8 text-center">
+                <p className="text-[28px] font-bold text-neutral-200 tracking-tight">
+                  Add your first track
+                </p>
+                <p className="text-body text-neutral-400 mt-3 max-w-sm mx-auto">
+                  Paste a Dropbox link above — your music will be streamable instantly, no upload needed.
+                </p>
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-2">
                 {share.tracks.map((track: ShareTrack, idx: number) => {
                   const isActiveTrack = playingTrackId === track.id;
+                  const progress = isActiveTrack && duration > 0 ? (currentTime / duration) * 100 : 0;
                   return (
                   <div
                     key={track.id}
-                    className={`flex items-center gap-3 px-4 py-3 border rounded-sm group transition-colors duration-fast ${isActiveTrack ? 'border-black bg-neutral-50' : 'border-neutral-200 hover:border-neutral-300'}`}
+                    className={`relative border rounded-sm group transition-all duration-fast overflow-hidden ${isActiveTrack ? 'border-black' : 'border-neutral-200 hover:border-neutral-300'}`}
                   >
-                    {/* Play/Pause button */}
-                    <button
-                      onClick={() => handlePlayTrack(track.id)}
-                      className={`w-7 h-7 flex items-center justify-center rounded-full shrink-0 transition-colors duration-fast ${isActiveTrack ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-black'}`}
-                    >
-                      <span className="text-[10px] leading-none">
-                        {isActiveTrack && isPlaying ? '▮▮' : '▶'}
+                    {/* Inline progress bar — sits behind content */}
+                    {isActiveTrack && (
+                      <div
+                        className="absolute inset-y-0 left-0 bg-neutral-50 transition-all duration-100 pointer-events-none"
+                        style={{ width: `${progress}%` }}
+                      />
+                    )}
+
+                    <div className="relative flex items-center gap-4 px-5 py-4">
+                      {/* Play/Pause button */}
+                      <button
+                        onClick={() => handlePlayTrack(track.id)}
+                        className={`w-8 h-8 flex items-center justify-center rounded-full shrink-0 transition-colors duration-fast ${isActiveTrack ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-500 hover:bg-black hover:text-white'}`}
+                      >
+                        <span className="text-[10px] leading-none">
+                          {isActiveTrack && isPlaying ? '▮▮' : '▶'}
+                        </span>
+                      </button>
+
+                      {/* Track number */}
+                      <span className="text-caption font-mono text-neutral-300 w-5 text-center shrink-0">
+                        {String(idx + 1).padStart(2, '0')}
                       </span>
-                    </button>
 
-                    {/* Order */}
-                    <span className="text-micro text-neutral-400 w-4 text-center shrink-0">
-                      {idx + 1}
-                    </span>
+                      {/* Title / rename */}
+                      <div className="flex-1 min-w-0">
+                        {editingTrackId === track.id ? (
+                          <input
+                            type="text"
+                            value={trackTitleValue}
+                            onChange={(e) => setTrackTitleValue(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') handleRenameTrack(track.id); if (e.key === 'Escape') setEditingTrackId(null); }}
+                            className="text-body font-bold text-black border-b border-black bg-transparent outline-none w-full"
+                            autoFocus
+                          />
+                        ) : (
+                          <span
+                            onClick={() => { setEditingTrackId(track.id); setTrackTitleValue(track.title); }}
+                            className="text-body font-bold text-black cursor-pointer truncate block"
+                            title="Click to rename"
+                          >
+                            {track.title}
+                          </span>
+                        )}
+                      </div>
 
-                    {/* Title / rename */}
-                    <div className="flex-1 min-w-0">
-                      {editingTrackId === track.id ? (
-                        <input
-                          type="text"
-                          value={trackTitleValue}
-                          onChange={(e) => setTrackTitleValue(e.target.value)}
-                          onKeyDown={(e) => { if (e.key === 'Enter') handleRenameTrack(track.id); if (e.key === 'Escape') setEditingTrackId(null); }}
-                          className="text-body text-black border-b border-black bg-transparent outline-none w-full"
-                          autoFocus
-                        />
-                      ) : (
-                        <span
-                          onClick={() => { setEditingTrackId(track.id); setTrackTitleValue(track.title); }}
-                          className="text-body text-black cursor-pointer truncate block"
-                          title="Click to rename"
-                        >
-                          {track.title}
+                      {/* Time display for active track */}
+                      {isActiveTrack && duration > 0 && (
+                        <span className="text-micro font-mono text-neutral-400 shrink-0">
+                          {formatTime(currentTime)} / {formatTime(duration)}
                         </span>
                       )}
-                    </div>
 
-                    {/* Meta */}
-                    <span className="text-micro text-neutral-400 shrink-0 uppercase">
-                      {track.format}
-                    </span>
-                    <span className="text-micro text-neutral-400 shrink-0">
-                      {track.play_count} play{track.play_count !== 1 ? 's' : ''}
-                    </span>
+                      {/* Meta */}
+                      <span className="text-micro text-neutral-300 shrink-0 uppercase tracking-widest">
+                        {track.format}
+                      </span>
+                      <span className="text-micro text-neutral-400 shrink-0">
+                        {track.play_count > 0 ? `${track.play_count} play${track.play_count !== 1 ? 's' : ''}` : '—'}
+                      </span>
 
-                    {/* Reorder buttons */}
-                    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-fast shrink-0">
+                      {/* Reorder buttons */}
+                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-fast shrink-0">
+                        <button
+                          onClick={() => handleMoveTrack(track.id, 'up')}
+                          disabled={idx === 0}
+                          className="text-neutral-400 hover:text-black disabled:opacity-20 text-small px-1"
+                        >
+                          ↑
+                        </button>
+                        <button
+                          onClick={() => handleMoveTrack(track.id, 'down')}
+                          disabled={idx === share.tracks.length - 1}
+                          className="text-neutral-400 hover:text-black disabled:opacity-20 text-small px-1"
+                        >
+                          ↓
+                        </button>
+                      </div>
+
+                      {/* Delete */}
                       <button
-                        onClick={() => handleMoveTrack(track.id, 'up')}
-                        disabled={idx === 0}
-                        className="text-neutral-400 hover:text-black disabled:opacity-20 text-small px-1"
+                        onClick={() => handleDeleteTrack(track.id)}
+                        className="text-neutral-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-fast text-small shrink-0"
                       >
-                        ↑
-                      </button>
-                      <button
-                        onClick={() => handleMoveTrack(track.id, 'down')}
-                        disabled={idx === share.tracks.length - 1}
-                        className="text-neutral-400 hover:text-black disabled:opacity-20 text-small px-1"
-                      >
-                        ↓
+                        ×
                       </button>
                     </div>
-
-                    {/* Delete */}
-                    <button
-                      onClick={() => handleDeleteTrack(track.id)}
-                      className="text-neutral-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-fast text-small shrink-0"
-                    >
-                      ×
-                    </button>
                   </div>
                   );
                 })}

@@ -142,25 +142,25 @@ export default function SharePage() {
               <button
                 key={share.id}
                 onClick={() => router.push(`/projects/${id}/share/${share.id}`)}
-                className="w-full text-left border border-neutral-200 rounded-sm p-5 hover:border-neutral-400 transition-colors duration-fast group"
+                className="w-full text-left border border-neutral-200 rounded-sm p-5 hover:border-black transition-all duration-200 group"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-5">
                     {/* Artwork thumbnail */}
                     {share.artwork_url ? (
-                      <div className="w-10 h-10 rounded-sm overflow-hidden border border-neutral-200 shrink-0">
+                      <div className="w-14 h-14 rounded-sm overflow-hidden border border-neutral-200 shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={resolveArtworkUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
                       </div>
                     ) : (
-                      <div className="w-10 h-10 rounded-sm bg-neutral-100 border border-neutral-200 shrink-0 flex items-center justify-center">
-                        <span className="text-neutral-400 text-small">♫</span>
+                      <div className="w-14 h-14 rounded-sm bg-neutral-50 border border-neutral-200 shrink-0 flex items-center justify-center">
+                        <span className="text-neutral-300 text-heading">&#9835;</span>
                       </div>
                     )}
                     <div>
-                      <span className="text-body font-bold text-black group-hover:text-black">{share.title}</span>
-                      <div className="flex items-center gap-3 mt-0.5">
-                        <span className="text-micro text-neutral-400 uppercase tracking-widest">
+                      <span className="text-heading-sm font-bold text-black">{share.title}</span>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-micro font-bold text-neutral-400 uppercase tracking-widest">
                           {share.track_count || 0} track{(share.track_count || 0) !== 1 ? 's' : ''}
                         </span>
                         <span className="text-neutral-200">·</span>
@@ -168,13 +168,16 @@ export default function SharePage() {
                           {share.total_plays} play{share.total_plays !== 1 ? 's' : ''}
                         </span>
                         <span className="text-neutral-200">·</span>
-                        <span className={`text-micro uppercase tracking-widest ${share.is_public ? 'text-green-600' : 'text-neutral-400'}`}>
-                          {share.is_public ? 'Public' : 'Private'}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <div className={`w-1.5 h-1.5 rounded-full ${share.is_public ? 'bg-green-500' : 'bg-neutral-300'}`} />
+                          <span className={`text-micro uppercase tracking-widest ${share.is_public ? 'text-green-600' : 'text-neutral-400'}`}>
+                            {share.is_public ? 'Public' : 'Private'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <span className="text-neutral-400 group-hover:text-black transition-colors duration-fast text-body">→</span>
+                  <span className="text-neutral-300 group-hover:text-black transition-colors duration-fast text-body">→</span>
                 </div>
               </button>
             ))}
