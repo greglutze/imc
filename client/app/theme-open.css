@@ -14,7 +14,6 @@
    The name is a coincidence that feels like destiny for IMC.
    ─────────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
 
 /* ── Theme scope ── */
 .theme-open {
@@ -67,21 +66,21 @@
    TYPOGRAPHY CLASSES
    ═══════════════════════════════════════════════════════════════ */
 
-/* Display — editorial serif for hero moments */
+/* Display — clean sans at light weight, large size */
 .theme-open .t-display {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 56px;
   line-height: 1.05;
-  letter-spacing: -0.03em;
-  font-weight: 400;
+  letter-spacing: -0.035em;
+  font-weight: 500;
 }
 
 .theme-open .t-display-sm {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 40px;
   line-height: 1.1;
-  letter-spacing: -0.02em;
-  font-weight: 400;
+  letter-spacing: -0.025em;
+  font-weight: 500;
 }
 
 /* Heading — clean sans */
