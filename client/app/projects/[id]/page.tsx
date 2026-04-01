@@ -662,9 +662,9 @@ export default function ProjectPage() {
         onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : page === 'moodboard' ? 'moodboard' : 'interview')}
       />
 
-      {/* Content area */}
+      {/* Content area — key forces remount for crossfade */}
       <div className="flex-1 overflow-hidden">
-        <div className={activeTab === 'interview' ? 'h-full' : 'h-full overflow-y-auto'}>
+        <div key={activeTab} className={`animate-fade-in ${activeTab === 'interview' ? 'h-full' : 'h-full overflow-y-auto'}`}>
           <div className="max-w-[1400px] mx-auto h-full">
           {activeTab === 'interview' && (
             <div className="h-full">
