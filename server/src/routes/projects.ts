@@ -153,6 +153,51 @@ router.put('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
   }
 });
 
+// Upload project artist image (base64 JSON)
+router.post('/:id/image/upload', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const user = req.user!;
+    const { id } = req.params;
+    const { data, contentType } = req.body;
+
+    if (!data) {
+      res.status(400).json({ error: 'No image data provided' });
+      return;
+    }
+
+    const checkResult = await pool.query(
+      'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
+      [id, user.org_id]
+    );
+    if (checkResult.rows.length === 0) {
+      res.status(403).json({ error: 'Not authorized' });
+      return;
+    }
+
+    const buffer = Buffer.from(data, 'base64');
+    const imageUrl = `/api/projects/${id}/image`;
+
+    // Ensure columns exist
+    try {
+      await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_data bytea`);
+      await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_content_type text`);
+    } catch (_e) { /* columns exist */ }
+
+    await pool.query(
+      `UPDATE projects
+       SET image_data = $1, image_content_type = $2,
+           image_url = $3, updated_at = NOW()
+       WHERE id = $4`,
+      [buffer, contentType || 'image/jpeg', imageUrl, id]
+    );
+
+    res.json({ image_url: imageUrl });
+  } catch (err) {
+    console.error('Project image upload error:', err);
+    res.status(500).json({ error: 'Image upload failed' });
+  }
+});
+
 router.delete('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const user = req.user!;

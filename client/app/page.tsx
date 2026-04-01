@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Signal } from '../components/ui';
 import { useAuth } from '../lib/auth-context';
-import { api, type Project } from '../lib/api';
+import { api, resolveArtworkUrl, type Project } from '../lib/api';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -161,7 +161,7 @@ export default function Home() {
                       <div className="w-16 h-16 rounded-sm overflow-hidden bg-neutral-100 shrink-0 flex items-center justify-center">
                         {project.image_url ? (
                           <img
-                            src={project.image_url}
+                            src={resolveArtworkUrl(project.image_url) || ''}
                             alt={project.artist_name || 'Artist'}
                             className="w-full h-full object-cover object-top"
                           />

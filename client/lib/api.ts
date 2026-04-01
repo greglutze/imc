@@ -690,6 +690,18 @@ class ApiClient {
     });
   }
 
+  async uploadProjectImage(projectId: string, file: File): Promise<{ image_url: string }> {
+    const base64 = await this.resizeImage(file, 1200, 0.85);
+
+    return this.request(`/api/projects/${projectId}/image/upload`, {
+      method: 'POST',
+      body: JSON.stringify({
+        data: base64,
+        contentType: 'image/jpeg',
+      }),
+    });
+  }
+
   private resizeImage(file: File, maxSize: number, quality: number): Promise<string> {
     return new Promise((resolve, reject) => {
       const img = new Image();

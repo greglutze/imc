@@ -55,6 +55,8 @@ export default function ProjectPage() {
   const [latestTrack, setLatestTrack] = useState<ShareTrack | null>(null);
   const [latestShareProject, setLatestShareProject] = useState<ShareProject | null>(null);
   const [demoTracks, setDemoTracks] = useState<I2Track[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -213,6 +215,21 @@ export default function ProjectPage() {
 
   const artistName = project?.artist_name || 'Untitled';
 
+  const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !id) return;
+    setUploadingImage(true);
+    try {
+      const result = await api.uploadProjectImage(id, file);
+      setProject((prev) => prev ? { ...prev, image_url: result.image_url } : prev);
+    } catch (err) {
+      console.error('Failed to upload image:', err);
+    } finally {
+      setUploadingImage(false);
+      if (imageInputRef.current) imageInputRef.current.value = '';
+    }
+  }, [id]);
+
   if (authLoading || pageLoading) {
     return (
       <div className="animate-fade-in px-8 py-16 max-w-2xl">
@@ -338,31 +355,56 @@ export default function ProjectPage() {
                 </span>
               </div>
 
-              {/* Right: Artist image or moodboard hero */}
+              {/* Right: Artist image — click to upload/replace */}
               <div className="col-span-5 flex justify-end">
+                <div
+                  onClick={() => imageInputRef.current?.click()}
+                  className="w-full max-w-[400px] aspect-square overflow-hidden rounded-sm cursor-pointer relative group"
+                >
                 {project?.image_url ? (
-                  <div className="w-full max-w-[400px] aspect-square overflow-hidden rounded-sm">
+                  <>
                     <img
-                      src={project.image_url}
+                      src={resolveArtworkUrl(project.image_url) || ''}
                       alt={artistName}
                       className="w-full h-full object-cover object-top"
                     />
-                  </div>
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-fast flex items-center justify-center">
+                      <span className="text-white text-micro font-bold uppercase tracking-widest">
+                        {uploadingImage ? 'Uploading...' : 'Replace Image'}
+                      </span>
+                    </div>
+                  </>
                 ) : moodboardImages.length > 0 && moodboardImages[0].image_data ? (
-                  <div className="w-full max-w-[400px] aspect-square overflow-hidden rounded-sm">
+                  <>
                     <img
                       src={moodboardImages[0].image_data}
                       alt={`${artistName} moodboard`}
                       className="w-full h-full object-cover"
                     />
-                  </div>
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-fast flex items-center justify-center">
+                      <span className="text-white text-micro font-bold uppercase tracking-widest">
+                        {uploadingImage ? 'Uploading...' : 'Add Image'}
+                      </span>
+                    </div>
+                  </>
                 ) : (
-                  <div className="w-full max-w-[400px] aspect-square bg-neutral-50 rounded-sm flex items-center justify-center">
+                  <div className="w-full h-full bg-neutral-50 flex flex-col items-center justify-center">
                     <span className="text-[120px] font-bold text-neutral-100">
                       {artistName.charAt(0).toUpperCase()}
                     </span>
+                    <span className="text-micro text-neutral-300 uppercase tracking-widest mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-fast">
+                      {uploadingImage ? 'Uploading...' : 'Add Image'}
+                    </span>
                   </div>
                 )}
+                </div>
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
               </div>
             </div>
 

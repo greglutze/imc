@@ -35,6 +35,28 @@ app.get('/api/share/artwork/:shareId', async (req: Request, res: Response): Prom
   }
 });
 
+// Serve project artist images (public)
+app.get('/api/projects/:id/image', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      'SELECT image_data, image_content_type FROM projects WHERE id = $1',
+      [id]
+    );
+    if (result.rows.length === 0 || !result.rows[0].image_data) {
+      res.status(404).json({ error: 'Not found' });
+      return;
+    }
+    const { image_data, image_content_type } = result.rows[0];
+    res.set('Content-Type', image_content_type);
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.send(image_data);
+  } catch (err) {
+    console.error('Project image serve error:', err);
+    res.status(500).json({ error: 'Failed to serve image' });
+  }
+});
+
 // JSON body parser for all routes
 app.use(express.json({ limit: '50mb' }));
 

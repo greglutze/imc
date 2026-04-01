@@ -2,6 +2,8 @@
 
 /* eslint-disable @next/next/no-img-element */
 
+import { resolveArtworkUrl } from '../lib/api';
+
 type NavPage = 'home' | 'checklist' | 'concept' | 'interview' | 'moodboard' | 'research' | 'prompts' | 'lyrics' | 'share';
 
 interface ProjectNavProps {
@@ -40,7 +42,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
           >
             {imageUrl && (
               <div className="w-6 h-6 rounded-sm overflow-hidden border border-neutral-200 shrink-0">
-                <img src={imageUrl} alt={artistName} className="w-full h-full object-cover object-top" />
+                <img src={resolveArtworkUrl(imageUrl) || ''} alt={artistName} className="w-full h-full object-cover object-top" />
               </div>
             )}
             <span className="text-micro font-bold uppercase tracking-widest text-black">
