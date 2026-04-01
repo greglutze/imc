@@ -11,6 +11,7 @@ import type { ShareProjectWithTracks, ShareTrack, Project } from '../../../../..
 import SharePreview from '../../../../../components/SharePreview';
 import TrackAnnotations from '../../../../../components/TrackAnnotations';
 import ShowreelPlayer from '../../../../../components/ShowreelPlayer';
+import { Button } from '../../../../../components/ui';
 
 function formatDuration(ms: number | null): string {
   if (!ms) return '—';
@@ -410,12 +411,14 @@ export default function ShareManagePage() {
       />
       <div className="max-w-[1400px] mx-auto px-10 py-12">
         {/* Back link */}
-        <button
+        <Button
           onClick={() => router.push(`/projects/${id}/share`)}
-          className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast mb-8 flex items-center gap-2"
+          variant="ghost"
+          size="sm"
+          className="mb-8 flex items-center gap-2"
         >
           <span className="text-body">←</span> All Share Links
-        </button>
+        </Button>
 
         <div className="grid grid-cols-[1fr_340px] gap-12">
           {/* Left column: tracks */}
@@ -432,9 +435,9 @@ export default function ShareManagePage() {
                     className="text-display font-bold tracking-tight text-black border-b-2 border-black bg-transparent outline-none w-full"
                     autoFocus
                   />
-                  <button onClick={handleTitleSave} disabled={saving} className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black">
+                  <Button onClick={handleTitleSave} disabled={saving} variant="ghost" size="sm">
                     Save
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <h1
@@ -477,13 +480,9 @@ export default function ShareManagePage() {
                   className="flex-1 text-small bg-neutral-50 border border-neutral-200 rounded-sm px-3 py-2.5 outline-none focus:border-neutral-400 resize-none min-h-[42px]"
                   rows={dropboxInput.includes('\n') ? 3 : 1}
                 />
-                <button
-                  onClick={handleAddTrack}
-                  disabled={addingTrack || !dropboxInput.trim()}
-                  className="px-4 py-2 bg-black text-white text-micro font-bold uppercase tracking-widest rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50 shrink-0 self-end"
-                >
-                  {addingTrack ? 'Adding...' : 'Add'}
-                </button>
+                <Button onClick={handleAddTrack} disabled={!dropboxInput.trim()} loading={addingTrack} size="sm" className="shrink-0 self-end">
+                  Add
+                </Button>
               </div>
               <p className="text-micro text-neutral-400 mt-1.5">
                 Right-click a file in Dropbox → Copy link → paste here. Multiple links? Shift+Enter for new lines.
@@ -530,14 +529,16 @@ export default function ShareManagePage() {
 
                     <div className="relative flex items-center gap-4 px-5 py-4">
                       {/* Play/Pause button */}
-                      <button
+                      <Button
                         onClick={() => handlePlayTrack(track.id)}
-                        className={`w-8 h-8 flex items-center justify-center rounded-full shrink-0 transition-colors duration-fast ${isActiveTrack ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-500 hover:bg-black hover:text-white'}`}
+                        variant="media"
+                        size="sm"
+                        data-active={isActiveTrack}
                       >
                         <span className="text-[10px] leading-none">
                           {isActiveTrack && isPlaying ? '▮▮' : '▶'}
                         </span>
-                      </button>
+                      </Button>
 
                       {/* Track number */}
                       <span className="text-caption font-mono text-neutral-300 w-5 text-center shrink-0">
@@ -620,14 +621,16 @@ export default function ShareManagePage() {
               return (
                 <div className="mt-6 border border-neutral-200 rounded-sm px-5 py-4">
                   <div className="flex items-center gap-4 mb-3">
-                    <button
+                    <Button
                       onClick={() => handlePlayTrack(playingTrackId)}
-                      className="w-8 h-8 flex items-center justify-center rounded-full bg-black text-white shrink-0"
+                      variant="media"
+                      size="sm"
+                      data-active
                     >
                       <span className="text-[11px] leading-none">
                         {isPlaying ? '▮▮' : '▶'}
                       </span>
-                    </button>
+                    </Button>
                     <div className="flex-1 min-w-0">
                       <span className="text-body font-bold text-black truncate block">
                         {activeTrack.title}
@@ -750,20 +753,13 @@ export default function ShareManagePage() {
                   readOnly
                   className="flex-1 text-small text-neutral-600 bg-neutral-50 border border-neutral-200 rounded-sm px-3 py-2 truncate"
                 />
-                <button
-                  onClick={handleCopyLink}
-                  className="px-3 py-2 bg-neutral-100 border border-neutral-200 rounded-sm text-micro font-bold uppercase tracking-widest text-neutral-600 hover:text-black transition-colors duration-fast shrink-0"
-                >
+                <Button onClick={handleCopyLink} variant="secondary" size="sm" className="shrink-0">
                   {copied ? 'Copied!' : 'Copy'}
-                </button>
+                </Button>
               </div>
-              <button
-                onClick={handleRegenerateLink}
-                disabled={saving}
-                className="text-micro text-neutral-400 hover:text-black mt-2 transition-colors duration-fast"
-              >
+              <Button onClick={handleRegenerateLink} disabled={saving} variant="ghost" size="sm" className="mt-2">
                 Regenerate link
-              </button>
+              </Button>
             </div>
 
             {/* Settings */}
@@ -824,13 +820,9 @@ export default function ShareManagePage() {
                           className="flex-1 text-small bg-neutral-50 border border-neutral-200 rounded-sm px-3 py-1.5 outline-none focus:border-neutral-400"
                           onKeyDown={(e) => { if (e.key === 'Enter') handleSetPassword(); }}
                         />
-                        <button
-                          onClick={handleSetPassword}
-                          disabled={!passwordValue.trim() || saving}
-                          className="px-3 py-1.5 bg-black text-white text-micro font-bold uppercase tracking-widest rounded-sm disabled:opacity-50"
-                        >
+                        <Button onClick={handleSetPassword} disabled={!passwordValue.trim() || saving} size="sm">
                           Set
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -861,28 +853,18 @@ export default function ShareManagePage() {
                 <div className="border border-red-200 rounded-sm p-4">
                   <p className="text-small text-red-600 mb-3">Delete this share link and all its tracks? This can&apos;t be undone.</p>
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleDeleteProject}
-                      disabled={deleting}
-                      className="px-4 py-1.5 bg-red-600 text-white text-micro font-bold uppercase tracking-widest rounded-sm disabled:opacity-50"
-                    >
-                      {deleting ? 'Deleting...' : 'Confirm Delete'}
-                    </button>
-                    <button
-                      onClick={() => setShowDeleteConfirm(false)}
-                      className="px-4 py-1.5 text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black"
-                    >
+                    <Button onClick={handleDeleteProject} loading={deleting} variant="danger" size="sm">
+                      Confirm Delete
+                    </Button>
+                    <Button onClick={() => setShowDeleteConfirm(false)} variant="ghost" size="sm">
                       Cancel
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="text-micro text-neutral-400 hover:text-red-500 transition-colors duration-fast"
-                >
+                <Button onClick={() => setShowDeleteConfirm(true)} variant="danger-ghost" size="sm">
                   Delete share link
-                </button>
+                </Button>
               )}
             </div>
             </>

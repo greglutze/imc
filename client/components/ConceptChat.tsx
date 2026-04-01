@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Signal, Badge } from './ui';
+import { Signal, Badge, Button } from './ui';
 import type { ConversationMessage, ProjectConcept } from '../lib/api';
 
 interface ConceptChatProps {
@@ -115,20 +115,9 @@ export default function ConceptChat({
             className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
             style={{ minHeight: '36px', maxHeight: '120px' }}
           />
-          <button
-            type="submit"
-            disabled={!input.trim() || loading}
-            className={`
-              text-label font-bold uppercase tracking-widest px-5 h-9 rounded-sm
-              transition-colors duration-fast shrink-0
-              ${input.trim() && !loading
-                ? 'bg-black text-white hover:bg-neutral-800'
-                : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
-              }
-            `}
-          >
+          <Button type="submit" disabled={!input.trim() || loading} size="sm" className="shrink-0">
             Send
-          </button>
+          </Button>
         </div>
       </form>
 

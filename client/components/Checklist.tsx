@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { api, type ChecklistItem, type ChecklistCategory, type ChecklistSummary } from '../lib/api';
+import { Button } from './ui';
 
 /* ———————— Category metadata ———————— */
 
@@ -237,20 +238,14 @@ function CategorySection({
                   placeholder="What needs to happen?"
                   className="flex-1 text-body text-black bg-transparent border-b border-neutral-300 pb-1 outline-none focus:border-black transition-colors placeholder:text-neutral-300"
                 />
-                <button
-                  onClick={handleAddItem}
-                  className="text-caption font-bold uppercase tracking-widest text-black hover:text-neutral-600 transition-colors"
-                >
+                <Button onClick={handleAddItem} variant="ghost" size="sm">
                   Add
-                </button>
+                </Button>
               </div>
             ) : (
-              <button
-                onClick={() => setAddingItem(true)}
-                className="text-caption font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors"
-              >
+              <Button onClick={() => setAddingItem(true)} variant="ghost" size="sm">
                 + Add item
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -389,20 +384,14 @@ function ChecklistItemRow({
           {/* Notes toggle + delete for custom items */}
           <div className="flex items-center gap-4 mt-1">
             {!showNotes && (
-              <button
-                onClick={() => setShowNotes(true)}
-                className="text-micro text-neutral-400 hover:text-black transition-colors uppercase tracking-widest font-bold"
-              >
+              <Button onClick={() => setShowNotes(true)} variant="ghost" size="sm">
                 {item.notes ? 'Edit note' : 'Add note'}
-              </button>
+              </Button>
             )}
             {!item.is_default && (
-              <button
-                onClick={handleDelete}
-                className="text-micro text-neutral-300 hover:text-red-500 transition-colors uppercase tracking-widest font-bold opacity-0 group-hover:opacity-100"
-              >
+              <Button onClick={handleDelete} variant="danger-ghost" size="sm" className="opacity-0 group-hover:opacity-100">
                 Remove
-              </button>
+              </Button>
             )}
           </div>
         </div>

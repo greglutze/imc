@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Signal } from '../components/ui';
+import { Signal, Button } from '../components/ui';
 import { useAuth } from '../lib/auth-context';
 import { api, resolveArtworkUrl, type Project } from '../lib/api';
 
@@ -46,18 +46,12 @@ export default function Home() {
               Instruments of Mass Creation
             </p>
             <div className="flex items-center gap-3">
-              <a
-                href="/login"
-                className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-              >
+              <Button as="a" href="/login" variant="ghost" size="lg">
                 Sign In
-              </a>
-              <a
-                href="/register"
-                className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
-              >
+              </Button>
+              <Button as="a" href="/register">
                 Get Started
-              </a>
+              </Button>
             </div>
           </div>
         </div>
@@ -72,18 +66,12 @@ export default function Home() {
             Define your concept. Research your market. Generate production-ready prompts — all from one brief.
           </p>
           <div className="mt-10 flex items-center gap-3">
-            <a
-              href="/register"
-              className="bg-black text-white text-label font-bold uppercase tracking-widest h-12 px-8 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
-            >
+            <Button as="a" href="/register" size="lg">
               Create Account
-            </a>
-            <a
-              href="/login"
-              className="bg-white text-black border border-neutral-200 text-label font-bold uppercase tracking-widest h-12 px-8 rounded-sm hover:border-black transition-colors duration-fast inline-flex items-center"
-            >
+            </Button>
+            <Button as="a" href="/login" variant="secondary" size="lg">
               Sign In
-            </a>
+            </Button>
           </div>
         </div>
 
@@ -155,12 +143,9 @@ export default function Home() {
                     {String(projects.length).padStart(2, '0')}
                   </h1>
                 </div>
-                <a
-                  href="/projects/new"
-                  className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
-                >
+                <Button as="a" href="/projects/new">
                   + New Project
-                </a>
+                </Button>
               </div>
 
               {/* Project list */}
@@ -242,12 +227,9 @@ export default function Home() {
               <p className="text-body-lg text-neutral-500 mt-4 max-w-md">
                 Every project begins with a concept. Create one and we&apos;ll help you build the research, prompts, and sound around it.
               </p>
-              <a
-                href="/projects/new"
-                className="mt-8 bg-black text-white text-label font-bold uppercase tracking-widest h-12 px-8 rounded-sm hover:bg-neutral-800 transition-colors duration-fast inline-flex items-center"
-              >
+              <Button as="a" href="/projects/new" size="lg" className="mt-8">
                 New Project
-              </a>
+              </Button>
             </div>
           )}
         </div>

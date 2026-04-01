@@ -11,6 +11,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { Button } from './ui';
 
 interface ShowreelTrack {
   id: string;
@@ -249,17 +250,17 @@ export default function ShowreelPlayer({
       {/* Player */}
       <div className="px-5 py-4">
         <div className="flex items-center gap-4 mb-3">
-          <button
+          <Button
             onClick={togglePlay}
             disabled={loading}
-            className={`w-9 h-9 flex items-center justify-center rounded-full shrink-0 transition-colors duration-fast ${
-              isPlaying ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-500 hover:bg-black hover:text-white'
-            } ${loading ? 'opacity-50' : ''}`}
+            variant="media"
+            size="md"
+            data-active={isPlaying}
           >
             <span className="text-[11px] leading-none">
               {loading ? '...' : isPlaying ? '▮▮' : '▶'}
             </span>
-          </button>
+          </Button>
 
           <div className="flex-1 min-w-0">
             {isPlaying && currentTrack ? (

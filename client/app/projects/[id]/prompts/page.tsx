@@ -9,6 +9,7 @@ import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
 import type { I2StyleProfile, I2VocalistPersona, I2Track, Project, I1Report } from '../../../../lib/api';
+import { Button } from '../../../../components/ui';
 
 type I2View = 'style' | 'tracks' | 'vocalist';
 
@@ -220,15 +221,15 @@ export default function PromptsPage() {
             </p>
           </div>
           {hasPrompts && (
-            <button
+            <Button
               onClick={() => {
                 autoGenerateTriggered.current = false;
                 handleGenerate();
               }}
-              className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast shrink-0 mt-6"
+              className="shrink-0 mt-6"
             >
               Regenerate All
-            </button>
+            </Button>
           )}
         </div>
 

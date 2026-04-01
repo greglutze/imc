@@ -10,6 +10,7 @@ import { useAuth } from '../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../lib/api';
 import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, MoodboardBrief } from '../../../lib/api';
 import { extractPaletteFromImages, type ExtractedColor } from '../../../lib/colorExtract';
+import { Button } from '../../../components/ui';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -411,13 +412,9 @@ export default function ProjectPage() {
                     {statusLabel}
                   </span>
                   {conceptReady && (
-                    <button
-                      onClick={handleExportBrief}
-                      disabled={exportingBrief}
-                      className="ml-auto text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black border border-neutral-200 hover:border-black px-3 py-1 rounded-sm transition-all duration-fast disabled:opacity-50"
-                    >
-                      {exportingBrief ? 'Exporting...' : 'Export Brief'}
-                    </button>
+                    <Button onClick={handleExportBrief} loading={exportingBrief} variant="secondary" size="sm" className="ml-auto">
+                      Export Brief
+                    </Button>
                   )}
                 </div>
 
@@ -761,15 +758,16 @@ export default function ProjectPage() {
                   {/* Re-run button at top */}
                   <div className="px-8 pt-6 pb-0 flex items-center justify-between max-w-[1400px]">
                     <div />
-                    <button
+                    <Button
                       onClick={() => {
                         autoResearchTriggered.current = false;
                         handleRunResearch();
                       }}
-                      className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
+                      variant="ghost"
+                      size="md"
                     >
                       Re-run Research
-                    </button>
+                    </Button>
                   </div>
                   <ResearchReport
                     report={report.report}
@@ -867,10 +865,7 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
       </div>
 
       {/* Play button */}
-      <button
-        onClick={togglePlay}
-        className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center shrink-0 hover:bg-neutral-800 transition-colors"
-      >
+      <Button onClick={togglePlay} variant="media" size="lg" data-active>
         {isPlaying ? (
           <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
             <rect x="2" y="1" width="3.5" height="12" rx="1" />
@@ -881,7 +876,7 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
             <path d="M3 1.5v11l9-5.5z" />
           </svg>
         )}
-      </button>
+      </Button>
 
       {/* Track info + progress */}
       <div className="flex-1 min-w-0">

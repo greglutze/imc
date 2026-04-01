@@ -6,6 +6,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { MoodboardImage, MoodboardBrief } from '../lib/api';
 import { extractPaletteFromImages, isLightColor, type ExtractedColor } from '../lib/colorExtract';
+import { Button } from './ui';
 
 interface VisualMoodboardProps {
   projectId: string;
@@ -237,12 +238,9 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
           </p>
         </div>
         {images.length > 0 && images.length < 30 && (
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-5 rounded-sm hover:bg-neutral-800 transition-colors duration-fast shrink-0 mt-6"
-          >
+          <Button onClick={() => fileInputRef.current?.click()} className="shrink-0 mt-6">
             + Add Images
-          </button>
+          </Button>
         )}
       </div>
 
@@ -495,12 +493,9 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
               {/* Previous brief toggle */}
               {brief.previous_prose && (
                 <div className="mt-5">
-                  <button
-                    onClick={() => setShowPreviousBrief(!showPreviousBrief)}
-                    className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-                  >
+                  <Button onClick={() => setShowPreviousBrief(!showPreviousBrief)} variant="ghost" size="md">
                     {showPreviousBrief ? 'Hide' : 'See'} previous brief
-                  </button>
+                  </Button>
                   {showPreviousBrief && (
                     <p className="text-body text-neutral-400 mt-3 italic">
                       {brief.previous_prose}
@@ -511,12 +506,9 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
               {/* Refresh button */}
               <div className="mt-6">
-                <button
-                  onClick={handleAnalyze}
-                  className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-                >
+                <Button onClick={handleAnalyze} variant="ghost" size="md">
                   Refresh brief
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -526,12 +518,9 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       {/* Generate brief button — shown when images exist but no brief */}
       {images.length >= 1 && !brief && !analyzing && (
         <div className="border-t border-neutral-200 px-8 py-6">
-          <button
-            onClick={handleAnalyze}
-            className="bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-6 rounded-sm hover:bg-neutral-800 transition-colors duration-fast"
-          >
+          <Button onClick={handleAnalyze}>
             Generate Sonic Brief
-          </button>
+          </Button>
           {images.length < 5 && (
             <p className="text-body-sm text-neutral-400 mt-2">
               More images will produce a richer brief

@@ -9,6 +9,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { TrackAnnotation } from '../lib/api';
+import { Button } from './ui';
 
 interface TrackAnnotationsProps {
   projectId: string;
@@ -136,13 +137,9 @@ export default function TrackAnnotations({
           placeholder="Add a note at this timestamp..."
           className="flex-1 text-small bg-transparent outline-none text-black placeholder:text-neutral-300"
         />
-        <button
-          onClick={handleAdd}
-          disabled={adding || !newContent.trim()}
-          className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast disabled:opacity-30 shrink-0"
-        >
+        <Button onClick={handleAdd} disabled={adding || !newContent.trim()} variant="ghost" size="sm" className="shrink-0">
           {adding ? '...' : 'Add'}
-        </button>
+        </Button>
       </div>
 
       {/* Annotation list */}

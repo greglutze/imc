@@ -6,6 +6,7 @@ import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../../lib/api';
 import type { ShareProject, Project } from '../../../../lib/api';
+import { Button } from '../../../../components/ui';
 
 export default function SharePage() {
   const { id } = useParams<{ id: string }>();
@@ -107,13 +108,9 @@ export default function SharePage() {
                 Share your music with collaborators, labels, or press — privately, on your terms.
               </p>
             </div>
-            <button
-              onClick={handleCreate}
-              disabled={creating}
-              className="px-5 py-2.5 bg-black text-white text-label font-bold uppercase tracking-widest rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50"
-            >
-              {creating ? 'Creating...' : '+ New Share Link'}
-            </button>
+            <Button onClick={handleCreate} loading={creating}>
+              + New Share Link
+            </Button>
           </div>
         </div>
 
@@ -128,13 +125,9 @@ export default function SharePage() {
             <p className="text-body text-neutral-400 mt-3 max-w-sm mx-auto">
               Create a share link to send your music to collaborators, labels, or press — privately, before it goes public.
             </p>
-            <button
-              onClick={handleCreate}
-              disabled={creating}
-              className="mt-6 bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-6 rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50"
-            >
-              {creating ? 'Creating...' : '+ New Share Link'}
-            </button>
+            <Button onClick={handleCreate} loading={creating} className="mt-6">
+              + New Share Link
+            </Button>
           </div>
         ) : (
           <div className="space-y-3">
