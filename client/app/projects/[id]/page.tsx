@@ -232,11 +232,48 @@ export default function ProjectPage() {
 
   if (authLoading || pageLoading) {
     return (
-      <div className="animate-fade-in px-8 py-16 max-w-2xl">
-        <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
-        <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-          Loading...
-        </p>
+      <div className="animate-fade-in h-full flex flex-col">
+        {/* Nav skeleton */}
+        <div className="border-b border-neutral-200">
+          <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="h-3 w-8 bg-neutral-100 rounded-sm animate-pulse" />
+              <span className="text-neutral-200">/</span>
+              <div className="h-3 w-24 bg-neutral-100 rounded-sm animate-pulse" />
+            </div>
+            <div className="flex items-center gap-3">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-3 w-14 bg-neutral-100 rounded-sm animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* Hero skeleton */}
+        <div className="max-w-[1400px] mx-auto px-10 w-full">
+          <div className="grid grid-cols-12 gap-x-8 pt-16 pb-12">
+            <div className="col-span-7">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-2 h-2 rounded-full bg-neutral-100 animate-pulse" />
+                <div className="h-3 w-20 bg-neutral-100 rounded-sm animate-pulse" />
+              </div>
+              <div className="h-20 w-80 bg-neutral-100 rounded-sm animate-pulse mb-6" />
+              <div className="h-3 w-48 bg-neutral-50 rounded-sm animate-pulse" />
+            </div>
+            <div className="col-span-5 flex justify-end">
+              <div className="w-full max-w-[400px] aspect-square bg-neutral-100 rounded-sm animate-pulse" />
+            </div>
+          </div>
+          {/* Instrument cards skeleton */}
+          <div className="grid grid-cols-3 gap-4 pt-12">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="border border-neutral-200 rounded-sm p-6 h-32">
+                <div className="h-3 w-16 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+                <div className="h-5 w-28 bg-neutral-100 rounded-sm animate-pulse mb-3" />
+                <div className="h-3 w-full bg-neutral-50 rounded-sm animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -253,55 +290,63 @@ export default function ProjectPage() {
       {
         number: '01',
         name: 'Concept',
-        description: 'AI creative director session. Define genre, influences, mood, and vision.',
+        description: conceptReady
+          ? `${concept?.genre_primary || 'Defined'}${concept?.mood_keywords?.length ? ' · ' + concept.mood_keywords.slice(0, 2).join(', ') : ''}`
+          : 'Describe your sound, influences, and creative direction.',
         href: `/projects/${id}?tab=interview`,
-        status: conceptReady ? 'Defined' : 'Pending',
-        statusLabel: conceptReady ? 'Complete' : 'Start Interview',
+        statusLabel: conceptReady ? 'Locked In' : 'Start Here',
         color: conceptReady ? 'green' as const : 'yellow' as const,
       },
       {
         number: '02',
         name: 'Audio Visuals',
-        description: 'Visual references and sonic brief. Curate the look and feel of your project.',
+        description: moodboardImages.length > 0
+          ? `${moodboardImages.length} images shaping your visual world.`
+          : 'Drop in photos, textures, and references that feel like your sound.',
         href: `/projects/${id}?tab=moodboard`,
-        status: moodboardImages.length > 0 ? `${moodboardImages.length} images` : '—',
-        statusLabel: moodboardImages.length > 0 ? 'Active' : 'Start',
+        statusLabel: moodboardImages.length > 0 ? `${moodboardImages.length} Images` : 'Start',
         color: moodboardImages.length > 0 ? 'green' as const : 'neutral' as const,
       },
       {
         number: '03',
         name: 'Research',
-        description: 'Market intelligence, comparable artists, audience profile, and sonic blueprint.',
+        description: report
+          ? 'Market intelligence, audience profile, and sonic positioning — ready to review.'
+          : conceptReady
+            ? 'Your concept is locked in. Research is ready to run.'
+            : 'Finish your concept first — research builds on it.',
         href: `/projects/${id}?tab=research`,
-        status: report ? `v${reportVersion}` : 'Pending',
-        statusLabel: report ? 'Complete' : conceptReady ? 'Ready' : 'Needs Concept',
+        statusLabel: report ? `v${reportVersion}` : conceptReady ? 'Ready to Run' : 'Needs Concept',
         color: report ? 'green' as const : conceptReady ? 'yellow' as const : 'neutral' as const,
       },
       {
         number: '04',
         name: 'Sonic Engine',
-        description: 'AI-generated Suno & Udio prompts tuned to your style profile and market data.',
+        description: hasPrompts
+          ? `${demoTracks.length} track prompts generated from your concept and research.`
+          : 'Style profiles, vocal direction, and per-track prompts — built from your brief.',
         href: `/projects/${id}/prompts`,
-        status: hasPrompts ? 'Generated' : 'Pending',
-        statusLabel: hasPrompts ? 'Complete' : 'Needs Research',
+        statusLabel: hasPrompts ? `${demoTracks.length} Tracks` : 'Needs Research',
         color: hasPrompts ? 'green' as const : 'neutral' as const,
       },
       {
         number: '05',
         name: 'LyriCol',
-        description: 'Collaborative lyric advisor. Paste lyrics, talk through ideas, find the right words.',
+        description: lyricSessionCount > 0
+          ? `${lyricSessionCount} session${lyricSessionCount !== 1 ? 's' : ''} — keep writing, keep refining.`
+          : 'Talk through lyrics, find the right words, shape your narrative.',
         href: `/projects/${id}/lyrics`,
-        status: lyricSessionCount > 0 ? `${lyricSessionCount} sessions` : '—',
-        statusLabel: lyricSessionCount > 0 ? 'Active' : 'Start',
+        statusLabel: lyricSessionCount > 0 ? `${lyricSessionCount} Sessions` : 'Start Writing',
         color: lyricSessionCount > 0 ? 'green' as const : 'neutral' as const,
       },
       {
         number: '06',
         name: 'Tracks',
-        description: 'Private listening rooms with Dropbox-linked audio, analytics, and password protection.',
+        description: shareCount > 0
+          ? `${shareCount} share link${shareCount !== 1 ? 's' : ''} — private listening, on your terms.`
+          : 'Share your music with collaborators, labels, or press before release.',
         href: `/projects/${id}/share`,
-        status: shareCount > 0 ? `${shareCount} shares` : '—',
-        statusLabel: shareCount > 0 ? 'Active' : 'Create',
+        statusLabel: shareCount > 0 ? `${shareCount} Links` : 'Create',
         color: shareCount > 0 ? 'green' as const : 'neutral' as const,
       },
     ];
@@ -408,75 +453,98 @@ export default function ProjectPage() {
               </div>
             </div>
 
-            {/* Concept excerpt bar */}
+            {/* Living brief */}
             {concept && (
-              <div className="grid grid-cols-12 gap-x-8 py-10 border-b border-neutral-200">
-                <div className="col-span-4">
-                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
-                    Artist Concept
-                  </p>
-                  <blockquote className="text-[28px] leading-[1.15] font-bold text-black tracking-tight">
-                    &ldquo;{(() => {
-                      const dir = concept.creative_direction.length > 100
-                        ? concept.creative_direction.slice(0, 100) + '...'
-                        : concept.creative_direction;
-                      return dir.charAt(0).toUpperCase() + dir.slice(1).toLowerCase();
-                    })()}&rdquo;
+              <div className="border-b border-neutral-200">
+                {/* Creative direction as hero quote */}
+                <div className="py-10 border-b border-neutral-100">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+                      Creative Brief
+                    </p>
+                  </div>
+                  <blockquote className="text-[24px] leading-[1.35] text-black max-w-3xl">
+                    {concept.creative_direction}
                   </blockquote>
                 </div>
-                <div className="col-span-4">
-                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
-                    Influences
-                  </p>
-                  <div className="space-y-2">
-                    {concept.reference_artists.slice(0, 4).map((artist, i) => (
-                      <a
-                        key={i}
-                        href={`https://open.spotify.com/search/${encodeURIComponent(artist)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-body font-bold text-black hover:text-green-600 transition-colors duration-fast"
-                      >
-                        {artist}
-                        <span className="text-neutral-300 ml-1.5 text-caption">&#8599;</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-                <div className="col-span-4">
-                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
-                    Demo Prompts
-                  </p>
-                  {demoTracks.length > 0 ? (
+
+                {/* Three-column data strip */}
+                <div className="grid grid-cols-12 gap-x-8 py-8">
+                  <div className="col-span-4">
+                    <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
+                      Influences
+                    </p>
                     <div className="space-y-2">
-                      {demoTracks.slice(0, 4).map((t) => (
+                      {concept.reference_artists.slice(0, 4).map((artist, i) => (
                         <a
-                          key={t.track_number}
-                          href={`/projects/${id}/prompts`}
-                          className="flex items-baseline gap-2 group"
+                          key={i}
+                          href={`https://open.spotify.com/search/${encodeURIComponent(artist)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-body font-bold text-black hover:text-green-600 transition-colors duration-fast"
                         >
-                          <span className="text-caption font-mono text-neutral-300">
-                            {String(t.track_number).padStart(2, '0')}
-                          </span>
-                          <span className="text-body font-bold text-black group-hover:text-neutral-600 transition-colors duration-fast truncate">
-                            {t.title}
-                          </span>
+                          {artist}
+                          <span className="text-neutral-300 ml-1.5 text-caption">&#8599;</span>
                         </a>
                       ))}
-                      {demoTracks.length > 4 && (
-                        <a
-                          href={`/projects/${id}/prompts`}
-                          className="text-caption text-neutral-400 hover:text-black transition-colors duration-fast mt-1 block"
-                        >
-                          View all
-                        </a>
+                    </div>
+                  </div>
+                  <div className="col-span-4">
+                    <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
+                      Sound
+                    </p>
+                    <div className="space-y-2">
+                      <p className="text-body font-bold text-black">{concept.genre_primary}</p>
+                      {concept.genre_secondary && concept.genre_secondary.length > 0 && (
+                        <p className="text-body-sm text-neutral-500">{concept.genre_secondary.join(', ')}</p>
+                      )}
+                      {concept.mood_keywords && concept.mood_keywords.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {concept.mood_keywords.map((kw, i) => (
+                            <span key={i} className="text-micro font-bold uppercase tracking-widest bg-neutral-100 text-neutral-500 px-2 py-0.5 rounded-sm">
+                              {kw}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
-                  ) : (
-                    <p className="text-body-sm text-neutral-400">
-                      {concept.track_count} tracks planned
+                  </div>
+                  <div className="col-span-4">
+                    <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">
+                      Tracklist
                     </p>
-                  )}
+                    {demoTracks.length > 0 ? (
+                      <div className="space-y-2">
+                        {demoTracks.slice(0, 4).map((t) => (
+                          <a
+                            key={t.track_number}
+                            href={`/projects/${id}/prompts`}
+                            className="flex items-baseline gap-2 group"
+                          >
+                            <span className="text-caption font-mono text-neutral-300">
+                              {String(t.track_number).padStart(2, '0')}
+                            </span>
+                            <span className="text-body font-bold text-black group-hover:text-neutral-600 transition-colors duration-fast truncate">
+                              {t.title}
+                            </span>
+                          </a>
+                        ))}
+                        {demoTracks.length > 4 && (
+                          <a
+                            href={`/projects/${id}/prompts`}
+                            className="text-caption text-neutral-400 hover:text-black transition-colors duration-fast mt-1 block"
+                          >
+                            View all {demoTracks.length} tracks
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-body-sm text-neutral-400">
+                        {concept.track_count} tracks planned
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -535,7 +603,7 @@ export default function ProjectPage() {
             {/* Instruments grid */}
             <div className="py-12">
               <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-8">
-                Instruments
+                Your Toolkit
               </p>
               <div className="grid grid-cols-3 gap-4">
                 {instruments.map((inst) => (
@@ -618,13 +686,12 @@ export default function ProjectPage() {
             <>
               {researchRunning && (
                 <div className="px-8 py-16 max-w-2xl">
-                  <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
+                  <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">03</p>
                   <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-                    Running Market Research
+                    Researching Your Market
                   </p>
-                  <p className="text-body-lg text-black mt-5 max-w-sm">
-                    Analyzing Spotify data, mapping comparable artists,
-                    and generating your market intelligence report.
+                  <p className="text-body-lg text-neutral-500 mt-5 max-w-sm">
+                    Pulling Spotify data, mapping comparable artists, and building your market intelligence report. This usually takes about a minute.
                   </p>
                   <div className="mt-8 flex items-center gap-2">
                     <div className="w-2 h-2 bg-signal-violet rounded-full animate-pulse" />
@@ -636,13 +703,12 @@ export default function ProjectPage() {
 
               {!researchRunning && !report && !conceptReady && (
                 <div className="px-8 py-16 max-w-2xl">
-                  <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">01</p>
+                  <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">03</p>
                   <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-                    No Concept Yet
+                    Start With Your Concept
                   </p>
-                  <p className="text-body-lg text-black mt-5 max-w-sm">
-                    Complete the concept interview first. Market research will run
-                    automatically when you return here.
+                  <p className="text-body-lg text-neutral-500 mt-5 max-w-sm">
+                    Head to the Concept tab and describe your vision first. Once that&apos;s locked in, research will run automatically when you come back here.
                   </p>
                 </div>
               )}
