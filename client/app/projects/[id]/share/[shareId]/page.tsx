@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ProjectNav from '../../../../../components/ProjectNav';
 import { useAuth } from '../../../../../lib/auth-context';
-import { api } from '../../../../../lib/api';
+import { api, resolveArtworkUrl } from '../../../../../lib/api';
 import type { ShareProjectWithTracks, ShareTrack, Project } from '../../../../../lib/api';
 
 function formatDuration(ms: number | null): string {
@@ -598,7 +598,7 @@ export default function ShareManagePage() {
               >
                 {share.artwork_url ? (
                   <>
-                    <img src={share.artwork_url} alt="Artwork" className="w-full h-full object-cover" />
+                    <img src={resolveArtworkUrl(share.artwork_url) || ''} alt="Artwork" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-fast flex items-center justify-center">
                       <span className="text-white text-micro font-bold uppercase tracking-widest">
                         {uploadingArtwork ? 'Uploading...' : 'Replace'}

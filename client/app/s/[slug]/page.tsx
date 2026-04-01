@@ -7,6 +7,12 @@ import { useParams } from 'next/navigation';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+function resolveUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith('http') || url.startsWith('data:')) return url;
+  return `${API_BASE}${url}`;
+}
+
 interface PublicTrack {
   id: string;
   title: string;
@@ -201,7 +207,7 @@ export default function ListenerPage() {
         <div className="w-full max-w-sm px-6">
           {share.artwork_url && (
             <div className="w-32 h-32 mx-auto mb-8 rounded-sm overflow-hidden border border-neutral-800">
-              <img src={share.artwork_url} alt={share.title} className="w-full h-full object-cover" />
+              <img src={resolveUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
             </div>
           )}
           <h1 className={`text-heading font-bold ${textPrimary} text-center mb-8`}>{share.title}</h1>
@@ -238,7 +244,7 @@ export default function ListenerPage() {
         <div className="text-center mb-12">
           {share.artwork_url ? (
             <div className={`w-64 h-64 mx-auto mb-8 rounded-sm overflow-hidden border ${border}`}>
-              <img src={share.artwork_url} alt={share.title} className="w-full h-full object-cover" />
+              <img src={resolveUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
             </div>
           ) : (
             <div className={`w-64 h-64 mx-auto mb-8 rounded-sm border ${border} flex items-center justify-center`}>

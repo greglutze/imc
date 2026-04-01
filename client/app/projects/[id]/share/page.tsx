@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
-import { api } from '../../../../lib/api';
+import { api, resolveArtworkUrl } from '../../../../lib/api';
 import type { ShareProject, Project } from '../../../../lib/api';
 
 export default function SharePage() {
@@ -128,7 +128,7 @@ export default function SharePage() {
                     {share.artwork_url ? (
                       <div className="w-10 h-10 rounded-sm overflow-hidden border border-neutral-200 shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={share.artwork_url} alt={share.title} className="w-full h-full object-cover" />
+                        <img src={resolveArtworkUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
                       </div>
                     ) : (
                       <div className="w-10 h-10 rounded-sm bg-neutral-100 border border-neutral-200 shrink-0 flex items-center justify-center">

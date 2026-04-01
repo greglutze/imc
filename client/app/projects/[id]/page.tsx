@@ -7,7 +7,7 @@ import ResearchReport from '../../../components/ResearchReport';
 import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
-import { api } from '../../../lib/api';
+import { api, resolveArtworkUrl } from '../../../lib/api';
 import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track } from '../../../lib/api';
 
 /* eslint-disable @next/next/no-img-element */
@@ -709,7 +709,7 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
       {/* Artwork */}
       <div className="w-16 h-16 rounded-sm overflow-hidden bg-neutral-100 shrink-0 flex items-center justify-center">
         {artworkUrl ? (
-          <img src={artworkUrl} alt={shareTitle} className="w-full h-full object-cover" />
+          <img src={resolveArtworkUrl(artworkUrl) || ''} alt={shareTitle} className="w-full h-full object-cover" />
         ) : (
           <span className="text-[24px] font-bold text-neutral-300">&#9835;</span>
         )}
