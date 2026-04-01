@@ -8,7 +8,8 @@ import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../lib/api';
-import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track } from '../../../lib/api';
+import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, MoodboardBrief } from '../../../lib/api';
+import { extractPaletteFromImages, type ExtractedColor } from '../../../lib/colorExtract';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -56,6 +57,9 @@ export default function ProjectPage() {
   const [latestShareProject, setLatestShareProject] = useState<ShareProject | null>(null);
   const [demoTracks, setDemoTracks] = useState<I2Track[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [exportingBrief, setExportingBrief] = useState(false);
+  const [dashboardPalette, setDashboardPalette] = useState<ExtractedColor[]>([]);
+  const [moodboardBriefData, setMoodboardBriefData] = useState<MoodboardBrief | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   // Redirect to login if not authenticated
@@ -127,7 +131,17 @@ export default function ProjectPage() {
             }).catch(() => {});
           }
         }).catch(() => {});
-        api.getMoodboardThumbnails(id).then(setMoodboardImages).catch(() => {});
+        api.getMoodboardThumbnails(id).then((imgs) => {
+          setMoodboardImages(imgs);
+          // Extract palette for brief export
+          const dataUrls = imgs.map(i => i.image_data).filter((d): d is string => !!d);
+          if (dataUrls.length > 0) {
+            extractPaletteFromImages(dataUrls, 7).then(setDashboardPalette);
+          }
+        }).catch(() => {});
+        api.getMoodboard(id).then((mb) => {
+          if (mb.brief) setMoodboardBriefData(mb.brief);
+        }).catch(() => {});
       } catch (err) {
         console.error('Failed to load project:', err);
       } finally {
@@ -212,6 +226,26 @@ export default function ProjectPage() {
       console.error('Failed to load version:', err);
     }
   }, [id]);
+
+  const handleExportBrief = useCallback(async () => {
+    setExportingBrief(true);
+    try {
+      const { generateProjectBrief } = await import('../../../lib/generateBrief');
+      generateProjectBrief({
+        artistName: project?.artist_name || 'Untitled',
+        createdDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+        concept: concept || null,
+        report: report || null,
+        palette: dashboardPalette,
+        trackNames: demoTracks.map(t => t.title),
+        moodboardBrief: moodboardBriefData?.prose || null,
+      });
+    } catch (err) {
+      console.error('Failed to export brief:', err);
+    } finally {
+      setExportingBrief(false);
+    }
+  }, [project, concept, report, dashboardPalette, demoTracks, moodboardBriefData]);
 
   const artistName = project?.artist_name || 'Untitled';
 
@@ -376,6 +410,15 @@ export default function ProjectPage() {
                   <span className="text-micro font-bold uppercase tracking-widest text-neutral-400">
                     {statusLabel}
                   </span>
+                  {conceptReady && (
+                    <button
+                      onClick={handleExportBrief}
+                      disabled={exportingBrief}
+                      className="ml-auto text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black border border-neutral-200 hover:border-black px-3 py-1 rounded-sm transition-all duration-fast disabled:opacity-50"
+                    >
+                      {exportingBrief ? 'Exporting...' : 'Export Brief'}
+                    </button>
+                  )}
                 </div>
 
                 <h1 className="text-[96px] leading-[0.88] font-bold tracking-tight text-black">
