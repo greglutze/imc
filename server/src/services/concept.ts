@@ -1,7 +1,7 @@
 import { chat } from './ai';
 import { ConversationMessage, ProjectConcept } from '../types';
 
-const CONCEPT_SYSTEM_PROMPT = `You are IMC's creative director — part A&R, part strategist. Your job is to help an artist define their concept clearly enough to run market research on it.
+const CONCEPT_BASE_PROMPT = `You are IMC's creative director — part A&R, part strategist. Your job is to help an artist define their concept clearly enough to run market research on it.
 
 Ask focused questions to understand:
 - Genre and subgenre positioning
@@ -22,6 +22,64 @@ The conversation continues after concept extraction — the artist can always co
 
 Don't force the conversation — if they give you rich answers, you can cover multiple areas fast. If they're vague, probe deeper. Speak like an experienced A&R: confident, knowledgeable, never condescending.`;
 
+/**
+ * Extract context tags from the conversation so far.
+ * These accumulate as the artist reveals more about their vision,
+ * making each AI response more attuned and specific.
+ */
+function extractContextTags(messages: ConversationMessage[]): string {
+  const userMessages = messages
+    .filter(m => m.role === 'user')
+    .map(m => m.content.toLowerCase());
+
+  if (userMessages.length === 0) return '';
+
+  const allUserText = userMessages.join(' ');
+
+  const tags: string[] = [];
+
+  // Genre signals
+  const genreWords = ['hip-hop', 'hip hop', 'rap', 'r&b', 'rnb', 'pop', 'rock', 'indie', 'electronic',
+    'soul', 'jazz', 'folk', 'country', 'metal', 'punk', 'lo-fi', 'lofi', 'ambient', 'trap',
+    'drill', 'house', 'techno', 'disco', 'funk', 'gospel', 'classical', 'alternative',
+    'shoegaze', 'post-punk', 'synth-pop', 'synthpop', 'neo-soul', 'afrobeats', 'latin',
+    'reggaeton', 'dancehall', 'grunge', 'emo', 'screamo', 'experimental', 'noise',
+    'psych', 'psychedelic', 'dream pop', 'bedroom pop', 'cloud rap', 'phonk', 'jersey club'];
+  const foundGenres = genreWords.filter(g => allUserText.includes(g));
+  if (foundGenres.length > 0) tags.push(`Genres mentioned: ${foundGenres.join(', ')}`);
+
+  // Mood / energy signals
+  const moodWords = ['dark', 'bright', 'melancholy', 'angry', 'sad', 'euphoric', 'chill', 'aggressive',
+    'dreamy', 'nostalgic', 'uplifting', 'haunting', 'ethereal', 'raw', 'minimal', 'lush',
+    'gritty', 'smooth', 'chaotic', 'introspective', 'vulnerable', 'confident', 'moody',
+    'atmospheric', 'cinematic', 'intimate', 'anthemic', 'brooding', 'playful', 'somber',
+    'warm', 'cold', 'hazy', 'crisp', 'heavy', 'light', 'floating', 'driving'];
+  const foundMoods = moodWords.filter(m => allUserText.includes(m));
+  if (foundMoods.length > 0) tags.push(`Mood/energy: ${foundMoods.join(', ')}`);
+
+  // Production era signals
+  const eraWords = ['90s', '80s', '70s', '2000s', 'y2k', 'vintage', 'retro', 'modern', 'futuristic',
+    'analog', 'digital', 'lo-fi', 'hi-fi', 'tape', 'vinyl'];
+  const foundEras = eraWords.filter(e => allUserText.includes(e));
+  if (foundEras.length > 0) tags.push(`Era/aesthetic: ${foundEras.join(', ')}`);
+
+  // Conversation depth indicator
+  const turnCount = userMessages.length;
+  if (turnCount >= 5) {
+    tags.push('Deep in conversation — be specific, reference what they\'ve told you');
+  } else if (turnCount >= 3) {
+    tags.push('Building rapport — start connecting their ideas together');
+  }
+
+  if (tags.length === 0) return '';
+
+  return `\n\n--- CONTEXT FROM THIS SESSION ---\n${tags.join('\n')}\n\nUse this context to make your responses more specific and attuned. Reference their language. Mirror their energy. The deeper the conversation goes, the more you should sound like you truly understand their vision.`;
+}
+
+function buildSystemPrompt(messages: ConversationMessage[]): string {
+  return CONCEPT_BASE_PROMPT + extractContextTags(messages);
+}
+
 export interface ConceptResponse {
   response: string;
   conceptReady: boolean;
@@ -36,7 +94,8 @@ export async function getConceptResponse(
     content: msg.content,
   }));
 
-  const response = await chat(CONCEPT_SYSTEM_PROMPT, chatMessages);
+  const systemPrompt = buildSystemPrompt(messages);
+  const response = await chat(systemPrompt, chatMessages);
 
   let conceptReady = false;
   let extractedConcept: ProjectConcept | null = null;
