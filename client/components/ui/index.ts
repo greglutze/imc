@@ -1,4 +1,5 @@
 export { default as Button } from './Button';
+export { default as ButtonV2 } from './ButtonV2';
 export { default as Input } from './Input';
 export { default as Badge } from './Badge';
 export { default as Card, CardHeader, CardTitle, CardDescription } from './Card';

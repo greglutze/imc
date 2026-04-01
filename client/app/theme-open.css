@@ -1,0 +1,394 @@
+/* ═══════════════════════════════════════════════════════════════
+   THEME: OPEN — Alternative design language for IMC
+   Influenced by Open app's editorial clarity and generous spacing.
+   White background, monochromatic, cleaner typography.
+
+   ACTIVATION: Add class="theme-open" to <html> or <body>.
+   Everything inside inherits the new tokens.
+
+   This theme does NOT replace the default — it layers over it.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Google Font: Instrument Sans ──
+   A clean, contemporary grotesque with optical sizing.
+   The name is a coincidence that feels like destiny for IMC.
+   ─────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+
+/* ── Theme scope ── */
+.theme-open {
+  /* ── Typography tokens ── */
+  --font-sans: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  /* ── Color tokens — warm neutrals ── */
+  --color-bg: #FFFFFF;
+  --color-fg: #1A1A1A;
+  --color-muted: #8A8A8A;
+  --color-faint: #C4C4C4;
+  --color-border: #E8E8E8;
+  --color-border-strong: #1A1A1A;
+  --color-surface: #F7F7F5;
+  --color-surface-hover: #F0F0ED;
+
+  /* ── Spacing scale — more generous ── */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+
+  /* ── Radius — softer ── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* ── Transitions ── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+
+  /* ── Apply base ── */
+  font-family: var(--font-sans);
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPOGRAPHY CLASSES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Display — editorial serif for hero moments */
+.theme-open .t-display {
+  font-family: var(--font-serif);
+  font-size: 56px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+}
+
+.theme-open .t-display-sm {
+  font-family: var(--font-serif);
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+
+/* Heading — clean sans */
+.theme-open .t-heading {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.theme-open .t-heading-sm {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+/* Body */
+.theme-open .t-body-lg {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+  font-weight: 400;
+}
+
+.theme-open .t-body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.theme-open .t-body-sm {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+/* Label — restrained uppercase, wider spacing than body but not extreme */
+.theme-open .t-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Caption — small metadata */
+.theme-open .t-caption {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+/* Mono — technical data */
+.theme-open .t-mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   COLOR UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════════ */
+
+.theme-open .c-fg         { color: var(--color-fg); }
+.theme-open .c-muted      { color: var(--color-muted); }
+.theme-open .c-faint      { color: var(--color-faint); }
+.theme-open .c-bg         { background-color: var(--color-bg); }
+.theme-open .c-surface    { background-color: var(--color-surface); }
+.theme-open .c-border     { border-color: var(--color-border); }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTON SYSTEM — pill-primary, clean-secondary, arrow-ghost
+   Applied via data attributes or classes on the ButtonV2 component
+   ═══════════════════════════════════════════════════════════════ */
+
+.theme-open .btn-v2 {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: 0;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+
+.theme-open .btn-v2:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Primary: pill, filled black ── */
+.theme-open .btn-v2--primary {
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  border-radius: var(--radius-full);
+}
+
+.theme-open .btn-v2--primary:hover:not(:disabled) {
+  background-color: #333;
+}
+
+/* ── Secondary: thin border, rounded ── */
+.theme-open .btn-v2--secondary {
+  background-color: transparent;
+  color: var(--color-fg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.theme-open .btn-v2--secondary:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+}
+
+/* ── Ghost: text only, with optional arrow ── */
+.theme-open .btn-v2--ghost {
+  background: none;
+  color: var(--color-muted);
+  padding: 0;
+  height: auto;
+}
+
+.theme-open .btn-v2--ghost:hover:not(:disabled) {
+  color: var(--color-fg);
+}
+
+/* Arrow indicator for ghost links */
+.theme-open .btn-v2--ghost .btn-arrow {
+  display: inline-block;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.theme-open .btn-v2--ghost:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+/* ── Danger: red text, pill on confirm ── */
+.theme-open .btn-v2--danger {
+  background-color: #DC2626;
+  color: white;
+  border-radius: var(--radius-full);
+}
+
+.theme-open .btn-v2--danger:hover:not(:disabled) {
+  background-color: #B91C1C;
+}
+
+.theme-open .btn-v2--danger-ghost {
+  background: none;
+  color: var(--color-muted);
+  padding: 0;
+  height: auto;
+}
+
+.theme-open .btn-v2--danger-ghost:hover:not(:disabled) {
+  color: #DC2626;
+}
+
+/* ── Media: circular play button ── */
+.theme-open .btn-v2--media {
+  border-radius: 50%;
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+}
+
+.theme-open .btn-v2--media:hover:not(:disabled) {
+  background-color: #333;
+}
+
+.theme-open .btn-v2--media[data-active="false"] {
+  background-color: var(--color-surface);
+  color: var(--color-muted);
+}
+
+.theme-open .btn-v2--media[data-active="false"]:hover:not(:disabled) {
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+}
+
+/* ── Sizes ── */
+.theme-open .btn-v2--sm  { height: 32px; padding: 0 14px; font-size: 13px; }
+.theme-open .btn-v2--md  { height: 38px; padding: 0 20px; font-size: 14px; }
+.theme-open .btn-v2--lg  { height: 44px; padding: 0 28px; font-size: 15px; }
+
+/* Ghost and danger-ghost ignore height/padding */
+.theme-open .btn-v2--ghost.btn-v2--sm,
+.theme-open .btn-v2--danger-ghost.btn-v2--sm   { font-size: 12px; }
+.theme-open .btn-v2--ghost.btn-v2--md,
+.theme-open .btn-v2--danger-ghost.btn-v2--md   { font-size: 13px; }
+.theme-open .btn-v2--ghost.btn-v2--lg,
+.theme-open .btn-v2--danger-ghost.btn-v2--lg   { font-size: 14px; }
+
+/* Media sizes — square */
+.theme-open .btn-v2--media.btn-v2--sm  { width: 32px; height: 32px; padding: 0; }
+.theme-open .btn-v2--media.btn-v2--md  { width: 38px; height: 38px; padding: 0; }
+.theme-open .btn-v2--media.btn-v2--lg  { width: 44px; height: 44px; padding: 0; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYOUT PRIMITIVES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Section — generous spacing with optional hairline */
+.theme-open .section-open {
+  padding: var(--space-xl) var(--space-2xl);
+}
+
+.theme-open .section-open + .section-open {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Divider — hairline, not the chunky default */
+.theme-open .divider-open {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--space-xl) 0;
+}
+
+/* Card — subtle surface with generous radius */
+.theme-open .card-open {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+
+/* Input — bottom-border style, clean */
+.theme-open .input-open {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  letter-spacing: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-sm) 0;
+  outline: none;
+  width: 100%;
+  color: var(--color-fg);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.theme-open .input-open::placeholder {
+  color: var(--color-faint);
+}
+
+.theme-open .input-open:focus {
+  border-bottom-color: var(--color-border-strong);
+}
+
+/* Tag / chip — pill-shaped, thin border */
+.theme-open .tag-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-fg);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLBAR — thinner
+   ═══════════════════════════════════════════════════════════════ */
+
+.theme-open ::-webkit-scrollbar { width: 3px; height: 3px; }
+.theme-open ::-webkit-scrollbar-thumb { background: var(--color-faint); border-radius: 2px; }
+.theme-open ::-webkit-scrollbar-thumb:hover { background: var(--color-muted); }
+
+/* ═══════════════════════════════════════════════════════════════
+   FOCUS — softer ring
+   ═══════════════════════════════════════════════════════════════ */
+
+.theme-open :focus-visible {
+  outline: 1.5px solid var(--color-fg);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SELECTION
+   ═══════════════════════════════════════════════════════════════ */
+
+.theme-open ::selection {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--color-fg);
+}
