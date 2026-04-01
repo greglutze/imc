@@ -53,13 +53,13 @@ export default function ConceptChat({
         <div className="flex items-start justify-between">
           <div>
             <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-              AI Creative Director
+              Creative Brief
             </p>
             <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
               Concept
             </p>
             <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
-              Define your artist identity — genre, influences, mood, and creative direction.
+              Let&apos;s figure out who you are as an artist. Talk about your sound, your references, the feeling you&apos;re chasing.
             </p>
           </div>
           {conceptReady ? (
@@ -109,7 +109,7 @@ export default function ConceptChat({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={conceptReady ? "Refine your concept — changes will update the extracted concept..." : "Describe your artist concept..."}
+            placeholder={conceptReady ? "Keep going — anything you add here refines your concept..." : "What kind of music are you making? What should it feel like?"}
             disabled={loading}
             rows={1}
             className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
@@ -134,14 +134,23 @@ export default function ConceptChat({
 
       {/* Concept extracted card */}
       {conceptReady && concept && (
-        <div className="border-t border-neutral-200 px-8 py-6 bg-neutral-50 shrink-0">
+        <div className="border-t-2 border-black px-8 py-8 bg-white shrink-0">
           <div className="max-w-2xl">
-            <div className="flex items-center gap-3 mb-4">
-              <Signal color="green" />
-              <p className="text-label font-bold uppercase tracking-widest text-black">
-                Concept Extracted
-              </p>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+                  Your Concept
+                </p>
+              </div>
+              <Badge variant="green">Locked In</Badge>
             </div>
+
+            {concept.creative_direction && (
+              <p className="text-body-lg text-black leading-relaxed mb-6">
+                {concept.creative_direction}
+              </p>
+            )}
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-3">
               <ConceptField label="Primary Genre" value={concept.genre_primary} />
@@ -151,8 +160,6 @@ export default function ConceptChat({
               <ConceptField label="Mood" value={concept.mood_keywords?.join(', ')} />
               <ConceptField label="Tracks" value={String(concept.track_count)} />
             </div>
-
-            <p className="text-body-sm text-neutral-500 mt-4">{concept.creative_direction}</p>
           </div>
         </div>
       )}

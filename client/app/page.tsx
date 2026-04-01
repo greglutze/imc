@@ -65,11 +65,11 @@ export default function Home() {
         <div className="max-w-[1400px] mx-auto px-10 py-32">
           <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">IMC</p>
           <p className="text-[48px] leading-[1.1] font-bold text-black mt-6 tracking-tight max-w-xl">
-            AI-powered market research &amp; prompt generation for artists
+
+            Your creative intelligence engine
           </p>
           <p className="text-body-lg text-neutral-500 mt-6 max-w-md">
-            Define your concept. Run research. Generate Suno &amp; Udio prompts.
-            All powered by real market intelligence.
+            Define your concept. Research your market. Generate production-ready prompts — all from one brief.
           </p>
           <div className="mt-10 flex items-center gap-3">
             <a
@@ -120,9 +120,28 @@ export default function Home() {
         <div className="max-w-[1400px] mx-auto px-10">
 
           {loadingProjects ? (
-            <div className="py-32 text-center">
-              <p className="text-[120px] leading-[0.85] font-bold text-neutral-100">...</p>
-              <p className="text-body text-neutral-400 mt-4">Loading projects</p>
+            <div className="pt-16 pb-10">
+              <div className="flex items-end justify-between mb-10">
+                <div>
+                  <div className="h-3 w-16 bg-neutral-100 rounded-sm animate-pulse mb-3" />
+                  <div className="h-14 w-16 bg-neutral-100 rounded-sm animate-pulse" />
+                </div>
+                <div className="h-10 w-32 bg-neutral-100 rounded-sm animate-pulse" />
+              </div>
+              <div className="border-t border-neutral-200">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-6 py-6 border-b border-neutral-200">
+                    <div className="w-16 h-16 rounded-sm bg-neutral-100 animate-pulse shrink-0" />
+                    <div className="flex-1">
+                      <div className="h-5 w-40 bg-neutral-100 rounded-sm animate-pulse mb-2" />
+                      <div className="h-3 w-64 bg-neutral-50 rounded-sm animate-pulse mb-2" />
+                      <div className="h-2 w-24 bg-neutral-50 rounded-sm animate-pulse" />
+                    </div>
+                    <div className="h-4 w-16 bg-neutral-50 rounded-sm animate-pulse" />
+                    <div className="h-4 w-20 bg-neutral-50 rounded-sm animate-pulse" />
+                  </div>
+                ))}
+              </div>
             </div>
           ) : projects.length > 0 ? (
             <>
@@ -218,10 +237,10 @@ export default function Home() {
             <div className="py-32">
               <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">00</p>
               <p className="text-[48px] leading-[1.1] font-bold text-black mt-6 tracking-tight">
-                No Projects Yet
+                Start Something
               </p>
               <p className="text-body-lg text-neutral-500 mt-4 max-w-md">
-                Create your first project to start defining an artist concept and running market research.
+                Every project begins with a concept. Create one and we&apos;ll help you build the research, prompts, and sound around it.
               </p>
               <a
                 href="/projects/new"

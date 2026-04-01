@@ -128,11 +128,26 @@ export default function PromptsPage() {
 
   if (authLoading || pageLoading) {
     return (
-      <div className="animate-fade-in px-8 py-16 max-w-2xl">
-        <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
-        <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-          Loading...
-        </p>
+      <div className="animate-fade-in h-full flex flex-col">
+        <div className="border-b border-neutral-200">
+          <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="h-3 w-8 bg-neutral-100 rounded-sm animate-pulse" />
+              <span className="text-neutral-200">/</span>
+              <div className="h-3 w-24 bg-neutral-100 rounded-sm animate-pulse" />
+            </div>
+            <div className="flex items-center gap-3">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-3 w-14 bg-neutral-100 rounded-sm animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="max-w-[1400px] mx-auto w-full px-10 pt-10 pb-6">
+          <div className="h-3 w-32 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+          <div className="h-10 w-64 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+          <div className="h-4 w-96 bg-neutral-50 rounded-sm animate-pulse" />
+        </div>
       </div>
     );
   }
@@ -146,11 +161,10 @@ export default function PromptsPage() {
         <div className="max-w-[1400px] mx-auto px-10 py-16">
           <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
           <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-            Generating Prompts
+            Building Your Sound
           </p>
           <p className="text-body-lg text-black mt-5 max-w-sm">
-            Creating style profiles, vocalist personas, and per-track
-            Suno &amp; Udio prompts from your concept and market research.
+            Translating your concept and market research into production-ready prompts, style direction, and vocal personas.
           </p>
           <div className="mt-8 flex items-center gap-2">
             <div className="w-2 h-2 bg-signal-blue rounded-full animate-pulse" />
@@ -171,11 +185,10 @@ export default function PromptsPage() {
         <div className="max-w-[1400px] px-10 py-16">
           <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
           <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
-            No Concept Yet
+            Start With Your Concept
           </p>
           <p className="text-body-lg text-black mt-5 max-w-md">
-            Complete the concept interview first. Prompts will generate
-            automatically when you return here.
+            Head to the Concept tab and describe your vision first. Once that&apos;s locked in, your prompts will generate automatically.
           </p>
         </div>
       </div>
@@ -197,13 +210,13 @@ export default function PromptsPage() {
         <div className="pt-10 pb-6 flex items-start justify-between">
           <div>
             <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-              AI-Generated Suno &amp; Udio Prompts
+              Production Intelligence
             </p>
             <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
               Sonic Engine
             </p>
             <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
-              Style profiles, vocalist personas, and per-track prompts tuned to your concept and market data.
+              Your concept and market data, translated into production-ready style profiles, vocal direction, and per-track prompts.
             </p>
           </div>
           {hasPrompts && (

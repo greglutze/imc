@@ -165,10 +165,15 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
   if (loading) {
     return (
-      <div className="animate-fade-in px-8 py-16 max-w-2xl">
-        <p className="text-[40px] leading-[1.1] font-bold text-neutral-200 tracking-tight">
-          Loading moodboard...
-        </p>
+      <div className="animate-fade-in px-8 pt-10 pb-8">
+        <div className="h-3 w-32 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+        <div className="h-10 w-48 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+        <div className="h-4 w-80 bg-neutral-50 rounded-sm animate-pulse mb-8" />
+        <div className="grid grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="aspect-square bg-neutral-100 rounded-sm animate-pulse" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -189,15 +194,15 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       <div className="px-8 pt-10 pb-8 flex items-start justify-between">
         <div>
           <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-            Visual References &amp; Sonic Brief
+            Visual World
           </p>
           <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
             Audio Visuals
           </p>
           <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
             {images.length > 0
-              ? `${imageCount} images defining the look and sound of your project.`
-              : 'Upload images that capture the visual world of your music — photos, textures, artwork, anything that feels right.'
+              ? `${imageCount} images shaping the visual language of your project.`
+              : 'Drop in anything that feels like your sound — photos, textures, artwork, color palettes, film stills.'
             }
           </p>
         </div>
@@ -225,10 +230,10 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
             onClick={() => fileInputRef.current?.click()}
           >
             <p className="text-[28px] font-bold text-neutral-200 tracking-tight">
-              Drop images here
+              Start your visual world
             </p>
             <p className="text-body text-neutral-400 mt-3">
-              or click to browse. JPG, PNG, WEBP — up to 30 images.
+              Drop images here or click to browse. JPG, PNG, WEBP — up to 30.
             </p>
           </div>
         )}

@@ -50,11 +50,11 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
             </span>
           </a>
         </div>
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-3">
           {links.map((link) => {
             const isActive = activePage === link.key;
-            const baseClass = `text-micro font-bold uppercase tracking-widest px-3 py-1 rounded-sm transition-colors duration-fast`;
-            const activeClass = isActive ? 'text-black bg-neutral-100' : 'text-neutral-400 hover:text-black';
+            const baseClass = `text-micro font-bold uppercase tracking-widest px-3 py-3 transition-colors duration-fast`;
+            const activeClass = isActive ? 'text-black border-b-2 border-black -mb-px' : 'text-neutral-400 hover:text-black';
 
             // If onNavigate is provided and this is concept/research, use button for in-page nav
             if (onNavigate && (link.key === 'interview' || link.key === 'moodboard' || link.key === 'research')) {

@@ -64,8 +64,21 @@ export default function SharePage() {
           artistName="..."
           activePage="share"
         />
-        <div className="max-w-[1400px] mx-auto px-10 py-20">
-          <div className="text-neutral-400 text-label uppercase tracking-widest">Loading...</div>
+        <div className="max-w-[1400px] mx-auto px-8 pt-10">
+          <div className="h-3 w-40 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+          <div className="h-10 w-32 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+          <div className="h-4 w-80 bg-neutral-50 rounded-sm animate-pulse mb-8" />
+          <div className="space-y-3">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="border border-neutral-200 rounded-sm p-5 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-sm bg-neutral-100 animate-pulse shrink-0" />
+                <div className="flex-1">
+                  <div className="h-4 w-40 bg-neutral-100 rounded-sm animate-pulse mb-2" />
+                  <div className="h-3 w-32 bg-neutral-50 rounded-sm animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -85,13 +98,13 @@ export default function SharePage() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
-                Private Listening Links &amp; Distribution
+                Private Listening &amp; Distribution
               </p>
               <h2 className="text-[40px] leading-[0.9] font-bold tracking-tight text-black">
                 Tracks
               </h2>
               <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
-                Create private listening links to share your music before release.
+                Share your music with collaborators, labels, or press — privately, on your terms.
               </p>
             </div>
             <button
@@ -108,11 +121,20 @@ export default function SharePage() {
 
         {/* Share projects list */}
         {shares.length === 0 ? (
-          <div className="border border-neutral-200 rounded-sm p-16 text-center">
-            <p className="text-body text-neutral-500 mb-2">No share links yet.</p>
-            <p className="text-small text-neutral-400">
-              Create a share link to send your music to collaborators, labels, or press.
+          <div className="border-2 border-dashed border-neutral-200 rounded-sm py-20 px-8 text-center">
+            <p className="text-[28px] font-bold text-neutral-200 tracking-tight">
+              Your first release starts here
             </p>
+            <p className="text-body text-neutral-400 mt-3 max-w-sm mx-auto">
+              Create a share link to send your music to collaborators, labels, or press — privately, before it goes public.
+            </p>
+            <button
+              onClick={handleCreate}
+              disabled={creating}
+              className="mt-6 bg-black text-white text-label font-bold uppercase tracking-widest h-10 px-6 rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50"
+            >
+              {creating ? 'Creating...' : '+ New Share Link'}
+            </button>
           </div>
         ) : (
           <div className="space-y-3">
