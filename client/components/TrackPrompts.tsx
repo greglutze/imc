@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Badge } from './ui';
+import { Badge, Button } from './ui';
 import type { I2Track } from '../lib/api';
 
 interface TrackPromptsProps {
@@ -64,13 +64,9 @@ function TrackCard({
           </div>
         </div>
         {onRegenerate && (
-          <button
-            onClick={() => onRegenerate(track.track_number)}
-            disabled={isRegenerating}
-            className="text-label font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-          >
-            {isRegenerating ? 'Regenerating...' : 'Regenerate'}
-          </button>
+          <Button onClick={() => onRegenerate(track.track_number)} loading={isRegenerating} variant="ghost" size="sm">
+            Regenerate
+          </Button>
         )}
       </div>
 

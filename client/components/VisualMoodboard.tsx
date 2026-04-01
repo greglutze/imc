@@ -429,6 +429,9 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                       v{brief.version}
                     </span>
                   )}
+                  <Button onClick={handleAnalyze} variant="ghost" size="sm">
+                    Regenerate
+                  </Button>
                 </div>
               </div>
 
@@ -504,12 +507,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                 </div>
               )}
 
-              {/* Refresh button */}
-              <div className="mt-6">
-                <Button onClick={handleAnalyze} variant="ghost" size="md">
-                  Refresh brief
-                </Button>
-              </div>
+              {/* Regenerate button is now in the section header above */}
             </div>
           )}
         </div>

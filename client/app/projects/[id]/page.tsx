@@ -755,7 +755,7 @@ export default function ProjectPage() {
 
               {!researchRunning && report && (
                 <>
-                  {/* Re-run button at top */}
+                  {/* Regenerate button — top-right of section */}
                   <div className="px-8 pt-6 pb-0 flex items-center justify-between max-w-[1400px]">
                     <div />
                     <Button
@@ -764,9 +764,9 @@ export default function ProjectPage() {
                         handleRunResearch();
                       }}
                       variant="ghost"
-                      size="md"
+                      size="sm"
                     >
-                      Re-run Research
+                      Regenerate
                     </Button>
                   </div>
                   <ResearchReport

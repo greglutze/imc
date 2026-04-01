@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
+import { Button } from '../../../../components/ui';
 import type {
   LyricSessionListItem,
   LyricTheme,
@@ -198,12 +199,9 @@ export default function LyricAdvisorPage() {
                   Starting Points
                 </p>
                 {themes.length > 0 && !themesLoading && (
-                  <button
-                    onClick={() => loadThemes(true)}
-                    className="text-caption font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast"
-                  >
-                    &#x21bb; Regenerate
-                  </button>
+                  <Button onClick={() => loadThemes(true)} variant="ghost" size="sm">
+                    Regenerate
+                  </Button>
                 )}
               </div>
 
