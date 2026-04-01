@@ -10,6 +10,7 @@ import { api, resolveArtworkUrl } from '../../../../../lib/api';
 import type { ShareProjectWithTracks, ShareTrack, Project } from '../../../../../lib/api';
 import SharePreview from '../../../../../components/SharePreview';
 import TrackAnnotations from '../../../../../components/TrackAnnotations';
+import ShowreelPlayer from '../../../../../components/ShowreelPlayer';
 
 function formatDuration(ms: number | null): string {
   if (!ms) return '—';
@@ -445,6 +446,20 @@ export default function ShareManagePage() {
                 </h1>
               )}
             </div>
+
+            {/* Showreel Player — auto-generated preview mix */}
+            {share.tracks.length >= 2 && (
+              <div className="mb-6">
+                <ShowreelPlayer
+                  tracks={share.tracks.map((t) => ({
+                    id: t.id,
+                    title: t.title,
+                    dropbox_url: t.dropbox_url,
+                    duration_ms: t.duration_ms,
+                  }))}
+                />
+              </div>
+            )}
 
             {/* Add track via Dropbox link */}
             <div className="mb-6">

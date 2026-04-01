@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'next/navigation';
+import ShowreelPlayer from '../../../components/ShowreelPlayer';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -253,6 +254,20 @@ export default function ListenerPage() {
           )}
           <h1 className={`text-heading font-bold ${textPrimary}`}>{share.title}</h1>
         </div>
+
+        {/* Showreel — quick preview mix */}
+        {share.tracks.length >= 2 && (
+          <div className="mb-8">
+            <ShowreelPlayer
+              tracks={share.tracks.map((t) => ({
+                id: t.id,
+                title: t.title,
+                dropbox_url: t.dropbox_url,
+                duration_ms: null,
+              }))}
+            />
+          </div>
+        )}
 
         {/* Track list */}
         <div className="space-y-1 mb-8">
