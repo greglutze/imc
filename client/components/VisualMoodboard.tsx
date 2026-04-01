@@ -5,6 +5,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { MoodboardImage, MoodboardBrief } from '../lib/api';
+import { extractPaletteFromImages, isLightColor, type ExtractedColor } from '../lib/colorExtract';
 
 interface VisualMoodboardProps {
   projectId: string;
@@ -20,6 +21,9 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [showPreviousBrief, setShowPreviousBrief] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [palette, setPalette] = useState<ExtractedColor[]>([]);
+  const [extractingColors, setExtractingColors] = useState(false);
+  const [copiedHex, setCopiedHex] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load moodboard data
@@ -41,6 +45,32 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
     };
     loadMoodboard();
   }, [projectId]);
+
+  // Extract palette when images change
+  useEffect(() => {
+    if (images.length === 0) {
+      setPalette([]);
+      return;
+    }
+    const dataUrls = images
+      .map((img) => img.image_data)
+      .filter((d): d is string => !!d);
+    if (dataUrls.length === 0) return;
+
+    setExtractingColors(true);
+    extractPaletteFromImages(dataUrls, 7).then((colors) => {
+      setPalette(colors);
+      setExtractingColors(false);
+    });
+  }, [images]);
+
+  // Copy hex to clipboard
+  const handleCopyHex = useCallback((hex: string) => {
+    navigator.clipboard.writeText(hex).then(() => {
+      setCopiedHex(hex);
+      setTimeout(() => setCopiedHex(null), 1500);
+    });
+  }, []);
 
   // File to base64 data URL
   const fileToDataUrl = (file: File): Promise<string> => {
@@ -300,6 +330,70 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
           </>
         )}
       </div>
+
+      {/* Color Palette Strip */}
+      {palette.length > 0 && (
+        <div className="px-8 py-6 border-t border-neutral-100">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+              Extracted Palette
+            </p>
+            <p className="text-micro text-neutral-300">
+              Click to copy hex
+            </p>
+          </div>
+          <div className="flex gap-0 rounded-sm overflow-hidden h-16">
+            {palette.map((color) => (
+              <button
+                key={color.hex}
+                onClick={() => handleCopyHex(color.hex)}
+                className="relative group transition-all duration-200 hover:flex-[2]"
+                style={{
+                  backgroundColor: color.hex,
+                  flex: color.percentage / 10,
+                  minWidth: '3rem',
+                }}
+                title={`${color.hex} · ${color.percentage}%`}
+              >
+                <span
+                  className={`
+                    absolute inset-0 flex items-center justify-center
+                    text-micro font-bold uppercase tracking-widest
+                    opacity-0 group-hover:opacity-100 transition-opacity duration-fast
+                    ${isLightColor(color.rgb) ? 'text-black/70' : 'text-white/80'}
+                  `}
+                >
+                  {copiedHex === color.hex ? 'Copied' : color.hex}
+                </span>
+              </button>
+            ))}
+          </div>
+          {/* Swatch detail row */}
+          <div className="flex mt-3 gap-4">
+            {palette.map((color) => (
+              <div key={color.hex} className="flex items-center gap-2">
+                <div
+                  className="w-3 h-3 rounded-full shrink-0 border border-neutral-200"
+                  style={{ backgroundColor: color.hex }}
+                />
+                <span className="text-micro font-mono text-neutral-400">
+                  {color.hex}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {extractingColors && images.length > 0 && palette.length === 0 && (
+        <div className="px-8 py-6 border-t border-neutral-100">
+          <div className="h-3 w-32 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+          <div className="flex gap-0 rounded-sm overflow-hidden h-16">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex-1 bg-neutral-100 animate-pulse" style={{ animationDelay: `${i * 100}ms` }} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Sonic Brief */}
       {(brief || analyzing) && (
