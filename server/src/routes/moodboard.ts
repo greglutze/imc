@@ -242,9 +242,11 @@ router.post('/:projectId/analyze', async (req: AuthRequest, res: Response): Prom
     );
 
     res.json({ brief });
-  } catch (err) {
-    console.error('Moodboard analysis error:', err);
-    res.status(500).json({ error: 'Failed to analyze moodboard' });
+  } catch (err: any) {
+    console.error('Moodboard analysis error:', err?.message || err);
+    console.error('Full error:', JSON.stringify(err, Object.getOwnPropertyNames(err || {}), 2));
+    const message = err?.message || 'Failed to analyze moodboard';
+    res.status(500).json({ error: message, message });
   }
 });
 
