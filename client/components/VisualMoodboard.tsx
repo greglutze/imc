@@ -398,121 +398,124 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Sonic Brief */}
       {(brief || analyzing) && (
-        <div className="border-t border-[#E8E8E8] px-8 py-8 bg-neutral-50">
-          {analyzing && (
-            <div className="max-w-2xl">
-              <p className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
-                Reading your images...
-              </p>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-neutral-300 rounded-full animate-pulse" />
-                <div className="w-2 h-2 bg-neutral-300 rounded-full animate-pulse" style={{ animationDelay: '200ms' }} />
-                <div className="w-2 h-2 bg-neutral-300 rounded-full animate-pulse" style={{ animationDelay: '400ms' }} />
-              </div>
-            </div>
-          )}
-
-          {brief && !analyzing && (
-            <div className="max-w-2xl">
-              <div className="flex items-center justify-between mb-5">
-                <p className="text-label font-semibold uppercase tracking-wide text-black">
-                  Sonic Brief
+        <div className="px-8 py-8">
+          <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
+            {analyzing && (
+              <div className="max-w-2xl">
+                <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-3">
+                  Reading your images...
                 </p>
-                <div className="flex items-center gap-3">
-                  {brief.confidence && (
-                    <span className={`text-micro font-semibold uppercase tracking-wide ${
-                      brief.confidence === 'high' ? 'text-green-600' :
-                      brief.confidence === 'medium' ? 'text-yellow-600' : 'text-red-500'
-                    }`}>
-                      {brief.confidence} confidence
-                    </span>
-                  )}
-                  {brief.version > 1 && (
-                    <span className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                      v{brief.version}
-                    </span>
-                  )}
-                  <ButtonV2 onClick={handleAnalyze} variant="ghost" size="sm">
-                    Regenerate
-                  </ButtonV2>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" />
+                  <div className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '200ms' }} />
+                  <div className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '400ms' }} />
                 </div>
               </div>
+            )}
 
-              {/* Prose brief — each sentence hoverable for flagging */}
-              <div className="text-body-lg text-black leading-relaxed">
-                {proseSentences.map((sentence, i) => {
-                  const isFlagged = brief.flagged_elements.includes(sentence);
-                  return (
-                    <span
-                      key={i}
-                      className={`
-                        inline cursor-pointer transition-colors duration-150
-                        ${isFlagged ? 'text-neutral-300 line-through' : 'hover:bg-neutral-100'}
-                      `}
-                      onClick={() => handleFlagToggle(sentence)}
-                      title={isFlagged ? 'Click to unflag' : 'Click to flag as not right'}
-                    >
-                      {sentence}{' '}
-                    </span>
-                  );
-                })}
-              </div>
-
-              {/* Brief metadata */}
-              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
-                {brief.tempo_feel && (
-                  <BriefTag label="Tempo" value={brief.tempo_feel} />
-                )}
-                {brief.texture && (
-                  <BriefTag label="Texture" value={brief.texture} />
-                )}
-                {brief.arrangement_density && (
-                  <BriefTag label="Density" value={brief.arrangement_density} />
-                )}
-                {brief.dynamic_range && (
-                  <BriefTag label="Dynamic Range" value={brief.dynamic_range} />
-                )}
-                {brief.production_era && (
-                  <BriefTag label="Era" value={brief.production_era} />
-                )}
-              </div>
-
-              {/* Sonic references */}
-              {brief.sonic_references.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
-                    Sonic References
+            {brief && !analyzing && (
+              <div className="max-w-2xl">
+                <div className="flex items-center justify-between mb-5">
+                  <p className="text-[11px] font-medium text-[#1A1A1A] uppercase tracking-wide">
+                    Sonic Brief
                   </p>
-                  <div className="flex gap-2 flex-wrap">
-                    {brief.sonic_references.map((ref, i) => (
-                      <span
-                        key={i}
-                        className="text-label font-bold text-black bg-neutral-100 px-3 py-1 rounded-md"
-                      >
-                        {ref}
+                  <div className="flex items-center gap-3">
+                    {brief.confidence && (
+                      <span className={`text-[11px] font-medium uppercase tracking-wide ${
+                        brief.confidence === 'high' ? 'text-green-600' :
+                        brief.confidence === 'medium' ? 'text-yellow-600' : 'text-red-500'
+                      }`}>
+                        {brief.confidence} confidence
                       </span>
-                    ))}
+                    )}
+                    {brief.version > 1 && (
+                      <span className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4]">
+                        v{brief.version}
+                      </span>
+                    )}
+                    <button
+                      onClick={handleAnalyze}
+                      className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
+                    >
+                      Regenerate
+                    </button>
                   </div>
                 </div>
-              )}
 
-              {/* Previous brief toggle */}
-              {brief.previous_prose && (
-                <div className="mt-5">
-                  <ButtonV2 onClick={() => setShowPreviousBrief(!showPreviousBrief)} variant="ghost" size="md">
-                    {showPreviousBrief ? 'Hide' : 'See'} previous brief
-                  </ButtonV2>
-                  {showPreviousBrief && (
-                    <p className="text-body text-[#8A8A8A] mt-3 italic">
-                      {brief.previous_prose}
-                    </p>
+                {/* Prose brief — each sentence hoverable for flagging */}
+                <div className="text-[14px] text-[#1A1A1A] leading-relaxed">
+                  {proseSentences.map((sentence, i) => {
+                    const isFlagged = brief.flagged_elements.includes(sentence);
+                    return (
+                      <span
+                        key={i}
+                        className={`
+                          inline cursor-pointer transition-colors duration-150
+                          ${isFlagged ? 'text-[#C4C4C4] line-through' : 'hover:bg-[#EEEDEB] rounded'}
+                        `}
+                        onClick={() => handleFlagToggle(sentence)}
+                        title={isFlagged ? 'Click to unflag' : 'Click to flag as not right'}
+                      >
+                        {sentence}{' '}
+                      </span>
+                    );
+                  })}
+                </div>
+
+                {/* Brief metadata */}
+                <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+                  {brief.tempo_feel && (
+                    <BriefTag label="Tempo" value={brief.tempo_feel} />
+                  )}
+                  {brief.texture && (
+                    <BriefTag label="Texture" value={brief.texture} />
+                  )}
+                  {brief.arrangement_density && (
+                    <BriefTag label="Density" value={brief.arrangement_density} />
+                  )}
+                  {brief.dynamic_range && (
+                    <BriefTag label="Dynamic Range" value={brief.dynamic_range} />
+                  )}
+                  {brief.production_era && (
+                    <BriefTag label="Era" value={brief.production_era} />
                   )}
                 </div>
-              )}
 
-              {/* Regenerate button is now in the section header above */}
-            </div>
-          )}
+                {/* Sonic references */}
+                {brief.sonic_references.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-2">
+                      Sonic References
+                    </p>
+                    <div className="flex gap-2 flex-wrap">
+                      {brief.sonic_references.map((ref, i) => (
+                        <span
+                          key={i}
+                          className="text-[13px] font-medium text-[#1A1A1A] bg-white px-3 py-1 rounded-full border border-[#E8E8E8]"
+                        >
+                          {ref}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Previous brief toggle */}
+                {brief.previous_prose && (
+                  <div className="mt-5">
+                    <ButtonV2 onClick={() => setShowPreviousBrief(!showPreviousBrief)} variant="ghost" size="md">
+                      {showPreviousBrief ? 'Hide' : 'See'} previous brief
+                    </ButtonV2>
+                    {showPreviousBrief && (
+                      <p className="text-[13px] text-[#8A8A8A] mt-3 italic leading-relaxed">
+                        {brief.previous_prose}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
