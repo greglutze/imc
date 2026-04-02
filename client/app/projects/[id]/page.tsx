@@ -505,6 +505,17 @@ export default function ProjectPage() {
                 <div className="grid grid-cols-12 gap-x-8 py-8">
                   <div className="col-span-4">
                     <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                      Sound
+                    </p>
+                    <div className="space-y-2">
+                      <p className="text-body font-semibold text-black">{concept.genre_primary}</p>
+                      {concept.genre_secondary && concept.genre_secondary.length > 0 && (
+                        <p className="text-body-sm text-neutral-500">{concept.genre_secondary.join(', ')}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="col-span-4">
+                    <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                       Influences
                     </p>
                     <div className="space-y-2">
@@ -520,17 +531,6 @@ export default function ProjectPage() {
                           <span className="text-neutral-300 ml-1.5 text-caption">&#8599;</span>
                         </a>
                       ))}
-                    </div>
-                  </div>
-                  <div className="col-span-4">
-                    <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
-                      Sound
-                    </p>
-                    <div className="space-y-2">
-                      <p className="text-body font-semibold text-black">{concept.genre_primary}</p>
-                      {concept.genre_secondary && concept.genre_secondary.length > 0 && (
-                        <p className="text-body-sm text-neutral-500">{concept.genre_secondary.join(', ')}</p>
-                      )}
                     </div>
                   </div>
                   <div className="col-span-4">
