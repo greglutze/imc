@@ -20,18 +20,18 @@ interface StyleProfileProps {
 
 export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: StyleProfileProps) {
   return (
-    <div className="animate-fade-in px-8 py-6 space-y-3">
-      {/* Production Aesthetic — hero card */}
-      <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
+    <div className="animate-fade-in px-10 py-10 max-w-[1400px] mx-auto">
+      {/* Production Aesthetic — open hero, no card */}
+      <div className="pb-10 border-b border-[#E8E8E8]">
         <SectionLabel>Production Aesthetic</SectionLabel>
-        <p className="text-[22px] leading-[1.4] font-medium text-[#1A1A1A] mt-4 max-w-3xl tracking-tight">
+        <blockquote className="text-[24px] leading-[1.35] font-medium text-[#1A1A1A] mt-5 max-w-3xl tracking-tight">
           &ldquo;{styleProfile.production_aesthetic}&rdquo;
-        </p>
+        </blockquote>
       </div>
 
-      {/* Genre DNA — only if concept has genre data */}
+      {/* Genre DNA — open section with border divider */}
       {concept?.genre_primary && (
-        <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
+        <div className="py-10 border-b border-[#E8E8E8]">
           <SectionLabel>Genre DNA</SectionLabel>
           <div className="mt-5 flex items-start gap-8">
             <div className="shrink-0">
@@ -48,7 +48,7 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
                   {concept.genre_secondary.map((genre, i) => (
                     <span
                       key={i}
-                      className="text-[13px] font-medium text-[#1A1A1A] bg-white px-4 py-2 rounded-full border border-[#E8E8E8]"
+                      className="text-[13px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-4 py-2 rounded-full border border-[#E8E8E8]"
                     >
                       {genre}
                     </span>
@@ -60,46 +60,48 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
         </div>
       )}
 
-      {/* Sonic Signatures + Tempo/Key grid */}
-      <div className="grid grid-cols-12 gap-3">
-        <div className="col-span-7 bg-[#F7F7F5] rounded-lg px-7 py-8">
-          <SectionLabel>Sonic Signatures</SectionLabel>
-          <div className="mt-5 space-y-4">
-            {styleProfile.sonic_signatures.map((sig, i) => (
-              <div key={i} className="flex items-start gap-4">
-                <span className="text-[13px] font-medium text-[#C4C4C4] shrink-0 w-6 text-right pt-0.5">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{sig}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
-          <div className="space-y-6">
-            <div className="border-b border-[#E8E8E8] pb-4">
-              <SectionLabel>Tempo Range</SectionLabel>
-              <p className="text-[18px] font-medium text-[#1A1A1A] mt-2">{styleProfile.tempo_range}</p>
-            </div>
-
-            <div>
-              <SectionLabel>Key Preferences</SectionLabel>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {styleProfile.key_preferences.map((k, i) => (
-                  <span key={i} className="text-[13px] font-mono text-[#1A1A1A] bg-white px-2.5 py-1 rounded-full border border-[#E8E8E8]">
-                    {k}
+      {/* Sonic Signatures + Tempo/Key — two-column cards */}
+      <div className="py-10 border-b border-[#E8E8E8]">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-7">
+            <SectionLabel>Sonic Signatures</SectionLabel>
+            <div className="mt-5 space-y-4">
+              {styleProfile.sonic_signatures.map((sig, i) => (
+                <div key={i} className="flex items-start gap-4">
+                  <span className="text-[13px] font-medium text-[#C4C4C4] shrink-0 w-6 text-right pt-0.5">
+                    {String(i + 1).padStart(2, '0')}
                   </span>
-                ))}
+                  <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{sig}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
+            <div className="space-y-6">
+              <div className="border-b border-[#E8E8E8] pb-4">
+                <SectionLabel>Tempo Range</SectionLabel>
+                <p className="text-[18px] font-medium text-[#1A1A1A] mt-2">{styleProfile.tempo_range}</p>
+              </div>
+
+              <div>
+                <SectionLabel>Key Preferences</SectionLabel>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {styleProfile.key_preferences.map((k, i) => (
+                    <span key={i} className="text-[13px] font-mono text-[#1A1A1A] bg-white px-2.5 py-1 rounded-full border border-[#E8E8E8]">
+                      {k}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Mood Map — only if concept has mood keywords */}
+      {/* Mood Map — open section, no card wrapper */}
       {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
-        <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
+        <div className="py-10 border-b border-[#E8E8E8]">
           <SectionLabel>Mood Map</SectionLabel>
           <div className="mt-5">
             <MoodConstellation moods={concept.mood_keywords} />
@@ -107,25 +109,27 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
         </div>
       )}
 
-      {/* Energy Profile — only if market research data is available */}
+      {/* Energy Profile — cards for data, open for prose */}
       {sonicBlueprint?.energy_profile && (
-        <div className="grid grid-cols-12 gap-3">
-          <div className="col-span-7 bg-[#F7F7F5] rounded-lg px-7 py-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-              <SectionLabel>Energy Profile</SectionLabel>
-              <Badge variant="green">From Market Research</Badge>
+        <div className="py-10">
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-7">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                <SectionLabel>Energy Profile</SectionLabel>
+                <Badge variant="green">From Market Research</Badge>
+              </div>
+              <p className="text-[14px] text-[#1A1A1A] leading-relaxed">
+                {sonicBlueprint.energy_profile}
+              </p>
             </div>
-            <p className="text-[14px] text-[#1A1A1A] leading-relaxed">
-              {sonicBlueprint.energy_profile}
-            </p>
-          </div>
 
-          <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
-            <SectionLabel>Market Production Style</SectionLabel>
-            <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-2">
-              {sonicBlueprint.production_style}
-            </p>
+            <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
+              <SectionLabel>Market Production Style</SectionLabel>
+              <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-2">
+                {sonicBlueprint.production_style}
+              </p>
+            </div>
           </div>
         </div>
       )}

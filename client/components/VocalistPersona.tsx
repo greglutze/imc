@@ -32,25 +32,35 @@ interface VocalistPersonaProps {
 
 export default function VocalistPersona({ vocalistPersona }: VocalistPersonaProps) {
   return (
-    <div className="animate-fade-in px-8 py-6 space-y-3">
-      {/* Character + Delivery hero */}
-      <div className="grid grid-cols-12 gap-3">
-        <div className="col-span-7 bg-[#F7F7F5] rounded-lg px-7 py-8">
-          <SectionLabel>Vocal Character</SectionLabel>
-          <p className="text-[22px] leading-[1.4] font-medium text-[#1A1A1A] mt-4 tracking-tight">
-            &ldquo;{vocalistPersona.vocal_character}&rdquo;
-          </p>
+    <div className="animate-fade-in px-10 py-10 max-w-[1400px] mx-auto">
+      {/* Vocal Character — open hero, no card */}
+      <div className="pb-10 border-b border-[#E8E8E8]">
+        <SectionLabel>Vocal Character</SectionLabel>
+        <blockquote className="text-[24px] leading-[1.35] font-medium text-[#1A1A1A] mt-5 max-w-3xl tracking-tight">
+          &ldquo;{vocalistPersona.vocal_character}&rdquo;
+        </blockquote>
+      </div>
 
-          <div className="mt-10">
+      {/* Delivery + References — two-column, mixed open & card */}
+      <div className="py-10 border-b border-[#E8E8E8]">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-7">
             <SectionLabel>Delivery Style</SectionLabel>
-            <p className="text-[14px] text-[#8A8A8A] leading-relaxed mt-3">
+            <p className="text-[14px] text-[#1A1A1A] leading-relaxed mt-4 max-w-lg">
               {vocalistPersona.delivery_style}
             </p>
-          </div>
-        </div>
 
-        <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
-          <div>
+            <div className="mt-10">
+              <SectionLabel>Tone Keywords</SectionLabel>
+              <div className="flex flex-wrap gap-2 mt-3">
+                {vocalistPersona.tone_keywords.map((kw, i) => (
+                  <Badge key={i} variant="blue">{kw}</Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
             <SectionLabel>Reference Vocalists</SectionLabel>
             <p className="text-[11px] text-[#C4C4C4] mt-1">For creative context only — not included in prompts</p>
             <div className="mt-5 space-y-3">
@@ -64,20 +74,11 @@ export default function VocalistPersona({ vocalistPersona }: VocalistPersonaProp
               ))}
             </div>
           </div>
-
-          <div className="mt-8">
-            <SectionLabel>Tone Keywords</SectionLabel>
-            <div className="flex flex-wrap gap-2 mt-3">
-              {vocalistPersona.tone_keywords.map((kw, i) => (
-                <Badge key={i} variant="blue">{kw}</Badge>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Suno Vocal Prompt — full width card */}
-      <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
+      {/* Suno Vocal Prompt — contained card for copiable content */}
+      <div className="py-10">
         <VocalPromptBlock vocalistPersona={vocalistPersona} />
       </div>
     </div>
