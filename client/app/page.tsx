@@ -149,7 +149,7 @@ export default function Home() {
                 {projects.map((project, index) => {
                   const statusLabel = project.status === 'draft' ? 'Draft' : project.status === 'complete' ? 'Complete' : 'In Progress';
                   const statusColor = project.status === 'complete' ? 'green' : project.status === 'draft' ? 'neutral' : 'yellow';
-                  const projectCode = `IMC\u00AE \u2014 ${String(index + 1).padStart(2, '0')}${(project.artist_name || 'U').charAt(0).toUpperCase()}`;
+                  const projectCode = `(IMC\u00AE \u2014 ${String(index + 1).padStart(2, '0')}${(project.artist_name || 'U').charAt(0).toUpperCase()})`;
 
                   return (
                     <a
