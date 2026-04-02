@@ -628,36 +628,45 @@ export default function ProjectPage() {
               <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-8">
                 Your Toolkit
               </p>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-5">
                 {instruments.map((inst) => (
                   <a
                     key={inst.number}
                     href={inst.href}
-                    className="group border border-[#E8E8E8] rounded-md p-6 hover:border-black transition-all duration-200 relative overflow-hidden"
+                    className="group bg-[#F7F7F5] rounded-lg p-7 pb-6 hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col justify-between min-h-[220px]"
                   >
-                    {/* Number watermark */}
-                    <span className="absolute top-3 right-4 text-[48px] font-medium text-neutral-100 leading-none group-hover:text-neutral-200 transition-colors">
-                      {inst.number}
-                    </span>
-
-                    <div className="relative">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className={`w-1.5 h-1.5 rounded-full ${
-                          inst.color === 'green' ? 'bg-green-500' :
-                          inst.color === 'yellow' ? 'bg-yellow-500' :
-                          'bg-neutral-300'
-                        }`} />
-                        <span className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                          {inst.statusLabel}
+                    <div>
+                      {/* Number + status row */}
+                      <div className="flex items-center justify-between mb-5">
+                        <span className="text-[13px] font-medium text-[#C4C4C4]">
+                          {inst.number}
                         </span>
+                        <div className="flex items-center gap-1.5">
+                          <div className={`w-1.5 h-1.5 rounded-full ${
+                            inst.color === 'green' ? 'bg-green-500' :
+                            inst.color === 'yellow' ? 'bg-yellow-500' :
+                            'bg-neutral-300'
+                          }`} />
+                          <span className="text-[11px] font-medium text-[#8A8A8A]">
+                            {inst.statusLabel}
+                          </span>
+                        </div>
                       </div>
 
-                      <h3 className="text-heading-sm font-semibold text-black group-hover:text-black mb-2">
+                      <h3 className="text-[22px] leading-tight font-medium text-[#1A1A1A] mb-2">
                         {inst.name}
                       </h3>
-                      <p className="text-body-sm text-neutral-500 leading-relaxed">
+                      <p className="text-[13px] leading-relaxed text-[#8A8A8A]">
                         {inst.description}
                       </p>
+                    </div>
+
+                    {/* CTA button */}
+                    <div className="mt-5">
+                      <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
+                        Open {inst.name}
+                        <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                      </span>
                     </div>
                   </a>
                 ))}
