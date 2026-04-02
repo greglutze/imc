@@ -272,11 +272,11 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         {/* Image grid — loose masonry-style, no square crop */}
         {images.length > 0 && (
           <>
-            <div className="grid grid-cols-4 gap-x-8 gap-y-16 items-start">
+            <div className="columns-3 gap-x-12 space-y-12">
               {images.map((img) => (
                 <div
                   key={img.id}
-                  className="relative group break-inside-avoid"
+                  className="relative group break-inside-avoid mb-12"
                   onMouseLeave={() => {
                     if (deleteConfirm === img.id) setDeleteConfirm(null);
                   }}
@@ -284,7 +284,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                   <img
                     src={img.image_data}
                     alt=""
-                    className="w-full rounded-md"
+                    className="w-full"
                   />
                   {/* Delete button — hover */}
                   <button
