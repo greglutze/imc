@@ -161,8 +161,8 @@ export default function Home() {
                       href={`/projects/${project.id}`}
                       className="group bg-[#F7F7F5] rounded-lg overflow-hidden hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col"
                     >
-                      {/* Artwork — top 60% */}
-                      <div className="aspect-[4/3] w-full overflow-hidden bg-[#EEEDEB] relative">
+                      {/* Artwork — top 30% */}
+                      <div className="aspect-[3/1] w-full overflow-hidden bg-[#EEEDEB] relative">
                         {project.image_url ? (
                           <img
                             src={resolveArtworkUrl(project.image_url) || ''}
