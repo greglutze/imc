@@ -173,7 +173,7 @@ export default function Home() {
 
                       {/* Name */}
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-heading font-medium text-black group-hover:text-black truncate">
+                        <h2 className="t-display-sm text-black group-hover:text-black truncate">
                           {project.artist_name || 'Untitled'}
                         </h2>
                       </div>
