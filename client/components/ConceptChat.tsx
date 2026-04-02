@@ -129,7 +129,7 @@ export default function ConceptChat({
 
           {/* Right column: concept card — sticky on lg+ */}
           {conceptReady && concept && (
-            <div className="lg:w-[380px] shrink-0 px-10 lg:px-0 lg:pr-10 py-8 lg:pt-8 border-t lg:border-t-0 border-[#E8E8E8]">
+            <div className="lg:w-[480px] shrink-0 px-10 lg:px-0 lg:pr-10 py-8 lg:pt-8 border-t lg:border-t-0 border-[#E8E8E8]">
               <div className="lg:sticky lg:top-8">
                 <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
                   <div className="flex items-center justify-between mb-6">
