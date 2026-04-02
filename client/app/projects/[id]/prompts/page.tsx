@@ -160,11 +160,11 @@ export default function PromptsPage() {
         <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
         <div className="max-w-[1400px] mx-auto px-10 py-16">
-          <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">02</p>
-          <p className="text-[40px] leading-[1.1] font-semibold text-black mt-4 tracking-tight">
+          <p className="text-[13px] font-medium text-[#C4C4C4] mb-3">02</p>
+          <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] mt-4 tracking-tight">
             Building Your Sound
           </p>
-          <p className="text-body-lg text-black mt-5 max-w-sm">
+          <p className="text-[14px] text-[#8A8A8A] mt-5 max-w-sm leading-relaxed">
             Translating your concept and market research into production-ready prompts, style direction, and vocal personas.
           </p>
           <div className="mt-8 flex items-center gap-2">
@@ -184,11 +184,11 @@ export default function PromptsPage() {
         <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
         <div className="max-w-[1400px] px-10 py-16">
-          <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">02</p>
-          <p className="text-[40px] leading-[1.1] font-semibold text-black mt-4 tracking-tight">
+          <p className="text-[13px] font-medium text-[#C4C4C4] mb-3">02</p>
+          <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] mt-4 tracking-tight">
             Start With Your Concept
           </p>
-          <p className="text-body-lg text-black mt-5 max-w-md">
+          <p className="text-[14px] text-[#8A8A8A] mt-5 max-w-md leading-relaxed">
             Head to the Concept tab and describe your vision first. Once that&apos;s locked in, your prompts will generate automatically.
           </p>
         </div>
@@ -210,13 +210,13 @@ export default function PromptsPage() {
       <div className="max-w-[1400px] mx-auto w-full px-10">
         <div className="pt-10 pb-6 flex items-start justify-between">
           <div>
-            <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
+            <p className="text-[13px] font-medium text-[#C4C4C4] mb-2">
               Production Intelligence
             </p>
-            <p className="text-[40px] leading-[1.1] font-semibold text-black tracking-tight">
+            <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
               Sonic Engine
             </p>
-            <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
+            <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-lg leading-relaxed">
               Your concept and market data, translated into production-ready style profiles, vocal direction, and per-track prompts.
             </p>
           </div>

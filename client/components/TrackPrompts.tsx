@@ -14,7 +14,7 @@ export default function TrackPrompts({ tracks, onRegenerateTrack, regenerating }
   return (
     <div className="animate-fade-in">
       {/* Track cards */}
-      <div className="divide-y divide-[#E8E8E8]">
+      <div className="px-8 py-6 space-y-3">
         {tracks.map((track) => (
           <TrackCard
             key={track.track_number}
@@ -51,16 +51,16 @@ function TrackCard({
   };
 
   return (
-    <div className={`px-8 py-8 ${isRegenerating ? 'opacity-50' : ''}`}>
+    <div className={`bg-[#F7F7F5] rounded-lg p-7 ${isRegenerating ? 'opacity-50' : ''}`}>
       {/* Track header */}
       <div className="flex items-start justify-between mb-6">
         <div className="flex items-start gap-4">
-          <span className="text-[40px] leading-none font-bold font-mono text-neutral-200">
+          <span className="text-[13px] font-medium text-[#C4C4C4]">
             {String(track.track_number).padStart(2, '0')}
           </span>
           <div>
-            <p className="text-heading-sm font-semibold text-black">{track.title}</p>
-            <p className="text-caption text-neutral-400 font-mono mt-1">{track.structure}</p>
+            <p className="text-[18px] font-medium text-[#1A1A1A]">{track.title}</p>
+            <p className="text-[11px] text-[#8A8A8A] font-mono mt-1">{track.structure}</p>
           </div>
         </div>
         {onRegenerate && (
@@ -71,40 +71,40 @@ function TrackCard({
       </div>
 
       {/* Prompts — two columns */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-3">
         {/* Suno prompt */}
-        <div className="border border-[#E8E8E8] rounded-md p-5">
+        <div className="bg-white rounded-lg p-5 border border-[#E8E8E8]">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <Badge variant="orange">Suno</Badge>
-              <span className={`text-caption font-mono ${sunoCharCount > 1000 ? 'text-signal-red' : 'text-neutral-300'}`}>
-                {sunoCharCount}/1000 chars
+              <span className={`text-[11px] font-mono ${sunoCharCount > 1000 ? 'text-signal-red' : 'text-[#C4C4C4]'}`}>
+                {sunoCharCount}/1000
               </span>
             </div>
             <button
               onClick={() => handleCopy(track.suno_prompt, 'suno')}
-              className="text-label font-semibold uppercase tracking-wide text-neutral-300 hover:text-black transition-colors duration-150"
+              className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
             >
               {copiedField === 'suno' ? 'Copied' : 'Copy'}
             </button>
           </div>
-          <p className="text-body-sm text-neutral-700 font-mono leading-relaxed">
+          <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
             {track.suno_prompt}
           </p>
         </div>
 
         {/* Udio prompt */}
-        <div className="border border-[#E8E8E8] rounded-md p-5">
+        <div className="bg-white rounded-lg p-5 border border-[#E8E8E8]">
           <div className="flex items-center justify-between mb-3">
             <Badge variant="violet">Udio</Badge>
             <button
               onClick={() => handleCopy(track.udio_prompt, 'udio')}
-              className="text-label font-semibold uppercase tracking-wide text-neutral-300 hover:text-black transition-colors duration-150"
+              className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
             >
               {copiedField === 'udio' ? 'Copied' : 'Copy'}
             </button>
           </div>
-          <p className="text-body-sm text-neutral-700 leading-relaxed">
+          <p className="text-[13px] text-[#1A1A1A] leading-relaxed">
             {track.udio_prompt}
           </p>
         </div>
@@ -112,9 +112,9 @@ function TrackCard({
 
       {/* Notes */}
       {track.notes && (
-        <div className="mt-4 bg-[#F7F7F5] rounded-md px-4 py-3">
-          <p className="text-caption text-[#8A8A8A] uppercase tracking-wide font-semibold mb-1">Notes</p>
-          <p className="text-body-sm text-neutral-600">{track.notes}</p>
+        <div className="mt-3 bg-white rounded-lg px-5 py-4 border border-[#E8E8E8]">
+          <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-1">Notes</p>
+          <p className="text-[13px] text-[#8A8A8A] leading-relaxed">{track.notes}</p>
         </div>
       )}
     </div>

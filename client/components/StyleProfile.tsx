@@ -20,37 +20,35 @@ interface StyleProfileProps {
 
 export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: StyleProfileProps) {
   return (
-    <div className="animate-fade-in">
-      {/* Production Aesthetic — hero block */}
-      <div className="border-b border-[#E8E8E8] px-8 py-12">
+    <div className="animate-fade-in px-8 py-6 space-y-3">
+      {/* Production Aesthetic — hero card */}
+      <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
         <SectionLabel>Production Aesthetic</SectionLabel>
-        <p className="text-[24px] leading-[1.4] font-medium text-black mt-4 max-w-3xl tracking-tight">
+        <p className="text-[22px] leading-[1.4] font-medium text-[#1A1A1A] mt-4 max-w-3xl tracking-tight">
           &ldquo;{styleProfile.production_aesthetic}&rdquo;
         </p>
       </div>
 
       {/* Genre DNA — only if concept has genre data */}
       {concept?.genre_primary && (
-        <div className="border-b border-[#E8E8E8] px-8 py-10">
+        <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
           <SectionLabel>Genre DNA</SectionLabel>
           <div className="mt-5 flex items-start gap-8">
-            {/* Primary genre — large */}
             <div className="shrink-0">
-              <p className="text-micro font-mono text-[#8A8A8A] mb-1">Primary</p>
-              <p className="text-[40px] leading-none font-medium text-black tracking-tight">
+              <p className="text-[11px] font-mono text-[#C4C4C4] mb-1">Primary</p>
+              <p className="text-[32px] leading-none font-medium text-[#1A1A1A] tracking-tight">
                 {concept.genre_primary}
               </p>
             </div>
 
-            {/* Secondary genres — smaller, branching off */}
             {concept.genre_secondary.length > 0 && (
               <div className="pt-1">
-                <p className="text-micro font-mono text-[#8A8A8A] mb-2">Secondary</p>
+                <p className="text-[11px] font-mono text-[#C4C4C4] mb-2">Secondary</p>
                 <div className="flex flex-wrap gap-2">
                   {concept.genre_secondary.map((genre, i) => (
                     <span
                       key={i}
-                      className="text-body font-semibold text-neutral-600 bg-[#F7F7F5] px-4 py-2 rounded-md border border-[#E8E8E8]"
+                      className="text-[13px] font-medium text-[#1A1A1A] bg-white px-4 py-2 rounded-full border border-[#E8E8E8]"
                     >
                       {genre}
                     </span>
@@ -63,38 +61,36 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
       )}
 
       {/* Sonic Signatures + Tempo/Key grid */}
-      <div className="border-b border-[#E8E8E8]">
-        <div className="grid grid-cols-12 gap-x-6">
-          <div className="col-span-7 px-8 py-10 border-r border-[#E8E8E8]">
-            <SectionLabel>Sonic Signatures</SectionLabel>
-            <div className="mt-5 space-y-4">
-              {styleProfile.sonic_signatures.map((sig, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <span className="text-[32px] leading-none font-medium font-mono text-neutral-200 shrink-0 w-10 text-right">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <p className="text-body-lg text-neutral-700 leading-relaxed pt-1">{sig}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="col-span-5 px-8 py-10">
-            <div className="space-y-6">
-              <div className="border-b border-neutral-100 pb-4">
-                <SectionLabel>Tempo Range</SectionLabel>
-                <p className="text-heading-sm font-semibold text-black mt-2">{styleProfile.tempo_range}</p>
+      <div className="grid grid-cols-12 gap-3">
+        <div className="col-span-7 bg-[#F7F7F5] rounded-lg px-7 py-8">
+          <SectionLabel>Sonic Signatures</SectionLabel>
+          <div className="mt-5 space-y-4">
+            {styleProfile.sonic_signatures.map((sig, i) => (
+              <div key={i} className="flex items-start gap-4">
+                <span className="text-[13px] font-medium text-[#C4C4C4] shrink-0 w-6 text-right pt-0.5">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{sig}</p>
               </div>
+            ))}
+          </div>
+        </div>
 
-              <div>
-                <SectionLabel>Key Preferences</SectionLabel>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {styleProfile.key_preferences.map((k, i) => (
-                    <span key={i} className="text-body-sm font-mono text-black bg-[#F7F7F5] px-2 py-1 rounded-md border border-[#E8E8E8]">
-                      {k}
-                    </span>
-                  ))}
-                </div>
+        <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
+          <div className="space-y-6">
+            <div className="border-b border-[#E8E8E8] pb-4">
+              <SectionLabel>Tempo Range</SectionLabel>
+              <p className="text-[18px] font-medium text-[#1A1A1A] mt-2">{styleProfile.tempo_range}</p>
+            </div>
+
+            <div>
+              <SectionLabel>Key Preferences</SectionLabel>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {styleProfile.key_preferences.map((k, i) => (
+                  <span key={i} className="text-[13px] font-mono text-[#1A1A1A] bg-white px-2.5 py-1 rounded-full border border-[#E8E8E8]">
+                    {k}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -103,7 +99,7 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
 
       {/* Mood Map — only if concept has mood keywords */}
       {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
-        <div className="border-b border-[#E8E8E8] px-8 py-10">
+        <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
           <SectionLabel>Mood Map</SectionLabel>
           <div className="mt-5">
             <MoodConstellation moods={concept.mood_keywords} />
@@ -113,25 +109,23 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
 
       {/* Energy Profile — only if market research data is available */}
       {sonicBlueprint?.energy_profile && (
-        <div className="border-b border-[#E8E8E8]">
-          <div className="grid grid-cols-12 gap-x-6">
-            <div className="col-span-7 px-8 py-10 border-r border-[#E8E8E8]">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-2 h-2 bg-signal-green rounded-full" />
-                <SectionLabel>Energy Profile</SectionLabel>
-                <Badge variant="green">From Market Research</Badge>
-              </div>
-              <p className="text-body-lg text-neutral-700 leading-relaxed">
-                {sonicBlueprint.energy_profile}
-              </p>
+        <div className="grid grid-cols-12 gap-3">
+          <div className="col-span-7 bg-[#F7F7F5] rounded-lg px-7 py-8">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+              <SectionLabel>Energy Profile</SectionLabel>
+              <Badge variant="green">From Market Research</Badge>
             </div>
+            <p className="text-[14px] text-[#1A1A1A] leading-relaxed">
+              {sonicBlueprint.energy_profile}
+            </p>
+          </div>
 
-            <div className="col-span-5 px-8 py-10">
-              <SectionLabel>Market Production Style</SectionLabel>
-              <p className="text-body text-neutral-700 leading-relaxed mt-2">
-                {sonicBlueprint.production_style}
-              </p>
-            </div>
+          <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
+            <SectionLabel>Market Production Style</SectionLabel>
+            <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-2">
+              {sonicBlueprint.production_style}
+            </p>
           </div>
         </div>
       )}
@@ -148,12 +142,6 @@ function hashStr(s: string): number {
   return Math.abs(h);
 }
 
-/**
- * Classify a mood keyword into an emotional temperature.
- * Warm/intense moods (aggressive, heavy, angry, chaotic, etc.) get warm colors.
- * Cool/calm moods (hopeful, peaceful, atmospheric, etc.) get cool colors.
- * Neutral/ambiguous moods get a grey tone.
- */
 type MoodTemp = 'warm' | 'cool' | 'neutral';
 
 function classifyMood(mood: string): MoodTemp {
@@ -194,22 +182,22 @@ interface MoodColor {
 
 const MOOD_COLORS: Record<MoodTemp, MoodColor> = {
   warm: {
-    fill: '#FFF7ED',     // orange-50
-    stroke: '#FB923C',   // orange-400
-    line: '#FDBA74',     // orange-300
-    text: '#C2410C',     // orange-700
+    fill: '#FFF7ED',
+    stroke: '#FB923C',
+    line: '#FDBA74',
+    text: '#C2410C',
   },
   cool: {
-    fill: '#F0FDF4',     // green-50
-    stroke: '#4ADE80',   // green-400
-    line: '#86EFAC',     // green-300
-    text: '#15803D',     // green-700
+    fill: '#F0FDF4',
+    stroke: '#4ADE80',
+    line: '#86EFAC',
+    text: '#15803D',
   },
   neutral: {
-    fill: '#F9FAFB',     // gray-50
-    stroke: '#D1D5DB',   // gray-300
-    line: '#E5E7EB',     // gray-200
-    text: '#374151',     // gray-700
+    fill: '#F9FAFB',
+    stroke: '#D1D5DB',
+    line: '#E5E7EB',
+    text: '#374151',
   },
 };
 
@@ -234,7 +222,6 @@ function MoodConstellation({ moods }: { moods: string[] }) {
     const cy = HEIGHT / 2;
     const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
-    // Use the full available space for distribution
     const radiusX = (WIDTH / 2) - PADDING;
     const radiusY = (HEIGHT / 2) - PADDING;
 
@@ -247,7 +234,6 @@ function MoodConstellation({ moods }: { moods: string[] }) {
         return { label: mood, x: cx, y: cy, r, temp };
       }
 
-      // Wider spiral distribution using elliptical scaling
       const angle = i * goldenAngle + (hash % 100) * 0.02;
       const normalizedDist = Math.sqrt((i + 0.5) / moods.length);
       const dist = normalizedDist * 0.95;
@@ -263,7 +249,6 @@ function MoodConstellation({ moods }: { moods: string[] }) {
     });
   }, [moods]);
 
-  // Build edges: connect each node to its 2 nearest neighbors
   const edges: Array<[number, number]> = useMemo(() => {
     if (nodes.length < 2) return [];
     const result: Array<[number, number]> = [];
@@ -298,11 +283,8 @@ function MoodConstellation({ moods }: { moods: string[] }) {
       className="w-full"
       style={{ maxHeight: '440px' }}
     >
-      {/* Connection lines — colored by the source node */}
       {edges.map(([a, b], i) => {
         const colA = MOOD_COLORS[nodes[a].temp];
-        const colB = MOOD_COLORS[nodes[b].temp];
-        // Blend: if both same temp use that color, otherwise use neutral
         const lineColor = nodes[a].temp === nodes[b].temp ? colA.line : '#E5E7EB';
         return (
           <line
@@ -317,12 +299,10 @@ function MoodConstellation({ moods }: { moods: string[] }) {
         );
       })}
 
-      {/* Nodes */}
       {nodes.map((node, i) => {
         const colors = MOOD_COLORS[node.temp];
         return (
           <g key={i}>
-            {/* Outer ring */}
             <circle
               cx={node.x}
               cy={node.y}
@@ -331,7 +311,6 @@ function MoodConstellation({ moods }: { moods: string[] }) {
               stroke={colors.stroke}
               strokeWidth="1.5"
             />
-            {/* Inner fill */}
             <circle
               cx={node.x}
               cy={node.y}
@@ -339,7 +318,6 @@ function MoodConstellation({ moods }: { moods: string[] }) {
               fill={colors.fill}
               stroke="none"
             />
-            {/* Small accent dot at center */}
             <circle
               cx={node.x}
               cy={node.y}
@@ -347,7 +325,6 @@ function MoodConstellation({ moods }: { moods: string[] }) {
               fill={colors.stroke}
               opacity="0.4"
             />
-            {/* Label */}
             <text
               x={node.x}
               y={node.y + node.r + 16}
@@ -366,7 +343,7 @@ function MoodConstellation({ moods }: { moods: string[] }) {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-caption text-[#8A8A8A] uppercase tracking-wide font-semibold">
+    <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide">
       {children}
     </p>
   );
