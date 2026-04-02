@@ -136,7 +136,7 @@ export default function Home() {
               <div className="flex items-end justify-between pt-16 pb-10">
                 <div>
                   <h1 className="t-display-sm text-black">
-                    Projects
+                    My Projects
                   </h1>
                 </div>
                 <ButtonV2 as="a" href="/projects/new">
