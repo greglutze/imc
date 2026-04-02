@@ -135,11 +135,8 @@ export default function Home() {
               {/* Header row */}
               <div className="flex items-end justify-between pt-16 pb-10">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
+                  <h1 className="t-display-sm text-black">
                     Projects
-                  </p>
-                  <h1 className="text-[64px] leading-[0.9] font-medium tracking-tight text-black">
-                    {String(projects.length).padStart(2, '0')}
                   </h1>
                 </div>
                 <ButtonV2 as="a" href="/projects/new">
