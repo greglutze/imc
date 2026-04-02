@@ -318,8 +318,6 @@ export default function ProjectPage() {
   // ──────────────────────────────────────────
   if (activeTab === 'home') {
     const statusLabel = project?.status === 'draft' ? 'In Development' : project?.status === 'complete' ? 'Complete' : 'In Progress';
-    const createdDate = project ? new Date(project.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
-
     // Build instrument cards for the grid
     const instruments = [
       {
@@ -422,22 +420,16 @@ export default function ProjectPage() {
                   {artistName}
                 </h1>
 
-                {/* Meta row */}
-                <div className="flex items-center gap-6 mt-8">
-                  {concept?.genre_primary && (
-                    <span className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                      {concept.genre_primary}
-                    </span>
-                  )}
-                  {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
-                    <span className="text-micro uppercase tracking-wide text-neutral-300">
-                      {concept.mood_keywords.slice(0, 3).join(' / ')}
-                    </span>
-                  )}
-                </div>
-                <span className="text-micro font-mono text-neutral-300 mt-3 block">
-                  {createdDate}
-                </span>
+                {/* Mood pills */}
+                {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-8">
+                    {concept.mood_keywords.map((keyword) => (
+                      <span key={keyword} className="tag-open">
+                        {keyword}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Right: Artist image — click to upload/replace */}
