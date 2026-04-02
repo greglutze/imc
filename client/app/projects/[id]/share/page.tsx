@@ -59,23 +59,23 @@ export default function SharePage() {
 
   if (authLoading || pageLoading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="animate-fade-in h-full flex flex-col">
         <ProjectNav
           projectId={id}
           artistName="..."
           activePage="share"
         />
-        <div className="max-w-[1400px] mx-auto px-8 pt-10">
-          <div className="h-3 w-40 bg-neutral-100 rounded-md animate-pulse mb-4" />
-          <div className="h-10 w-32 bg-neutral-100 rounded-md animate-pulse mb-4" />
-          <div className="h-4 w-80 bg-neutral-50 rounded-md animate-pulse mb-8" />
+        <div className="max-w-[1400px] mx-auto px-10 pt-10 w-full">
+          <div className="h-3 w-32 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+          <div className="h-10 w-28 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+          <div className="h-4 w-72 bg-neutral-50 rounded-sm animate-pulse mb-10" />
           <div className="space-y-3">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="border border-[#E8E8E8] rounded-md p-5 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-md bg-neutral-100 animate-pulse shrink-0" />
+              <div key={i} className="bg-[#F7F7F5] rounded-lg p-6 flex items-center gap-5">
+                <div className="w-14 h-14 rounded-lg bg-[#EEEDEB] animate-pulse shrink-0" />
                 <div className="flex-1">
-                  <div className="h-4 w-40 bg-neutral-100 rounded-md animate-pulse mb-2" />
-                  <div className="h-3 w-32 bg-neutral-50 rounded-md animate-pulse" />
+                  <div className="h-4 w-40 bg-[#EEEDEB] rounded-sm animate-pulse mb-2" />
+                  <div className="h-3 w-28 bg-[#EEEDEB] rounded-sm animate-pulse" />
                 </div>
               </div>
             ))}
@@ -86,96 +86,101 @@ export default function SharePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="animate-fade-in h-full flex flex-col">
       <ProjectNav
         projectId={id}
         artistName={project?.artist_name || ''}
         imageUrl={project?.image_url}
         activePage="share"
       />
-      <div className="max-w-[1400px] mx-auto">
-        {/* Editorial header */}
-        <div className="px-8 pt-10 pb-8">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
-                Private Listening &amp; Distribution
-              </p>
-              <h2 className="text-[40px] leading-[0.9] font-medium tracking-tight text-black">
-                Tracks
-              </h2>
-              <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
-                Share your music with collaborators, labels, or press — privately, on your terms.
-              </p>
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-[1400px] mx-auto px-10 py-10">
+          {/* Editorial header */}
+          <div className="pb-10 border-b border-[#E8E8E8]">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-2">
+                  Private Listening &amp; Distribution
+                </p>
+                <h2 className="text-[40px] leading-[1.1] font-medium tracking-tight text-[#1A1A1A]">
+                  Tracks
+                </h2>
+                <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-lg leading-relaxed">
+                  Share your music with collaborators, labels, or press — privately, on your terms.
+                </p>
+              </div>
+              <ButtonV2 onClick={handleCreate} loading={creating}>
+                + New Share Link
+              </ButtonV2>
             </div>
-            <ButtonV2 onClick={handleCreate} loading={creating}>
-              + New Share Link
-            </ButtonV2>
           </div>
-        </div>
 
-        <div className="px-8 pb-12">
-
-        {/* Share projects list */}
-        {shares.length === 0 ? (
-          <div className="border-2 border-dashed border-[#E8E8E8] rounded-md py-20 px-8 text-center">
-            <p className="text-[28px] font-semibold text-neutral-200 tracking-tight">
-              Your first release starts here
-            </p>
-            <p className="text-body text-[#8A8A8A] mt-3 max-w-sm mx-auto">
-              Create a share link to send your music to collaborators, labels, or press — privately, before it goes public.
-            </p>
-            <ButtonV2 onClick={handleCreate} loading={creating} className="mt-6">
-              + New Share Link
-            </ButtonV2>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {shares.map((share) => (
-              <button
-                key={share.id}
-                onClick={() => router.push(`/projects/${id}/share/${share.id}`)}
-                className="w-full text-left border border-[#E8E8E8] rounded-md p-5 hover:border-[#1A1A1A] transition-all duration-150 group"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-5">
+          {/* Share projects list */}
+          <div className="pt-10">
+            {shares.length === 0 ? (
+              <div className="bg-[#F7F7F5] rounded-lg py-20 px-8 text-center">
+                <p className="text-[22px] font-medium text-[#C4C4C4] tracking-tight">
+                  Your first release starts here
+                </p>
+                <p className="text-[14px] text-[#8A8A8A] mt-3 max-w-sm mx-auto leading-relaxed">
+                  Create a share link to send your music to collaborators, labels, or press — privately, before it goes public.
+                </p>
+                <div className="mt-6">
+                  <ButtonV2 onClick={handleCreate} loading={creating}>
+                    + New Share Link
+                  </ButtonV2>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {shares.map((share) => (
+                  <button
+                    key={share.id}
+                    onClick={() => router.push(`/projects/${id}/share/${share.id}`)}
+                    className="w-full text-left bg-[#F7F7F5] rounded-lg hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6 group"
+                  >
                     {/* Artwork thumbnail */}
                     {share.artwork_url ? (
-                      <div className="w-14 h-14 rounded-md overflow-hidden border border-[#E8E8E8] shrink-0">
+                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#EEEDEB] shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={resolveArtworkUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
                       </div>
                     ) : (
-                      <div className="w-14 h-14 rounded-md bg-neutral-50 border border-[#E8E8E8] shrink-0 flex items-center justify-center">
-                        <span className="text-neutral-300 text-heading">&#9835;</span>
+                      <div className="w-16 h-16 rounded-lg bg-[#EEEDEB] shrink-0 flex items-center justify-center">
+                        <span className="text-[#C4C4C4] text-[24px]">&#9835;</span>
                       </div>
                     )}
-                    <div>
-                      <span className="text-heading-sm font-semibold text-black">{share.title}</span>
+
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[16px] font-medium text-[#1A1A1A]">{share.title}</p>
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="text-micro font-semibold text-[#8A8A8A] uppercase tracking-wide">
+                        <span className="text-[11px] font-medium text-[#8A8A8A]">
                           {share.track_count || 0} track{(share.track_count || 0) !== 1 ? 's' : ''}
                         </span>
-                        <span className="text-neutral-200">·</span>
-                        <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">
+                        <span className="text-[#C4C4C4]">·</span>
+                        <span className="text-[11px] text-[#8A8A8A]">
                           {share.total_plays} play{share.total_plays !== 1 ? 's' : ''}
                         </span>
-                        <span className="text-neutral-200">·</span>
+                        <span className="text-[#C4C4C4]">·</span>
                         <div className="flex items-center gap-1.5">
-                          <div className={`w-1.5 h-1.5 rounded-full ${share.is_public ? 'bg-green-500' : 'bg-neutral-300'}`} />
-                          <span className={`text-micro uppercase tracking-wide ${share.is_public ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${share.is_public ? 'bg-green-500' : 'bg-[#C4C4C4]'}`} />
+                          <span className={`text-[11px] font-medium ${share.is_public ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
                             {share.is_public ? 'Public' : 'Private'}
                           </span>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <span className="text-neutral-300 group-hover:text-black transition-colors duration-150 text-body">→</span>
-                </div>
-              </button>
-            ))}
+
+                    <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+
+          <p className="text-[11px] text-[#C4C4C4] mt-10 italic">
+            All links are private by default.
+          </p>
         </div>
       </div>
     </div>
