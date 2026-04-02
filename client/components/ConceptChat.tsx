@@ -49,16 +49,16 @@ export default function ConceptChat({
   return (
     <div className="flex flex-col h-full">
       {/* Editorial header */}
-      <div className="px-8 pt-10 pb-6 shrink-0">
-        <div className="flex items-start justify-between">
+      <div className="px-10 pt-10 pb-6 shrink-0 border-b border-[#E8E8E8]">
+        <div className="flex items-start justify-between max-w-[1400px] mx-auto">
           <div>
-            <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
+            <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-2">
               Creative Brief
             </p>
-            <p className="text-[40px] leading-[1.1] font-medium text-black tracking-tight">
+            <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
               Concept
             </p>
-            <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
+            <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-lg leading-relaxed">
               Let&apos;s figure out who you are as an artist. Talk about your sound, your references, the feeling you&apos;re chasing.
             </p>
           </div>
@@ -71,7 +71,7 @@ export default function ConceptChat({
       </div>
 
       {/* Messages — editorial style, not bubbles */}
-      <div className="flex-1 overflow-y-auto px-8 py-6">
+      <div className="flex-1 overflow-y-auto px-10 py-8">
         {messages.length === 0 && !loading && (
           <div className="py-4 max-w-2xl" />
         )}
@@ -85,13 +85,13 @@ export default function ConceptChat({
             <div className="flex items-start gap-4">
               <div className="w-1 h-6 bg-signal-violet rounded-full animate-pulse" />
               <div className="space-y-2 flex-1">
-                <p className="text-caption text-signal-violet font-semibold uppercase tracking-wide">
+                <p className="text-[11px] text-signal-violet font-medium uppercase tracking-wide">
                   IMC
                 </p>
                 <div className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-neutral-300 rounded-full animate-pulse" />
-                  <span className="w-1.5 h-1.5 bg-neutral-300 rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
-                  <span className="w-1.5 h-1.5 bg-neutral-300 rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
+                  <span className="w-1.5 h-1.5 bg-[#C4C4C4] rounded-full animate-pulse" />
+                  <span className="w-1.5 h-1.5 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -102,8 +102,8 @@ export default function ConceptChat({
       </div>
 
       {/* Input — always visible so the artist can refine the concept */}
-      <form onSubmit={handleSubmit} className="px-8 py-5 shrink-0 border-t border-neutral-100">
-        <div className="max-w-2xl bg-neutral-50 rounded-md px-5 py-4 flex items-end gap-3">
+      <form onSubmit={handleSubmit} className="px-10 py-5 shrink-0 border-t border-[#E8E8E8]">
+        <div className="max-w-2xl bg-[#F7F7F5] rounded-lg px-5 py-4 flex items-end gap-3">
           <textarea
             ref={inputRef}
             value={input}
@@ -112,7 +112,7 @@ export default function ConceptChat({
             placeholder={conceptReady ? "Keep going — anything you add here refines your concept..." : "What kind of music are you making? What should it feel like?"}
             disabled={loading}
             rows={1}
-            className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
+            className="flex-1 bg-transparent text-[14px] text-[#1A1A1A] placeholder-[#C4C4C4] resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
             style={{ minHeight: '36px', maxHeight: '120px' }}
           />
           <ButtonV2 type="submit" disabled={!input.trim() || loading} size="sm" className="shrink-0">
@@ -123,12 +123,12 @@ export default function ConceptChat({
 
       {/* Concept extracted card */}
       {conceptReady && concept && (
-        <div className="border-t-2 border-black px-8 py-8 bg-white shrink-0">
-          <div className="max-w-2xl">
+        <div className="px-10 py-8 shrink-0 border-t border-[#E8E8E8]">
+          <div className="max-w-2xl bg-[#F7F7F5] rounded-lg px-7 py-8">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-green-500" />
-                <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide">
                   Your Concept
                 </p>
               </div>
@@ -136,7 +136,7 @@ export default function ConceptChat({
             </div>
 
             {concept.creative_direction && (
-              <p className="text-body-lg text-black leading-relaxed mb-6">
+              <p className="text-[14px] text-[#1A1A1A] leading-relaxed mb-6">
                 {concept.creative_direction}
               </p>
             )}
@@ -178,19 +178,19 @@ function MessageBlock({ message, index }: { message: ConversationMessage; index:
   return (
     <div className="flex items-start gap-4">
       {/* Accent bar */}
-      <div className={`w-1 min-h-[24px] rounded-full shrink-0 ${isUser ? 'bg-black' : 'bg-signal-violet'}`} />
+      <div className={`w-1 min-h-[24px] rounded-full shrink-0 ${isUser ? 'bg-[#1A1A1A]' : 'bg-signal-violet'}`} />
 
       <div className="flex-1 space-y-1.5">
-        <p className={`text-caption font-semibold uppercase tracking-wide ${isUser ? 'text-[#8A8A8A]' : 'text-signal-violet'}`}>
+        <p className={`text-[11px] font-medium uppercase tracking-wide ${isUser ? 'text-[#8A8A8A]' : 'text-signal-violet'}`}>
           {isUser ? 'You' : 'IMC'}
         </p>
-        <div className="text-body text-neutral-700 leading-relaxed whitespace-pre-wrap">
+        <div className="text-[14px] text-[#1A1A1A] leading-relaxed whitespace-pre-wrap">
           {displayContent}
         </div>
       </div>
 
       {/* Turn number */}
-      <span className="text-micro font-mono text-neutral-200 shrink-0 pt-1">
+      <span className="text-[13px] font-medium text-[#C4C4C4] shrink-0 pt-1">
         {String(Math.floor(index / 2) + 1).padStart(2, '0')}
       </span>
     </div>
@@ -200,8 +200,8 @@ function MessageBlock({ message, index }: { message: ConversationMessage; index:
 function ConceptField({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between border-b border-[#E8E8E8] pb-2">
-      <span className="text-caption text-[#8A8A8A]">{label}</span>
-      <span className="text-body-sm text-black font-bold text-right">{value}</span>
+      <span className="text-[11px] font-medium text-[#8A8A8A] uppercase tracking-wide">{label}</span>
+      <span className="text-[13px] text-[#1A1A1A] font-medium text-right">{value}</span>
     </div>
   );
 }
