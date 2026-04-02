@@ -22,22 +22,22 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
   return (
     <div className="animate-fade-in">
       {/* Production Aesthetic — hero block */}
-      <div className="border-b border-neutral-200 px-8 py-12">
+      <div className="border-b border-[#E8E8E8] px-8 py-12">
         <SectionLabel>Production Aesthetic</SectionLabel>
-        <p className="text-[24px] leading-[1.4] font-bold text-black mt-4 max-w-3xl tracking-tight">
+        <p className="text-[24px] leading-[1.4] font-medium text-black mt-4 max-w-3xl tracking-tight">
           &ldquo;{styleProfile.production_aesthetic}&rdquo;
         </p>
       </div>
 
       {/* Genre DNA — only if concept has genre data */}
       {concept?.genre_primary && (
-        <div className="border-b border-neutral-200 px-8 py-10">
+        <div className="border-b border-[#E8E8E8] px-8 py-10">
           <SectionLabel>Genre DNA</SectionLabel>
           <div className="mt-5 flex items-start gap-8">
             {/* Primary genre — large */}
             <div className="shrink-0">
-              <p className="text-micro font-mono text-neutral-300 mb-1">Primary</p>
-              <p className="text-[40px] leading-none font-bold text-black tracking-tight">
+              <p className="text-micro font-mono text-[#8A8A8A] mb-1">Primary</p>
+              <p className="text-[40px] leading-none font-medium text-black tracking-tight">
                 {concept.genre_primary}
               </p>
             </div>
@@ -45,12 +45,12 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
             {/* Secondary genres — smaller, branching off */}
             {concept.genre_secondary.length > 0 && (
               <div className="pt-1">
-                <p className="text-micro font-mono text-neutral-300 mb-2">Secondary</p>
+                <p className="text-micro font-mono text-[#8A8A8A] mb-2">Secondary</p>
                 <div className="flex flex-wrap gap-2">
                   {concept.genre_secondary.map((genre, i) => (
                     <span
                       key={i}
-                      className="text-body font-bold text-neutral-600 bg-neutral-50 px-4 py-2 rounded-sm border border-neutral-200"
+                      className="text-body font-semibold text-neutral-600 bg-[#F7F7F5] px-4 py-2 rounded-md border border-[#E8E8E8]"
                     >
                       {genre}
                     </span>
@@ -63,14 +63,14 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
       )}
 
       {/* Sonic Signatures + Tempo/Key grid */}
-      <div className="border-b border-neutral-200">
+      <div className="border-b border-[#E8E8E8]">
         <div className="grid grid-cols-12 gap-x-6">
-          <div className="col-span-7 px-8 py-10 border-r border-neutral-200">
+          <div className="col-span-7 px-8 py-10 border-r border-[#E8E8E8]">
             <SectionLabel>Sonic Signatures</SectionLabel>
             <div className="mt-5 space-y-4">
               {styleProfile.sonic_signatures.map((sig, i) => (
                 <div key={i} className="flex items-start gap-4">
-                  <span className="text-[32px] leading-none font-bold font-mono text-neutral-200 shrink-0 w-10 text-right">
+                  <span className="text-[32px] leading-none font-medium font-mono text-neutral-200 shrink-0 w-10 text-right">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <p className="text-body-lg text-neutral-700 leading-relaxed pt-1">{sig}</p>
@@ -83,14 +83,14 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
             <div className="space-y-6">
               <div className="border-b border-neutral-100 pb-4">
                 <SectionLabel>Tempo Range</SectionLabel>
-                <p className="text-heading-sm font-bold text-black mt-2">{styleProfile.tempo_range}</p>
+                <p className="text-heading-sm font-semibold text-black mt-2">{styleProfile.tempo_range}</p>
               </div>
 
               <div>
                 <SectionLabel>Key Preferences</SectionLabel>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {styleProfile.key_preferences.map((k, i) => (
-                    <span key={i} className="text-body-sm font-mono text-black bg-neutral-50 px-2 py-1 rounded-sm border border-neutral-200">
+                    <span key={i} className="text-body-sm font-mono text-black bg-[#F7F7F5] px-2 py-1 rounded-md border border-[#E8E8E8]">
                       {k}
                     </span>
                   ))}
@@ -103,7 +103,7 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
 
       {/* Mood Map — only if concept has mood keywords */}
       {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
-        <div className="border-b border-neutral-200 px-8 py-10">
+        <div className="border-b border-[#E8E8E8] px-8 py-10">
           <SectionLabel>Mood Map</SectionLabel>
           <div className="mt-5">
             <MoodConstellation moods={concept.mood_keywords} />
@@ -113,9 +113,9 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
 
       {/* Energy Profile — only if market research data is available */}
       {sonicBlueprint?.energy_profile && (
-        <div className="border-b border-neutral-200">
+        <div className="border-b border-[#E8E8E8]">
           <div className="grid grid-cols-12 gap-x-6">
-            <div className="col-span-7 px-8 py-10 border-r border-neutral-200">
+            <div className="col-span-7 px-8 py-10 border-r border-[#E8E8E8]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-2 h-2 bg-signal-green rounded-full" />
                 <SectionLabel>Energy Profile</SectionLabel>
@@ -366,7 +366,7 @@ function MoodConstellation({ moods }: { moods: string[] }) {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-caption text-neutral-400 uppercase tracking-widest font-bold">
+    <p className="text-caption text-[#8A8A8A] uppercase tracking-wide font-semibold">
       {children}
     </p>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ConfidenceMeter, Badge, Signal, Button } from './ui';
+import { ConfidenceMeter, Badge, Signal, ButtonV2 } from './ui';
 import type { I1Report, I1Confidence } from '../lib/api';
 
 interface ResearchReportProps {
@@ -40,13 +40,13 @@ export default function ResearchReport({
   return (
     <div className="animate-fade-in">
       {/* Report header — oversized editorial */}
-      <div className="border-b border-neutral-200 px-8 py-10">
+      <div className="border-b border-[#E8E8E8] px-8 py-10">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+            <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
               Market Intelligence &amp; Audience Analysis
             </p>
-            <h2 className="text-[64px] leading-[0.9] font-bold tracking-tight text-black">
+            <h2 className="text-[64px] leading-[0.9] font-medium tracking-tight text-black">
               {artistName}
             </h2>
             <div className="flex items-center gap-3 mt-4">
@@ -59,7 +59,7 @@ export default function ResearchReport({
                     <button
                       key={v}
                       onClick={() => onVersionChange(v)}
-                      className={`w-6 h-6 rounded-sm text-micro font-mono font-bold transition-colors duration-fast ${
+                      className={`w-6 h-6 rounded-md text-micro font-mono font-bold transition-colors duration-150 ${
                         v === version
                           ? 'bg-black text-white'
                           : 'bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-black'
@@ -71,9 +71,9 @@ export default function ResearchReport({
                 </div>
               )}
               <span className="text-neutral-200 mx-1">·</span>
-              <Button onClick={openSections.size === 9 ? collapseAll : expandAll} variant="ghost" size="md">
+              <ButtonV2 onClick={openSections.size === 9 ? collapseAll : expandAll} variant="ghost" size="md">
                 {openSections.size === 9 ? 'Collapse All' : 'Expand All'}
-              </Button>
+              </ButtonV2>
             </div>
           </div>
           <div className="text-right">
@@ -87,7 +87,7 @@ export default function ResearchReport({
 
 
       {/* Market Overview */}
-      <div className="border-b border-neutral-200 px-8 py-8">
+      <div className="border-b border-[#E8E8E8] px-8 py-8">
         <SectionHeader
           number="01" title="Market Overview"
           summary={report.market_overview.saturation_level + ' saturation · ' + report.market_overview.growth_trend}
@@ -123,7 +123,7 @@ export default function ResearchReport({
       </div>
 
       {/* Comparable Artists */}
-      <div className="border-b border-neutral-200 px-8 py-8">
+      <div className="border-b border-[#E8E8E8] px-8 py-8">
         <SectionHeader
           number="02" title="Comparable Artists"
           summary={report.comparable_artists.slice(0, 3).map(a => a.name).join(', ')}
@@ -132,7 +132,7 @@ export default function ResearchReport({
         {openSections.has('02') && (
           <div className="animate-fade-in mt-6 grid grid-cols-2 gap-6">
             {report.comparable_artists.map((artist, i) => (
-              <div key={i} className="border border-neutral-200 rounded-sm p-5 hover:border-neutral-300 transition-colors duration-fast">
+              <div key={i} className="border border-[#E8E8E8] rounded-md p-5 hover:border-neutral-300 transition-colors duration-150">
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <p className="text-heading-sm font-bold text-black">{artist.name}</p>
@@ -153,7 +153,7 @@ export default function ResearchReport({
       </div>
 
       {/* Audience Profile */}
-      <div className="border-b border-neutral-200 px-8 py-8">
+      <div className="border-b border-[#E8E8E8] px-8 py-8">
         <SectionHeader
           number="03" title="Audience"
           summary={report.audience_profile.primary_age_range + ' · ' + report.audience_profile.top_markets[0]}
@@ -168,7 +168,7 @@ export default function ResearchReport({
               </div>
             </div>
             <div className="col-span-4">
-              <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">Top Markets</p>
+              <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">Top Markets</p>
               <div className="space-y-2">
                 {report.audience_profile.top_markets.map((market, i) => (
                   <div key={i} className="flex items-center gap-3">
@@ -179,7 +179,7 @@ export default function ResearchReport({
               </div>
             </div>
             <div className="col-span-4">
-              <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-4">Platforms</p>
+              <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">Platforms</p>
               <div className="flex flex-wrap gap-2">
                 {report.audience_profile.platforms.map((p, i) => (
                   <Badge key={i}>{p}</Badge>
@@ -194,7 +194,7 @@ export default function ResearchReport({
       </div>
 
       {/* Sonic Blueprint */}
-      <div className="border-b border-neutral-200 px-8 py-8">
+      <div className="border-b border-[#E8E8E8] px-8 py-8">
         <SectionHeader
           number="04" title="Sonic Blueprint"
           summary={report.sonic_blueprint.bpm_range + ' BPM · ' + report.sonic_blueprint.energy_profile}
@@ -212,13 +212,13 @@ export default function ResearchReport({
                 <p className="text-caption text-neutral-400 mb-2">Key Signatures</p>
                 <div className="flex flex-wrap gap-2">
                   {report.sonic_blueprint.key_signatures.map((k, i) => (
-                    <span key={i} className="text-body-sm font-mono text-black bg-neutral-50 px-2 py-1 rounded-sm border border-neutral-200">{k}</span>
+                    <span key={i} className="text-body-sm font-mono text-black bg-neutral-50 px-2 py-1 rounded-md border border-[#E8E8E8]">{k}</span>
                   ))}
                 </div>
               </div>
             </div>
             <div className="col-span-7">
-              <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-6">Sonic Signatures</p>
+              <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-6">Sonic Signatures</p>
               <div className="space-y-4">
                 {report.sonic_blueprint.sonic_signatures.map((sig, i) => (
                   <div key={i} className="flex items-start gap-4">
@@ -233,7 +233,7 @@ export default function ResearchReport({
       </div>
 
       {/* Playlist Landscape */}
-      <div className="border-b border-neutral-200 px-8 py-8">
+      <div className="border-b border-[#E8E8E8] px-8 py-8">
         <SectionHeader
           number="05" title="Playlist Landscape"
           summary={report.playlist_landscape.target_playlists.length + ' target playlists'}
@@ -261,7 +261,7 @@ export default function ResearchReport({
       </div>
 
       {/* Opportunities */}
-      <div className="border-b border-neutral-200 px-8 py-8">
+      <div className="border-b border-[#E8E8E8] px-8 py-8">
         <SectionHeader
           number="06" title="Opportunities"
           summary={report.opportunities.length + ' gaps identified'}
@@ -270,7 +270,7 @@ export default function ResearchReport({
         {openSections.has('06') && (
           <div className="animate-fade-in mt-6 grid grid-cols-3 gap-6">
             {report.opportunities.map((opp, i) => (
-              <div key={i} className="border border-neutral-200 rounded-sm p-5">
+              <div key={i} className="border border-[#E8E8E8] rounded-md p-5">
                 <span className="text-[48px] leading-none font-bold font-mono text-neutral-100">
                   {String(i + 1).padStart(2, '0')}
                 </span>
@@ -286,7 +286,7 @@ export default function ResearchReport({
       </div>
 
       {/* Revenue Projections */}
-      <div className="border-b border-neutral-200 px-8 py-8">
+      <div className="border-b border-[#E8E8E8] px-8 py-8">
         <SectionHeader
           number="07" title="Revenue Projections"
           summary="Streaming, touring, merch, sync"
@@ -303,7 +303,7 @@ export default function ResearchReport({
       </div>
 
       {/* Risks */}
-      <div className="border-b border-neutral-200 px-8 py-8">
+      <div className="border-b border-[#E8E8E8] px-8 py-8">
         <SectionHeader
           number="08" title="Risks"
           summary={report.risk_assessment.length + ' risks identified'}
@@ -316,7 +316,7 @@ export default function ResearchReport({
                 <SeverityDot severity={risk.severity} />
                 <div className="flex-1">
                   <p className="text-body-sm text-black font-bold">{risk.risk}</p>
-                  <p className="text-caption text-neutral-400 uppercase tracking-widest mt-0.5">{risk.severity}</p>
+                  <p className="text-caption text-[#8A8A8A] uppercase tracking-wide mt-0.5">{risk.severity}</p>
                 </div>
               </div>
             ))}
@@ -325,7 +325,7 @@ export default function ResearchReport({
       </div>
 
       {/* Recommendations */}
-      <div className="border-b border-neutral-200 px-8 py-8">
+      <div className="border-b border-[#E8E8E8] px-8 py-8">
         <SectionHeader
           number="09" title="Recommendations"
           summary={report.recommendations.length + ' actions'}
@@ -354,9 +354,9 @@ export default function ResearchReport({
           Report v{version} — Generated by Instrument 01
         </p>
         <div className="flex items-center gap-4">
-          <Button onClick={() => window.print()} variant="ghost" size="md" className="print:hidden">
+          <ButtonV2 onClick={() => window.print()} variant="ghost" size="md" className="print:hidden">
             Export PDF
-          </Button>
+          </ButtonV2>
           <div className="flex items-center gap-2">
             <Signal color="green" />
             <span className="text-caption text-neutral-400">Research Complete</span>
@@ -383,14 +383,14 @@ function SectionHeader({ number, title, summary, isOpen, onToggle }: {
     >
       <div className="flex items-center gap-4">
         <span className="text-heading font-bold font-mono text-neutral-200">{number}</span>
-        <h3 className="text-heading font-bold text-black">{title}</h3>
+        <h3 className="text-heading font-semibold text-black">{title}</h3>
         {!isOpen && summary && (
           <span className="text-body-sm text-neutral-400 ml-2 hidden sm:inline truncate max-w-xs">
             {summary}
           </span>
         )}
       </div>
-      <span className={`text-neutral-300 group-hover:text-black transition-all duration-fast text-body shrink-0 ml-4 ${isOpen ? 'rotate-90' : ''}`}>
+      <span className={`text-neutral-300 group-hover:text-black transition-all duration-150 text-body shrink-0 ml-4 ${isOpen ? 'rotate-90' : ''}`}>
         →
       </span>
     </button>
@@ -426,7 +426,7 @@ function MetricDisplay({ label, value, color }: { label: string; value: string; 
 
 function RevenueCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-neutral-200 rounded-sm p-4">
+    <div className="border border-[#E8E8E8] rounded-md p-4">
       <p className="text-caption text-neutral-400 mb-2">{label}</p>
       <p className="text-body font-bold text-black">{value}</p>
     </div>

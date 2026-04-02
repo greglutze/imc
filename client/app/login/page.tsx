@@ -32,9 +32,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-white flex">
       {/* Left — editorial branding */}
-      <div className="hidden lg:flex lg:w-1/2 border-r border-neutral-200 flex-col justify-between p-16">
+      <div className="hidden lg:flex lg:w-1/2 border-r border-[#E8E8E8] flex-col justify-between p-16">
         <div>
-          <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+          <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
             Instruments of Mass Creation
           </p>
         </div>
@@ -57,7 +57,7 @@ export default function LoginPage() {
       {/* Right — login form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-sm">
-          <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
+          <p className="text-[40px] leading-[1.1] font-medium text-black tracking-tight">
             Sign In
           </p>
           <p className="text-body text-neutral-500 mt-3">
@@ -66,7 +66,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="mt-10 space-y-5">
             <div>
-              <label className="text-label font-bold uppercase tracking-widest text-neutral-500 block mb-2">
+              <label className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] block mb-2">
                 Email
               </label>
               <input
@@ -74,13 +74,13 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@label.com"
-                className="w-full bg-white border border-neutral-200 rounded-sm px-4 py-3 text-body text-black placeholder-neutral-300 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
+                className="w-full bg-white border border-[#E8E8E8] rounded-md px-4 py-3 text-body text-black placeholder-neutral-300 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="text-label font-bold uppercase tracking-widest text-neutral-500 block mb-2">
+              <label className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] block mb-2">
                 Password
               </label>
               <input
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-white border border-neutral-200 rounded-sm px-4 py-3 text-body text-black placeholder-neutral-300 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
+                className="w-full bg-white border border-[#E8E8E8] rounded-md px-4 py-3 text-body text-black placeholder-neutral-300 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
                 required
               />
             </div>
@@ -101,8 +101,8 @@ export default function LoginPage() {
               type="submit"
               disabled={loading || !email || !password}
               className={`
-                w-full h-12 rounded-sm text-label font-bold uppercase tracking-widest
-                transition-colors duration-fast
+                w-full h-12 rounded-md text-label font-semibold uppercase tracking-wide
+                transition-colors duration-150
                 ${loading
                   ? 'bg-neutral-100 text-neutral-400 cursor-wait'
                   : 'bg-black text-white hover:bg-neutral-800'
@@ -113,7 +113,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-neutral-200">
+          <div className="mt-8 pt-6 border-t border-[#E8E8E8]">
             <p className="text-body-sm text-neutral-500">
               No account?{' '}
               <a href="/register" className="text-black font-bold hover:underline">

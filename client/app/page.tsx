@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Signal, Button } from '../components/ui';
+import { Signal, ButtonV2 } from '../components/ui';
 import { useAuth } from '../lib/auth-context';
 import { api, resolveArtworkUrl, type Project } from '../lib/api';
 
@@ -28,8 +28,8 @@ export default function Home() {
     return (
       <div className="animate-fade-in flex items-center justify-center h-full">
         <div className="text-center">
-          <p className="text-[120px] leading-[0.85] font-bold text-neutral-100">IMC</p>
-          <p className="text-body text-neutral-400 mt-4">Loading...</p>
+          <p className="text-[120px] leading-[0.85] font-medium text-neutral-100">IMC</p>
+          <p className="text-body text-[#8A8A8A] mt-4">Loading...</p>
         </div>
       </div>
     );
@@ -40,43 +40,42 @@ export default function Home() {
     return (
       <div className="animate-fade-in">
         {/* Masthead */}
-        <div className="border-b border-neutral-200">
+        <div className="border-b border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
               Instruments of Mass Creation
             </p>
             <div className="flex items-center gap-3">
-              <Button as="a" href="/login" variant="ghost" size="lg">
+              <ButtonV2 as="a" href="/login" variant="ghost" size="lg">
                 Sign In
-              </Button>
-              <Button as="a" href="/register">
+              </ButtonV2>
+              <ButtonV2 as="a" href="/register">
                 Get Started
-              </Button>
+              </ButtonV2>
             </div>
           </div>
         </div>
 
         <div className="max-w-[1400px] mx-auto px-10 py-32">
-          <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">IMC</p>
-          <p className="text-[48px] leading-[1.1] font-bold text-black mt-6 tracking-tight max-w-xl">
-
+          <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">IMC</p>
+          <p className="t-display text-black mt-6 max-w-xl">
             Your creative intelligence engine
           </p>
-          <p className="text-body-lg text-neutral-500 mt-6 max-w-md">
+          <p className="text-body-lg text-[#8A8A8A] mt-6 max-w-md">
             Define your concept. Research your market. Generate production-ready prompts — all from one brief.
           </p>
           <div className="mt-10 flex items-center gap-3">
-            <Button as="a" href="/register" size="lg">
+            <ButtonV2 as="a" href="/register" size="lg">
               Create Account
-            </Button>
-            <Button as="a" href="/login" variant="secondary" size="lg">
+            </ButtonV2>
+            <ButtonV2 as="a" href="/login" variant="secondary" size="lg">
               Sign In
-            </Button>
+            </ButtonV2>
           </div>
         </div>
 
         {/* Colophon */}
-        <div className="border-t border-neutral-200">
+        <div className="border-t border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
             <p className="text-micro font-mono text-neutral-300">IMC v0.1.0</p>
             <p className="text-micro font-mono text-neutral-300">Music Intelligence Platform</p>
@@ -89,10 +88,10 @@ export default function Home() {
   return (
     <div className="animate-fade-in h-full flex flex-col">
       {/* Masthead */}
-      <div className="border-b border-neutral-200 shrink-0">
+      <div className="border-b border-[#E8E8E8] shrink-0">
         <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
           <div>
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
               Instruments of Mass Creation
             </p>
           </div>
@@ -111,22 +110,22 @@ export default function Home() {
             <div className="pt-16 pb-10">
               <div className="flex items-end justify-between mb-10">
                 <div>
-                  <div className="h-3 w-16 bg-neutral-100 rounded-sm animate-pulse mb-3" />
-                  <div className="h-14 w-16 bg-neutral-100 rounded-sm animate-pulse" />
+                  <div className="h-3 w-16 bg-neutral-100 rounded-md animate-pulse mb-3" />
+                  <div className="h-14 w-16 bg-neutral-100 rounded-md animate-pulse" />
                 </div>
-                <div className="h-10 w-32 bg-neutral-100 rounded-sm animate-pulse" />
+                <div className="h-10 w-32 bg-neutral-100 rounded-md animate-pulse" />
               </div>
-              <div className="border-t border-neutral-200">
+              <div className="border-t border-[#E8E8E8]">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-6 py-6 border-b border-neutral-200">
-                    <div className="w-16 h-16 rounded-sm bg-neutral-100 animate-pulse shrink-0" />
+                  <div key={i} className="flex items-center gap-6 py-6 border-b border-[#E8E8E8]">
+                    <div className="w-16 h-16 rounded-md bg-neutral-100 animate-pulse shrink-0" />
                     <div className="flex-1">
-                      <div className="h-5 w-40 bg-neutral-100 rounded-sm animate-pulse mb-2" />
-                      <div className="h-3 w-64 bg-neutral-50 rounded-sm animate-pulse mb-2" />
-                      <div className="h-2 w-24 bg-neutral-50 rounded-sm animate-pulse" />
+                      <div className="h-5 w-40 bg-neutral-100 rounded-md animate-pulse mb-2" />
+                      <div className="h-3 w-64 bg-neutral-50 rounded-md animate-pulse mb-2" />
+                      <div className="h-2 w-24 bg-neutral-50 rounded-md animate-pulse" />
                     </div>
-                    <div className="h-4 w-16 bg-neutral-50 rounded-sm animate-pulse" />
-                    <div className="h-4 w-20 bg-neutral-50 rounded-sm animate-pulse" />
+                    <div className="h-4 w-16 bg-neutral-50 rounded-md animate-pulse" />
+                    <div className="h-4 w-20 bg-neutral-50 rounded-md animate-pulse" />
                   </div>
                 ))}
               </div>
@@ -136,20 +135,20 @@ export default function Home() {
               {/* Header row */}
               <div className="flex items-end justify-between pt-16 pb-10">
                 <div>
-                  <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
                     Projects
                   </p>
-                  <h1 className="text-[64px] leading-[0.9] font-bold tracking-tight text-black">
+                  <h1 className="text-[64px] leading-[0.9] font-medium tracking-tight text-black">
                     {String(projects.length).padStart(2, '0')}
                   </h1>
                 </div>
-                <Button as="a" href="/projects/new">
+                <ButtonV2 as="a" href="/projects/new">
                   + New Project
-                </Button>
+                </ButtonV2>
               </div>
 
               {/* Project list */}
-              <div className="border-t border-neutral-200">
+              <div className="border-t border-[#E8E8E8]">
                 {projects.map((project) => {
                   const statusLabel = project.status === 'draft' ? 'Draft' : project.status === 'complete' ? 'Complete' : 'In Progress';
                   const statusColor = project.status === 'complete' ? 'green' : project.status === 'draft' ? 'neutral' : 'yellow';
@@ -159,10 +158,10 @@ export default function Home() {
                     <a
                       key={project.id}
                       href={`/projects/${project.id}`}
-                      className="group flex items-center gap-6 py-6 border-b border-neutral-200 hover:bg-neutral-50 -mx-4 px-4 rounded-sm transition-colors duration-fast"
+                      className="group flex items-center gap-6 py-6 border-b border-[#E8E8E8] hover:bg-[#F7F7F5] -mx-4 px-4 rounded-md transition-colors duration-150"
                     >
                       {/* Artist image or initial */}
-                      <div className="w-16 h-16 rounded-sm overflow-hidden bg-neutral-100 shrink-0 flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-md overflow-hidden bg-neutral-100 shrink-0 flex items-center justify-center">
                         {project.image_url ? (
                           <img
                             src={resolveArtworkUrl(project.image_url) || ''}
@@ -170,7 +169,7 @@ export default function Home() {
                             className="w-full h-full object-cover object-top"
                           />
                         ) : (
-                          <span className="text-[28px] font-bold text-neutral-300">
+                          <span className="text-[28px] font-medium text-neutral-300">
                             {(project.artist_name || 'U').charAt(0).toUpperCase()}
                           </span>
                         )}
@@ -178,7 +177,7 @@ export default function Home() {
 
                       {/* Name + concept + date */}
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-heading-sm font-bold text-black group-hover:text-black truncate">
+                        <h2 className="text-heading-sm font-semibold text-black group-hover:text-black truncate">
                           {project.artist_name || 'Untitled'}
                         </h2>
                         {project.concept?.creative_direction ? (
@@ -195,7 +194,7 @@ export default function Home() {
 
                       {/* Genre pill */}
                       {project.concept?.genre_primary && (
-                        <span className="text-micro font-bold uppercase tracking-widest text-neutral-400 bg-neutral-100 px-3 py-1.5 rounded-sm shrink-0">
+                        <span className="tag-open shrink-0">
                           {project.concept.genre_primary}
                         </span>
                       )}
@@ -220,23 +219,23 @@ export default function Home() {
           ) : (
             /* No projects yet */
             <div className="py-32">
-              <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">00</p>
-              <p className="text-[48px] leading-[1.1] font-bold text-black mt-6 tracking-tight">
+              <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">00</p>
+              <p className="t-display text-black mt-6">
                 Start Something
               </p>
               <p className="text-body-lg text-neutral-500 mt-4 max-w-md">
                 Every project begins with a concept. Create one and we&apos;ll help you build the research, prompts, and sound around it.
               </p>
-              <Button as="a" href="/projects/new" size="lg" className="mt-8">
+              <ButtonV2 as="a" href="/projects/new" size="lg" className="mt-8">
                 New Project
-              </Button>
+              </ButtonV2>
             </div>
           )}
         </div>
       </div>
 
       {/* Colophon */}
-      <div className="border-t border-neutral-200 shrink-0">
+      <div className="border-t border-[#E8E8E8] shrink-0">
         <div className="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
           <p className="text-micro font-mono text-neutral-300">IMC v0.1.0</p>
           <p className="text-micro font-mono text-neutral-300">Music Intelligence Platform</p>

@@ -49,11 +49,9 @@ const config: Config = {
       },
 
       fontFamily: {
-        // Helvetica Neue Bold as primary — falls back to system sans
+        // Instrument Sans — clean, contemporary grotesque
         sans: [
-          'Helvetica Neue',
-          'Helvetica',
-          'Arial',
+          'Instrument Sans',
           'system-ui',
           '-apple-system',
           'sans-serif',
@@ -63,18 +61,19 @@ const config: Config = {
       },
 
       fontSize: {
-        // Swiss typographic scale
-        'micro': ['10px', { lineHeight: '14px', letterSpacing: '0.08em' }],
-        'caption': ['11px', { lineHeight: '16px', letterSpacing: '0.04em' }],
-        'label': ['12px', { lineHeight: '16px', letterSpacing: '0.02em' }],
+        // Open typographic scale — cleaner proportions, less aggressive tracking
+        'micro': ['10px', { lineHeight: '14px', letterSpacing: '0.06em' }],
+        'caption': ['11px', { lineHeight: '16px', letterSpacing: '0.02em' }],
+        'label': ['12px', { lineHeight: '16px', letterSpacing: '0.01em' }],
+        'small': ['13px', { lineHeight: '20px', letterSpacing: '0' }],
         'body-sm': ['13px', { lineHeight: '20px', letterSpacing: '0' }],
-        'body': ['15px', { lineHeight: '24px', letterSpacing: '-0.01em' }],
-        'body-lg': ['17px', { lineHeight: '26px', letterSpacing: '-0.01em' }],
-        'heading-sm': ['20px', { lineHeight: '28px', letterSpacing: '-0.02em' }],
-        'heading': ['28px', { lineHeight: '34px', letterSpacing: '-0.03em' }],
-        'heading-lg': ['36px', { lineHeight: '42px', letterSpacing: '-0.03em' }],
-        'display': ['48px', { lineHeight: '52px', letterSpacing: '-0.04em' }],
-        'display-lg': ['64px', { lineHeight: '68px', letterSpacing: '-0.04em' }],
+        'body': ['15px', { lineHeight: '24px', letterSpacing: '-0.005em' }],
+        'body-lg': ['17px', { lineHeight: '28px', letterSpacing: '-0.005em' }],
+        'heading-sm': ['20px', { lineHeight: '28px', letterSpacing: '-0.015em' }],
+        'heading': ['28px', { lineHeight: '34px', letterSpacing: '-0.02em' }],
+        'heading-lg': ['36px', { lineHeight: '42px', letterSpacing: '-0.025em' }],
+        'display': ['48px', { lineHeight: '52px', letterSpacing: '-0.035em' }],
+        'display-lg': ['64px', { lineHeight: '68px', letterSpacing: '-0.035em' }],
       },
 
       spacing: {
@@ -98,9 +97,9 @@ const config: Config = {
 
       borderRadius: {
         'none': '0',
-        'sm': '4px',
-        'md': '8px',
-        'lg': '12px',
+        'sm': '6px',
+        'md': '10px',
+        'lg': '16px',
         'full': '9999px',
       },
 

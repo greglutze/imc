@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Badge, Button } from './ui';
+import { Badge, ButtonV2 } from './ui';
 import type { I2Track } from '../lib/api';
 
 interface TrackPromptsProps {
@@ -14,7 +14,7 @@ export default function TrackPrompts({ tracks, onRegenerateTrack, regenerating }
   return (
     <div className="animate-fade-in">
       {/* Track cards */}
-      <div className="divide-y divide-neutral-200">
+      <div className="divide-y divide-[#E8E8E8]">
         {tracks.map((track) => (
           <TrackCard
             key={track.track_number}
@@ -59,21 +59,21 @@ function TrackCard({
             {String(track.track_number).padStart(2, '0')}
           </span>
           <div>
-            <p className="text-heading-sm font-bold text-black">{track.title}</p>
+            <p className="text-heading-sm font-semibold text-black">{track.title}</p>
             <p className="text-caption text-neutral-400 font-mono mt-1">{track.structure}</p>
           </div>
         </div>
         {onRegenerate && (
-          <Button onClick={() => onRegenerate(track.track_number)} loading={isRegenerating} variant="ghost" size="sm">
+          <ButtonV2 onClick={() => onRegenerate(track.track_number)} loading={isRegenerating} variant="ghost" size="sm">
             Regenerate
-          </Button>
+          </ButtonV2>
         )}
       </div>
 
       {/* Prompts — two columns */}
       <div className="grid grid-cols-2 gap-6">
         {/* Suno prompt */}
-        <div className="border border-neutral-200 rounded-sm p-5">
+        <div className="border border-[#E8E8E8] rounded-md p-5">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <Badge variant="orange">Suno</Badge>
@@ -83,7 +83,7 @@ function TrackCard({
             </div>
             <button
               onClick={() => handleCopy(track.suno_prompt, 'suno')}
-              className="text-label font-bold uppercase tracking-widest text-neutral-300 hover:text-black transition-colors duration-fast"
+              className="text-label font-semibold uppercase tracking-wide text-neutral-300 hover:text-black transition-colors duration-150"
             >
               {copiedField === 'suno' ? 'Copied' : 'Copy'}
             </button>
@@ -94,12 +94,12 @@ function TrackCard({
         </div>
 
         {/* Udio prompt */}
-        <div className="border border-neutral-200 rounded-sm p-5">
+        <div className="border border-[#E8E8E8] rounded-md p-5">
           <div className="flex items-center justify-between mb-3">
             <Badge variant="violet">Udio</Badge>
             <button
               onClick={() => handleCopy(track.udio_prompt, 'udio')}
-              className="text-label font-bold uppercase tracking-widest text-neutral-300 hover:text-black transition-colors duration-fast"
+              className="text-label font-semibold uppercase tracking-wide text-neutral-300 hover:text-black transition-colors duration-150"
             >
               {copiedField === 'udio' ? 'Copied' : 'Copy'}
             </button>
@@ -112,8 +112,8 @@ function TrackCard({
 
       {/* Notes */}
       {track.notes && (
-        <div className="mt-4 bg-neutral-50 rounded-sm px-4 py-3">
-          <p className="text-caption text-neutral-400 uppercase tracking-widest font-bold mb-1">Notes</p>
+        <div className="mt-4 bg-[#F7F7F5] rounded-md px-4 py-3">
+          <p className="text-caption text-[#8A8A8A] uppercase tracking-wide font-semibold mb-1">Notes</p>
           <p className="text-body-sm text-neutral-600">{track.notes}</p>
         </div>
       )}

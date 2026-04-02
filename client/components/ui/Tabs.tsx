@@ -25,16 +25,16 @@ export default function Tabs({ tabs, activeTab, onTabChange, className = '' }: T
   };
 
   return (
-    <div className={`flex items-center gap-0 border-b border-neutral-200 ${className}`}>
+    <div className={`flex items-center gap-0 border-b border-[#E8E8E8] ${className}`}>
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => handleChange(tab.id)}
           className={`
-            relative px-5 py-3 text-label font-bold uppercase tracking-widest transition-colors duration-fast
+            relative px-5 py-3 text-label font-semibold uppercase tracking-wide transition-colors duration-150
             ${active === tab.id
               ? 'text-black'
-              : 'text-neutral-400 hover:text-neutral-600'
+              : 'text-[#8A8A8A] hover:text-neutral-600'
             }
           `}
         >

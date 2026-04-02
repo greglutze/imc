@@ -11,7 +11,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Button } from './ui';
+import { ButtonV2 } from './ui';
 
 interface ShowreelTrack {
   id: string;
@@ -234,11 +234,11 @@ export default function ShowreelPlayer({
   const currentTrack = tracks[currentTrackIdx];
 
   return (
-    <div className="border border-neutral-200 rounded-sm overflow-hidden">
+    <div className="border border-[#E8E8E8] rounded-md overflow-hidden">
       {/* Header */}
       <div className="px-5 py-3 flex items-center justify-between border-b border-neutral-100">
         <div className="flex items-center gap-3">
-          <span className="text-label font-bold uppercase tracking-widest text-black">
+          <span className="text-label font-semibold uppercase tracking-wide text-black">
             Showreel
           </span>
           <span className="text-micro text-neutral-400">
@@ -250,7 +250,7 @@ export default function ShowreelPlayer({
       {/* Player */}
       <div className="px-5 py-4">
         <div className="flex items-center gap-4 mb-3">
-          <Button
+          <ButtonV2
             onClick={togglePlay}
             disabled={loading}
             variant="media"
@@ -260,7 +260,7 @@ export default function ShowreelPlayer({
             <span className="text-[11px] leading-none">
               {loading ? '...' : isPlaying ? '▮▮' : '▶'}
             </span>
-          </Button>
+          </ButtonV2>
 
           <div className="flex-1 min-w-0">
             {isPlaying && currentTrack ? (
@@ -293,7 +293,7 @@ export default function ShowreelPlayer({
             {tracks.slice(0, clipCount).map((track, idx) => (
               <div
                 key={track.id}
-                className={`flex-1 h-1 rounded-full transition-colors duration-fast ${
+                className={`flex-1 h-1 rounded-full transition-colors duration-150 ${
                   idx < currentTrackIdx
                     ? 'bg-black'
                     : idx === currentTrackIdx

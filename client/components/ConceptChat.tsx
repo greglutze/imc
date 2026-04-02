@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Signal, Badge, Button } from './ui';
+import { Signal, Badge, ButtonV2 } from './ui';
 import type { ConversationMessage, ProjectConcept } from '../lib/api';
 
 interface ConceptChatProps {
@@ -52,10 +52,10 @@ export default function ConceptChat({
       <div className="px-8 pt-10 pb-6 shrink-0">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+            <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
               Creative Brief
             </p>
-            <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
+            <p className="text-[40px] leading-[1.1] font-medium text-black tracking-tight">
               Concept
             </p>
             <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
@@ -85,7 +85,7 @@ export default function ConceptChat({
             <div className="flex items-start gap-4">
               <div className="w-1 h-6 bg-signal-violet rounded-full animate-pulse" />
               <div className="space-y-2 flex-1">
-                <p className="text-caption text-signal-violet font-bold uppercase tracking-widest">
+                <p className="text-caption text-signal-violet font-semibold uppercase tracking-wide">
                   IMC
                 </p>
                 <div className="flex items-center gap-1">
@@ -103,7 +103,7 @@ export default function ConceptChat({
 
       {/* Input — always visible so the artist can refine the concept */}
       <form onSubmit={handleSubmit} className="px-8 py-5 shrink-0 border-t border-neutral-100">
-        <div className="max-w-2xl bg-neutral-50 rounded-sm px-5 py-4 flex items-end gap-3">
+        <div className="max-w-2xl bg-neutral-50 rounded-md px-5 py-4 flex items-end gap-3">
           <textarea
             ref={inputRef}
             value={input}
@@ -115,9 +115,9 @@ export default function ConceptChat({
             className="flex-1 bg-transparent text-body text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-1"
             style={{ minHeight: '36px', maxHeight: '120px' }}
           />
-          <Button type="submit" disabled={!input.trim() || loading} size="sm" className="shrink-0">
+          <ButtonV2 type="submit" disabled={!input.trim() || loading} size="sm" className="shrink-0">
             Send
-          </Button>
+          </ButtonV2>
         </div>
       </form>
 
@@ -128,7 +128,7 @@ export default function ConceptChat({
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-green-500" />
-                <p className="text-micro font-bold uppercase tracking-widest text-neutral-400">
+                <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
                   Your Concept
                 </p>
               </div>
@@ -181,7 +181,7 @@ function MessageBlock({ message, index }: { message: ConversationMessage; index:
       <div className={`w-1 min-h-[24px] rounded-full shrink-0 ${isUser ? 'bg-black' : 'bg-signal-violet'}`} />
 
       <div className="flex-1 space-y-1.5">
-        <p className={`text-caption font-bold uppercase tracking-widest ${isUser ? 'text-neutral-400' : 'text-signal-violet'}`}>
+        <p className={`text-caption font-semibold uppercase tracking-wide ${isUser ? 'text-[#8A8A8A]' : 'text-signal-violet'}`}>
           {isUser ? 'You' : 'IMC'}
         </p>
         <div className="text-body text-neutral-700 leading-relaxed whitespace-pre-wrap">
@@ -199,8 +199,8 @@ function MessageBlock({ message, index }: { message: ConversationMessage; index:
 
 function ConceptField({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between border-b border-neutral-200 pb-2">
-      <span className="text-caption text-neutral-400">{label}</span>
+    <div className="flex items-baseline justify-between border-b border-[#E8E8E8] pb-2">
+      <span className="text-caption text-[#8A8A8A]">{label}</span>
       <span className="text-body-sm text-black font-bold text-right">{value}</span>
     </div>
   );

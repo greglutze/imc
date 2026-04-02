@@ -83,14 +83,14 @@ export default function NewProjectPage() {
   return (
     <div className="animate-fade-in h-full flex flex-col">
       {/* Header */}
-      <div className="border-b border-neutral-200">
+      <div className="border-b border-[#E8E8E8]">
         <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center">
-          <a href="/" className="text-micro font-bold uppercase tracking-widest text-neutral-400 hover:text-black transition-colors duration-fast flex items-center gap-2">
+          <a href="/" className="text-micro font-bold uppercase tracking-wide text-neutral-400 hover:text-black transition-colors duration-150 flex items-center gap-2">
             <span className="text-body">&#8592;</span>
             IMC
           </a>
           <span className="text-neutral-200 mx-4">/</span>
-          <span className="text-micro font-bold uppercase tracking-widest text-black">
+          <span className="text-micro font-bold uppercase tracking-wide text-black">
             New Project
           </span>
         </div>
@@ -102,7 +102,7 @@ export default function NewProjectPage() {
           <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">
             00
           </p>
-          <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+          <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
             New Project
           </p>
           <p className="text-body-lg text-black mt-5 max-w-md">
@@ -111,7 +111,7 @@ export default function NewProjectPage() {
 
           <form onSubmit={handleSubmit} className="mt-10 max-w-md">
             {/* Artist Name */}
-            <label className="text-label font-bold uppercase tracking-widest text-neutral-500 block mb-2">
+            <label className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] block mb-2">
               Artist Name
             </label>
             <input
@@ -119,7 +119,7 @@ export default function NewProjectPage() {
               value={artistName}
               onChange={(e) => setArtistName(e.target.value)}
               placeholder="e.g. MMe., NOVA, Ghost Protocol"
-              className="w-full bg-white border border-neutral-200 rounded-sm px-4 py-3 text-body text-black placeholder-neutral-300 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
+              className="w-full bg-white border border-[#E8E8E8] rounded-md px-4 py-3 text-body text-black placeholder-neutral-300 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
               autoFocus
             />
             <p className="text-caption text-neutral-400 mt-2">
@@ -128,7 +128,7 @@ export default function NewProjectPage() {
 
             {/* Artist Image */}
             <div className="mt-6">
-              <label className="text-label font-bold uppercase tracking-widest text-neutral-500 block mb-2">
+              <label className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] block mb-2">
                 Artist Image <span className="text-neutral-300 font-normal normal-case tracking-normal">(optional)</span>
               </label>
 
@@ -143,14 +143,14 @@ export default function NewProjectPage() {
               {imagePreview ? (
                 <div className="flex items-start gap-4">
                   <div className="relative group w-20 h-20 shrink-0">
-                    <div className="w-20 h-20 overflow-hidden rounded-sm border border-neutral-200">
+                    <div className="w-20 h-20 overflow-hidden rounded-md border border-[#E8E8E8]">
                       <img
                         src={imagePreview}
                         alt={artistName || 'Artist portrait'}
                         className="w-full h-full object-cover object-top"
                       />
                     </div>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-fast rounded-sm flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-150 rounded-md flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <button
                         type="button"
                         onClick={handleRemoveImage}
@@ -162,14 +162,14 @@ export default function NewProjectPage() {
                   </div>
                   <div className="pt-1">
                     {imageFile && (
-                      <p className="text-body-sm text-black font-bold truncate max-w-[240px]">
+                      <p className="text-body-sm text-black font-semibold truncate max-w-[240px]">
                         {imageFile.name}
                       </p>
                     )}
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="text-caption text-neutral-400 hover:text-black transition-colors duration-fast mt-0.5"
+                      className="text-caption text-neutral-400 hover:text-black transition-colors duration-150 mt-0.5"
                     >
                       Replace image
                     </button>
@@ -179,13 +179,13 @@ export default function NewProjectPage() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-3 border border-dashed border-neutral-200 rounded-sm px-4 py-3 w-full hover:border-neutral-400 transition-colors duration-fast group"
+                  className="flex items-center gap-3 border border-dashed border-[#E8E8E8] rounded-md px-4 py-3 w-full hover:border-neutral-400 transition-colors duration-150 group"
                 >
-                  <div className="w-10 h-10 rounded-sm bg-neutral-50 flex items-center justify-center group-hover:bg-neutral-100 transition-colors duration-fast shrink-0">
+                  <div className="w-10 h-10 rounded-md bg-[#F7F7F5] flex items-center justify-center group-hover:bg-[#F7F7F5] transition-colors duration-150 shrink-0">
                     <span className="text-[18px] text-neutral-300 leading-none">+</span>
                   </div>
                   <div className="text-left">
-                    <p className="text-body-sm text-neutral-400 group-hover:text-black transition-colors duration-fast">
+                    <p className="text-body-sm text-[#8A8A8A] group-hover:text-black transition-colors duration-150">
                       Upload image
                     </p>
                     <p className="text-caption text-neutral-300">
@@ -204,8 +204,8 @@ export default function NewProjectPage() {
               type="submit"
               disabled={loading}
               className={`
-                mt-8 h-12 px-8 rounded-sm text-label font-bold uppercase tracking-widest
-                transition-colors duration-fast
+                mt-8 h-12 px-8 rounded-md text-label font-semibold uppercase tracking-wide
+                transition-colors duration-150
                 ${loading
                   ? 'bg-neutral-100 text-neutral-400 cursor-wait'
                   : 'bg-black text-white hover:bg-neutral-800'

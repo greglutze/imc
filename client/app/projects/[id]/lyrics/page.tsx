@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
-import { Button } from '../../../../components/ui';
+import { ButtonV2 } from '../../../../components/ui';
 import type {
   LyricSessionListItem,
   LyricTheme,
@@ -119,8 +119,8 @@ export default function LyricAdvisorPage() {
   if (authLoading || pageLoading) {
     return (
       <div className="animate-fade-in px-8 py-16 max-w-2xl">
-        <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">LA</p>
-        <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+        <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">LA</p>
+        <p className="text-[40px] leading-[1.1] font-semibold text-black mt-4 tracking-tight">
           Loading...
         </p>
       </div>
@@ -137,10 +137,10 @@ export default function LyricAdvisorPage() {
         <div className="max-w-[1400px] mx-auto px-10 py-10">
           {/* Header */}
           <div className="mb-10">
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+            <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
               Lyric Collaborator
             </p>
-            <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
+            <p className="text-[40px] leading-[1.1] font-semibold text-black tracking-tight">
               LyriCol
             </p>
             {moodboard?.prose ? (
@@ -152,8 +152,8 @@ export default function LyricAdvisorPage() {
                     if (moodboard.texture) pills.push({ label: 'Texture', value: moodboard.texture });
                     if (moodboard.emotional_register) pills.push({ label: 'Emotion', value: moodboard.emotional_register });
                     return pills.map((item) => (
-                      <span key={item.label} className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-600 text-[13px] px-3 py-1.5 rounded-sm">
-                        <span className="font-bold text-neutral-400 uppercase tracking-wider text-[10px]">{item.label}</span>
+                      <span key={item.label} className="inline-flex items-center gap-1.5 rounded-full border border-[#E8E8E8] bg-transparent text-neutral-600 text-[13px] px-3 py-1.5">
+                        <span className="font-semibold text-[#8A8A8A] uppercase tracking-wide text-[10px]">{item.label}</span>
                         <span>{item.value}</span>
                       </span>
                     ));
@@ -161,8 +161,8 @@ export default function LyricAdvisorPage() {
                 </div>
                 {moodboard.tempo_feel && (
                   <div className="mt-2">
-                    <span className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-600 text-[13px] px-3 py-1.5 rounded-sm">
-                      <span className="font-bold text-neutral-400 uppercase tracking-wider text-[10px]">Tempo</span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E8E8E8] bg-transparent text-neutral-600 text-[13px] px-3 py-1.5">
+                      <span className="font-semibold text-[#8A8A8A] uppercase tracking-wide text-[10px]">Tempo</span>
                       <span>{moodboard.tempo_feel}</span>
                     </span>
                   </div>
@@ -180,7 +180,7 @@ export default function LyricAdvisorPage() {
             <button
               onClick={() => handleNewBlankSession('conversation')}
               disabled={creating !== null}
-              className="inline-flex items-center gap-2 bg-black text-white text-label font-bold uppercase tracking-widest px-6 py-3 rounded-sm hover:bg-neutral-800 transition-colors duration-fast disabled:opacity-50"
+              className="inline-flex items-center gap-2 bg-[#1A1A1A] text-white text-[13px] font-medium px-5 py-2.5 rounded-full hover:bg-[#333] transition-colors duration-150 disabled:opacity-50"
             >
               {creating === 'conversation' ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -195,13 +195,13 @@ export default function LyricAdvisorPage() {
           {hasConcept && (
             <div className="mb-12">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-label font-bold uppercase tracking-widest text-neutral-400">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                   Starting Points
                 </p>
                 {themes.length > 0 && !themesLoading && (
-                  <Button onClick={() => loadThemes(true)} variant="ghost" size="sm">
+                  <ButtonV2 onClick={() => loadThemes(true)} variant="ghost" size="sm">
                     Regenerate
-                  </Button>
+                  </ButtonV2>
                 )}
               </div>
 
@@ -267,7 +267,7 @@ export default function LyricAdvisorPage() {
           {/* Previous sessions */}
           {sessions.length > 0 && (
             <div>
-              <p className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                 Sessions
               </p>
               <div className="space-y-2">
@@ -275,7 +275,7 @@ export default function LyricAdvisorPage() {
                   <a
                     key={session.id}
                     href={`/projects/${id}/lyrics/${session.id}`}
-                    className="block border border-neutral-200 rounded-sm p-5 hover:border-black transition-colors duration-fast group"
+                    className="block border border-[#E8E8E8] rounded-md p-5 hover:border-black transition-colors duration-150 group"
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -305,7 +305,7 @@ export default function LyricAdvisorPage() {
 
           {/* Empty state */}
           {!hasConcept && (
-            <div className="border border-dashed border-neutral-300 rounded-sm p-8 text-center mt-4">
+            <div className="border border-dashed border-neutral-300 rounded-md p-8 text-center mt-4">
               <p className="text-body text-neutral-500">
                 Define your artist concept first to unlock AI-generated writing themes based on your sonic moodboard.
               </p>

@@ -11,7 +11,7 @@ import type { ShareProjectWithTracks, ShareTrack, Project } from '../../../../..
 import SharePreview from '../../../../../components/SharePreview';
 import TrackAnnotations from '../../../../../components/TrackAnnotations';
 import ShowreelPlayer from '../../../../../components/ShowreelPlayer';
-import { Button } from '../../../../../components/ui';
+import { ButtonV2 } from '../../../../../components/ui';
 
 function formatDuration(ms: number | null): string {
   if (!ms) return '—';
@@ -356,30 +356,30 @@ export default function ShareManagePage() {
       <div className="min-h-screen bg-white">
         <ProjectNav projectId={id} artistName="..." activePage="share" />
         <div className="max-w-[1400px] mx-auto px-10 py-12">
-          <div className="h-3 w-24 bg-neutral-100 rounded-sm animate-pulse mb-8" />
+          <div className="h-3 w-24 bg-neutral-100 rounded-md animate-pulse mb-8" />
           <div className="grid grid-cols-[1fr_340px] gap-12">
             <div>
-              <div className="h-12 w-64 bg-neutral-100 rounded-sm animate-pulse mb-8" />
-              <div className="h-3 w-20 bg-neutral-100 rounded-sm animate-pulse mb-4" />
+              <div className="h-12 w-64 bg-neutral-100 rounded-md animate-pulse mb-8" />
+              <div className="h-3 w-20 bg-neutral-100 rounded-md animate-pulse mb-4" />
               <div className="space-y-1">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-3 px-4 py-3 border border-neutral-200 rounded-sm">
+                  <div key={i} className="flex items-center gap-3 px-4 py-3 border border-[#E8E8E8] rounded-md">
                     <div className="w-7 h-7 rounded-full bg-neutral-100 animate-pulse shrink-0" />
-                    <div className="w-4 h-3 bg-neutral-100 rounded-sm animate-pulse" />
-                    <div className="flex-1 h-4 bg-neutral-100 rounded-sm animate-pulse" />
-                    <div className="w-10 h-3 bg-neutral-50 rounded-sm animate-pulse" />
+                    <div className="w-4 h-3 bg-neutral-100 rounded-md animate-pulse" />
+                    <div className="flex-1 h-4 bg-neutral-100 rounded-md animate-pulse" />
+                    <div className="w-10 h-3 bg-neutral-50 rounded-md animate-pulse" />
                   </div>
                 ))}
               </div>
             </div>
             <div className="space-y-8">
               <div>
-                <div className="h-3 w-16 bg-neutral-100 rounded-sm animate-pulse mb-3" />
-                <div className="aspect-square bg-neutral-100 rounded-sm animate-pulse" />
+                <div className="h-3 w-16 bg-neutral-100 rounded-md animate-pulse mb-3" />
+                <div className="aspect-square bg-neutral-100 rounded-md animate-pulse" />
               </div>
               <div>
-                <div className="h-3 w-20 bg-neutral-100 rounded-sm animate-pulse mb-3" />
-                <div className="h-9 w-full bg-neutral-100 rounded-sm animate-pulse" />
+                <div className="h-3 w-20 bg-neutral-100 rounded-md animate-pulse mb-3" />
+                <div className="h-9 w-full bg-neutral-100 rounded-md animate-pulse" />
               </div>
             </div>
           </div>
@@ -393,7 +393,7 @@ export default function ShareManagePage() {
       <div className="min-h-screen bg-white">
         <ProjectNav projectId={id} artistName={project?.artist_name || ''} imageUrl={project?.image_url} activePage="share" />
         <div className="max-w-[1400px] mx-auto px-10 py-20">
-          <div className="text-neutral-400 text-label uppercase tracking-widest">Share project not found.</div>
+          <div className="text-[#8A8A8A] text-label uppercase tracking-wide">Share project not found.</div>
         </div>
       </div>
     );
@@ -411,14 +411,14 @@ export default function ShareManagePage() {
       />
       <div className="max-w-[1400px] mx-auto px-10 py-12">
         {/* Back link */}
-        <Button
+        <ButtonV2
           onClick={() => router.push(`/projects/${id}/share`)}
           variant="ghost"
           size="sm"
           className="mb-8 flex items-center gap-2"
         >
           <span className="text-body">←</span> All Share Links
-        </Button>
+        </ButtonV2>
 
         <div className="grid grid-cols-[1fr_340px] gap-12">
           {/* Left column: tracks */}
@@ -432,17 +432,17 @@ export default function ShareManagePage() {
                     value={titleValue}
                     onChange={(e) => setTitleValue(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') handleTitleSave(); if (e.key === 'Escape') setEditingTitle(false); }}
-                    className="text-display font-bold tracking-tight text-black border-b-2 border-black bg-transparent outline-none w-full"
+                    className="text-display font-medium tracking-tight text-black border-b-2 border-black bg-transparent outline-none w-full"
                     autoFocus
                   />
-                  <Button onClick={handleTitleSave} disabled={saving} variant="ghost" size="sm">
+                  <ButtonV2 onClick={handleTitleSave} disabled={saving} variant="ghost" size="sm">
                     Save
-                  </Button>
+                  </ButtonV2>
                 </div>
               ) : (
                 <h1
                   onClick={() => { setEditingTitle(true); setTitleValue(share.title); }}
-                  className="text-display font-bold tracking-tight text-black cursor-pointer hover:text-neutral-600 transition-colors duration-fast"
+                  className="text-display font-medium tracking-tight text-black cursor-pointer hover:text-neutral-600 transition-colors duration-150"
                   title="Click to edit"
                 >
                   {share.title}
@@ -467,7 +467,7 @@ export default function ShareManagePage() {
             {/* Add track via Dropbox link */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-label font-bold uppercase tracking-widest text-neutral-400">
+                <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A]">
                   Tracks ({share.tracks.length})
                 </span>
               </div>
@@ -477,21 +477,21 @@ export default function ShareManagePage() {
                   onChange={(e) => setDropboxInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAddTrack(); } }}
                   placeholder="Paste Dropbox link(s) here — one per line for multiple tracks"
-                  className="flex-1 text-small bg-neutral-50 border border-neutral-200 rounded-sm px-3 py-2.5 outline-none focus:border-neutral-400 resize-none min-h-[42px]"
+                  className="flex-1 text-small bg-neutral-50 border border-[#E8E8E8] rounded-md px-3 py-2.5 outline-none focus:border-neutral-400 resize-none min-h-[42px]"
                   rows={dropboxInput.includes('\n') ? 3 : 1}
                 />
-                <Button onClick={handleAddTrack} disabled={!dropboxInput.trim()} loading={addingTrack} size="sm" className="shrink-0 self-end">
+                <ButtonV2 onClick={handleAddTrack} disabled={!dropboxInput.trim()} loading={addingTrack} size="sm" className="shrink-0 self-end">
                   Add
-                </Button>
+                </ButtonV2>
               </div>
-              <p className="text-micro text-neutral-400 mt-1.5">
+              <p className="text-micro text-[#8A8A8A] mt-1.5">
                 Right-click a file in Dropbox → Copy link → paste here. Multiple links? Shift+Enter for new lines.
               </p>
             </div>
 
             {/* Error */}
             {addError && (
-              <div className="mb-4 px-4 py-3 border border-red-200 rounded-sm bg-red-50">
+              <div className="mb-4 px-4 py-3 border border-red-200 rounded-md bg-red-50">
                 <div className="flex items-center justify-between">
                   <span className="text-small text-red-600">{addError}</span>
                   <button onClick={() => setAddError(null)} className="text-red-400 hover:text-red-600 text-small">×</button>
@@ -501,11 +501,11 @@ export default function ShareManagePage() {
 
             {/* Track list */}
             {share.tracks.length === 0 ? (
-              <div className="border-2 border-dashed border-neutral-200 rounded-sm py-16 px-8 text-center">
-                <p className="text-[28px] font-bold text-neutral-200 tracking-tight">
+              <div className="border-2 border-dashed border-[#E8E8E8] rounded-md py-16 px-8 text-center">
+                <p className="text-[28px] font-medium text-neutral-200 tracking-tight">
                   Add your first track
                 </p>
-                <p className="text-body text-neutral-400 mt-3 max-w-sm mx-auto">
+                <p className="text-body text-[#8A8A8A] mt-3 max-w-sm mx-auto">
                   Paste a Dropbox link above — your music will be streamable instantly, no upload needed.
                 </p>
               </div>
@@ -517,7 +517,7 @@ export default function ShareManagePage() {
                   return (
                   <div
                     key={track.id}
-                    className={`relative border rounded-sm group transition-all duration-fast overflow-hidden ${isActiveTrack ? 'border-black' : 'border-neutral-200 hover:border-neutral-300'}`}
+                    className={`relative border rounded-md group transition-all duration-150 overflow-hidden ${isActiveTrack ? 'border-black' : 'border-[#E8E8E8] hover:border-neutral-300'}`}
                   >
                     {/* Inline progress bar — sits behind content */}
                     {isActiveTrack && (
@@ -529,7 +529,7 @@ export default function ShareManagePage() {
 
                     <div className="relative flex items-center gap-4 px-5 py-4">
                       {/* Play/Pause button */}
-                      <Button
+                      <ButtonV2
                         onClick={() => handlePlayTrack(track.id)}
                         variant="media"
                         size="sm"
@@ -538,7 +538,7 @@ export default function ShareManagePage() {
                         <span className="text-[10px] leading-none">
                           {isActiveTrack && isPlaying ? '▮▮' : '▶'}
                         </span>
-                      </Button>
+                      </ButtonV2>
 
                       {/* Track number */}
                       <span className="text-caption font-mono text-neutral-300 w-5 text-center shrink-0">
@@ -553,13 +553,13 @@ export default function ShareManagePage() {
                             value={trackTitleValue}
                             onChange={(e) => setTrackTitleValue(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') handleRenameTrack(track.id); if (e.key === 'Escape') setEditingTrackId(null); }}
-                            className="text-body font-bold text-black border-b border-black bg-transparent outline-none w-full"
+                            className="text-body font-semibold text-black border-b border-black bg-transparent outline-none w-full"
                             autoFocus
                           />
                         ) : (
                           <span
                             onClick={() => { setEditingTrackId(track.id); setTrackTitleValue(track.title); }}
-                            className="text-body font-bold text-black cursor-pointer truncate block"
+                            className="text-body font-semibold text-black cursor-pointer truncate block"
                             title="Click to rename"
                           >
                             {track.title}
@@ -569,32 +569,32 @@ export default function ShareManagePage() {
 
                       {/* Time display for active track */}
                       {isActiveTrack && duration > 0 && (
-                        <span className="text-micro font-mono text-neutral-400 shrink-0">
+                        <span className="text-micro font-mono text-[#8A8A8A] shrink-0">
                           {formatTime(currentTime)} / {formatTime(duration)}
                         </span>
                       )}
 
                       {/* Meta */}
-                      <span className="text-micro text-neutral-300 shrink-0 uppercase tracking-widest">
+                      <span className="text-micro text-[#C4C4C4] shrink-0 uppercase tracking-wide">
                         {track.format}
                       </span>
-                      <span className="text-micro text-neutral-400 shrink-0">
+                      <span className="text-micro text-[#8A8A8A] shrink-0">
                         {track.play_count > 0 ? `${track.play_count} play${track.play_count !== 1 ? 's' : ''}` : '—'}
                       </span>
 
                       {/* Reorder buttons */}
-                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-fast shrink-0">
+                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0">
                         <button
                           onClick={() => handleMoveTrack(track.id, 'up')}
                           disabled={idx === 0}
-                          className="text-neutral-400 hover:text-black disabled:opacity-20 text-small px-1"
+                          className="text-[#8A8A8A] hover:text-black disabled:opacity-20 text-small px-1"
                         >
                           ↑
                         </button>
                         <button
                           onClick={() => handleMoveTrack(track.id, 'down')}
                           disabled={idx === share.tracks.length - 1}
-                          className="text-neutral-400 hover:text-black disabled:opacity-20 text-small px-1"
+                          className="text-[#8A8A8A] hover:text-black disabled:opacity-20 text-small px-1"
                         >
                           ↓
                         </button>
@@ -603,7 +603,7 @@ export default function ShareManagePage() {
                       {/* Delete */}
                       <button
                         onClick={() => handleDeleteTrack(track.id)}
-                        className="text-neutral-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-fast text-small shrink-0"
+                        className="text-[#8A8A8A] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-150 text-small shrink-0"
                       >
                         ×
                       </button>
@@ -619,9 +619,9 @@ export default function ShareManagePage() {
               const activeTrack = share.tracks.find((t) => t.id === playingTrackId);
               if (!activeTrack) return null;
               return (
-                <div className="mt-6 border border-neutral-200 rounded-sm px-5 py-4">
+                <div className="mt-6 border border-[#E8E8E8] rounded-md px-5 py-4">
                   <div className="flex items-center gap-4 mb-3">
-                    <Button
+                    <ButtonV2
                       onClick={() => handlePlayTrack(playingTrackId)}
                       variant="media"
                       size="sm"
@@ -630,13 +630,13 @@ export default function ShareManagePage() {
                       <span className="text-[11px] leading-none">
                         {isPlaying ? '▮▮' : '▶'}
                       </span>
-                    </Button>
+                    </ButtonV2>
                     <div className="flex-1 min-w-0">
-                      <span className="text-body font-bold text-black truncate block">
+                      <span className="text-body font-semibold text-black truncate block">
                         {activeTrack.title}
                       </span>
                     </div>
-                    <span className="text-micro text-neutral-400 shrink-0">
+                    <span className="text-micro text-[#8A8A8A] shrink-0">
                       {formatTime(currentTime)} / {formatTime(duration || 0)}
                     </span>
                   </div>
@@ -673,16 +673,16 @@ export default function ShareManagePage() {
           {/* Right column: settings / preview toggle */}
           <div className="space-y-8">
             {/* Panel toggle */}
-            <div className="flex items-center gap-0 border border-neutral-200 rounded-sm overflow-hidden">
+            <div className="flex items-center gap-0 border border-[#E8E8E8] rounded-md overflow-hidden">
               <button
                 onClick={() => setRightPanel('settings')}
-                className={`flex-1 py-2 text-micro font-bold uppercase tracking-widest transition-colors duration-fast ${rightPanel === 'settings' ? 'bg-black text-white' : 'text-neutral-400 hover:text-black'}`}
+                className={`flex-1 py-2 text-micro font-semibold uppercase tracking-wide transition-colors duration-150 ${rightPanel === 'settings' ? 'bg-black text-white' : 'text-[#8A8A8A] hover:text-black'}`}
               >
                 Settings
               </button>
               <button
                 onClick={() => setRightPanel('preview')}
-                className={`flex-1 py-2 text-micro font-bold uppercase tracking-widest transition-colors duration-fast ${rightPanel === 'preview' ? 'bg-black text-white' : 'text-neutral-400 hover:text-black'}`}
+                className={`flex-1 py-2 text-micro font-semibold uppercase tracking-wide transition-colors duration-150 ${rightPanel === 'preview' ? 'bg-black text-white' : 'text-[#8A8A8A] hover:text-black'}`}
               >
                 Preview
               </button>
@@ -707,26 +707,26 @@ export default function ShareManagePage() {
             <>
             {/* Artwork */}
             <div>
-              <span className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-3 block">
+              <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
                 Artwork
               </span>
               <div
                 onClick={() => artworkInputRef.current?.click()}
-                className="aspect-square rounded-sm overflow-hidden border border-neutral-200 cursor-pointer hover:border-neutral-400 transition-colors duration-fast relative group"
+                className="aspect-square rounded-md overflow-hidden border border-[#E8E8E8] cursor-pointer hover:border-neutral-400 transition-colors duration-150 relative group"
               >
                 {share.artwork_url ? (
                   <>
                     <img src={resolveArtworkUrl(share.artwork_url) || ''} alt="Artwork" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-fast flex items-center justify-center">
-                      <span className="text-white text-micro font-bold uppercase tracking-widest">
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center">
+                      <span className="text-white text-micro font-semibold uppercase tracking-wide">
                         {uploadingArtwork ? 'Uploading...' : 'Replace'}
                       </span>
                     </div>
                   </>
                 ) : (
                   <div className="w-full h-full bg-neutral-50 flex flex-col items-center justify-center">
-                    <span className="text-neutral-400 text-display mb-2">♫</span>
-                    <span className="text-micro text-neutral-400 uppercase tracking-widest">
+                    <span className="text-[#8A8A8A] text-display mb-2">♫</span>
+                    <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">
                       {uploadingArtwork ? 'Uploading...' : 'Add artwork'}
                     </span>
                   </div>
@@ -743,7 +743,7 @@ export default function ShareManagePage() {
 
             {/* Share Link */}
             <div>
-              <span className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-3 block">
+              <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
                 Share Link
               </span>
               <div className="flex items-center gap-2">
@@ -751,20 +751,20 @@ export default function ShareManagePage() {
                   type="text"
                   value={shareUrl}
                   readOnly
-                  className="flex-1 text-small text-neutral-600 bg-neutral-50 border border-neutral-200 rounded-sm px-3 py-2 truncate"
+                  className="flex-1 text-small text-neutral-600 bg-neutral-50 border border-[#E8E8E8] rounded-md px-3 py-2 truncate"
                 />
-                <Button onClick={handleCopyLink} variant="secondary" size="sm" className="shrink-0">
+                <ButtonV2 onClick={handleCopyLink} variant="secondary" size="sm" className="shrink-0">
                   {copied ? 'Copied!' : 'Copy'}
-                </Button>
+                </ButtonV2>
               </div>
-              <Button onClick={handleRegenerateLink} disabled={saving} variant="ghost" size="sm" className="mt-2">
+              <ButtonV2 onClick={handleRegenerateLink} disabled={saving} variant="ghost" size="sm" className="mt-2">
                 Regenerate link
-              </Button>
+              </ButtonV2>
             </div>
 
             {/* Settings */}
             <div>
-              <span className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-3 block">
+              <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
                 Settings
               </span>
               <div className="space-y-3">
@@ -772,10 +772,10 @@ export default function ShareManagePage() {
                 <button
                   onClick={handleTogglePublic}
                   disabled={saving}
-                  className="w-full flex items-center justify-between px-4 py-3 border border-neutral-200 rounded-sm hover:border-neutral-300 transition-colors duration-fast"
+                  className="w-full flex items-center justify-between px-4 py-3 border border-[#E8E8E8] rounded-md hover:border-neutral-300 transition-colors duration-150"
                 >
                   <span className="text-small text-black">Public</span>
-                  <span className={`text-micro font-bold uppercase tracking-widest ${share.is_public ? 'text-green-600' : 'text-neutral-400'}`}>
+                  <span className={`text-micro font-semibold uppercase tracking-wide ${share.is_public ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
                     {share.is_public ? 'On' : 'Off'}
                   </span>
                 </button>
@@ -784,16 +784,16 @@ export default function ShareManagePage() {
                 <button
                   onClick={handleToggleDownloads}
                   disabled={saving}
-                  className="w-full flex items-center justify-between px-4 py-3 border border-neutral-200 rounded-sm hover:border-neutral-300 transition-colors duration-fast"
+                  className="w-full flex items-center justify-between px-4 py-3 border border-[#E8E8E8] rounded-md hover:border-neutral-300 transition-colors duration-150"
                 >
                   <span className="text-small text-black">Allow Downloads</span>
-                  <span className={`text-micro font-bold uppercase tracking-widest ${share.downloads_enabled ? 'text-green-600' : 'text-neutral-400'}`}>
+                  <span className={`text-micro font-semibold uppercase tracking-wide ${share.downloads_enabled ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
                     {share.downloads_enabled ? 'On' : 'Off'}
                   </span>
                 </button>
 
                 {/* Password */}
-                <div className="border border-neutral-200 rounded-sm">
+                <div className="border border-[#E8E8E8] rounded-md">
                   <button
                     onClick={() => {
                       if (share.password_hash) {
@@ -802,27 +802,27 @@ export default function ShareManagePage() {
                         setShowPasswordInput(!showPasswordInput);
                       }
                     }}
-                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-neutral-50 transition-colors duration-fast"
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-[#F7F7F5] transition-colors duration-150"
                   >
                     <span className="text-small text-black">Password Protection</span>
-                    <span className={`text-micro font-bold uppercase tracking-widest ${share.password_hash ? 'text-green-600' : 'text-neutral-400'}`}>
+                    <span className={`text-micro font-semibold uppercase tracking-wide ${share.password_hash ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
                       {share.password_hash ? 'On' : 'Off'}
                     </span>
                   </button>
                   {showPasswordInput && (
-                    <div className="px-4 py-3 border-t border-neutral-200">
+                    <div className="px-4 py-3 border-t border-[#E8E8E8]">
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
                           value={passwordValue}
                           onChange={(e) => setPasswordValue(e.target.value)}
                           placeholder="Enter password"
-                          className="flex-1 text-small bg-neutral-50 border border-neutral-200 rounded-sm px-3 py-1.5 outline-none focus:border-neutral-400"
+                          className="flex-1 text-small bg-neutral-50 border border-[#E8E8E8] rounded-md px-3 py-1.5 outline-none focus:border-neutral-400"
                           onKeyDown={(e) => { if (e.key === 'Enter') handleSetPassword(); }}
                         />
-                        <Button onClick={handleSetPassword} disabled={!passwordValue.trim() || saving} size="sm">
+                        <ButtonV2 onClick={handleSetPassword} disabled={!passwordValue.trim() || saving} size="sm">
                           Set
-                        </Button>
+                        </ButtonV2>
                       </div>
                     </div>
                   )}
@@ -832,17 +832,17 @@ export default function ShareManagePage() {
 
             {/* Analytics */}
             <div>
-              <span className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-3 block">
+              <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
                 Analytics
               </span>
               <div className="grid grid-cols-2 gap-3">
-                <div className="border border-neutral-200 rounded-sm p-4">
-                  <span className="text-display font-bold text-black block">{share.total_plays}</span>
-                  <span className="text-micro text-neutral-400 uppercase tracking-widest">Total Plays</span>
+                <div className="border border-[#E8E8E8] rounded-md p-4">
+                  <span className="text-display font-medium text-black block">{share.total_plays}</span>
+                  <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">Total Plays</span>
                 </div>
-                <div className="border border-neutral-200 rounded-sm p-4">
-                  <span className="text-display font-bold text-black block">{share.download_count}</span>
-                  <span className="text-micro text-neutral-400 uppercase tracking-widest">Downloads</span>
+                <div className="border border-[#E8E8E8] rounded-md p-4">
+                  <span className="text-display font-medium text-black block">{share.download_count}</span>
+                  <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">Downloads</span>
                 </div>
               </div>
             </div>
@@ -850,21 +850,21 @@ export default function ShareManagePage() {
             {/* Danger zone */}
             <div>
               {showDeleteConfirm ? (
-                <div className="border border-red-200 rounded-sm p-4">
+                <div className="border border-red-200 rounded-md p-4">
                   <p className="text-small text-red-600 mb-3">Delete this share link and all its tracks? This can&apos;t be undone.</p>
                   <div className="flex items-center gap-2">
-                    <Button onClick={handleDeleteProject} loading={deleting} variant="danger" size="sm">
+                    <ButtonV2 onClick={handleDeleteProject} loading={deleting} variant="danger" size="sm">
                       Confirm Delete
-                    </Button>
-                    <Button onClick={() => setShowDeleteConfirm(false)} variant="ghost" size="sm">
+                    </ButtonV2>
+                    <ButtonV2 onClick={() => setShowDeleteConfirm(false)} variant="ghost" size="sm">
                       Cancel
-                    </Button>
+                    </ButtonV2>
                   </div>
                 </div>
               ) : (
-                <Button onClick={() => setShowDeleteConfirm(true)} variant="danger-ghost" size="sm">
+                <ButtonV2 onClick={() => setShowDeleteConfirm(true)} variant="danger-ghost" size="sm">
                   Delete share link
-                </Button>
+                </ButtonV2>
               )}
             </div>
             </>

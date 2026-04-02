@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { api, type ChecklistItem, type ChecklistCategory, type ChecklistSummary } from '../lib/api';
-import { Button } from './ui';
+import { ButtonV2 } from './ui';
 
 /* ———————— Category metadata ———————— */
 
@@ -48,11 +48,11 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="border-b border-neutral-200 px-8 py-10">
-        <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+      <div className="border-b border-[#E8E8E8] px-8 py-10">
+        <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
           Instrument 00
         </p>
-        <h2 className="text-[64px] leading-[0.9] font-bold tracking-tight text-black">
+        <h2 className="text-[64px] leading-[0.9] font-medium tracking-tight text-black">
           Launch Checklist
         </h2>
         <p className="text-body-lg text-neutral-500 mt-4 max-w-md">
@@ -61,9 +61,9 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
       </div>
 
       {/* Global progress bar */}
-      <div className="border-b border-neutral-200 px-8 py-4">
+      <div className="border-b border-[#E8E8E8] px-8 py-4">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-caption text-neutral-400 uppercase tracking-widest font-bold">
+          <p className="text-caption text-[#8A8A8A] uppercase tracking-wide font-semibold">
             Overall Progress
           </p>
           <p className="text-caption font-bold text-black font-mono">
@@ -80,7 +80,7 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
 
       {/* Completion celebration */}
       {percent >= 100 && (
-        <div className="border-b border-neutral-200 px-8 py-8 bg-neutral-50">
+        <div className="border-b border-[#E8E8E8] px-8 py-8 bg-neutral-50">
           <p className="text-heading font-bold text-black">Launch-ready</p>
           <p className="text-body text-neutral-500 mt-1">
             Every item is checked. You&apos;re ready to release.
@@ -168,17 +168,17 @@ function CategorySection({
   };
 
   return (
-    <div className="border-b border-neutral-200">
+    <div className="border-b border-[#E8E8E8]">
       {/* Category header — clickable to collapse */}
       <button
         onClick={onToggleCollapse}
-        className="w-full px-8 py-6 flex items-center justify-between hover:bg-neutral-50 transition-colors"
+        className="w-full px-8 py-6 flex items-center justify-between hover:bg-[#F7F7F5] transition-colors"
       >
         <div className="flex items-center gap-4">
           <span className="text-heading font-bold font-mono text-neutral-200">
             {category.number}
           </span>
-          <h3 className="text-heading font-bold text-black">{category.label}</h3>
+          <h3 className="text-heading font-semibold text-black">{category.label}</h3>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-body-sm font-mono text-neutral-400">
@@ -238,14 +238,14 @@ function CategorySection({
                   placeholder="What needs to happen?"
                   className="flex-1 text-body text-black bg-transparent border-b border-neutral-300 pb-1 outline-none focus:border-black transition-colors placeholder:text-neutral-300"
                 />
-                <Button onClick={handleAddItem} variant="ghost" size="sm">
+                <ButtonV2 onClick={handleAddItem} variant="ghost" size="sm">
                   Add
-                </Button>
+                </ButtonV2>
               </div>
             ) : (
-              <Button onClick={() => setAddingItem(true)} variant="ghost" size="sm">
+              <ButtonV2 onClick={() => setAddingItem(true)} variant="ghost" size="sm">
                 + Add item
-              </Button>
+              </ButtonV2>
             )}
           </div>
         </div>
@@ -322,13 +322,13 @@ function ChecklistItemRow({
   const hasGuide = item.guide && item.guide.length > 0;
 
   return (
-    <div className="group border-b border-neutral-100 last:border-b-0">
+    <div className="group border-b border-[#E8E8E8] last:border-b-0">
       {/* Main row */}
       <div className="flex items-start gap-4 py-3">
         {/* Checkbox */}
         <button
           onClick={handleToggle}
-          className={`mt-0.5 w-5 h-5 rounded-sm border flex-shrink-0 flex items-center justify-center transition-all ${
+          className={`mt-0.5 w-5 h-5 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${
             item.is_checked
               ? 'bg-black border-black'
               : 'border-neutral-300 hover:border-black'
@@ -384,14 +384,14 @@ function ChecklistItemRow({
           {/* Notes toggle + delete for custom items */}
           <div className="flex items-center gap-4 mt-1">
             {!showNotes && (
-              <Button onClick={() => setShowNotes(true)} variant="ghost" size="sm">
+              <ButtonV2 onClick={() => setShowNotes(true)} variant="ghost" size="sm">
                 {item.notes ? 'Edit note' : 'Add note'}
-              </Button>
+              </ButtonV2>
             )}
             {!item.is_default && (
-              <Button onClick={handleDelete} variant="danger-ghost" size="sm" className="opacity-0 group-hover:opacity-100">
+              <ButtonV2 onClick={handleDelete} variant="danger-ghost" size="sm" className="opacity-0 group-hover:opacity-100">
                 Remove
-              </Button>
+              </ButtonV2>
             )}
           </div>
         </div>
@@ -411,7 +411,7 @@ function ChecklistItemRow({
             onBlur={handleNotesBlur}
             placeholder="Add a note..."
             rows={2}
-            className="w-full text-body-sm text-neutral-600 bg-neutral-50 border border-neutral-200 rounded-sm px-3 py-2 outline-none focus:border-neutral-400 transition-colors resize-none placeholder:text-neutral-300"
+            className="w-full text-body-sm text-neutral-600 bg-neutral-50 border border-[#E8E8E8] rounded-md px-3 py-2 outline-none focus:border-neutral-400 transition-colors resize-none placeholder:text-neutral-300"
           />
         </div>
       )}

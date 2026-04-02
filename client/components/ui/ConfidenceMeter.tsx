@@ -48,7 +48,7 @@ export default function ConfidenceMeter({
       )}
       <div className={`w-full ${height} bg-neutral-100 rounded-full overflow-hidden`}>
         <div
-          className={`${height} ${getColor(clampedValue)} rounded-full transition-all duration-slow`}
+          className={`${height} ${getColor(clampedValue)} rounded-full transition-all duration-150`}
           style={{ width: `${clampedValue}%` }}
         />
       </div>

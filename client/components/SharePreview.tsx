@@ -42,7 +42,7 @@ export default function SharePreview({
   const textPrimary = isDark ? 'text-white' : 'text-black';
   const textSecondary = isDark ? 'text-neutral-400' : 'text-neutral-500';
   const textMuted = isDark ? 'text-neutral-600' : 'text-neutral-300';
-  const border = isDark ? 'border-neutral-800' : 'border-neutral-200';
+  const border = isDark ? 'border-neutral-800' : 'border-[#E8E8E8]';
 
   return (
     <div className="relative">
@@ -63,7 +63,7 @@ export default function SharePreview({
           {/* Password gate preview */}
           {passwordProtected && (
             <div className="absolute top-12 right-3">
-              <span className={`text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${isDark ? 'bg-neutral-800 text-neutral-400' : 'bg-neutral-100 text-neutral-500'}`}>
+              <span className={`text-[8px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-md ${isDark ? 'bg-neutral-800 text-[#8A8A8A]' : 'bg-neutral-100 text-neutral-500'}`}>
                 Password
               </span>
             </div>
@@ -72,7 +72,7 @@ export default function SharePreview({
           {/* Artwork */}
           <div className="text-center mb-5">
             {artworkUrl ? (
-              <div className={`w-28 h-28 mx-auto mb-4 rounded-sm overflow-hidden border ${border}`}>
+              <div className={`w-28 h-28 mx-auto mb-4 rounded-md overflow-hidden border ${border}`}>
                 <img
                   src={resolveArtworkUrl(artworkUrl) || ''}
                   alt={title}
@@ -80,7 +80,7 @@ export default function SharePreview({
                 />
               </div>
             ) : (
-              <div className={`w-28 h-28 mx-auto mb-4 rounded-sm border ${border} flex items-center justify-center`}>
+              <div className={`w-28 h-28 mx-auto mb-4 rounded-md border ${border} flex items-center justify-center`}>
                 <span className={`text-[32px] ${textMuted}`}>♫</span>
               </div>
             )}
@@ -95,7 +95,7 @@ export default function SharePreview({
               {tracks.map((track, idx) => (
                 <div
                   key={track.id}
-                  className={`flex items-center gap-2 px-2.5 py-2 rounded-sm border ${border}`}
+                  className={`flex items-center gap-2 px-2.5 py-2 rounded-md border ${border}`}
                 >
                   <span className={`text-[9px] w-3 text-center shrink-0 ${textSecondary}`}>
                     {idx + 1}
@@ -110,14 +110,14 @@ export default function SharePreview({
               ))}
             </div>
           ) : (
-            <div className={`text-center py-6 border ${border} rounded-sm border-dashed`}>
+            <div className={`text-center py-6 border ${border} rounded-md border-dashed`}>
               <span className={`text-[10px] ${textMuted}`}>No tracks yet</span>
             </div>
           )}
 
           {/* Footer */}
           <div className={`text-center mt-6 pt-4 border-t ${border}`}>
-            <span className={`text-[8px] ${textMuted} uppercase tracking-widest`}>
+            <span className={`text-[8px] ${textMuted} uppercase tracking-wide`}>
               Shared via IMC
             </span>
           </div>
@@ -127,7 +127,7 @@ export default function SharePreview({
       {/* Visibility badge */}
       <div className="mt-3 flex items-center justify-center gap-2">
         <div className={`w-1.5 h-1.5 rounded-full ${isPublic ? 'bg-green-500' : 'bg-neutral-400'}`} />
-        <span className="text-micro text-neutral-400 uppercase tracking-widest">
+        <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">
           {isPublic ? 'Public' : 'Private'}
           {passwordProtected ? ' · Password Protected' : ''}
         </span>

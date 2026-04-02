@@ -34,11 +34,11 @@ export default function VocalistPersona({ vocalistPersona }: VocalistPersonaProp
   return (
     <div className="animate-fade-in">
       {/* Character + Delivery hero */}
-      <div className="border-b border-neutral-200">
+      <div className="border-b border-[#E8E8E8]">
         <div className="grid grid-cols-12 gap-x-6">
-          <div className="col-span-7 px-8 py-10 border-r border-neutral-200">
+          <div className="col-span-7 px-8 py-10 border-r border-[#E8E8E8]">
             <SectionLabel>Vocal Character</SectionLabel>
-            <p className="text-[24px] leading-[1.4] font-bold text-black mt-4 tracking-tight">
+            <p className="text-[24px] leading-[1.4] font-medium text-black mt-4 tracking-tight">
               &ldquo;{vocalistPersona.vocal_character}&rdquo;
             </p>
 
@@ -53,14 +53,14 @@ export default function VocalistPersona({ vocalistPersona }: VocalistPersonaProp
           <div className="col-span-5 px-8 py-10">
             <div>
               <SectionLabel>Reference Vocalists</SectionLabel>
-              <p className="text-caption text-neutral-300 mt-1">For creative context only — not included in prompts</p>
+              <p className="text-caption text-[#8A8A8A] mt-1">For creative context only — not included in prompts</p>
               <div className="mt-5 space-y-3">
                 {vocalistPersona.reference_vocalists.map((v, i) => (
                   <div key={i} className="flex items-center gap-4">
-                    <span className="text-[28px] leading-none font-bold font-mono text-neutral-200 w-8 text-right shrink-0">
+                    <span className="text-[28px] leading-none font-medium font-mono text-neutral-200 w-8 text-right shrink-0">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <span className="text-body font-bold text-black">{v}</span>
+                    <span className="text-body font-semibold text-black">{v}</span>
                   </div>
                 ))}
               </div>
@@ -113,15 +113,15 @@ function VocalPromptBlock({ vocalistPersona }: { vocalistPersona: I2VocalistPers
         <SectionLabel>Suno Vocal Prompt</SectionLabel>
         <button
           onClick={handleCopy}
-          className="text-caption font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm border border-neutral-200 hover:border-neutral-400 transition-colors"
+          className="text-caption font-semibold uppercase tracking-wide px-3 py-1.5 rounded-md border border-[#E8E8E8] hover:bg-[#F7F7F5] transition-colors"
         >
           {copied ? 'Copied' : 'Copy'}
         </button>
       </div>
-      <pre className="bg-neutral-50 border border-neutral-200 rounded-sm p-6 text-body font-mono text-black whitespace-pre-wrap leading-relaxed">
+      <pre className="bg-[#F7F7F5] border border-[#E8E8E8] rounded-md p-6 text-body font-mono text-black whitespace-pre-wrap leading-relaxed">
         {prompt}
       </pre>
-      <p className="text-caption text-neutral-400 mt-3">
+      <p className="text-caption text-[#8A8A8A] mt-3">
         Paste directly into Suno&apos;s vocal style field. Person and band names are excluded for compatibility.
       </p>
     </div>
@@ -130,7 +130,7 @@ function VocalPromptBlock({ vocalistPersona }: { vocalistPersona: I2VocalistPers
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-caption text-neutral-400 uppercase tracking-widest font-bold">
+    <p className="text-caption text-[#8A8A8A] uppercase tracking-wide font-semibold">
       {children}
     </p>
   );

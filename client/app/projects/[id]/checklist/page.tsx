@@ -40,15 +40,15 @@ export default function ChecklistPage() {
   if (loading || !summary) {
     return (
       <div className="animate-fade-in">
-        <div className="border-b border-neutral-200 px-8 py-10">
-          <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+        <div className="border-b border-[#E8E8E8] px-8 py-10">
+          <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
             Instrument 00
           </p>
-          <div className="h-16 w-96 bg-neutral-100 rounded-sm animate-pulse" />
+          <div className="h-16 w-96 bg-neutral-100 rounded-md animate-pulse" />
         </div>
         <div className="px-8 py-8 space-y-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-8 bg-neutral-50 rounded-sm animate-pulse" />
+            <div key={i} className="h-8 bg-neutral-50 rounded-md animate-pulse" />
           ))}
         </div>
       </div>

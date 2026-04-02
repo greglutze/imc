@@ -9,7 +9,7 @@ import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
 import type { I2StyleProfile, I2VocalistPersona, I2Track, Project, I1Report } from '../../../../lib/api';
-import { Button } from '../../../../components/ui';
+import { ButtonV2 } from '../../../../components/ui';
 
 type I2View = 'style' | 'tracks' | 'vocalist';
 
@@ -130,7 +130,7 @@ export default function PromptsPage() {
   if (authLoading || pageLoading) {
     return (
       <div className="animate-fade-in h-full flex flex-col">
-        <div className="border-b border-neutral-200">
+        <div className="border-b border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="h-3 w-8 bg-neutral-100 rounded-sm animate-pulse" />
@@ -160,8 +160,8 @@ export default function PromptsPage() {
         <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
         <div className="max-w-[1400px] mx-auto px-10 py-16">
-          <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
-          <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+          <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">02</p>
+          <p className="text-[40px] leading-[1.1] font-semibold text-black mt-4 tracking-tight">
             Building Your Sound
           </p>
           <p className="text-body-lg text-black mt-5 max-w-sm">
@@ -184,8 +184,8 @@ export default function PromptsPage() {
         <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
         <div className="max-w-[1400px] px-10 py-16">
-          <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">02</p>
-          <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+          <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">02</p>
+          <p className="text-[40px] leading-[1.1] font-semibold text-black mt-4 tracking-tight">
             Start With Your Concept
           </p>
           <p className="text-body-lg text-black mt-5 max-w-md">
@@ -210,10 +210,10 @@ export default function PromptsPage() {
       <div className="max-w-[1400px] mx-auto w-full px-10">
         <div className="pt-10 pb-6 flex items-start justify-between">
           <div>
-            <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-2">
+            <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
               Production Intelligence
             </p>
-            <p className="text-[40px] leading-[1.1] font-bold text-black tracking-tight">
+            <p className="text-[40px] leading-[1.1] font-semibold text-black tracking-tight">
               Sonic Engine
             </p>
             <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
@@ -221,7 +221,7 @@ export default function PromptsPage() {
             </p>
           </div>
           {hasPrompts && (
-            <Button
+            <ButtonV2
               onClick={() => {
                 autoGenerateTriggered.current = false;
                 handleGenerate();
@@ -229,12 +229,12 @@ export default function PromptsPage() {
               className="shrink-0 mt-6"
             >
               Regenerate All
-            </Button>
+            </ButtonV2>
           )}
         </div>
 
         {/* Sub-navigation tabs */}
-        <div className="flex items-center gap-6 border-b border-neutral-200 pb-0">
+        <div className="flex items-center gap-6 border-b border-[#E8E8E8] pb-0">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -242,10 +242,10 @@ export default function PromptsPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as I2View)}
                 className={`
-                  text-label font-bold uppercase tracking-widest pb-3 transition-colors duration-fast
+                  text-[11px] font-semibold uppercase tracking-wide pb-3 transition-colors duration-150
                   ${isActive
                     ? 'text-black border-b-2 border-black -mb-px'
-                    : 'text-neutral-400 hover:text-black'
+                    : 'text-[#8A8A8A] hover:text-black'
                   }
                 `}
               >

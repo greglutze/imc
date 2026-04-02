@@ -9,7 +9,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { TrackAnnotation } from '../lib/api';
-import { Button } from './ui';
+import { ButtonV2 } from './ui';
 
 interface TrackAnnotationsProps {
   projectId: string;
@@ -106,11 +106,11 @@ export default function TrackAnnotations({
   const unresolvedCount = annotations.filter((a) => !a.resolved).length;
 
   return (
-    <div className="border border-neutral-200 rounded-sm mt-4">
+    <div className="border border-[#E8E8E8] rounded-md mt-4">
       {/* Header */}
       <div className="px-5 py-3 border-b border-neutral-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-label font-bold uppercase tracking-widest text-black">
+          <span className="text-label font-semibold uppercase tracking-wide text-black">
             Notes
           </span>
           <span className="text-micro text-neutral-400">
@@ -118,7 +118,7 @@ export default function TrackAnnotations({
           </span>
         </div>
         {unresolvedCount > 0 && (
-          <span className="text-micro font-bold uppercase tracking-widest text-yellow-600">
+          <span className="text-micro font-semibold uppercase tracking-wide text-yellow-600">
             {unresolvedCount} open
           </span>
         )}
@@ -137,15 +137,15 @@ export default function TrackAnnotations({
           placeholder="Add a note at this timestamp..."
           className="flex-1 text-small bg-transparent outline-none text-black placeholder:text-neutral-300"
         />
-        <Button onClick={handleAdd} disabled={adding || !newContent.trim()} variant="ghost" size="sm" className="shrink-0">
+        <ButtonV2 onClick={handleAdd} disabled={adding || !newContent.trim()} variant="ghost" size="sm" className="shrink-0">
           {adding ? '...' : 'Add'}
-        </Button>
+        </ButtonV2>
       </div>
 
       {/* Annotation list */}
       {loading ? (
         <div className="px-5 py-4">
-          <div className="h-3 w-48 bg-neutral-100 rounded-sm animate-pulse" />
+          <div className="h-3 w-48 bg-neutral-100 rounded-md animate-pulse" />
         </div>
       ) : annotations.length === 0 ? (
         <div className="px-5 py-6 text-center">
@@ -154,7 +154,7 @@ export default function TrackAnnotations({
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-neutral-100">
+        <div className="divide-y divide-[#E8E8E8]">
           {annotations.map((annotation) => (
             <div
               key={annotation.id}
@@ -163,7 +163,7 @@ export default function TrackAnnotations({
               {/* Resolved toggle */}
               <button
                 onClick={() => handleToggleResolved(annotation)}
-                className={`w-4 h-4 rounded-sm border shrink-0 mt-0.5 flex items-center justify-center transition-colors duration-fast ${
+                className={`w-4 h-4 rounded-md border shrink-0 mt-0.5 flex items-center justify-center transition-colors duration-150 ${
                   annotation.resolved
                     ? 'bg-green-500 border-green-500 text-white'
                     : 'border-neutral-300 hover:border-black'
@@ -177,7 +177,7 @@ export default function TrackAnnotations({
               {/* Timestamp — clickable to seek */}
               <button
                 onClick={() => onSeek?.(annotation.timestamp_ms)}
-                className="text-micro font-mono text-neutral-400 hover:text-black transition-colors duration-fast shrink-0 w-10 text-center mt-0.5"
+                className="text-micro font-mono text-neutral-400 hover:text-black transition-colors duration-150 shrink-0 w-10 text-center mt-0.5"
                 title="Jump to this timestamp"
               >
                 {formatTimestamp(annotation.timestamp_ms)}
@@ -213,7 +213,7 @@ export default function TrackAnnotations({
               {/* Delete */}
               <button
                 onClick={() => handleDelete(annotation.id)}
-                className="text-neutral-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-fast text-small shrink-0"
+                className="text-neutral-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-150 text-small shrink-0"
               >
                 ×
               </button>

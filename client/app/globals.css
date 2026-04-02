@@ -2,11 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Instrument Sans — clean, contemporary grotesque */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 /* JetBrains Mono for technical elements */
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 /* ————————————————————————————————————————
-   Base — Light mode
+   Base — Open design language
    ———————————————————————————————————————— */
 
 html, body {
@@ -16,10 +18,11 @@ html, body {
 
 body {
   background-color: #FFFFFF;
-  color: #171717;
-  font-family: 'Helvetica Neue', Helvetica, Arial, system-ui, -apple-system, sans-serif;
+  color: #1A1A1A;
+  font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 }
 
 /* ————————————————————————————————————————
@@ -33,28 +36,28 @@ body {
 
 .text-uppercase-label {
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 700;
-  font-size: 10px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  font-size: 11px;
   line-height: 14px;
 }
 
 /* ————————————————————————————————————————
-   Scrollbar — minimal, light
+   Scrollbar — thin, subtle
    ———————————————————————————————————————— */
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D4D4D4; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #A3A3A3; }
+::-webkit-scrollbar-thumb { background: #C4C4C4; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #8A8A8A; }
 
 /* ————————————————————————————————————————
-   Focus — black ring
+   Focus — softer ring
    ———————————————————————————————————————— */
 
 :focus-visible {
-  outline: 2px solid #000000;
-  outline-offset: 2px;
+  outline: 1.5px solid #1A1A1A;
+  outline-offset: 3px;
 }
 
 /* ————————————————————————————————————————
@@ -62,8 +65,8 @@ body {
    ———————————————————————————————————————— */
 
 ::selection {
-  background: rgba(0, 0, 0, 0.08);
-  color: #000000;
+  background: rgba(0, 0, 0, 0.06);
+  color: #1A1A1A;
 }
 
 /* ————————————————————————————————————————

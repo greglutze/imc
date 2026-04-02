@@ -206,7 +206,7 @@ export default function LyricSessionPage() {
     return (
       <div className="animate-fade-in px-8 py-16 max-w-2xl">
         <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">LA</p>
-        <p className="text-[40px] leading-[1.1] font-bold text-black mt-4 tracking-tight">
+        <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
           Loading...
         </p>
       </div>
@@ -218,11 +218,11 @@ export default function LyricSessionPage() {
       <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="lyrics" />
 
       {/* Session header */}
-      <div className="border-b border-neutral-200 px-10 py-3 flex items-center justify-between">
+      <div className="border-b border-[#E8E8E8] px-10 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <a
             href={`/projects/${id}/lyrics`}
-            className="text-caption text-neutral-400 hover:text-black transition-colors duration-fast"
+            className="text-caption text-neutral-400 hover:text-black transition-colors duration-150"
           >
             &#8592; Sessions
           </a>
@@ -235,12 +235,12 @@ export default function LyricSessionPage() {
               onBlur={handleTitleSubmit}
               onKeyDown={(e) => e.key === 'Enter' && handleTitleSubmit()}
               autoFocus
-              className="text-body font-bold text-black bg-transparent border-b border-black outline-none px-0 py-0"
+              className="text-body font-semibold text-black bg-transparent border-b border-black outline-none px-0 py-0"
             />
           ) : (
             <button
               onClick={() => { setTitleInput(sessionTitle); setEditingTitle(true); }}
-              className="text-body font-bold text-black hover:text-neutral-600 transition-colors duration-fast"
+              className="text-body font-semibold text-black hover:text-neutral-600 transition-colors duration-150"
             >
               {sessionTitle}
             </button>
@@ -259,9 +259,9 @@ export default function LyricSessionPage() {
       {/* Split pane workspace */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left: Lyrics editor */}
-        <div className="w-1/2 flex flex-col border-r border-neutral-200">
+        <div className="w-1/2 flex flex-col border-r border-[#E8E8E8]">
           <div className="px-6 py-3 border-b border-neutral-100 flex items-center justify-between">
-            <p className="text-label font-bold uppercase tracking-widest text-neutral-400">Lyrics</p>
+            <p className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A]">Lyrics</p>
             <LyricsStats lyrics={lyrics} />
           </div>
           <textarea
@@ -282,7 +282,7 @@ export default function LyricSessionPage() {
         <div className="w-1/2 flex flex-col bg-neutral-50">
           <div className="px-6 py-3 border-b border-neutral-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <p className="text-label font-bold uppercase tracking-widest text-neutral-400">Advisor</p>
+              <p className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A]">Advisor</p>
               {sending && <Signal color="violet" label="" pulse />}
             </div>
           </div>
@@ -311,7 +311,7 @@ export default function LyricSessionPage() {
                     <div className="flex items-start gap-3">
                       <div className={`w-1 min-h-[20px] rounded-full shrink-0 mt-1 ${isUser ? 'bg-black' : 'bg-signal-violet'}`} />
                       <div className="flex-1 min-w-0">
-                        <p className={`text-caption font-bold uppercase tracking-widest mb-1 ${isUser ? 'text-neutral-400' : 'text-signal-violet'}`}>
+                        <p className={`text-caption font-semibold uppercase tracking-wide mb-1 ${isUser ? 'text-[#8A8A8A]' : 'text-signal-violet'}`}>
                           {isUser ? 'You' : 'Advisor'}
                         </p>
                         <div className="text-body-sm text-neutral-700 leading-relaxed whitespace-pre-wrap">
@@ -321,7 +321,7 @@ export default function LyricSessionPage() {
                       {!isUser && (
                         <button
                           onClick={() => handleDismiss(i)}
-                          className="opacity-0 group-hover:opacity-100 text-caption text-neutral-300 hover:text-neutral-500 transition-all duration-fast shrink-0 mt-1"
+                          className="opacity-0 group-hover:opacity-100 text-caption text-neutral-300 hover:text-neutral-500 transition-all duration-150 shrink-0 mt-1"
                           title="Dismiss"
                         >
                           &#x2715;
@@ -336,7 +336,7 @@ export default function LyricSessionPage() {
                 <div className="flex items-start gap-3">
                   <div className="w-1 min-h-[20px] rounded-full shrink-0 mt-1 bg-signal-violet animate-pulse" />
                   <div className="flex-1">
-                    <p className="text-caption font-bold uppercase tracking-widest text-signal-violet mb-1">
+                    <p className="text-caption font-semibold uppercase tracking-wide text-signal-violet mb-1">
                       Advisor
                     </p>
                     <div className="flex items-center gap-1">
@@ -353,13 +353,13 @@ export default function LyricSessionPage() {
           </div>
 
           {/* Quick actions */}
-          <div className="px-6 py-2 border-t border-neutral-100 flex items-center gap-2">
+          <div className="px-6 py-2 border-t border-[#E8E8E8] flex items-center gap-2">
             {['Rhyme', 'Synonym', 'Structure', 'Coherence'].map((action) => (
               <button
                 key={action}
                 onClick={() => handleQuickAction(action.toLowerCase())}
                 disabled={sending}
-                className="text-caption font-bold uppercase tracking-widest text-neutral-400 hover:text-black bg-white border border-neutral-200 px-3 py-1.5 rounded-sm transition-colors duration-fast disabled:opacity-50"
+                className="text-caption font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black bg-white border border-[#E8E8E8] px-3 py-1.5 rounded-md transition-colors duration-150 disabled:opacity-50"
               >
                 {action}
               </button>
@@ -367,8 +367,8 @@ export default function LyricSessionPage() {
           </div>
 
           {/* Chat input */}
-          <form onSubmit={handleSubmit} className="px-6 py-4 border-t border-neutral-200">
-            <div className="bg-white rounded-sm px-4 py-3 flex items-end gap-3 border border-neutral-200">
+          <form onSubmit={handleSubmit} className="px-6 py-4 border-t border-[#E8E8E8]">
+            <div className="bg-white rounded-md px-4 py-3 flex items-end gap-3 border border-[#E8E8E8]">
               <textarea
                 ref={inputRef}
                 value={input}
@@ -384,8 +384,8 @@ export default function LyricSessionPage() {
                 type="submit"
                 disabled={!input.trim() || sending}
                 className={`
-                  text-label font-bold uppercase tracking-widest px-4 h-8 rounded-sm
-                  transition-colors duration-fast shrink-0 text-caption
+                  text-label font-semibold uppercase tracking-wide px-4 h-8 rounded-md
+                  transition-colors duration-150 shrink-0 text-caption
                   ${input.trim() && !sending
                     ? 'bg-black text-white hover:bg-neutral-800'
                     : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
