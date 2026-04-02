@@ -159,60 +159,65 @@ export default function Home() {
                     <a
                       key={project.id}
                       href={`/projects/${project.id}`}
-                      className="group bg-[#F7F7F5] rounded-lg p-7 pb-6 hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col justify-between min-h-[260px]"
+                      className="group bg-[#F7F7F5] rounded-lg overflow-hidden hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col"
                     >
-                      <div>
-                        {/* Code + status row */}
-                        <div className="flex items-center justify-between mb-5">
-                          <span className="text-[11px] font-medium tracking-wide text-[#C4C4C4]">
-                            {projectCode}
-                          </span>
-                          <div className="flex items-center gap-1.5">
-                            <div className={`w-1.5 h-1.5 rounded-full ${
-                              statusColor === 'green' ? 'bg-green-500' :
-                              statusColor === 'yellow' ? 'bg-yellow-500' :
-                              'bg-neutral-300'
-                            }`} />
-                            <span className="text-[11px] font-medium text-[#8A8A8A]">
-                              {statusLabel}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Artist image */}
-                        <div className="w-14 h-14 rounded-md overflow-hidden bg-white/60 shrink-0 flex items-center justify-center mb-5">
-                          {project.image_url ? (
-                            <img
-                              src={resolveArtworkUrl(project.image_url) || ''}
-                              alt={project.artist_name || 'Artist'}
-                              className="w-full h-full object-cover object-top"
-                            />
-                          ) : (
-                            <span className="text-[24px] font-medium text-[#C4C4C4]">
+                      {/* Artwork — top 60% */}
+                      <div className="aspect-[4/3] w-full overflow-hidden bg-[#EEEDEB] relative">
+                        {project.image_url ? (
+                          <img
+                            src={resolveArtworkUrl(project.image_url) || ''}
+                            alt={project.artist_name || 'Artist'}
+                            className="w-full h-full object-cover object-top group-hover:scale-[1.03] transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-[72px] font-medium text-[#D4D4D0]">
                               {(project.artist_name || 'U').charAt(0).toUpperCase()}
                             </span>
-                          )}
-                        </div>
-
-                        {/* Name */}
-                        <h2 className="text-[22px] leading-tight font-medium text-[#1A1A1A] truncate">
-                          {project.artist_name || 'Untitled'}
-                        </h2>
-
-                        {/* Genre */}
-                        {project.concept?.genre_primary && (
-                          <p className="text-[13px] text-[#8A8A8A] mt-1.5">
-                            {toTitleCase(project.concept.genre_primary)}
-                          </p>
+                          </div>
                         )}
                       </div>
 
-                      {/* CTA */}
-                      <div className="mt-5">
-                        <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
-                          Open Project
-                          <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
-                        </span>
+                      {/* Details — bottom */}
+                      <div className="p-6 pb-5 flex flex-col flex-1 justify-between">
+                        <div>
+                          {/* Code + status row */}
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-[11px] font-medium tracking-wide text-[#C4C4C4]">
+                              {projectCode}
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <div className={`w-1.5 h-1.5 rounded-full ${
+                                statusColor === 'green' ? 'bg-green-500' :
+                                statusColor === 'yellow' ? 'bg-yellow-500' :
+                                'bg-neutral-300'
+                              }`} />
+                              <span className="text-[11px] font-medium text-[#8A8A8A]">
+                                {statusLabel}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Name */}
+                          <h2 className="text-[22px] leading-tight font-medium text-[#1A1A1A] truncate">
+                            {project.artist_name || 'Untitled'}
+                          </h2>
+
+                          {/* Genre */}
+                          {project.concept?.genre_primary && (
+                            <p className="text-[13px] text-[#8A8A8A] mt-1">
+                              {toTitleCase(project.concept.genre_primary)}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* CTA */}
+                        <div className="mt-4">
+                          <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
+                            Open Project
+                            <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                          </span>
+                        </div>
                       </div>
                     </a>
                   );
