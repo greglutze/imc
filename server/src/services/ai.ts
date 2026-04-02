@@ -19,7 +19,7 @@ export async function chat(
   messages: ChatMessage[]
 ): Promise<string> {
   const response = await getClient().messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: 4096,
     system: systemPrompt,
     messages,
@@ -38,7 +38,7 @@ export async function analyze(
   userPrompt: string
 ): Promise<string> {
   const response = await getClient().messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: 8192,
     system: systemPrompt,
     messages: [
@@ -98,7 +98,7 @@ export async function analyzeImages(
   }
 
   const response = await getClient().messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: 4096,
     system: systemPrompt,
     messages: [
