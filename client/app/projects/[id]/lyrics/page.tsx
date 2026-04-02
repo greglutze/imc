@@ -119,8 +119,8 @@ export default function LyricAdvisorPage() {
   if (authLoading || pageLoading) {
     return (
       <div className="animate-fade-in px-8 py-16 max-w-2xl">
-        <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">LA</p>
-        <p className="text-[40px] leading-[1.1] font-semibold text-black mt-4 tracking-tight">
+        <p className="text-[13px] font-medium text-[#C4C4C4] mb-3">05</p>
+        <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] mt-4 tracking-tight">
           Loading...
         </p>
       </div>
@@ -137,39 +137,18 @@ export default function LyricAdvisorPage() {
         <div className="max-w-[1400px] mx-auto px-10 py-10">
           {/* Header */}
           <div className="mb-10">
-            <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
+            <p className="text-[13px] font-medium text-[#C4C4C4] mb-2">
               Lyric Collaborator
             </p>
-            <p className="text-[40px] leading-[1.1] font-semibold text-black tracking-tight">
+            <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
               LyriCol
             </p>
             {moodboard?.prose ? (
-              <div className="mt-5 max-w-2xl">
-                <div className="flex flex-wrap gap-2">
-                  {(() => {
-                    const pills: { label: string; value: string }[] = [];
-                    if (moodboard.atmosphere) pills.push({ label: 'Atmosphere', value: moodboard.atmosphere });
-                    if (moodboard.texture) pills.push({ label: 'Texture', value: moodboard.texture });
-                    if (moodboard.emotional_register) pills.push({ label: 'Emotion', value: moodboard.emotional_register });
-                    return pills.map((item) => (
-                      <span key={item.label} className="inline-flex items-center gap-1.5 rounded-full border border-[#E8E8E8] bg-transparent text-neutral-600 text-[13px] px-3 py-1.5">
-                        <span className="font-semibold text-[#8A8A8A] uppercase tracking-wide text-[10px]">{item.label}</span>
-                        <span>{item.value}</span>
-                      </span>
-                    ));
-                  })()}
-                </div>
-                {moodboard.tempo_feel && (
-                  <div className="mt-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E8E8E8] bg-transparent text-neutral-600 text-[13px] px-3 py-1.5">
-                      <span className="font-semibold text-[#8A8A8A] uppercase tracking-wide text-[10px]">Tempo</span>
-                      <span>{moodboard.tempo_feel}</span>
-                    </span>
-                  </div>
-                )}
-              </div>
+              <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-xl leading-relaxed">
+                {moodboard.prose}
+              </p>
             ) : (
-              <p className="text-body-lg text-neutral-500 mt-3 max-w-md">
+              <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-md leading-relaxed">
                 A creative collaborator that helps you find the right words — without writing them for you.
               </p>
             )}
@@ -191,11 +170,11 @@ export default function LyricAdvisorPage() {
             </button>
           </div>
 
-          {/* Theme cards with moodboard images */}
+          {/* Starting Points — theme cards */}
           {hasConcept && (
             <div className="mb-12">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4]">
                   Starting Points
                 </p>
                 {themes.length > 0 && !themesLoading && (
@@ -206,13 +185,13 @@ export default function LyricAdvisorPage() {
               </div>
 
               {themesLoading ? (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="aspect-[4/3] bg-neutral-100 rounded-sm animate-pulse" />
+                    <div key={i} className="bg-[#F7F7F5] rounded-lg p-7 min-h-[200px] animate-pulse" />
                   ))}
                 </div>
               ) : themes.length > 0 ? (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   {themes.map((theme, index) => {
                     const imageUrl = getImageForTheme(index);
                     return (
@@ -220,40 +199,51 @@ export default function LyricAdvisorPage() {
                         key={theme.id}
                         onClick={() => handleThemeSelect(theme)}
                         disabled={creating !== null}
-                        className="text-left rounded-sm overflow-hidden group relative aspect-[4/3] cursor-pointer"
-                        style={{ minHeight: '200px' }}
+                        className="text-left bg-[#F7F7F5] rounded-lg overflow-hidden hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col group"
                       >
-                        {/* Background image or dark fallback */}
-                        {imageUrl ? (
-                          <img
-                            src={imageUrl}
-                            alt=""
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 bg-neutral-900" />
+                        {/* Image strip */}
+                        {imageUrl && (
+                          <div className="aspect-[3/1] w-full overflow-hidden bg-[#EEEDEB]">
+                            <img
+                              src={imageUrl}
+                              alt=""
+                              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                            />
+                          </div>
                         )}
 
-                        {/* Gradient overlay for text legibility */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 group-hover:from-black/90 group-hover:via-black/40 transition-all duration-300" />
-
                         {/* Content */}
-                        <div className="absolute inset-0 p-5 flex flex-col justify-end">
-                          <p className="text-[22px] leading-tight font-bold text-white drop-shadow-sm">
-                            {theme.title}
-                          </p>
-                          <p className="text-[13px] leading-snug text-white/70 mt-1.5">
-                            {theme.subtitle}
-                          </p>
-                        </div>
+                        <div className="p-6 pb-5 flex flex-col flex-1 justify-between">
+                          <div>
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-[11px] font-medium text-[#C4C4C4]">
+                                {String(index + 1).padStart(2, '0')}
+                              </span>
+                              {theme.mood && (
+                                <span className="text-[11px] font-medium text-[#8A8A8A]">
+                                  {theme.mood}
+                                </span>
+                              )}
+                            </div>
+                            <h3 className="text-[18px] leading-tight font-medium text-[#1A1A1A]">
+                              {theme.title}
+                            </h3>
+                            <p className="text-[13px] text-[#8A8A8A] mt-2 leading-relaxed">
+                              {theme.subtitle}
+                            </p>
+                          </div>
 
-                        {/* Hover border */}
-                        <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-sm transition-all duration-300" />
+                          <div className="mt-5">
+                            <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
+                              Start Writing <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                            </span>
+                          </div>
+                        </div>
 
                         {/* Loading state */}
                         {creating === theme.id && (
-                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <div className="absolute inset-0 bg-[#F7F7F5]/80 rounded-lg flex items-center justify-center">
+                            <div className="w-5 h-5 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin" />
                           </div>
                         )}
                       </button>
@@ -267,35 +257,34 @@ export default function LyricAdvisorPage() {
           {/* Previous sessions */}
           {sessions.length > 0 && (
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4] mb-4">
                 Sessions
               </p>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {sessions.map((session) => (
                   <a
                     key={session.id}
                     href={`/projects/${id}/lyrics/${session.id}`}
-                    className="block border border-[#E8E8E8] rounded-md p-5 hover:border-black transition-colors duration-150 group"
+                    className="group bg-[#F7F7F5] rounded-lg hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-5 block"
                   >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-body font-bold text-black group-hover:text-black">
-                          {session.title || 'Untitled Session'}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[16px] font-medium text-[#1A1A1A]">
+                        {session.title || 'Untitled Session'}
+                      </p>
+                      {session.lyrics_preview && (
+                        <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
+                          {session.lyrics_preview}
                         </p>
-                        {session.lyrics_preview && (
-                          <p className="text-body-sm text-neutral-400 mt-1 truncate max-w-lg">
-                            {session.lyrics_preview}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-4 shrink-0">
-                        <span className="text-caption text-neutral-300">
-                          {session.message_count} messages
-                        </span>
-                        <span className="text-caption text-neutral-300">
-                          {new Date(session.updated_at).toLocaleDateString()}
-                        </span>
-                      </div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4 shrink-0">
+                      <span className="text-[11px] font-medium text-[#C4C4C4]">
+                        {session.message_count} messages
+                      </span>
+                      <span className="text-[11px] font-medium text-[#C4C4C4]">
+                        {new Date(session.updated_at).toLocaleDateString()}
+                      </span>
+                      <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
                     </div>
                   </a>
                 ))}
@@ -305,14 +294,14 @@ export default function LyricAdvisorPage() {
 
           {/* Empty state */}
           {!hasConcept && (
-            <div className="border border-dashed border-neutral-300 rounded-md p-8 text-center mt-4">
-              <p className="text-body text-neutral-500">
+            <div className="bg-[#F7F7F5] rounded-lg p-8 text-center mt-4">
+              <p className="text-[14px] text-[#8A8A8A]">
                 Define your artist concept first to unlock AI-generated writing themes based on your sonic moodboard.
               </p>
             </div>
           )}
 
-          <p className="text-caption text-neutral-300 mt-10 italic">
+          <p className="text-[11px] text-[#C4C4C4] mt-10 italic">
             Everything you write is yours.
           </p>
         </div>
