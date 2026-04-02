@@ -62,21 +62,40 @@ export async function analyzeImages(
   imageDataUrls: string[],
   textPrompt: string
 ): Promise<string> {
-  const imageBlocks: Anthropic.Messages.ImageBlockParam[] = imageDataUrls.map((dataUrl) => {
+  // Supported media types for the Claude Vision API
+  const SUPPORTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
+
+  const imageBlocks: Anthropic.Messages.ImageBlockParam[] = [];
+  for (const dataUrl of imageDataUrls) {
     // Extract media type and base64 data from data URL
-    const match = dataUrl.match(/^data:(image\/(?:jpeg|png|gif|webp));base64,(.+)$/);
+    const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
     if (!match) {
-      throw new Error('Invalid image data URL format');
+      console.warn('Skipping image with invalid data URL format');
+      continue;
     }
-    return {
+
+    let mediaType = match[1];
+
+    // Map unsupported types to closest supported type
+    if (!SUPPORTED_TYPES.has(mediaType)) {
+      // HEIC, HEIF, BMP, TIFF etc. — treat as JPEG (most compatible)
+      console.warn(`Unsupported image type "${mediaType}", treating as image/jpeg`);
+      mediaType = 'image/jpeg';
+    }
+
+    imageBlocks.push({
       type: 'image' as const,
       source: {
         type: 'base64' as const,
-        media_type: match[1] as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+        media_type: mediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
         data: match[2],
       },
-    };
-  });
+    });
+  }
+
+  if (imageBlocks.length === 0) {
+    throw new Error('No valid images found for analysis');
+  }
 
   const response = await getClient().messages.create({
     model: 'claude-sonnet-4-20250514',

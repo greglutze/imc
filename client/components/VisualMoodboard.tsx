@@ -19,6 +19,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [showPreviousBrief, setShowPreviousBrief] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -141,11 +142,13 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
   // Handle analyze
   const handleAnalyze = useCallback(async () => {
     setAnalyzing(true);
+    setAnalyzeError(null);
     try {
       const result = await api.analyzeMoodboard(projectId);
       setBrief(result.brief);
     } catch (err) {
       console.error('Analysis failed:', err);
+      setAnalyzeError(err instanceof Error ? err.message : 'Analysis failed — please try again');
     } finally {
       setAnalyzing(false);
     }
@@ -519,7 +522,12 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
           <ButtonV2 onClick={handleAnalyze}>
             Generate Sonic Brief
           </ButtonV2>
-          {images.length < 5 && (
+          {analyzeError && (
+            <p className="text-body-sm text-red-500 mt-2">
+              {analyzeError}
+            </p>
+          )}
+          {!analyzeError && images.length < 5 && (
             <p className="text-body-sm text-neutral-400 mt-2">
               More images will produce a richer brief
             </p>

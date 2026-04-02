@@ -93,12 +93,14 @@ const ButtonV2 = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
       );
     }
 
+    // Spread rest first so explicit disabled/className take precedence
+    const { disabled: restDisabled, ...restWithoutDisabled } = rest as ButtonHTMLAttributes<HTMLButtonElement>;
     return (
       <button
         ref={ref as React.Ref<HTMLButtonElement>}
-        disabled={(rest as ButtonHTMLAttributes<HTMLButtonElement>).disabled || loading}
+        {...restWithoutDisabled}
+        disabled={restDisabled || loading}
         className={classes}
-        {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
       >
         {content}
       </button>
