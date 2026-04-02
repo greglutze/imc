@@ -17,7 +17,7 @@ interface ProjectNavProps {
 export default function ProjectNav({ projectId, artistName, imageUrl, activePage, onNavigate }: ProjectNavProps) {
   const links: Array<{ key: NavPage; label: string; href: string }> = [
     { key: 'interview', label: 'Concept', href: `/projects/${projectId}?tab=interview` },
-    { key: 'moodboard', label: 'Audio Visuals', href: `/projects/${projectId}?tab=moodboard` },
+    { key: 'moodboard', label: 'Audio/Visuals', href: `/projects/${projectId}?tab=moodboard` },
     { key: 'research', label: 'Research', href: `/projects/${projectId}?tab=research` },
     { key: 'prompts', label: 'Sonic Engine', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'LyriCol', href: `/projects/${projectId}/lyrics` },

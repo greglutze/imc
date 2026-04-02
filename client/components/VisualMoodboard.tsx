@@ -228,7 +228,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
             Visual World
           </p>
           <p className="text-[40px] leading-[1.1] font-medium text-black tracking-tight">
-            Audio Visuals
+            Audio/Visuals
           </p>
           <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
             {images.length > 0

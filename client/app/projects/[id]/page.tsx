@@ -336,7 +336,7 @@ export default function ProjectPage() {
       },
       {
         number: '02',
-        name: 'Audio Visuals',
+        name: 'Audio/Visuals',
         description: moodboardImages.length > 0
           ? `${moodboardImages.length} images shaping your visual world.`
           : 'Drop in photos, textures, and references that feel like your sound.',
@@ -581,7 +581,7 @@ export default function ProjectPage() {
               <div className="py-12 border-b border-[#E8E8E8]">
                 <div className="flex items-center justify-between mb-6">
                   <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                    Audio Visuals
+                    Audio/Visuals
                   </p>
                   <a
                     href={`/projects/${id}?tab=moodboard`}
