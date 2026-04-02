@@ -148,8 +148,8 @@ export default function Home() {
                 </ButtonV2>
               </div>
 
-              {/* Project cards */}
-              <div className="grid grid-cols-3 gap-5">
+              {/* Project cards — stacked full-width */}
+              <div className="space-y-3">
                 {projects.map((project, index) => {
                   const statusLabel = project.status === 'draft' ? 'Draft' : project.status === 'complete' ? 'Complete' : 'In Progress';
                   const statusColor = project.status === 'complete' ? 'green' : project.status === 'draft' ? 'neutral' : 'yellow';
@@ -159,60 +159,52 @@ export default function Home() {
                     <a
                       key={project.id}
                       href={`/projects/${project.id}`}
-                      className="group bg-[#F7F7F5] rounded-lg overflow-hidden hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col"
+                      className="group bg-[#F7F7F5] rounded-lg hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6"
                     >
-                      {/* Artwork — top 30% */}
-                      <div className="aspect-[3/1] w-full overflow-hidden bg-[#EEEDEB] relative">
+                      {/* Artwork thumbnail */}
+                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#EEEDEB] shrink-0">
                         {project.image_url ? (
                           <img
                             src={resolveArtworkUrl(project.image_url) || ''}
                             alt={project.artist_name || 'Artist'}
-                            className="w-full h-full object-cover object-top group-hover:scale-[1.03] transition-transform duration-300"
+                            className="w-full h-full object-cover"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-[72px] font-medium text-[#D4D4D0]">
+                            <span className="text-[24px] font-medium text-[#D4D4D0]">
                               {(project.artist_name || 'U').charAt(0).toUpperCase()}
                             </span>
                           </div>
                         )}
                       </div>
 
-                      {/* Details — bottom */}
-                      <div className="p-6 pb-5 flex flex-col flex-1 justify-between">
-                        <div>
-                          {/* Code + status row */}
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-[11px] font-medium tracking-wide text-[#C4C4C4]">
-                              {projectCode}
-                            </span>
-                            <div className="flex items-center gap-1.5">
-                              <div className={`w-1.5 h-1.5 rounded-full ${
-                                statusColor === 'green' ? 'bg-green-500' :
-                                statusColor === 'yellow' ? 'bg-yellow-500' :
-                                'bg-neutral-300'
-                              }`} />
-                              <span className="text-[11px] font-medium text-[#8A8A8A]">
-                                {statusLabel}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Name */}
-                          <h2 className="text-[22px] leading-tight font-medium text-[#1A1A1A] truncate">
-                            {project.artist_name || 'Untitled'}
-                          </h2>
-
-                        </div>
-
-                        {/* CTA */}
-                        <div className="mt-4">
-                          <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
-                            Open Project
-                            <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="text-[11px] font-medium text-[#C4C4C4]">
+                            {projectCode}
                           </span>
+                          <div className="flex items-center gap-1.5">
+                            <div className={`w-1.5 h-1.5 rounded-full ${
+                              statusColor === 'green' ? 'bg-green-500' :
+                              statusColor === 'yellow' ? 'bg-yellow-500' :
+                              'bg-neutral-300'
+                            }`} />
+                            <span className="text-[11px] font-medium text-[#8A8A8A]">
+                              {statusLabel}
+                            </span>
+                          </div>
                         </div>
+                        <h2 className="text-[22px] leading-tight font-medium text-[#1A1A1A] truncate">
+                          {project.artist_name || 'Untitled'}
+                        </h2>
                       </div>
+
+                      {/* CTA */}
+                      <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150 shrink-0">
+                        Open Project
+                        <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                      </span>
                     </a>
                   );
                 })}
