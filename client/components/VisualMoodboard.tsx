@@ -235,7 +235,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
           </p>
           <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
             {images.length > 0
-              ? `${imageCount} images shaping the visual language of your project.`
+              ? `${imageCount} images shaping the sound and vision of your project.`
               : 'Drop in anything that feels like your sound — photos, textures, artwork, color palettes, film stills.'
             }
           </p>
