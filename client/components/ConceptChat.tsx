@@ -74,7 +74,7 @@ export default function ConceptChat({
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row lg:gap-8 h-full">
           {/* Left column: conversation + input */}
-          <div className="flex-1 min-w-0 flex flex-col h-full">
+          <div className="lg:max-w-[560px] flex-1 min-w-0 flex flex-col h-full">
             {/* Messages */}
             <div className="flex-1 overflow-y-auto px-10 lg:pr-0 py-8">
               {messages.length === 0 && !loading && (
