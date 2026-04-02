@@ -78,10 +78,10 @@ export default function ConceptChat({
             {/* Messages */}
             <div className="flex-1 overflow-y-auto px-10 lg:pr-0 py-8">
               {messages.length === 0 && !loading && (
-                <div className="py-4 max-w-2xl" />
+                <div className="py-4 max-w-lg" />
               )}
 
-              <div className="space-y-8 max-w-2xl">
+              <div className="space-y-8 max-w-lg">
                 {messages.map((msg, i) => (
                   <MessageBlock key={i} message={msg} index={i} />
                 ))}
@@ -108,7 +108,7 @@ export default function ConceptChat({
 
             {/* Input */}
             <form onSubmit={handleSubmit} className="px-10 lg:pr-0 py-5 shrink-0 border-t border-[#E8E8E8]">
-              <div className="max-w-2xl bg-[#F7F7F5] rounded-lg px-5 py-4 flex items-end gap-3">
+              <div className="max-w-lg bg-[#F7F7F5] rounded-lg px-5 py-4 flex items-end gap-3">
                 <textarea
                   ref={inputRef}
                   value={input}
