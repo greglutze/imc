@@ -149,7 +149,6 @@ export default function Home() {
                 {projects.map((project) => {
                   const statusLabel = project.status === 'draft' ? 'Draft' : project.status === 'complete' ? 'Complete' : 'In Progress';
                   const statusColor = project.status === 'complete' ? 'green' : project.status === 'draft' ? 'neutral' : 'yellow';
-                  const createdDate = new Date(project.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
                   return (
                     <a
@@ -172,21 +171,11 @@ export default function Home() {
                         )}
                       </div>
 
-                      {/* Name + concept + date */}
+                      {/* Name */}
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-heading-sm font-semibold text-black group-hover:text-black truncate">
+                        <h2 className="text-heading font-medium text-black group-hover:text-black truncate">
                           {project.artist_name || 'Untitled'}
                         </h2>
-                        {project.concept?.creative_direction ? (
-                          <p className="text-body-sm text-neutral-500 mt-1 truncate">
-                            {project.concept.creative_direction}
-                          </p>
-                        ) : (
-                          <p className="text-body-sm text-neutral-400 mt-1">No concept defined</p>
-                        )}
-                        <span className="text-micro font-mono text-neutral-300 mt-1.5 block">
-                          {createdDate}
-                        </span>
                       </div>
 
                       {/* Genre pill */}
