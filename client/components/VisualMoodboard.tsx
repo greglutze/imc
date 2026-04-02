@@ -284,7 +284,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                   <img
                     src={img.image_data}
                     alt=""
-                    className="w-full"
+                    className="w-full rounded-lg"
                   />
                   {/* Delete button — hover */}
                   <button
