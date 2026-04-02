@@ -109,26 +109,28 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
         </div>
       )}
 
-      {/* Energy Profile — cards for data, open for prose */}
+      {/* Energy Profile — card */}
       {sonicBlueprint?.energy_profile && (
         <div className="py-10">
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-7">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                <SectionLabel>Energy Profile</SectionLabel>
-                <Badge variant="green">From Market Research</Badge>
+          <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
+            <div className="grid grid-cols-12 gap-8">
+              <div className="col-span-7">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                  <SectionLabel>Energy Profile</SectionLabel>
+                  <Badge variant="green">From Market Research</Badge>
+                </div>
+                <p className="text-[14px] text-[#1A1A1A] leading-relaxed">
+                  {sonicBlueprint.energy_profile}
+                </p>
               </div>
-              <p className="text-[14px] text-[#1A1A1A] leading-relaxed">
-                {sonicBlueprint.energy_profile}
-              </p>
-            </div>
 
-            <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
-              <SectionLabel>Market Production Style</SectionLabel>
-              <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-2">
-                {sonicBlueprint.production_style}
-              </p>
+              <div className="col-span-5 border-l border-[#E8E8E8] pl-8">
+                <SectionLabel>Market Production Style</SectionLabel>
+                <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-2">
+                  {sonicBlueprint.production_style}
+                </p>
+              </div>
             </div>
           </div>
         </div>
