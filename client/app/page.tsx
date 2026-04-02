@@ -154,7 +154,7 @@ export default function Home() {
                     <a
                       key={project.id}
                       href={`/projects/${project.id}`}
-                      className="group flex items-center gap-6 py-6 border-b border-[#E8E8E8] hover:bg-[#F7F7F5] -mx-4 px-4 rounded-md transition-colors duration-150"
+                      className="group flex items-center gap-6 py-6 border-b border-[#E8E8E8] transition-colors duration-150"
                     >
                       {/* Artist image or initial */}
                       <div className="w-16 h-16 rounded-md overflow-hidden bg-neutral-100 shrink-0 flex items-center justify-center">
@@ -173,7 +173,7 @@ export default function Home() {
 
                       {/* Name */}
                       <div className="flex-1 min-w-0">
-                        <h2 className="t-display-sm text-black group-hover:text-black truncate">
+                        <h2 className="t-display-sm text-[#1A1A1A] group-hover:text-black transition-colors duration-150 truncate">
                           {project.artist_name || 'Untitled'}
                         </h2>
                       </div>
@@ -191,8 +191,8 @@ export default function Home() {
                       </div>
 
                       {/* Arrow */}
-                      <span className="text-neutral-300 group-hover:text-black transition-colors shrink-0">
-                        &#8599;
+                      <span className="text-[#C4C4C4] opacity-0 group-hover:opacity-100 group-hover:text-black transition-all duration-150 shrink-0">
+                        &#8594;
                       </span>
                     </a>
                   );
