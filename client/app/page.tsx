@@ -203,12 +203,6 @@ export default function Home() {
                             {project.artist_name || 'Untitled'}
                           </h2>
 
-                          {/* Genre */}
-                          {project.concept?.genre_primary && (
-                            <p className="text-[13px] text-[#8A8A8A] mt-1">
-                              {toTitleCase(project.concept.genre_primary)}
-                            </p>
-                          )}
                         </div>
 
                         {/* CTA */}
