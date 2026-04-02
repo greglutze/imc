@@ -14,6 +14,10 @@ import { ButtonV2 } from '../../../components/ui';
 
 /* eslint-disable @next/next/no-img-element */
 
+function toTitleCase(str: string): string {
+  return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
+}
+
 type ViewState = 'home' | 'interview' | 'moodboard' | 'report';
 
 export default function ProjectPage() {
@@ -324,7 +328,7 @@ export default function ProjectPage() {
         number: '01',
         name: 'Concept',
         description: conceptReady
-          ? `${concept?.genre_primary || 'Defined'}${concept?.mood_keywords?.length ? ' · ' + concept.mood_keywords.slice(0, 2).join(', ') : ''}`
+          ? `${toTitleCase(concept?.genre_primary || 'Defined')}${concept?.mood_keywords?.length ? ' · ' + concept.mood_keywords.slice(0, 2).map(k => toTitleCase(k)).join(', ') : ''}`
           : 'Describe your sound, influences, and creative direction.',
         href: `/projects/${id}?tab=interview`,
         statusLabel: conceptReady ? 'Locked In' : 'Start Here',
@@ -508,9 +512,9 @@ export default function ProjectPage() {
                       Sound
                     </p>
                     <div className="space-y-2">
-                      <p className="text-body font-semibold text-black">{concept.genre_primary}</p>
+                      <p className="text-body font-semibold text-black">{toTitleCase(concept.genre_primary)}</p>
                       {concept.genre_secondary && concept.genre_secondary.length > 0 && (
-                        <p className="text-body-sm text-neutral-500">{concept.genre_secondary.join(', ')}</p>
+                        <p className="text-body-sm text-neutral-500">{concept.genre_secondary.map(g => toTitleCase(g)).join(', ')}</p>
                       )}
                     </div>
                   </div>

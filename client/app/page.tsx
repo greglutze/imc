@@ -7,6 +7,10 @@ import { api, resolveArtworkUrl, type Project } from '../lib/api';
 
 /* eslint-disable @next/next/no-img-element */
 
+function toTitleCase(str: string): string {
+  return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
+}
+
 export default function Home() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
@@ -198,7 +202,7 @@ export default function Home() {
                         {/* Genre */}
                         {project.concept?.genre_primary && (
                           <p className="text-[13px] text-[#8A8A8A] mt-1.5">
-                            {project.concept.genre_primary}
+                            {toTitleCase(project.concept.genre_primary)}
                           </p>
                         )}
                       </div>
