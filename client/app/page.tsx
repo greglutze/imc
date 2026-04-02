@@ -146,9 +146,10 @@ export default function Home() {
 
               {/* Project list */}
               <div className="border-t border-[#E8E8E8]">
-                {projects.map((project) => {
+                {projects.map((project, index) => {
                   const statusLabel = project.status === 'draft' ? 'Draft' : project.status === 'complete' ? 'Complete' : 'In Progress';
                   const statusColor = project.status === 'complete' ? 'green' : project.status === 'draft' ? 'neutral' : 'yellow';
+                  const projectCode = `IMC\u00AE \u2014 ${String(index + 1).padStart(2, '0')}${(project.artist_name || 'U').charAt(0).toUpperCase()}`;
 
                   return (
                     <a
@@ -171,8 +172,11 @@ export default function Home() {
                         )}
                       </div>
 
-                      {/* Name */}
+                      {/* Code + Name */}
                       <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-medium tracking-wide text-[#C4C4C4] mb-1">
+                          {projectCode}
+                        </p>
                         <h2 className="t-display-sm text-[#1A1A1A] group-hover:text-black transition-colors duration-150 truncate">
                           {project.artist_name || 'Untitled'}
                         </h2>
