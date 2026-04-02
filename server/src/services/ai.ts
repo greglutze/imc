@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import sharp from 'sharp';
 
 let client: Anthropic | null = null;
 
@@ -57,6 +58,50 @@ export async function analyze(
   throw new Error('Unexpected response type from Claude API');
 }
 
+// Claude Vision API limit: 5MB per image (5,242,880 bytes)
+const MAX_IMAGE_BYTES = 4_800_000; // leave a small buffer under 5MB
+
+async function compressImageForApi(base64Data: string, mediaType: string): Promise<{ data: string; media_type: string }> {
+  const inputBuffer = Buffer.from(base64Data, 'base64');
+
+  // If already under limit, return as-is
+  if (inputBuffer.length <= MAX_IMAGE_BYTES) {
+    return { data: base64Data, media_type: mediaType };
+  }
+
+  console.log(`Compressing image: ${(inputBuffer.length / 1024 / 1024).toFixed(1)}MB → target <4.8MB`);
+
+  // Resize and convert to JPEG for best compression
+  let quality = 80;
+  let width = 2048;
+  let outputBuffer: Buffer;
+
+  // Iteratively reduce quality/size until under limit
+  do {
+    outputBuffer = await sharp(inputBuffer)
+      .resize({ width, withoutEnlargement: true })
+      .jpeg({ quality })
+      .toBuffer();
+
+    if (outputBuffer.length <= MAX_IMAGE_BYTES) break;
+
+    // Reduce quality first, then size
+    if (quality > 40) {
+      quality -= 15;
+    } else {
+      width = Math.round(width * 0.7);
+      quality = 70;
+    }
+  } while (width > 400);
+
+  console.log(`Compressed to ${(outputBuffer.length / 1024 / 1024).toFixed(1)}MB (${width}px, q${quality})`);
+
+  return {
+    data: outputBuffer.toString('base64'),
+    media_type: 'image/jpeg',
+  };
+}
+
 export async function analyzeImages(
   systemPrompt: string,
   imageDataUrls: string[],
@@ -78,17 +123,19 @@ export async function analyzeImages(
 
     // Map unsupported types to closest supported type
     if (!SUPPORTED_TYPES.has(mediaType)) {
-      // HEIC, HEIF, BMP, TIFF etc. — treat as JPEG (most compatible)
       console.warn(`Unsupported image type "${mediaType}", treating as image/jpeg`);
       mediaType = 'image/jpeg';
     }
+
+    // Compress if over API size limit
+    const compressed = await compressImageForApi(match[2], mediaType);
 
     imageBlocks.push({
       type: 'image' as const,
       source: {
         type: 'base64' as const,
-        media_type: mediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
-        data: match[2],
+        media_type: compressed.media_type as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+        data: compressed.data,
       },
     });
   }
