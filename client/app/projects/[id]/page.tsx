@@ -531,15 +531,6 @@ export default function ProjectPage() {
                       {concept.genre_secondary && concept.genre_secondary.length > 0 && (
                         <p className="text-body-sm text-neutral-500">{concept.genre_secondary.join(', ')}</p>
                       )}
-                      {concept.mood_keywords && concept.mood_keywords.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 mt-2">
-                          {concept.mood_keywords.map((kw, i) => (
-                            <span key={i} className="text-micro font-semibold uppercase tracking-wide bg-neutral-100 text-neutral-500 px-2 py-0.5 rounded-md">
-                              {kw}
-                            </span>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                   <div className="col-span-4">
