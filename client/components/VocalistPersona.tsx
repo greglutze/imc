@@ -107,18 +107,21 @@ function VocalPromptBlock({ vocalistPersona }: { vocalistPersona: I2VocalistPers
 
   return (
     <div className="max-w-3xl">
-      <div className="flex items-center justify-between mb-4">
-        <SectionLabel>Suno Vocal Prompt</SectionLabel>
-        <button
-          onClick={handleCopy}
-          className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
-        >
-          {copied ? 'Copied' : 'Copy'}
-        </button>
+      <SectionLabel>Suno Vocal Prompt</SectionLabel>
+      <div className="bg-white border border-[#E8E8E8] rounded-lg p-5 mt-4">
+        <div className="flex items-center justify-between mb-3">
+          <Badge variant="orange">Suno</Badge>
+          <button
+            onClick={handleCopy}
+            className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
+          >
+            {copied ? 'Copied' : 'Copy'}
+          </button>
+        </div>
+        <pre className="text-[13px] font-mono text-[#1A1A1A] whitespace-pre-wrap leading-relaxed">
+          {prompt}
+        </pre>
       </div>
-      <pre className="bg-white border border-[#E8E8E8] rounded-lg p-6 text-[13px] font-mono text-[#1A1A1A] whitespace-pre-wrap leading-relaxed">
-        {prompt}
-      </pre>
       <p className="text-[11px] text-[#C4C4C4] mt-3">
         Paste directly into Suno&apos;s vocal style field. Person and band names are excluded for compatibility.
       </p>
