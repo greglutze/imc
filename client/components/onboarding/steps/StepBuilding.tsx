@@ -12,14 +12,61 @@ interface Props {
 }
 
 const STAGES = [
-  { label: 'Preparing your workspace\u2026', sublabel: '' },
-  { label: 'Creating your project\u2026', sublabel: 'Setting up the foundation' },
-  { label: 'Extracting your concept\u2026', sublabel: 'Analyzing your vision and influences' },
-  { label: 'Building your moodboard\u2026', sublabel: 'Curating your visual world' },
-  { label: 'Researching your market\u2026', sublabel: 'Mapping comparable artists and audiences' },
-  { label: 'Designing your sonic engine\u2026', sublabel: 'Generating style profiles and track prompts' },
-  { label: 'Your project is ready.', sublabel: '' },
+  { label: 'Preparing your workspace\u2026', sublabel: '', icon: '' },
+  { label: 'Creating your project\u2026', sublabel: 'Setting up the foundation', icon: '\u2728' },
+  { label: 'Extracting your concept\u2026', sublabel: 'Understanding your vision, influences, and creative direction', icon: '\u{1F3A8}' },
+  { label: 'Building your moodboard\u2026', sublabel: 'Curating your visual world and generating a sonic brief', icon: '\u{1F5BC}\uFE0F' },
+  { label: 'Researching your market\u2026', sublabel: 'Analyzing comparable artists, audiences, and sonic positioning', icon: '\u{1F50D}' },
+  { label: 'Designing your sonic engine\u2026', sublabel: 'Building style profiles, vocal direction, and per-track prompts', icon: '\u{1F3B9}' },
+  { label: 'Starting your first lyrics\u2026', sublabel: 'Seeding a writing session with hooks and verse ideas', icon: '\u270F\uFE0F' },
+  { label: 'Setting up your checklist\u2026', sublabel: 'Preparing your launch readiness tracker', icon: '\u2705' },
+  { label: 'Your project is ready.', sublabel: 'Every instrument is populated and waiting for you.', icon: '\u{1F680}' },
 ];
+
+// Completed stage checkmarks for the progress list
+function StageList({ currentStage }: { currentStage: number }) {
+  // Only show stages 1-7 (skip 0=preparing and 8=done)
+  const visibleStages = STAGES.slice(1, 8);
+
+  return (
+    <div className="flex flex-col gap-2.5 mt-10 w-full max-w-xs mx-auto">
+      {visibleStages.map((s, i) => {
+        const stageNum = i + 1;
+        const isComplete = currentStage > stageNum;
+        const isActive = currentStage === stageNum;
+        const isPending = currentStage < stageNum;
+
+        return (
+          <div
+            key={stageNum}
+            className={`
+              flex items-center gap-3 text-left transition-all duration-500
+              ${isComplete ? 'opacity-50' : isActive ? 'opacity-100' : 'opacity-20'}
+            `}
+          >
+            {/* Status indicator */}
+            <div className="w-5 h-5 flex items-center justify-center shrink-0">
+              {isComplete ? (
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-green-400">
+                  <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : isActive ? (
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse-subtle" />
+              ) : (
+                <div className="w-1.5 h-1.5 bg-white/20 rounded-full" />
+              )}
+            </div>
+
+            {/* Label */}
+            <span className={`text-[13px] ${isActive ? 'text-white font-medium' : 'text-white/60'}`}>
+              {s.label.replace('\u2026', '')}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function StepBuilding({ stage, progress, selectedImageIds }: Props) {
   const [bgIndex, setBgIndex] = useState(0);
@@ -50,7 +97,7 @@ export default function StepBuilding({ stage, progress, selectedImageIds }: Prop
   }, [bgImages.length]);
 
   const currentStage = STAGES[Math.min(stage, STAGES.length - 1)];
-  const isComplete = stage >= 6;
+  const isComplete = stage >= 8;
 
   return (
     <div className="fixed inset-0 bg-[#0a0a0a] flex flex-col items-center justify-center overflow-hidden">
@@ -61,20 +108,29 @@ export default function StepBuilding({ stage, progress, selectedImageIds }: Prop
             src={bgImages[bgIndex % bgImages.length]?.src}
             alt=""
             className="w-full h-full object-cover transition-opacity duration-1000"
-            style={{ opacity: bgOpacity * 0.25 }}
+            style={{ opacity: bgOpacity * 0.2 }}
           />
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/70 to-[#0a0a0a]/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-[#0a0a0a]/50" />
         </div>
       )}
 
       {/* Content */}
       <div className="relative z-10 text-center max-w-lg px-6">
         {/* Stage headline */}
-        <div className="min-h-[120px] flex flex-col items-center justify-center">
+        <div className="min-h-[100px] flex flex-col items-center justify-center">
+          {currentStage.icon && (
+            <span
+              key={`icon-${stage}`}
+              className="text-[32px] mb-4 animate-fade-in block"
+            >
+              {currentStage.icon}
+            </span>
+          )}
+
           <h2
             key={stage}
-            className={`text-[32px] md:text-[40px] leading-[1.1] font-medium tracking-tight text-white animate-fade-in ${
+            className={`text-[28px] md:text-[36px] leading-[1.1] font-medium tracking-tight text-white animate-fade-in ${
               isComplete ? 'animate-float' : ''
             }`}
           >
@@ -84,33 +140,36 @@ export default function StepBuilding({ stage, progress, selectedImageIds }: Prop
           {currentStage.sublabel && (
             <p
               key={`sub-${stage}`}
-              className="text-[14px] text-white/50 mt-3 animate-fade-in"
+              className="text-[14px] text-white/40 mt-3 animate-fade-in max-w-sm"
             >
               {currentStage.sublabel}
             </p>
           )}
         </div>
 
-        {/* Animated dots — only while building */}
-        {!isComplete && (
-          <div className="flex items-center justify-center gap-2 mt-8">
-            <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse-subtle" />
-            <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse-subtle" style={{ animationDelay: '200ms' }} />
-            <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse-subtle" style={{ animationDelay: '400ms' }} />
-          </div>
+        {/* Stage progress list — shows what's done and what's next */}
+        {!isComplete && stage > 0 && (
+          <StageList currentStage={stage} />
         )}
 
         {/* Progress bar */}
-        <div className="mt-12 w-full max-w-xs mx-auto">
+        <div className="mt-10 w-full max-w-xs mx-auto">
           <div className="h-1 bg-white/10 rounded-full overflow-hidden">
             <div
               className="h-full bg-white/80 rounded-full transition-all duration-1000 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-[11px] text-white/30 mt-3 font-mono">
-            {Math.round(progress)}%
-          </p>
+          <div className="flex items-center justify-between mt-3">
+            <p className="text-[11px] text-white/20 font-mono">
+              {Math.round(progress)}%
+            </p>
+            {!isComplete && (
+              <p className="text-[11px] text-white/20">
+                Building your world
+              </p>
+            )}
+          </div>
         </div>
       </div>
 

@@ -156,74 +156,121 @@ export default function OnboardingFlow() {
     }
   }, [activeSteps, currentIndex, goTo]);
 
-  // Handle the building pipeline
+  // Handle the building pipeline — populates EVERY instrument
   const startBuilding = useCallback(async () => {
     goTo('building');
 
     // Small delay so the building screen renders first
     await new Promise((r) => setTimeout(r, 600));
 
+    let projectId = '';
+
     try {
-      // Stage 1: Create project
+      // ── Stage 1: Create project ──
       setBuildStage(1);
-      setBuildProgress(88);
+      setBuildProgress(86);
       const projectResult = await api.createProject(
         data.projectName || undefined,
         undefined
       );
-      const projectId =
-        (projectResult as any).project?.id || projectResult.id;
+      projectId = (projectResult as any).project?.id || projectResult.id;
 
-      // Stage 2: Send concept conversation to extract concept
+      // ── Stage 2: Extract concept ──
+      // Send a rich, structured message that gives the AI everything
+      // it needs to build a complete concept in one shot
       setBuildStage(2);
-      setBuildProgress(91);
-
-      // Build a rich concept message from all onboarding data
+      setBuildProgress(89);
       const conceptMessage = buildConceptMessage(data);
       await api.sendConceptMessage(projectId, conceptMessage);
 
-      // Stage 3: Upload selected moodboard images
+      // Send a follow-up to lock in the concept immediately
+      // (normally the user would chat back and forth)
+      await api.sendConceptMessage(projectId,
+        'That captures my vision perfectly. Lock it in.'
+      );
+
+      // ── Stage 3: Build moodboard + generate sonic brief ──
       setBuildStage(3);
-      setBuildProgress(94);
+      setBuildProgress(91);
       if (data.selectedImageIds.length > 0) {
-        // Upload curated image selections
         try {
           await api.uploadOnboardingImages(projectId, data.selectedImageIds);
+          // Analyze the moodboard to generate the sonic brief
+          // (this creates the MoodboardBrief with sonic references, palette, prose)
+          await api.analyzeMoodboard(projectId);
         } catch {
-          // Non-critical — moodboard can be populated later
           console.warn('Moodboard population skipped');
         }
       }
 
-      // Stage 4: Run research
+      // ── Stage 4: Run market research ──
       setBuildStage(4);
-      setBuildProgress(96);
+      setBuildProgress(93);
       try {
         await api.runResearch(projectId);
       } catch {
         console.warn('Research generation skipped');
       }
 
-      // Stage 5: Generate prompts
+      // ── Stage 5: Generate sonic engine (style profile + vocalist + track prompts) ──
       setBuildStage(5);
-      setBuildProgress(98);
+      setBuildProgress(95);
       try {
         await api.generatePrompts(projectId);
       } catch {
         console.warn('Prompt generation skipped');
       }
 
-      // Stage 6: Done
+      // ── Stage 6: Seed a LyriCol writing session ──
       setBuildStage(6);
+      setBuildProgress(97);
+      try {
+        const vibeContext = [
+          data.visionText,
+          data.moodChips.length > 0 ? `Mood: ${data.moodChips.join(', ')}` : '',
+          data.referenceArtists.length > 0 ? `Inspired by: ${data.referenceArtists.join(', ')}` : '',
+        ].filter(Boolean).join('. ');
+
+        const session = await api.createLyricSession(projectId, {
+          entry_mode: 'vibe',
+          title: 'First Draft',
+          vibe_context: vibeContext,
+        });
+
+        // Send an opening message to kickstart the session with content
+        await api.sendAdvisorMessage(
+          projectId,
+          session.id,
+          `I just set up this project. Based on my vision — ${data.visionText.slice(0, 200)} — give me a strong opening lyric concept with a hook idea and a first verse direction.`,
+          'chat'
+        );
+      } catch {
+        console.warn('LyriCol session skipped');
+      }
+
+      // ── Stage 7: Initialize checklist ──
+      setBuildStage(7);
+      setBuildProgress(99);
+      try {
+        // Fetching the checklist auto-populates default items
+        await api.getChecklist(projectId);
+      } catch {
+        console.warn('Checklist initialization skipped');
+      }
+
+      // ── Stage 8: Done — everything is built ──
+      setBuildStage(8);
       setBuildProgress(100);
 
-      // Brief pause to show completion, then navigate
-      await new Promise((r) => setTimeout(r, 1200));
+      // Let the completion moment breathe
+      await new Promise((r) => setTimeout(r, 1500));
       router.push(`/projects/${projectId}`);
     } catch (err) {
       console.error('Onboarding pipeline failed:', err);
-      // Fallback: redirect to project home even on partial failure
-      // The user can re-run any failed instruments from the home page
+      // Even on failure, navigate to whatever was created
+      if (projectId) {
+        router.push(`/projects/${projectId}`);
+      }
     }
   }, [data, goTo, router]);
 
@@ -350,35 +397,78 @@ export default function OnboardingFlow() {
 
 // ── Helpers ────────────────────────────────────────────
 
+/**
+ * Build a rich, natural-language concept message from the onboarding data.
+ * This is sent as the first user message in the concept conversation.
+ * The AI uses it to extract genre, mood, influences, creative direction,
+ * and everything else needed for a full ProjectConcept.
+ *
+ * The message is structured to feel like a real person describing their
+ * project, not a form dump — this gives the AI better context for
+ * generating nuanced, personalized output.
+ */
 function buildConceptMessage(data: OnboardingData): string {
   const parts: string[] = [];
 
-  if (data.visionText) {
-    parts.push(data.visionText);
+  // Open with the name if they have one
+  if (data.projectName) {
+    parts.push(`I'm working on a project called "${data.projectName}".`);
   }
 
+  // Experience-level context helps the AI calibrate its responses
+  if (data.experienceLevel === 'explorer') {
+    parts.push("I'm pretty new to music creation and exploring what's possible.");
+  } else if (data.experienceLevel === 'professional') {
+    parts.push("I'm an experienced musician with a clear vision for this project.");
+  }
+
+  // Genre selections
   if (data.genres.length > 0) {
-    parts.push(`Genres: ${data.genres.join(', ')}`);
+    parts.push(`I'm drawn to ${data.genres.join(', ')}.`);
   }
 
+  // The core vision — this is the most important piece
+  if (data.visionText) {
+    parts.push(`Here's my vision: ${data.visionText}`);
+  }
+
+  // Mood chips add emotional texture
   if (data.moodChips.length > 0) {
-    parts.push(`Mood: ${data.moodChips.join(', ')}`);
+    parts.push(`The mood I'm going for is ${data.moodChips.join(', ').toLowerCase()}.`);
   }
 
+  // Reference artists
   if (data.referenceArtists.length > 0) {
-    parts.push(`Influences: ${data.referenceArtists.join(', ')}`);
+    if (data.referenceArtists.length === 1) {
+      parts.push(`My main influence is ${data.referenceArtists[0]}.`);
+    } else {
+      const last = data.referenceArtists[data.referenceArtists.length - 1];
+      const rest = data.referenceArtists.slice(0, -1).join(', ');
+      parts.push(`My influences include ${rest} and ${last}.`);
+    }
   }
 
+  // Project scope
   if (data.projectShape) {
     const shapes: Record<string, string> = {
-      single: '1 track (single)',
-      ep: '5 tracks (EP)',
-      album: '10 tracks (album)',
+      single: "I want to create a single — one track, fully realized.",
+      ep: "I'm thinking an EP — around 4 to 6 tracks, a tight collection.",
+      album: "I want to make a full album — 8 to 14 tracks, the complete vision.",
     };
-    parts.push(
-      `Project scope: ${shapes[data.projectShape] || `${data.customTrackCount} tracks`}`
-    );
+    if (data.customTrackCount) {
+      parts.push(`I want exactly ${data.customTrackCount} tracks.`);
+    } else {
+      parts.push(shapes[data.projectShape] || '');
+    }
   }
 
-  return parts.join('\n\n');
+  // Selected image count gives context about visual direction
+  if (data.selectedImageIds.length > 0) {
+    parts.push(`I've also selected ${data.selectedImageIds.length} visual references that capture the atmosphere I'm going for.`);
+  }
+
+  // Close with a prompt to lock everything in
+  parts.push("Please extract my full concept from this — genre, sub-genres, mood, creative direction, reference artists, and track count. Give me a complete creative brief.");
+
+  return parts.join(' ');
 }
