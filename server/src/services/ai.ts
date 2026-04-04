@@ -102,6 +102,30 @@ async function compressImageForApi(base64Data: string, mediaType: string): Promi
   };
 }
 
+/**
+ * Fetch an HTTP(S) image URL and return it as { base64, mediaType }.
+ * Falls back to image/jpeg if Content-Type is missing or unrecognized.
+ */
+async function fetchImageAsBase64(url: string): Promise<{ data: string; media_type: string } | null> {
+  try {
+    const res = await fetch(url, {
+      headers: { 'Accept': 'image/*' },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) {
+      console.warn(`Failed to fetch image ${url}: ${res.status}`);
+      return null;
+    }
+    const contentType = res.headers.get('content-type') || 'image/jpeg';
+    const mediaType = contentType.split(';')[0].trim();
+    const buffer = Buffer.from(await res.arrayBuffer());
+    return { data: buffer.toString('base64'), media_type: mediaType };
+  } catch (err) {
+    console.warn(`Error fetching image ${url}:`, err);
+    return null;
+  }
+}
+
 export async function analyzeImages(
   systemPrompt: string,
   imageDataUrls: string[],
@@ -112,14 +136,25 @@ export async function analyzeImages(
 
   const imageBlocks: Anthropic.Messages.ImageBlockParam[] = [];
   for (const dataUrl of imageDataUrls) {
-    // Extract media type and base64 data from data URL
-    const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
-    if (!match) {
-      console.warn('Skipping image with invalid data URL format');
-      continue;
-    }
+    let base64Data: string;
+    let mediaType: string;
 
-    let mediaType = match[1];
+    if (dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
+      // HTTP(S) URL — fetch the image and convert to base64
+      const fetched = await fetchImageAsBase64(dataUrl);
+      if (!fetched) continue;
+      base64Data = fetched.data;
+      mediaType = fetched.media_type;
+    } else {
+      // Base64 data URL — extract media type and data
+      const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+      if (!match) {
+        console.warn('Skipping image with invalid data URL format');
+        continue;
+      }
+      mediaType = match[1];
+      base64Data = match[2];
+    }
 
     // Map unsupported types to closest supported type
     if (!SUPPORTED_TYPES.has(mediaType)) {
@@ -128,7 +163,7 @@ export async function analyzeImages(
     }
 
     // Compress if over API size limit
-    const compressed = await compressImageForApi(match[2], mediaType);
+    const compressed = await compressImageForApi(base64Data, mediaType);
 
     imageBlocks.push({
       type: 'image' as const,

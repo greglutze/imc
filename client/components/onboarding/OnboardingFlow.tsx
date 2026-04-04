@@ -268,10 +268,15 @@ export default function OnboardingFlow() {
         });
 
         // Send an opening message to kickstart the session with content
+        const visionSummary = data.visionText
+          ? data.visionText.slice(0, 200)
+          : data.moodChips.length > 0
+          ? `a ${data.moodChips.join(', ').toLowerCase()} vibe`
+          : 'my creative direction';
         await api.sendAdvisorMessage(
           projectId,
           session.id,
-          `I just set up this project. Based on my vision — ${data.visionText.slice(0, 200)} — give me a strong opening lyric concept with a hook idea and a first verse direction.`,
+          `I just set up this project. Based on my vision — ${visionSummary} — give me a strong opening lyric concept with a hook idea and a first verse direction.`,
           'chat'
         );
       } catch (err) {
@@ -497,8 +502,23 @@ function buildConceptMessage(data: OnboardingData): string {
     parts.push(`I've also selected ${data.selectedImageIds.length} visual references that capture the atmosphere I'm going for.`);
   }
 
-  // Close with a prompt to lock everything in
-  parts.push("Please extract my full concept from this — genre, sub-genres, mood, creative direction, reference artists, and track count. Give me a complete creative brief.");
+  // Target audience — the concept AI requires this as one of its six areas.
+  // Infer from the data if not explicitly provided.
+  if (data.genres.length > 0 || data.referenceArtists.length > 0) {
+    const audienceHint = data.referenceArtists.length > 0
+      ? `fans of ${data.referenceArtists.slice(0, 2).join(' and ')}`
+      : `listeners who love ${data.genres.slice(0, 2).join(' and ')}`;
+    parts.push(`My target audience is ${audienceHint} — people who appreciate this kind of sound and aesthetic.`);
+  }
+
+  // Close with explicit instructions to extract the concept NOW.
+  // The concept AI is designed for multi-turn conversation, but during onboarding
+  // all the data is available — we need to push it to extract immediately.
+  parts.push(
+    "I've given you everything: genre, mood, creative direction, reference artists, target audience, and track count. " +
+    "This is all the info you need. Please extract and lock in my concept now — output the full CONCEPT_READY block with my complete creative brief. " +
+    "Don't ask any follow-up questions, just finalize it."
+  );
 
   return parts.join(' ');
 }
