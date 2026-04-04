@@ -128,7 +128,7 @@ export default function OnboardingFlow() {
     const timeout = setTimeout(() => {
       if (buildStage < 8) {
         console.warn('Build pipeline safety timeout — redirecting to project');
-        router.push(`/projects/${createdProjectId}`);
+        window.location.href = `/projects/${createdProjectId}`;
       }
     }, 180_000); // 3 minutes
     return () => clearTimeout(timeout);
@@ -325,7 +325,9 @@ export default function OnboardingFlow() {
       setBuildProgress(100);
 
       await new Promise((r) => setTimeout(r, 1500));
-      router.push(`/projects/${projectId}`);
+      // Use window.location for a hard redirect — router.push can fail
+      // silently inside async callbacks, leaving a white screen
+      window.location.href = `/projects/${projectId}`;
     } catch (err: any) {
       console.error('Onboarding pipeline failed:', err);
       if (projectId) {
@@ -333,7 +335,7 @@ export default function OnboardingFlow() {
         setBuildStage(8);
         setBuildProgress(100);
         await new Promise((r) => setTimeout(r, 800));
-        router.push(`/projects/${projectId}`);
+        window.location.href = `/projects/${projectId}`;
       } else {
         // Project creation itself failed — show error with retry
         setBuildError(err?.message || 'Something went wrong. Please try again.');
@@ -469,7 +471,7 @@ export default function OnboardingFlow() {
                     </button>
                     {createdProjectId && (
                       <button
-                        onClick={() => router.push(`/projects/${createdProjectId}`)}
+                        onClick={() => { window.location.href = `/projects/${createdProjectId}`; }}
                         className="px-5 py-2.5 bg-white/10 text-white rounded-lg text-[14px] font-medium hover:bg-white/20 transition-colors"
                       >
                         Go to project

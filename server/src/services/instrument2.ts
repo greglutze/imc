@@ -36,30 +36,30 @@ CRITICAL RULES:
 Return JSON:
 {
   "style_profile": {
-    "production_aesthetic": "description of overall sound",
-    "sonic_signatures": ["signature1", "signature2"],
-    "tempo_range": "BPM range",
-    "key_preferences": ["key1", "key2"]
+    "production_aesthetic": "A rich, evocative 2-4 sentence description of the overall sonic identity. This is the project's sound in words — think how a producer would pitch the vibe to an engineer. Be specific about textures, space, weight, warmth/coolness, and era. This is displayed as a hero quote so make it count.",
+    "sonic_signatures": ["At least 5-8 specific sonic characteristics. Each should be a short vivid phrase like 'Tape-saturated drum machines with swing quantization' or 'Cathedral reverb on layered vocal harmonics'. Be concrete — not 'good bass' but 'Sub-bass that blooms rather than hits, tuned to root notes with gentle overdrive'"],
+    "tempo_range": "Specific BPM range with feel descriptor, e.g. '88-96 BPM — leans into the pocket, human-played feel'",
+    "key_preferences": ["2-4 specific keys with reasoning, e.g. 'D minor — classic melancholy without being obvious', 'F major — warm and open'"]
   },
   "vocalist_persona": {
-    "vocal_character": "description",
-    "delivery_style": "description",
-    "reference_vocalists": ["name1", "name2"],
-    "tone_keywords": ["keyword1", "keyword2"]
+    "vocal_character": "2-3 sentences describing the vocal identity. Timbre, range, texture, breath. Be cinematic — 'A midnight voice — smoky lower register that opens into clear falsetto on emotional peaks. Intimate like a late-night voicemail.'",
+    "delivery_style": "2-3 sentences on phrasing, rhythm, attitude. 'Conversational verses that tighten into rhythmic precision on hooks. Words land slightly behind the beat, creating a pulling sensation. Never shouts — intensity comes from restraint.'",
+    "reference_vocalists": ["2-4 vocalist names for internal reference only — NEVER used in prompts"],
+    "tone_keywords": ["6-10 evocative keywords: 'velvet', 'midnight', 'vulnerable', 'controlled fire', 'whispered intensity'"]
   },
   "tracks": [
     {
       "track_number": 1,
-      "title": "Working Title",
-      "suno_prompt": "[Genres: ...] [Moods: ...] [Instrumentation: ...] [Tempo: ...] [Vocal Style: ...] [Production: ...] [Structure: ...] [Sound Design: ...]",
-      "udio_prompt": "Narrative description of the track's sound, production approach, and aesthetic...",
+      "title": "Evocative working title that captures the track's identity",
+      "suno_prompt": "[Genres: ...] [Moods: ...] [Instrumentation: ... — be exhaustive, include exclusions like 'no acoustic guitar, no 808'] [Tempo: specific BPM with feel] [Vocal Style: specific character — what to do AND what to avoid] [Production: detailed aesthetic — reference textures, recording approach, analog vs digital, spatial qualities] [Structure: section-by-section flow in plain language] [Sound Design: evocative scene-setting — describe the physical space the listener inhabits] — MINIMUM 400 characters, aim for 600-800. Fill the 1000 char limit with rich detail.",
+      "udio_prompt": "Detailed narrative description of the track. 300-500 chars. Describe how it SOUNDS and FEELS — the opening moment, how the beat enters, how the chorus lifts, what textures dominate. Written like a producer describing the finished track to someone who hasn't heard it yet.",
       "structure": "[Intro] [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus] [Outro]",
-      "notes": "Generation guidance and intent"
+      "notes": "2-3 sentences of generation guidance: what makes this track unique in the project, what to watch for, what would make it great vs generic."
     }
   ]
 }
 
-Generate exactly the number of tracks specified in track_count. Be creative but commercially aware. Every prompt should produce something that could realistically compete in its genre.`;
+Generate EXACTLY the number of tracks specified in track_count. Each track must have a distinct identity within the project's sonic universe — different enough to be interesting, cohesive enough to belong. Every prompt should be RICH and DETAILED — sparse prompts produce generic music. Fill the suno_prompt character limit. Be creative but commercially aware.`;
 
 interface PromptContext {
   concept: ProjectConcept;
@@ -148,24 +148,26 @@ export async function generatePrompts(
 
   const defaultResponse = {
     style_profile: {
-      production_aesthetic: 'Modern and polished',
-      sonic_signatures: [],
+      production_aesthetic: `A ${concept.genre_primary}-rooted project with ${concept.mood_keywords.slice(0, 3).join(', ')} sensibilities. ${concept.creative_direction ? concept.creative_direction.slice(0, 200) : 'Modern production approach with attention to sonic detail.'}`,
+      sonic_signatures: concept.mood_keywords.length > 0
+        ? concept.mood_keywords.slice(0, 4).map(m => `${m} textures throughout`)
+        : ['Modern production approach'],
       tempo_range: '100-130 BPM',
-      key_preferences: [],
+      key_preferences: ['To be determined during production'],
     },
     vocalist_persona: {
-      vocal_character: 'Contemporary',
-      delivery_style: 'Natural and emotive',
-      reference_vocalists: [],
-      tone_keywords: [],
+      vocal_character: 'Contemporary vocal approach suited to the genre',
+      delivery_style: 'Natural and emotive delivery with genre-appropriate phrasing',
+      reference_vocalists: concept.reference_artists.slice(0, 3),
+      tone_keywords: concept.mood_keywords.slice(0, 5),
     },
     tracks: Array.from({ length: concept.track_count }, (_, i) => ({
       track_number: i + 1,
       title: `Track ${i + 1}`,
-      suno_prompt: '',
-      udio_prompt: '',
+      suno_prompt: `[Genres: ${concept.genre_primary}${concept.genre_secondary.length ? ', ' + concept.genre_secondary.join(', ') : ''}] [Moods: ${concept.mood_keywords.join(', ')}]`,
+      udio_prompt: `A ${concept.genre_primary} track with ${concept.mood_keywords.join(', ')} mood.`,
       structure: '[Intro] [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus] [Outro]',
-      notes: '',
+      notes: 'Auto-generated from concept — regenerate for full prompt',
     })),
   };
 
