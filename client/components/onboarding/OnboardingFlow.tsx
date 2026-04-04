@@ -176,30 +176,60 @@ export default function OnboardingFlow() {
       projectId = (projectResult as any).project?.id || projectResult.id;
 
       // ── Stage 2: Extract concept ──
-      // Send a rich, structured message that gives the AI everything
-      // it needs to build a complete concept in one shot
+      // The concept AI requires a conversation — it emits CONCEPT_READY
+      // when it has enough signal. We send a rich first message with all
+      // onboarding data, then keep nudging until conceptReady = true.
       setBuildStage(2);
-      setBuildProgress(89);
-      const conceptMessage = buildConceptMessage(data);
-      await api.sendConceptMessage(projectId, conceptMessage);
+      setBuildProgress(88);
 
-      // Send a follow-up to lock in the concept immediately
-      // (normally the user would chat back and forth)
-      await api.sendConceptMessage(projectId,
-        'That captures my vision perfectly. Lock it in.'
-      );
+      const conceptMessage = buildConceptMessage(data);
+      let conceptResult = await api.sendConceptMessage(projectId, conceptMessage);
+
+      // If the AI asks follow-up questions instead of extracting immediately,
+      // keep responding until concept is locked in (max 4 rounds to be safe)
+      let rounds = 0;
+      while (!conceptResult.conceptReady && rounds < 4) {
+        rounds++;
+        setBuildProgress(88 + rounds); // subtle progress movement
+
+        // Send increasingly direct confirmation messages
+        const followUps = [
+          'Yes, that all sounds right. I\'m happy with this direction — please extract and lock in my concept.',
+          'That covers everything. Please finalize the concept now with all the details I\'ve shared.',
+          'Perfect. Lock it in exactly as described.',
+          'Confirmed. Extract the concept now.',
+        ];
+        conceptResult = await api.sendConceptMessage(
+          projectId,
+          followUps[Math.min(rounds - 1, followUps.length - 1)]
+        );
+      }
+
+      if (!conceptResult.conceptReady) {
+        console.warn('Concept extraction did not complete after 4 rounds — continuing anyway');
+      }
 
       // ── Stage 3: Build moodboard + generate sonic brief ──
       setBuildStage(3);
       setBuildProgress(91);
       if (data.selectedImageIds.length > 0) {
         try {
-          await api.uploadOnboardingImages(projectId, data.selectedImageIds);
+          // Use the curated image URLs directly as moodboard images.
+          // The existing upload endpoint accepts image data strings —
+          // we pass the CDN URLs which the server stores as image_data.
+          const { CURATED_IMAGES } = await import('./curatedImages');
+          const selectedImages = CURATED_IMAGES.filter(
+            (img) => data.selectedImageIds.includes(img.id)
+          );
+          const imageUrls = selectedImages.map((img) => img.src);
+
+          await api.uploadMoodboardImages(projectId, imageUrls);
+
           // Analyze the moodboard to generate the sonic brief
-          // (this creates the MoodboardBrief with sonic references, palette, prose)
+          // (creates MoodboardBrief with sonic references, visual palette, prose)
           await api.analyzeMoodboard(projectId);
-        } catch {
-          console.warn('Moodboard population skipped');
+        } catch (err) {
+          console.warn('Moodboard population skipped:', err);
         }
       }
 
@@ -208,8 +238,8 @@ export default function OnboardingFlow() {
       setBuildProgress(93);
       try {
         await api.runResearch(projectId);
-      } catch {
-        console.warn('Research generation skipped');
+      } catch (err) {
+        console.warn('Research generation skipped:', err);
       }
 
       // ── Stage 5: Generate sonic engine (style profile + vocalist + track prompts) ──
@@ -217,8 +247,8 @@ export default function OnboardingFlow() {
       setBuildProgress(95);
       try {
         await api.generatePrompts(projectId);
-      } catch {
-        console.warn('Prompt generation skipped');
+      } catch (err) {
+        console.warn('Prompt generation skipped:', err);
       }
 
       // ── Stage 6: Seed a LyriCol writing session ──
@@ -244,8 +274,8 @@ export default function OnboardingFlow() {
           `I just set up this project. Based on my vision — ${data.visionText.slice(0, 200)} — give me a strong opening lyric concept with a hook idea and a first verse direction.`,
           'chat'
         );
-      } catch {
-        console.warn('LyriCol session skipped');
+      } catch (err) {
+        console.warn('LyriCol session skipped:', err);
       }
 
       // ── Stage 7: Initialize checklist ──
@@ -254,8 +284,8 @@ export default function OnboardingFlow() {
       try {
         // Fetching the checklist auto-populates default items
         await api.getChecklist(projectId);
-      } catch {
-        console.warn('Checklist initialization skipped');
+      } catch (err) {
+        console.warn('Checklist initialization skipped:', err);
       }
 
       // ── Stage 8: Done — everything is built ──
