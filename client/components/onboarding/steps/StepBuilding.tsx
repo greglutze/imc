@@ -9,6 +9,7 @@ interface Props {
   stage: number;
   progress: number;
   selectedImageIds: string[];
+  projectId?: string | null;
 }
 
 const STAGES = [
@@ -68,9 +69,10 @@ function StageList({ currentStage }: { currentStage: number }) {
   );
 }
 
-export default function StepBuilding({ stage, progress, selectedImageIds }: Props) {
+export default function StepBuilding({ stage, progress, selectedImageIds, projectId }: Props) {
   const [bgIndex, setBgIndex] = useState(0);
   const [bgOpacity, setBgOpacity] = useState(0);
+  const [showGoButton, setShowGoButton] = useState(false);
 
   // Get selected images for background crossfade
   const bgImages = useMemo(() => {
@@ -95,6 +97,13 @@ export default function StepBuilding({ stage, progress, selectedImageIds }: Prop
 
     return () => clearInterval(interval);
   }, [bgImages.length]);
+
+  // Show a "go to project" escape hatch after 20s so user is never stranded
+  useEffect(() => {
+    if (!projectId) return;
+    const timer = setTimeout(() => setShowGoButton(true), 20_000);
+    return () => clearTimeout(timer);
+  }, [projectId]);
 
   const currentStage = STAGES[Math.min(stage, STAGES.length - 1)];
   const isComplete = stage >= 8;
@@ -172,6 +181,18 @@ export default function StepBuilding({ stage, progress, selectedImageIds }: Prop
           </div>
         </div>
       </div>
+
+      {/* Go to project button — appears after 20s as escape hatch */}
+      {showGoButton && projectId && !isComplete && (
+        <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20 animate-fade-in">
+          <a
+            href={`/projects/${projectId}`}
+            className="text-[13px] text-white/40 hover:text-white/70 transition-colors underline underline-offset-4"
+          >
+            Taking a while? Go to your project &rarr;
+          </a>
+        </div>
+      )}
 
       {/* Bottom decorative line */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />

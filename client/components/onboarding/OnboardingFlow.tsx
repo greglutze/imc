@@ -349,8 +349,11 @@ export default function OnboardingFlow() {
   // Compute visual progress value
   const progress = currentStep?.progress ?? 0;
 
-  // Animation classes
-  const stepClass = transitioning
+  // Animation classes — skip for building screen since its fixed positioning
+  // breaks when a parent has a CSS transform (from animation fill-mode: forwards)
+  const stepClass = currentStepId === 'building'
+    ? ''
+    : transitioning
     ? direction === 'forward'
       ? 'animate-step-exit-left'
       : 'animate-step-exit-right'
@@ -457,6 +460,7 @@ export default function OnboardingFlow() {
                 stage={buildStage}
                 progress={buildProgress}
                 selectedImageIds={data.selectedImageIds}
+                projectId={createdProjectId}
               />
               {/* Error overlay */}
               {buildError && (
