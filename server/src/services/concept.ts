@@ -76,8 +76,18 @@ function extractContextTags(messages: ConversationMessage[]): string {
   return `\n\n--- CONTEXT FROM THIS SESSION ---\n${tags.join('\n')}\n\nUse this context to make your responses more specific and attuned. Reference their language. Mirror their energy. The deeper the conversation goes, the more you should sound like you truly understand their vision.`;
 }
 
-function buildSystemPrompt(messages: ConversationMessage[]): string {
-  return CONCEPT_BASE_PROMPT + extractContextTags(messages);
+const IMMEDIATE_EXTRACTION_ADDENDUM = `
+
+CRITICAL OVERRIDE: The user is providing all project details in a single message from the onboarding flow. They have already answered every question. DO NOT ask follow-up questions. DO NOT ask for clarification. You MUST extract the concept immediately from what they've provided.
+
+Respond with a brief 2-3 sentence summary of what you've understood, then output CONCEPT_READY followed by the JSON block. This is non-negotiable — the user has given you all six areas (genre, reference artists, creative direction, target audience, mood, track count). Extract now.`;
+
+function buildSystemPrompt(messages: ConversationMessage[], immediate: boolean = false): string {
+  let prompt = CONCEPT_BASE_PROMPT + extractContextTags(messages);
+  if (immediate) {
+    prompt += IMMEDIATE_EXTRACTION_ADDENDUM;
+  }
+  return prompt;
 }
 
 export interface ConceptResponse {
@@ -87,14 +97,15 @@ export interface ConceptResponse {
 }
 
 export async function getConceptResponse(
-  messages: ConversationMessage[]
+  messages: ConversationMessage[],
+  immediate: boolean = false
 ): Promise<ConceptResponse> {
   const chatMessages = messages.map((msg) => ({
     role: msg.role as 'user' | 'assistant',
     content: msg.content,
   }));
 
-  const systemPrompt = buildSystemPrompt(messages);
+  const systemPrompt = buildSystemPrompt(messages, immediate);
   const response = await chat(systemPrompt, chatMessages);
 
   let conceptReady = false;

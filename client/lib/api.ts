@@ -469,10 +469,10 @@ class ApiClient {
     return this.request(`/api/projects/${projectId}/conversation`);
   }
 
-  async sendConceptMessage(projectId: string, content: string): Promise<ConversationResponse> {
+  async sendConceptMessage(projectId: string, content: string, immediate: boolean = false): Promise<ConversationResponse> {
     return this.request(`/api/instrument1/conversation/${projectId}`, {
       method: 'POST',
-      body: JSON.stringify({ role: 'user', content }),
+      body: JSON.stringify({ role: 'user', content, ...(immediate && { immediate: true }) }),
     });
   }
 

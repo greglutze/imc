@@ -203,7 +203,8 @@ export default function OnboardingFlow() {
       setBuildProgress(88);
 
       const conceptMessage = buildConceptMessage(data);
-      let conceptResult = await api.sendConceptMessage(projectId, conceptMessage);
+      // Pass immediate=true so the server uses the extraction-focused system prompt
+      let conceptResult = await api.sendConceptMessage(projectId, conceptMessage, true);
       console.log('[onboarding] Concept round 0 — ready:', conceptResult.conceptReady);
 
       let rounds = 0;
@@ -219,7 +220,8 @@ export default function OnboardingFlow() {
         ];
         conceptResult = await api.sendConceptMessage(
           projectId,
-          followUps[Math.min(rounds - 1, followUps.length - 1)]
+          followUps[Math.min(rounds - 1, followUps.length - 1)],
+          true
         );
         console.log(`[onboarding] Concept round ${rounds} — ready:`, conceptResult.conceptReady);
       }

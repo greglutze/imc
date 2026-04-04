@@ -68,7 +68,7 @@ router.post(
     try {
       const user = req.user!;
       const { projectId } = req.params;
-      const { role, content } = req.body;
+      const { role, content, immediate } = req.body;
 
       const projectCheck = await pool.query(
         'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
@@ -99,7 +99,7 @@ router.post(
 
       messages.push(newMessage);
 
-      const conceptResponse = await getConceptResponse(messages);
+      const conceptResponse = await getConceptResponse(messages, !!immediate);
 
       messages.push({
         role: 'assistant',
