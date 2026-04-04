@@ -113,6 +113,11 @@ const config: Config = {
         'fade-in': 'fadeIn 0.2s ease-out',
         'slide-up': 'slideUp 0.3s ease-out',
         'pulse-subtle': 'pulseSubtle 2s ease-in-out infinite',
+        'step-enter-right': 'stepEnterRight 0.35s ease-out forwards',
+        'step-enter-left': 'stepEnterLeft 0.35s ease-out forwards',
+        'step-exit-left': 'stepExitLeft 0.25s ease-in forwards',
+        'step-exit-right': 'stepExitRight 0.25s ease-in forwards',
+        'float': 'float 6s ease-in-out infinite',
       },
 
       keyframes: {
@@ -127,6 +132,26 @@ const config: Config = {
         pulseSubtle: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.7' },
+        },
+        stepEnterRight: {
+          '0%': { opacity: '0', transform: 'translateX(30px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        stepEnterLeft: {
+          '0%': { opacity: '0', transform: 'translateX(-30px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        stepExitLeft: {
+          '0%': { opacity: '1', transform: 'translateX(0)' },
+          '100%': { opacity: '0', transform: 'translateX(-30px)' },
+        },
+        stepExitRight: {
+          '0%': { opacity: '1', transform: 'translateX(0)' },
+          '100%': { opacity: '0', transform: 'translateX(30px)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
       },
 

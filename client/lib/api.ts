@@ -577,6 +577,18 @@ class ApiClient {
     });
   }
 
+  /**
+   * Upload curated onboarding images to a project's moodboard.
+   * Accepts an array of curated image IDs from the onboarding library.
+   * The backend fetches the images from the CDN and creates moodboard entries.
+   */
+  async uploadOnboardingImages(projectId: string, imageIds: string[]): Promise<{ images: MoodboardImage[]; count: number }> {
+    return this.request(`/api/moodboard/${projectId}/onboarding-images`, {
+      method: 'POST',
+      body: JSON.stringify({ image_ids: imageIds }),
+    });
+  }
+
   async flagMoodboardElement(projectId: string, element: string, flagged: boolean): Promise<{ brief: MoodboardBrief }> {
     return this.request(`/api/moodboard/${projectId}/brief/flag`, {
       method: 'PATCH',
