@@ -178,7 +178,7 @@ export default function PromptsPage() {
   }
 
   // No concept yet — can't generate
-  if (!hasPrompts && !project?.concept?.genre_primary) {
+  if (!hasPrompts && !conceptExists) {
     return (
       <div className="animate-fade-in h-full flex flex-col">
         <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
@@ -191,6 +191,37 @@ export default function PromptsPage() {
           <p className="text-[14px] text-[#8A8A8A] mt-5 max-w-md leading-relaxed">
             Head to the Concept tab and describe your vision first. Once that&apos;s locked in, your prompts will generate automatically.
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Concept exists but prompts failed or haven't generated — show manual trigger
+  if (!hasPrompts && conceptExists && !generating) {
+    return (
+      <div className="animate-fade-in h-full flex flex-col">
+        <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
+
+        <div className="max-w-[1400px] mx-auto px-10 py-16">
+          <p className="text-[13px] font-medium text-[#C4C4C4] mb-3">02</p>
+          <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] mt-4 tracking-tight">
+            Sonic Engine
+          </p>
+          <p className="text-[14px] text-[#8A8A8A] mt-5 max-w-md leading-relaxed">
+            Your concept is ready. Generate your style profiles, vocal direction, and per-track prompts.
+          </p>
+          <div className="mt-8">
+            <ButtonV2
+              onClick={() => {
+                autoGenerateTriggered.current = false;
+                handleGenerate();
+              }}
+              size="lg"
+              arrow
+            >
+              Generate Sonic Engine
+            </ButtonV2>
+          </div>
         </div>
       </div>
     );
