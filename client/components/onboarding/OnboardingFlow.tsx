@@ -112,6 +112,8 @@ export default function OnboardingFlow() {
   // Building screen state
   const [buildStage, setBuildStage] = useState(0);
   const [buildProgress, setBuildProgress] = useState(85);
+  const [buildError, setBuildError] = useState<string | null>(null);
+  const [createdProjectId, setCreatedProjectId] = useState<string | null>(null);
 
   // Auth redirect
   useEffect(() => {
@@ -119,6 +121,18 @@ export default function OnboardingFlow() {
       router.push('/login');
     }
   }, [authLoading, isAuthenticated, router]);
+
+  // Safety timeout: if building takes longer than 3 minutes and we have a project, redirect
+  useEffect(() => {
+    if (currentStepId !== 'building' || !createdProjectId) return;
+    const timeout = setTimeout(() => {
+      if (buildStage < 8) {
+        console.warn('Build pipeline safety timeout — redirecting to project');
+        router.push(`/projects/${createdProjectId}`);
+      }
+    }, 180_000); // 3 minutes
+    return () => clearTimeout(timeout);
+  }, [currentStepId, createdProjectId, buildStage, router]);
 
   // Update a field in onboarding data
   const updateData = useCallback((patch: Partial<OnboardingData>) => {
@@ -159,6 +173,7 @@ export default function OnboardingFlow() {
   // Handle the building pipeline — populates EVERY instrument
   const startBuilding = useCallback(async () => {
     goTo('building');
+    setBuildError(null);
 
     // Small delay so the building screen renders first
     await new Promise((r) => setTimeout(r, 600));
@@ -167,6 +182,7 @@ export default function OnboardingFlow() {
 
     try {
       // ── Stage 1: Create project ──
+      console.log('[onboarding] Stage 1: Creating project...');
       setBuildStage(1);
       setBuildProgress(86);
       const projectResult = await api.createProject(
@@ -174,25 +190,27 @@ export default function OnboardingFlow() {
         undefined
       );
       projectId = (projectResult as any).project?.id || projectResult.id;
+      setCreatedProjectId(projectId);
+      console.log('[onboarding] Project created:', projectId);
+
+      if (!projectId) {
+        throw new Error('Project creation returned no ID');
+      }
 
       // ── Stage 2: Extract concept ──
-      // The concept AI requires a conversation — it emits CONCEPT_READY
-      // when it has enough signal. We send a rich first message with all
-      // onboarding data, then keep nudging until conceptReady = true.
+      console.log('[onboarding] Stage 2: Extracting concept...');
       setBuildStage(2);
       setBuildProgress(88);
 
       const conceptMessage = buildConceptMessage(data);
       let conceptResult = await api.sendConceptMessage(projectId, conceptMessage);
+      console.log('[onboarding] Concept round 0 — ready:', conceptResult.conceptReady);
 
-      // If the AI asks follow-up questions instead of extracting immediately,
-      // keep responding until concept is locked in (max 4 rounds to be safe)
       let rounds = 0;
       while (!conceptResult.conceptReady && rounds < 4) {
         rounds++;
-        setBuildProgress(88 + rounds); // subtle progress movement
+        setBuildProgress(88 + rounds);
 
-        // Send increasingly direct confirmation messages
         const followUps = [
           'Yes, that all sounds right. I\'m happy with this direction — please extract and lock in my concept.',
           'That covers everything. Please finalize the concept now with all the details I\'ve shared.',
@@ -203,20 +221,19 @@ export default function OnboardingFlow() {
           projectId,
           followUps[Math.min(rounds - 1, followUps.length - 1)]
         );
+        console.log(`[onboarding] Concept round ${rounds} — ready:`, conceptResult.conceptReady);
       }
 
       if (!conceptResult.conceptReady) {
-        console.warn('Concept extraction did not complete after 4 rounds — continuing anyway');
+        console.warn('[onboarding] Concept extraction incomplete after 4 rounds — continuing');
       }
 
       // ── Stage 3: Build moodboard + generate sonic brief ──
+      console.log('[onboarding] Stage 3: Building moodboard...');
       setBuildStage(3);
       setBuildProgress(91);
       if (data.selectedImageIds.length > 0) {
         try {
-          // Use the curated image URLs directly as moodboard images.
-          // The existing upload endpoint accepts image data strings —
-          // we pass the CDN URLs which the server stores as image_data.
           const { CURATED_IMAGES } = await import('./curatedImages');
           const selectedImages = CURATED_IMAGES.filter(
             (img) => data.selectedImageIds.includes(img.id)
@@ -224,34 +241,40 @@ export default function OnboardingFlow() {
           const imageUrls = selectedImages.map((img) => img.src);
 
           await api.uploadMoodboardImages(projectId, imageUrls);
-
-          // Analyze the moodboard to generate the sonic brief
-          // (creates MoodboardBrief with sonic references, visual palette, prose)
+          console.log('[onboarding] Moodboard images uploaded, analyzing...');
           await api.analyzeMoodboard(projectId);
+          console.log('[onboarding] Moodboard analysis complete');
         } catch (err) {
-          console.warn('Moodboard population skipped:', err);
+          console.warn('[onboarding] Moodboard skipped:', err);
         }
+      } else {
+        console.log('[onboarding] No images selected, skipping moodboard');
       }
 
       // ── Stage 4: Run market research ──
+      console.log('[onboarding] Stage 4: Running research...');
       setBuildStage(4);
       setBuildProgress(93);
       try {
         await api.runResearch(projectId);
+        console.log('[onboarding] Research complete');
       } catch (err) {
-        console.warn('Research generation skipped:', err);
+        console.warn('[onboarding] Research skipped:', err);
       }
 
-      // ── Stage 5: Generate sonic engine (style profile + vocalist + track prompts) ──
+      // ── Stage 5: Generate sonic engine ──
+      console.log('[onboarding] Stage 5: Generating prompts...');
       setBuildStage(5);
       setBuildProgress(95);
       try {
         await api.generatePrompts(projectId);
+        console.log('[onboarding] Prompts complete');
       } catch (err) {
-        console.warn('Prompt generation skipped:', err);
+        console.warn('[onboarding] Prompts skipped:', err);
       }
 
       // ── Stage 6: Seed a LyriCol writing session ──
+      console.log('[onboarding] Stage 6: Creating lyrics session...');
       setBuildStage(6);
       setBuildProgress(97);
       try {
@@ -267,7 +290,6 @@ export default function OnboardingFlow() {
           vibe_context: vibeContext,
         });
 
-        // Send an opening message to kickstart the session with content
         const visionSummary = data.visionText
           ? data.visionText.slice(0, 200)
           : data.moodChips.length > 0
@@ -279,32 +301,40 @@ export default function OnboardingFlow() {
           `I just set up this project. Based on my vision — ${visionSummary} — give me a strong opening lyric concept with a hook idea and a first verse direction.`,
           'chat'
         );
+        console.log('[onboarding] Lyrics session created');
       } catch (err) {
-        console.warn('LyriCol session skipped:', err);
+        console.warn('[onboarding] LyriCol skipped:', err);
       }
 
       // ── Stage 7: Initialize checklist ──
+      console.log('[onboarding] Stage 7: Initializing checklist...');
       setBuildStage(7);
       setBuildProgress(99);
       try {
-        // Fetching the checklist auto-populates default items
         await api.getChecklist(projectId);
+        console.log('[onboarding] Checklist initialized');
       } catch (err) {
-        console.warn('Checklist initialization skipped:', err);
+        console.warn('[onboarding] Checklist skipped:', err);
       }
 
-      // ── Stage 8: Done — everything is built ──
+      // ── Stage 8: Done ──
+      console.log('[onboarding] Stage 8: Complete! Redirecting...');
       setBuildStage(8);
       setBuildProgress(100);
 
-      // Let the completion moment breathe
       await new Promise((r) => setTimeout(r, 1500));
       router.push(`/projects/${projectId}`);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Onboarding pipeline failed:', err);
-      // Even on failure, navigate to whatever was created
       if (projectId) {
+        // Project exists — redirect even though some instruments may not be populated
+        setBuildStage(8);
+        setBuildProgress(100);
+        await new Promise((r) => setTimeout(r, 800));
         router.push(`/projects/${projectId}`);
+      } else {
+        // Project creation itself failed — show error with retry
+        setBuildError(err?.message || 'Something went wrong. Please try again.');
       }
     }
   }, [data, goTo, router]);
@@ -418,11 +448,35 @@ export default function OnboardingFlow() {
             />
           )}
           {currentStepId === 'building' && (
-            <StepBuilding
-              stage={buildStage}
-              progress={buildProgress}
-              selectedImageIds={data.selectedImageIds}
-            />
+            <>
+              <StepBuilding
+                stage={buildStage}
+                progress={buildProgress}
+                selectedImageIds={data.selectedImageIds}
+              />
+              {/* Error overlay */}
+              {buildError && (
+                <div className="fixed inset-0 z-50 bg-[#0a0a0a] flex flex-col items-center justify-center px-6">
+                  <p className="text-white/60 text-[15px] mb-6 text-center max-w-sm">{buildError}</p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => startBuilding()}
+                      className="px-5 py-2.5 bg-white text-[#0a0a0a] rounded-lg text-[14px] font-medium hover:bg-white/90 transition-colors"
+                    >
+                      Try again
+                    </button>
+                    {createdProjectId && (
+                      <button
+                        onClick={() => router.push(`/projects/${createdProjectId}`)}
+                        className="px-5 py-2.5 bg-white/10 text-white rounded-lg text-[14px] font-medium hover:bg-white/20 transition-colors"
+                      >
+                        Go to project
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
