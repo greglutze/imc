@@ -452,6 +452,19 @@ class ApiClient {
     });
   }
 
+  async generateProjectNames(context: {
+    genres?: string[];
+    vision?: string;
+    moods?: string[];
+    artists?: string[];
+    shape?: string;
+  }): Promise<{ names: string[] }> {
+    return this.request('/api/projects/generate-names', {
+      method: 'POST',
+      body: JSON.stringify(context),
+    });
+  }
+
   async getProject(id: string): Promise<Project> {
     return this.request(`/api/projects/${id}`);
   }

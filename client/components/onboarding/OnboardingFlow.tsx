@@ -63,13 +63,13 @@ interface StepDef {
 const ALL_STEPS: StepDef[] = [
   { id: 'welcome', progress: 0 },
   { id: 'experience', progress: 10 },
-  { id: 'name', progress: 20 },
-  { id: 'genre', progress: 30, condition: (d) => d.experienceLevel === 'explorer' },
-  { id: 'vision', progress: 40 },
-  { id: 'images', progress: 60 },
-  { id: 'artists', progress: 75 },
-  { id: 'shape', progress: 85 },
-  { id: 'building', progress: 90 },
+  { id: 'genre', progress: 20, condition: (d) => d.experienceLevel === 'explorer' },
+  { id: 'vision', progress: 30 },
+  { id: 'images', progress: 50 },
+  { id: 'artists', progress: 65 },
+  { id: 'shape', progress: 78 },
+  { id: 'name', progress: 88 },
+  { id: 'building', progress: 92 },
 ];
 
 function getActiveSteps(data: OnboardingData): StepDef[] {
@@ -402,11 +402,12 @@ export default function OnboardingFlow() {
           {currentStepId === 'name' && (
             <StepName
               value={data.projectName}
+              onboardingData={data}
               onChange={(name) => updateData({ projectName: name })}
-              onContinue={goNext}
+              onContinue={() => startBuilding()}
               onSkip={() => {
                 updateData({ projectName: '' });
-                goNext();
+                startBuilding();
               }}
             />
           )}
@@ -458,7 +459,7 @@ export default function OnboardingFlow() {
               customTrackCount={data.customTrackCount}
               onChange={(shape, count) => {
                 updateData({ projectShape: shape, customTrackCount: count });
-                setTimeout(() => startBuilding(), 300);
+                setTimeout(goNext, 300);
               }}
             />
           )}
@@ -477,14 +478,14 @@ export default function OnboardingFlow() {
                   <div className="flex gap-3">
                     <button
                       onClick={() => startBuilding()}
-                      className="px-5 py-2.5 bg-white text-[#0a0a0a] rounded-lg text-[14px] font-medium hover:bg-white/90 transition-colors"
+                      className="px-5 py-2.5 bg-white text-[#0a0a0a] text-[14px] font-medium hover:bg-white/90 transition-colors"
                     >
                       Try again
                     </button>
                     {createdProjectId && (
                       <button
                         onClick={() => { window.location.href = `/projects/${createdProjectId}`; }}
-                        className="px-5 py-2.5 bg-white/10 text-white rounded-lg text-[14px] font-medium hover:bg-white/20 transition-colors"
+                        className="px-5 py-2.5 bg-white/10 text-white text-[14px] font-medium hover:bg-white/20 transition-colors"
                       >
                         Go to project
                       </button>

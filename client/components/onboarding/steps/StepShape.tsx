@@ -42,7 +42,7 @@ export default function StepShape({ value, experienceLevel, customTrackCount, on
     <div className="min-h-screen flex flex-col items-center justify-center px-6">
       <div className="max-w-xl w-full">
         <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-4 text-center">
-          Last step
+          Project scope
         </p>
         <h2 className="text-[32px] md:text-[40px] leading-[1.1] font-medium tracking-tight text-[#1A1A1A] text-center mb-10">
           How big is this project?
@@ -59,7 +59,7 @@ export default function StepShape({ value, experienceLevel, customTrackCount, on
                   onChange(shape.id);
                 }}
                 className={`
-                  w-full text-left px-7 py-6 rounded-lg transition-all duration-200 group
+                  w-full text-left px-7 py-6 transition-all duration-200 group
                   ${isSelected
                     ? 'bg-[#1A1A1A] text-white ring-2 ring-[#1A1A1A] scale-[1.01]'
                     : 'bg-[#F7F7F5] hover:bg-[#F0F0ED] text-[#1A1A1A]'
@@ -89,7 +89,7 @@ export default function StepShape({ value, experienceLevel, customTrackCount, on
               <button
                 onClick={() => setShowCustom(true)}
                 className={`
-                  w-full text-left px-7 py-6 rounded-lg transition-all duration-200
+                  w-full text-left px-7 py-6 transition-all duration-200
                   ${showCustom
                     ? 'bg-[#1A1A1A] text-white ring-2 ring-[#1A1A1A]'
                     : 'bg-[#F7F7F5] hover:bg-[#F0F0ED] text-[#1A1A1A]'
@@ -113,7 +113,7 @@ export default function StepShape({ value, experienceLevel, customTrackCount, on
                         max={20}
                         value={customCount}
                         onChange={(e) => setCustomCount(Math.max(1, Math.min(20, parseInt(e.target.value) || 1)))}
-                        className="w-16 text-center bg-white/20 border border-white/30 rounded-lg px-2 py-1.5 text-[16px] font-medium text-white outline-none"
+                        className="w-16 text-center bg-white/20 border border-white/30 px-2 py-1.5 text-[16px] font-medium text-white outline-none"
                       />
                       <span className="text-[13px] text-white/50">tracks</span>
                     </div>
