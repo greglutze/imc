@@ -519,44 +519,7 @@ export default function ProjectPage() {
 
             {/* Style Profile — production aesthetic & sonic signatures */}
             {styleProfile && (
-              <div className="py-10 border-b border-[#E8E8E8]">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
-                  <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                    Sonic Identity
-                  </p>
-                </div>
-                <blockquote className="text-[20px] leading-[1.4] text-[#1A1A1A] max-w-3xl mb-8">
-                  {styleProfile.production_aesthetic}
-                </blockquote>
-
-                {/* Sonic signatures as pills */}
-                {styleProfile.sonic_signatures && styleProfile.sonic_signatures.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {styleProfile.sonic_signatures.map((sig, i) => (
-                      <span key={i} className="text-[12px] text-[#8A8A8A] bg-[#F7F7F5] px-3 py-1.5 rounded-full border border-[#E8E8E8]">
-                        {sig}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Tempo + key info */}
-                <div className="flex items-center gap-6">
-                  {styleProfile.tempo_range && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-micro font-semibold uppercase tracking-wide text-[#C4C4C4]">Tempo</span>
-                      <span className="text-[13px] text-[#1A1A1A]">{styleProfile.tempo_range}</span>
-                    </div>
-                  )}
-                  {styleProfile.key_preferences && styleProfile.key_preferences.length > 0 && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-micro font-semibold uppercase tracking-wide text-[#C4C4C4]">Keys</span>
-                      <span className="text-[13px] text-[#1A1A1A]">{styleProfile.key_preferences.join(', ')}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <SonicIdentitySection styleProfile={styleProfile} />
             )}
 
             {/* Vocalist Persona */}
@@ -950,6 +913,137 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
           <span className="text-micro font-mono text-[#8A8A8A]">{formatTime(currentTime)}</span>
           <span className="text-micro font-mono text-[#8A8A8A]">{duration > 0 ? formatTime(duration) : '--:--'}</span>
         </div>
+      </div>
+    </div>
+  );
+}
+
+
+// ── Sonic Identity — collapsed, scannable overview ────────────
+
+/** Parse "Title — description" or "Title: description" into parts */
+function parseSigTitle(raw: string): { title: string; detail: string } {
+  const emDash = raw.indexOf(' — ');
+  if (emDash > 0 && emDash < 65) {
+    return { title: raw.slice(0, emDash).trim(), detail: raw.slice(emDash + 3).trim() };
+  }
+  const colon = raw.indexOf(': ');
+  if (colon > 0 && colon < 55) {
+    return { title: raw.slice(0, colon).trim(), detail: raw.slice(colon + 2).trim() };
+  }
+  if (raw.length > 55) {
+    const sp = raw.indexOf(' ', 40);
+    if (sp > 0) return { title: raw.slice(0, sp).trim(), detail: raw.slice(sp + 1).trim() };
+  }
+  return { title: raw, detail: '' };
+}
+
+/** Extract just the key name from "C minor — long description" */
+function parseKeyName(raw: string): string {
+  const emDash = raw.indexOf(' — ');
+  if (emDash > 0) return raw.slice(0, emDash).trim();
+  const colon = raw.indexOf(': ');
+  if (colon > 0) return raw.slice(0, colon).trim();
+  const comma = raw.indexOf(', ');
+  if (comma > 0 && comma < 20) return raw.slice(0, comma).trim();
+  return raw.length > 20 ? raw.slice(0, 20).trim() : raw;
+}
+
+/** Extract BPM range from tempo string like "70–140 BPM — long description" */
+function parseTempoBpm(raw: string): { bpm: string; detail: string } {
+  const bpmMatch = raw.match(/(\d+[\u2013\u2014-]\d+\s*BPM)/i);
+  if (bpmMatch) {
+    const after = raw.slice(raw.indexOf(bpmMatch[0]) + bpmMatch[0].length).replace(/^\s*[—\-:,]\s*/, '').trim();
+    return { bpm: bpmMatch[1], detail: after };
+  }
+  const single = raw.match(/(\d+\s*BPM)/i);
+  if (single) {
+    const after = raw.slice(raw.indexOf(single[0]) + single[0].length).replace(/^\s*[—\-:,]\s*/, '').trim();
+    return { bpm: single[1], detail: after };
+  }
+  return { bpm: raw.slice(0, 30), detail: '' };
+}
+
+function SonicIdentitySection({ styleProfile }: { styleProfile: I2StyleProfile }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const sigs = (styleProfile.sonic_signatures || []).map(parseSigTitle);
+  const keys = (styleProfile.key_preferences || []).map(parseKeyName);
+  const tempo = styleProfile.tempo_range ? parseTempoBpm(styleProfile.tempo_range) : null;
+
+  const prose = styleProfile.production_aesthetic || '';
+  const needsTruncation = prose.length > 200;
+  const truncatedProse = needsTruncation
+    ? prose.slice(0, prose.indexOf(' ', 180)) + '...'
+    : prose;
+
+  return (
+    <div className="py-10 border-b border-[#E8E8E8]">
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-2 h-2 rounded-full bg-blue-500" />
+        <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+          Sonic Identity
+        </p>
+      </div>
+
+      {/* Production aesthetic — truncated */}
+      {prose && (
+        <div className="mb-6 max-w-3xl">
+          <p className="text-[16px] leading-[1.6] text-[#1A1A1A]">
+            {expanded ? prose : truncatedProse}
+          </p>
+          {needsTruncation && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="text-[12px] text-[#8A8A8A] hover:text-[#1A1A1A] mt-1.5 transition-colors duration-150"
+            >
+              {expanded ? 'Show less' : 'Read more'}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Sonic signatures — title-only pills */}
+      {sigs.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {sigs.map((sig, i) => (
+            <span
+              key={i}
+              className="text-[12px] text-[#8A8A8A] bg-[#F7F7F5] px-3 py-1.5 rounded-full border border-[#E8E8E8]"
+              title={sig.detail || undefined}
+            >
+              {sig.title}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Tempo + Keys — clean grid */}
+      <div className="flex flex-wrap items-start gap-8">
+        {tempo && (
+          <div>
+            <p className="text-micro font-semibold uppercase tracking-wide text-[#C4C4C4] mb-1.5">Tempo</p>
+            <p className="text-[14px] font-medium text-[#1A1A1A]">{tempo.bpm}</p>
+            {tempo.detail && (
+              <p className="text-[12px] text-[#8A8A8A] mt-0.5 max-w-[220px] leading-relaxed">{tempo.detail}</p>
+            )}
+          </div>
+        )}
+        {keys.length > 0 && (
+          <div>
+            <p className="text-micro font-semibold uppercase tracking-wide text-[#C4C4C4] mb-1.5">Keys</p>
+            <div className="flex flex-wrap gap-1.5">
+              {keys.map((k, i) => (
+                <span
+                  key={i}
+                  className="text-[12px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-2.5 py-1 rounded-full"
+                >
+                  {k}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
