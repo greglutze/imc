@@ -313,7 +313,7 @@ function ProjectCard({ project, projectCode, statusLabel, statusColor, projects,
       {/* CTA */}
       <a
         href={`/projects/${project.id}`}
-        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150 shrink-0"
+        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150 shrink-0"
         onClick={(e) => e.stopPropagation()}
       >
         Open Project
