@@ -135,7 +135,7 @@ export default function TrackAnnotations({
           onChange={(e) => setNewContent(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
           placeholder="Add a note at this timestamp..."
-          className="flex-1 text-small bg-transparent outline-none text-black placeholder:text-[#C4C4C4]"
+          className="flex-1 text-[13px] bg-transparent outline-none text-black placeholder:text-[#C4C4C4]"
         />
         <ButtonV2 onClick={handleAdd} disabled={adding || !newContent.trim()} variant="ghost" size="sm" className="shrink-0">
           {adding ? '...' : 'Add'}
@@ -194,7 +194,7 @@ export default function TrackAnnotations({
                       if (e.key === 'Enter') handleEdit(annotation.id);
                       if (e.key === 'Escape') setEditingId(null);
                     }}
-                    className="text-small text-black bg-transparent border-b border-black outline-none w-full"
+                    className="text-[13px] text-black bg-transparent border-b border-black outline-none w-full"
                     autoFocus
                   />
                 ) : (
@@ -203,7 +203,7 @@ export default function TrackAnnotations({
                       setEditingId(annotation.id);
                       setEditContent(annotation.content);
                     }}
-                    className={`text-small cursor-pointer ${annotation.resolved ? 'text-[#C4C4C4] line-through' : 'text-black'}`}
+                    className={`text-[13px] cursor-pointer ${annotation.resolved ? 'text-[#C4C4C4] line-through' : 'text-black'}`}
                   >
                     {annotation.content}
                   </span>
@@ -213,7 +213,7 @@ export default function TrackAnnotations({
               {/* Delete */}
               <button
                 onClick={() => handleDelete(annotation.id)}
-                className="text-[#C4C4C4] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-150 text-small shrink-0"
+                className="text-[#C4C4C4] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-150 text-[13px] shrink-0"
               >
                 ×
               </button>

@@ -219,7 +219,7 @@ export default function ListenerPage() {
               onChange={(e) => setPasswordInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') handleVerifyPassword(); }}
               placeholder="Enter password"
-              className={`w-full text-small ${inputBg} border  px-4 py-3 outline-none focus:border-[#8A8A8A] ${textPrimary}`}
+              className={`w-full text-[13px] ${inputBg} border  px-4 py-3 outline-none focus:border-[#8A8A8A] ${textPrimary}`}
             />
             {passwordError && (
               <p className="text-[11px] text-red-500">Incorrect password.</p>
@@ -249,7 +249,7 @@ export default function ListenerPage() {
             </div>
           ) : (
             <div className={`w-64 h-64 mx-auto mb-8  border ${border} flex items-center justify-center`}>
-              <span className={`text-display ${textMuted}`}>♫</span>
+              <span className={`text-[40px] ${textMuted}`}>♫</span>
             </div>
           )}
           <h1 className={`text-[22px] font-bold ${textPrimary}`}>{share.title}</h1>
@@ -285,7 +285,7 @@ export default function ListenerPage() {
                 }}
                 className={`w-full text-left flex items-center gap-4 px-4 py-3  border ${border} ${hoverBorder} transition-colors duration-fast ${isActive ? trackActive : ''}`}
               >
-                <span className={`text-small w-5 text-center shrink-0 ${isActive && isPlaying ? textPrimary : textSecondary}`}>
+                <span className={`text-[13px] w-5 text-center shrink-0 ${isActive && isPlaying ? textPrimary : textSecondary}`}>
                   {isActive && isPlaying ? '▮▮' : isActive ? '▶' : (idx + 1)}
                 </span>
                 <span className={`flex-1 text-[14px] ${isActive ? textPrimary + ' font-bold' : textPrimary}`}>
@@ -317,7 +317,7 @@ export default function ListenerPage() {
               >
                 {isPlaying ? '▮▮' : '▶'}
               </button>
-              <span className={`text-small ${textPrimary} font-bold flex-1 truncate`}>
+              <span className={`text-[13px] ${textPrimary} font-bold flex-1 truncate`}>
                 {currentTrack.title}
               </span>
               <span className={`text-[11px] ${textSecondary} shrink-0`}>

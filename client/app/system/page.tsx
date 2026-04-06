@@ -10,7 +10,7 @@ export default function SystemPage() {
         <p className="text-[11px] font-bold uppercase tracking-widest text-[#C4C4C4] mb-3">
           IMC Design System
         </p>
-        <h1 className="text-display font-bold tracking-tight text-black">
+        <h1 className="text-[40px] font-bold tracking-tight text-black">
           Component Reference
         </h1>
         <p className="text-[14px] text-[#8A8A8A] mt-2 max-w-xl">
@@ -27,11 +27,11 @@ export default function SystemPage() {
           <div className="space-y-6 mt-6">
             <div>
               <span className="text-[11px] text-[#C4C4C4] font-mono">display-lg / 64px</span>
-              <p className="text-display-lg font-bold text-black">Instruments</p>
+              <p className="text-[40px]-lg font-bold text-black">Instruments</p>
             </div>
             <div>
               <span className="text-[11px] text-[#C4C4C4] font-mono">display / 48px</span>
-              <p className="text-display font-bold text-black">Mass Creation</p>
+              <p className="text-[40px] font-bold text-black">Mass Creation</p>
             </div>
             <div>
               <span className="text-[11px] text-[#C4C4C4] font-mono">heading-lg / 36px</span>

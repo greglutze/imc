@@ -204,7 +204,7 @@ export default function LyricSessionPage() {
 
   if (authLoading || pageLoading) {
     return (
-      <div className="animate-fade-in px-8 py-16 max-w-2xl">
+      <div className="animate-fade-in px-10 py-16 max-w-2xl">
         <p className="text-[120px] leading-[0.85] font-bold text-[#E8E8E8] -ml-1">LA</p>
         <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
           Loading...
@@ -379,7 +379,7 @@ export default function LyricSessionPage() {
                 key={action}
                 onClick={() => handleQuickAction(action.toLowerCase())}
                 disabled={sending}
-                className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black bg-white border border-[#E8E8E8] px-3 py-1.5  transition-colors duration-150 disabled:opacity-50"
+                className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black bg-white border border-[#E8E8E8] px-3 py-1.5 rounded-full transition-colors duration-150 disabled:opacity-50"
               >
                 {action}
               </button>
@@ -388,7 +388,7 @@ export default function LyricSessionPage() {
 
           {/* Chat input */}
           <form onSubmit={handleSubmit} className="px-6 py-4 border-t border-[#E8E8E8]">
-            <div className="bg-white  px-4 py-3 flex items-end gap-3 border border-[#E8E8E8]">
+            <div className="bg-white px-4 py-3 flex items-end gap-3 border border-[#E8E8E8]">
               <textarea
                 ref={inputRef}
                 value={input}
@@ -404,7 +404,7 @@ export default function LyricSessionPage() {
                 type="submit"
                 disabled={!input.trim() || sending}
                 className={`
-                  text-[12px] font-semibold uppercase tracking-wide px-4 h-8                   transition-colors duration-150 shrink-0 text-[11px]
+                  text-[11px] font-semibold uppercase tracking-wide px-4 h-8 transition-colors duration-150 shrink-0
                   ${input.trim() && !sending
                     ? 'bg-black text-white hover:bg-[#1A1A1A]'
                     : 'bg-[#F7F7F5] text-[#C4C4C4] cursor-not-allowed'
