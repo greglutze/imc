@@ -400,9 +400,7 @@ export default function ProjectPage() {
           imageUrl={project?.image_url}
           activePage="home"
           onNavigate={(page) => {
-            if (page === 'interview') setActiveTab('interview');
-            else if (page === 'moodboard') setActiveTab('moodboard');
-            else if (page === 'research') setActiveTab('report');
+            if (page === 'research') setActiveTab('report');
           }}
         />
 
@@ -811,8 +809,10 @@ export default function ProjectPage() {
         projectId={id}
         artistName={artistName}
         imageUrl={project?.image_url}
-        activePage={activeTab === 'report' ? 'research' : activeTab === 'moodboard' ? 'moodboard' : 'interview'}
-        onNavigate={(page) => setActiveTab(page === 'research' ? 'report' : page === 'moodboard' ? 'moodboard' : 'interview')}
+        activePage={activeTab === 'report' ? 'research' : 'home'}
+        onNavigate={(page) => {
+          if (page === 'research') setActiveTab('report');
+        }}
       />
 
       {/* Content area — key forces remount for crossfade */}

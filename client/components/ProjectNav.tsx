@@ -16,8 +16,6 @@ interface ProjectNavProps {
 
 export default function ProjectNav({ projectId, artistName, imageUrl, activePage, onNavigate }: ProjectNavProps) {
   const links: Array<{ key: NavPage; label: string; href: string }> = [
-    { key: 'interview', label: 'Concept', href: `/projects/${projectId}?tab=interview` },
-    { key: 'moodboard', label: 'Audio/Visuals', href: `/projects/${projectId}?tab=moodboard` },
     { key: 'research', label: 'Research', href: `/projects/${projectId}?tab=research` },
     { key: 'prompts', label: 'Sonic Engine', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'LyriCol', href: `/projects/${projectId}/lyrics` },
@@ -56,8 +54,8 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
             const baseClass = `text-micro font-semibold uppercase tracking-wide px-3 py-3 transition-colors duration-150`;
             const activeClass = isActive ? 'text-black border-b-2 border-black -mb-px' : 'text-[#8A8A8A] hover:text-[#1A1A1A]';
 
-            // If onNavigate is provided and this is concept/research, use button for in-page nav
-            if (onNavigate && (link.key === 'interview' || link.key === 'moodboard' || link.key === 'research')) {
+            // If onNavigate is provided and this is research, use button for in-page nav
+            if (onNavigate && link.key === 'research') {
               return (
                 <button
                   key={link.key}
