@@ -18,10 +18,141 @@ interface StyleProfileProps {
   sonicBlueprint?: SonicBlueprint;
 }
 
+/* ——— Helpers ——— */
+
+function toTitleCase(str: string): string {
+  return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
+}
+
+/** Parse a flat string into { title, description } by splitting on em dash, colon, or first sentence. */
+function parseTitleDesc(raw: string): { title: string; description: string } {
+  // Try em dash first (most common in our prompts)
+  const emDash = raw.indexOf(' — ');
+  if (emDash > 0 && emDash < 60) {
+    return { title: raw.slice(0, emDash).trim(), description: raw.slice(emDash + 3).trim() };
+  }
+
+  // Try colon
+  const colon = raw.indexOf(': ');
+  if (colon > 0 && colon < 50) {
+    return { title: raw.slice(0, colon).trim(), description: raw.slice(colon + 2).trim() };
+  }
+
+  // Try " that " or " with " as natural break points
+  for (const splitter of [' that ', ' with ']) {
+    const idx = raw.indexOf(splitter);
+    if (idx > 8 && idx < 55) {
+      return { title: raw.slice(0, idx).trim(), description: raw.slice(idx + 1).trim() };
+    }
+  }
+
+  // Fallback: first comma if it's early enough
+  const comma = raw.indexOf(', ');
+  if (comma > 8 && comma < 50) {
+    return { title: raw.slice(0, comma).trim(), description: raw.slice(comma + 2).trim() };
+  }
+
+  // Last resort: take first ~40 chars as title
+  if (raw.length > 50) {
+    const spaceIdx = raw.indexOf(' ', 30);
+    if (spaceIdx > 0) {
+      return { title: raw.slice(0, spaceIdx).trim(), description: raw.slice(spaceIdx + 1).trim() };
+    }
+  }
+
+  return { title: raw, description: '' };
+}
+
+/** Break a long production style paragraph into themed sentences */
+function parseProductionThemes(text: string): Array<{ title: string; body: string }> {
+  // Split on sentence boundaries (period followed by space and capital letter)
+  const sentences = text.match(/[^.!]+[.!]+/g) || [text];
+
+  // Group into themed chunks of 1-2 sentences
+  const themes: Array<{ title: string; body: string }> = [];
+  const themeKeywords: Record<string, string[]> = {
+    'Foundation': ['foundation', 'structural', 'base', 'core', 'roots', 'influenced'],
+    'Texture & Space': ['texture', 'reverb', 'pad', 'atmospheric', 'rain', 'space', 'ambient', 'synth', 'analog'],
+    'Low End': ['808', 'bass', 'sub-bass', 'low-end', 'low end', 'weight'],
+    'Drums & Rhythm': ['drum', 'snare', 'hi-hat', 'percussion', 'rhythm', 'beat', 'kick'],
+    'Distortion & Edge': ['distortion', 'lo-fi', 'lofi', 'punk', 'raw', 'grit', 'clipping', 'noise'],
+    'Dynamics': ['silence', 'negative space', 'dynamic', 'contrast', 'heavy', 'soft', 'tension'],
+    'Mix & Master': ['mix', 'mixing', 'master', 'earphone', 'headphone', 'presence', 'midrange', 'stereo'],
+    'Vocals': ['vocal', 'voice', 'sing', 'falsetto', 'harmony', 'choir', 'choral'],
+  };
+
+  for (const sentence of sentences) {
+    const trimmed = sentence.trim();
+    if (!trimmed) continue;
+
+    let matchedTheme = 'Sound Design';
+    const lower = trimmed.toLowerCase();
+
+    for (const [theme, keywords] of Object.entries(themeKeywords)) {
+      if (keywords.some(kw => lower.includes(kw))) {
+        matchedTheme = theme;
+        break;
+      }
+    }
+
+    // Try to merge with existing theme
+    const existing = themes.find(t => t.title === matchedTheme);
+    if (existing) {
+      existing.body += ' ' + trimmed;
+    } else {
+      themes.push({ title: matchedTheme, body: trimmed });
+    }
+  }
+
+  return themes;
+}
+
+/* ——— Icons as simple SVG components ——— */
+
+function WaveformIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
+      <rect x="1" y="6" width="2" height="4" rx="0.5" fill="currentColor" opacity="0.4" />
+      <rect x="4.5" y="3" width="2" height="10" rx="0.5" fill="currentColor" opacity="0.6" />
+      <rect x="8" y="5" width="2" height="6" rx="0.5" fill="currentColor" opacity="0.8" />
+      <rect x="11.5" y="2" width="2" height="12" rx="0.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function KeyIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0">
+      <rect x="2" y="4" width="2" height="8" rx="0.5" fill="currentColor" />
+      <rect x="5" y="2" width="2" height="10" rx="0.5" fill="currentColor" opacity="0.7" />
+      <rect x="8" y="5" width="2" height="7" rx="0.5" fill="currentColor" opacity="0.5" />
+      <rect x="11" y="3" width="2" height="9" rx="0.5" fill="currentColor" opacity="0.85" />
+    </svg>
+  );
+}
+
+/* ——— Main Component ——— */
+
 export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: StyleProfileProps) {
+  const parsedSignatures = useMemo(
+    () => styleProfile.sonic_signatures.map(parseTitleDesc),
+    [styleProfile.sonic_signatures]
+  );
+
+  const parsedKeys = useMemo(
+    () => styleProfile.key_preferences.map(parseTitleDesc),
+    [styleProfile.key_preferences]
+  );
+
+  const productionThemes = useMemo(
+    () => sonicBlueprint?.production_style ? parseProductionThemes(sonicBlueprint.production_style) : [],
+    [sonicBlueprint?.production_style]
+  );
+
   return (
     <div className="animate-fade-in px-10 py-10 max-w-[1400px] mx-auto">
-      {/* Production Aesthetic — open hero, no card */}
+
+      {/* ———— Production Aesthetic — hero quote ———— */}
       <div className="pb-10 border-b border-[#E8E8E8]">
         <SectionLabel>Production Aesthetic</SectionLabel>
         <blockquote className="text-[24px] leading-[1.35] font-medium text-[#1A1A1A] mt-5 max-w-3xl tracking-tight">
@@ -29,15 +160,15 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
         </blockquote>
       </div>
 
-      {/* Genre DNA — open section with border divider */}
+      {/* ———— Genre DNA ———— */}
       {concept?.genre_primary && (
         <div className="py-10 border-b border-[#E8E8E8]">
           <SectionLabel>Genre DNA</SectionLabel>
-          <div className="mt-5 flex items-start gap-8">
+          <div className="mt-5 flex items-start gap-10">
             <div className="shrink-0">
               <p className="text-[11px] font-mono text-[#C4C4C4] mb-1">Primary</p>
               <p className="text-[32px] leading-none font-medium text-[#1A1A1A] tracking-tight">
-                {concept.genre_primary}
+                {toTitleCase(concept.genre_primary)}
               </p>
             </div>
 
@@ -50,7 +181,7 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
                       key={i}
                       className="text-[13px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-4 py-2 rounded-full border border-[#E8E8E8]"
                     >
-                      {genre}
+                      {toTitleCase(genre)}
                     </span>
                   ))}
                 </div>
@@ -60,46 +191,80 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
         </div>
       )}
 
-      {/* Sonic Signatures + Tempo/Key — two-column cards */}
+      {/* ———— Sonic Signatures — card grid ———— */}
+      <div className="py-10 border-b border-[#E8E8E8]">
+        <SectionLabel>Sonic Signatures</SectionLabel>
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          {parsedSignatures.map((sig, i) => (
+            <div
+              key={i}
+              className="bg-[#F7F7F5] px-5 py-4 group hover:bg-[#F0F0ED] transition-colors duration-200"
+            >
+              <div className="flex items-start gap-3">
+                <span className="text-[#C4C4C4] mt-0.5">
+                  <WaveformIcon />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[14px] font-medium text-[#1A1A1A] leading-snug">
+                    {sig.title}
+                  </p>
+                  {sig.description && (
+                    <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-1">
+                      {sig.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ———— Tempo & Key — side by side cards ———— */}
       <div className="py-10 border-b border-[#E8E8E8]">
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-7">
-            <SectionLabel>Sonic Signatures</SectionLabel>
-            <div className="mt-5 space-y-4">
-              {styleProfile.sonic_signatures.map((sig, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <span className="text-[13px] font-medium text-[#C4C4C4] shrink-0 w-6 text-right pt-0.5">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{sig}</p>
-                </div>
-              ))}
+          {/* Tempo */}
+          <div className="col-span-5">
+            <SectionLabel>Tempo Range</SectionLabel>
+            <div className="mt-4 bg-[#1A1A1A] px-6 py-5">
+              <p className="text-[22px] font-medium text-white tracking-tight">
+                {styleProfile.tempo_range.split('—')[0]?.split('–')[0]?.trim() || styleProfile.tempo_range}
+              </p>
+              {(styleProfile.tempo_range.includes('—') || styleProfile.tempo_range.includes('–')) && (
+                <p className="text-[13px] text-[#8A8A8A] mt-1.5">
+                  {(styleProfile.tempo_range.split('—')[1] || styleProfile.tempo_range.split('–')[1] || '').trim()}
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="col-span-5 bg-[#F7F7F5] px-7 py-8">
-            <div className="space-y-6">
-              <div className="border-b border-[#E8E8E8] pb-4">
-                <SectionLabel>Tempo Range</SectionLabel>
-                <p className="text-[18px] font-medium text-[#1A1A1A] mt-2">{styleProfile.tempo_range}</p>
-              </div>
-
-              <div>
-                <SectionLabel>Key Preferences</SectionLabel>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {styleProfile.key_preferences.map((k, i) => (
-                    <span key={i} className="text-[13px] font-mono text-[#1A1A1A] bg-white px-2.5 py-1 rounded-full border border-[#E8E8E8]">
-                      {k}
-                    </span>
-                  ))}
+          {/* Key Preferences */}
+          <div className="col-span-7">
+            <SectionLabel>Key Preferences</SectionLabel>
+            <div className="mt-4 space-y-2">
+              {parsedKeys.map((k, i) => (
+                <div key={i} className="flex items-start gap-3 bg-[#F7F7F5] px-5 py-3.5">
+                  <span className="text-[#C4C4C4] mt-0.5">
+                    <KeyIcon />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[15px] font-medium text-[#1A1A1A]">
+                      {k.title}
+                    </p>
+                    {k.description && (
+                      <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-0.5">
+                        {k.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Mood Map — open section, no card wrapper */}
+      {/* ———— Mood Map ———— */}
       {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
         <div className="py-10 border-b border-[#E8E8E8]">
           <SectionLabel>Mood Map</SectionLabel>
@@ -109,29 +274,40 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
         </div>
       )}
 
-      {/* Energy Profile — card */}
+      {/* ———— Market Production Style — themed cards ———— */}
+      {sonicBlueprint?.production_style && (
+        <div className="py-10 border-b border-[#E8E8E8]">
+          <div className="flex items-center gap-3 mb-5">
+            <SectionLabel>Market Production Style</SectionLabel>
+            <Badge variant="green">From Research</Badge>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {productionThemes.map((theme, i) => (
+              <div key={i} className="bg-[#F7F7F5] px-5 py-4">
+                <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-2">
+                  {theme.title}
+                </p>
+                <p className="text-[14px] text-[#1A1A1A] leading-relaxed">
+                  {theme.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ———— Energy Profile ———— */}
       {sonicBlueprint?.energy_profile && (
         <div className="py-10">
-          <div className="bg-[#F7F7F5] px-7 py-8">
-            <div className="grid grid-cols-12 gap-8">
-              <div className="col-span-7">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                  <SectionLabel>Energy Profile</SectionLabel>
-                  <Badge variant="green">From Market Research</Badge>
-                </div>
-                <p className="text-[14px] text-[#1A1A1A] leading-relaxed">
-                  {sonicBlueprint.energy_profile}
-                </p>
-              </div>
-
-              <div className="col-span-5 border-l border-[#E8E8E8] pl-8">
-                <SectionLabel>Market Production Style</SectionLabel>
-                <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-2">
-                  {sonicBlueprint.production_style}
-                </p>
-              </div>
-            </div>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+            <SectionLabel>Energy Profile</SectionLabel>
+            <Badge variant="green">From Research</Badge>
+          </div>
+          <div className="bg-[#1A1A1A] px-7 py-6">
+            <p className="text-[15px] text-[#E0E0E0] leading-relaxed">
+              {sonicBlueprint.energy_profile}
+            </p>
           </div>
         </div>
       )}
@@ -139,7 +315,8 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
   );
 }
 
-/** Deterministic hash for consistent node placement across renders */
+/* ——— Mood Constellation (unchanged visual component) ——— */
+
 function hashStr(s: string): number {
   let h = 0;
   for (let i = 0; i < s.length; i++) {
