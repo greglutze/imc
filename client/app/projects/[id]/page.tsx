@@ -340,16 +340,6 @@ export default function ProjectPage() {
       },
       {
         number: '02',
-        name: 'Audio/Visuals',
-        description: moodboardImages.length > 0
-          ? `${moodboardImages.length} images shaping your visual world.`
-          : 'Drop in photos, textures, and references that feel like your sound.',
-        href: `/projects/${id}?tab=moodboard`,
-        statusLabel: moodboardImages.length > 0 ? `${moodboardImages.length} Images` : 'Start',
-        color: moodboardImages.length > 0 ? 'green' as const : 'neutral' as const,
-      },
-      {
-        number: '03',
         name: 'Research',
         description: report
           ? 'Market intelligence, audience profile, and sonic positioning — ready to review.'
@@ -361,7 +351,7 @@ export default function ProjectPage() {
         color: report ? 'green' as const : conceptReady ? 'yellow' as const : 'neutral' as const,
       },
       {
-        number: '04',
+        number: '03',
         name: 'Sonic Engine',
         description: hasPrompts
           ? `${demoTracks.length} track prompts generated from your concept and research.`
@@ -371,7 +361,7 @@ export default function ProjectPage() {
         color: hasPrompts ? 'green' as const : 'neutral' as const,
       },
       {
-        number: '05',
+        number: '04',
         name: 'LyriCol',
         description: lyricSessionCount > 0
           ? `${lyricSessionCount} session${lyricSessionCount !== 1 ? 's' : ''} — keep writing, keep refining.`
@@ -381,7 +371,7 @@ export default function ProjectPage() {
         color: lyricSessionCount > 0 ? 'green' as const : 'neutral' as const,
       },
       {
-        number: '06',
+        number: '05',
         name: 'Tracks',
         description: shareCount > 0
           ? `${shareCount} share link${shareCount !== 1 ? 's' : ''} — private listening, on your terms.`
@@ -668,20 +658,20 @@ export default function ProjectPage() {
               </div>
             )}
 
-            {/* Moodboard grid */}
-            {moodboardImages.length > 0 && (
-              <div className="py-12 border-b border-[#E8E8E8]">
-                <div className="flex items-center justify-between mb-6">
-                  <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                    Audio/Visuals
-                  </p>
-                  <a
-                    href={`/projects/${id}?tab=moodboard`}
-                    className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black transition-colors duration-150"
-                  >
-                    Edit
-                  </a>
-                </div>
+            {/* Visual World — inline moodboard */}
+            <div className="py-12 border-b border-[#E8E8E8]">
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                  Visual World
+                </p>
+                <a
+                  href={`/projects/${id}?tab=moodboard`}
+                  className="text-[11px] font-medium text-[#8A8A8A] hover:text-black transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
+                >
+                  {moodboardImages.length > 0 ? 'Manage Images' : 'Add Images'}
+                </a>
+              </div>
+              {moodboardImages.length > 0 ? (
                 <div className="grid grid-cols-6 gap-2">
                   {moodboardImages.slice(0, 6).map((img, i) => (
                     <div
@@ -698,8 +688,18 @@ export default function ProjectPage() {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="border border-dashed border-[#E8E8E8] py-16 flex flex-col items-center justify-center">
+                  <p className="text-[14px] text-[#C4C4C4] mb-2">No visual references yet</p>
+                  <a
+                    href={`/projects/${id}?tab=moodboard`}
+                    className="text-[13px] font-medium text-[#1A1A1A] hover:underline"
+                  >
+                    Add images that feel like your sound &rarr;
+                  </a>
+                </div>
+              )}
+            </div>
 
             {/* Latest track player */}
             {latestTrack && latestShareProject && (

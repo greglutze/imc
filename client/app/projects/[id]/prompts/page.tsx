@@ -4,14 +4,13 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import StyleProfile from '../../../../components/StyleProfile';
 import TrackPrompts from '../../../../components/TrackPrompts';
-import VocalistPersona from '../../../../components/VocalistPersona';
 import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
 import type { I2StyleProfile, I2VocalistPersona, I2Track, Project, I1Report } from '../../../../lib/api';
 import { ButtonV2 } from '../../../../components/ui';
 
-type I2View = 'style' | 'tracks' | 'vocalist';
+type I2View = 'style' | 'tracks';
 
 export default function PromptsPage() {
   const { id } = useParams<{ id: string }>();
@@ -195,9 +194,6 @@ export default function PromptsPage() {
             <span className="text-[11px] font-semibold uppercase tracking-wide pb-3 text-[#8A8A8A]">
               Demo Prompts
             </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wide pb-3 text-[#8A8A8A]">
-              Vocalist Persona
-            </span>
           </div>
         </div>
 
@@ -301,7 +297,6 @@ export default function PromptsPage() {
   const tabs = [
     { id: 'style', label: 'Style Profile' },
     { id: 'tracks', label: 'Demo Prompts', count: tracks.length },
-    { id: 'vocalist', label: 'Vocalist Persona' },
   ];
 
   return (
@@ -369,6 +364,7 @@ export default function PromptsPage() {
               styleProfile={styleProfile}
               concept={project?.concept || undefined}
               sonicBlueprint={report?.sonic_blueprint || undefined}
+              vocalistPersona={vocalistPersona || undefined}
             />
           )}
 
@@ -378,10 +374,6 @@ export default function PromptsPage() {
               onRegenerateTrack={handleRegenerate}
               regenerating={regenerating}
             />
-          )}
-
-          {activeTab === 'vocalist' && vocalistPersona && (
-            <VocalistPersona vocalistPersona={vocalistPersona} />
           )}
         </div>
       </div>

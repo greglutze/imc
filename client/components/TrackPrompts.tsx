@@ -146,28 +146,30 @@ function TrackCard({
         </div>
 
         {/* Lyrics */}
-        <div className="bg-[#F7F7F5] p-5">
+        <div className="bg-[#F7F7F5] p-5 flex flex-col">
           <div className="flex items-center justify-between mb-3">
             <Badge variant="violet">Lyrics</Badge>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleCopy(track.lyrics, 'lyrics')}
-                className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
-              >
-                {copiedField === 'lyrics' ? 'Copied' : 'Copy'}
-              </button>
-              <button
-                onClick={handleEditInLyriCol}
-                disabled={creatingSession || !track.lyrics}
-                className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A] disabled:opacity-40"
-              >
-                {creatingSession ? 'Opening...' : 'Edit in LyriCol →'}
-              </button>
-            </div>
+            <button
+              onClick={() => handleCopy(track.lyrics, 'lyrics')}
+              className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
+            >
+              {copiedField === 'lyrics' ? 'Copied' : 'Copy'}
+            </button>
           </div>
-          <div className="max-h-[400px] overflow-y-auto pr-2">
+          <div className="max-h-[400px] overflow-y-auto pr-2 flex-1">
             {renderLyrics(track.lyrics)}
           </div>
+          {/* Prominent LyriCol bridge */}
+          {track.lyrics && (
+            <button
+              onClick={handleEditInLyriCol}
+              disabled={creatingSession}
+              className="mt-4 w-full py-2.5 bg-[#1A1A1A] text-white text-[13px] font-medium hover:bg-black transition-colors duration-150 disabled:opacity-40 flex items-center justify-center gap-2"
+            >
+              {creatingSession ? 'Opening...' : 'Write in LyriCol'}
+              {!creatingSession && <span>&rarr;</span>}
+            </button>
+          )}
         </div>
       </div>
 

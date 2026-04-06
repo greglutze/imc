@@ -1,8 +1,8 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Badge } from './ui';
-import type { I2StyleProfile, ProjectConcept } from '../lib/api';
+import type { I2StyleProfile, I2VocalistPersona, ProjectConcept } from '../lib/api';
 
 interface SonicBlueprint {
   bpm_range: string;
@@ -16,6 +16,7 @@ interface StyleProfileProps {
   styleProfile: I2StyleProfile;
   concept?: ProjectConcept;
   sonicBlueprint?: SonicBlueprint;
+  vocalistPersona?: I2VocalistPersona;
 }
 
 /* ——— Helpers ——— */
@@ -133,7 +134,16 @@ function KeyIcon() {
 
 /* ——— Main Component ——— */
 
-export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: StyleProfileProps) {
+/** Build a Suno-formatted vocal prompt (no real names). */
+function buildVocalPrompt(persona: I2VocalistPersona): string {
+  const parts: string[] = [];
+  if (persona.vocal_character) parts.push(`[Vocal Style: ${persona.vocal_character}]`);
+  if (persona.delivery_style) parts.push(`[Vocal Delivery: ${persona.delivery_style}]`);
+  if (persona.tone_keywords.length > 0) parts.push(`[Vocal Tone: ${persona.tone_keywords.join(', ')}]`);
+  return parts.join('\n');
+}
+
+export default function StyleProfile({ styleProfile, concept, sonicBlueprint, vocalistPersona }: StyleProfileProps) {
   const parsedSignatures = useMemo(
     () => styleProfile.sonic_signatures.map(parseTitleDesc),
     [styleProfile.sonic_signatures]
@@ -298,7 +308,7 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
 
       {/* ———— Energy Profile ———— */}
       {sonicBlueprint?.energy_profile && (
-        <div className="py-10">
+        <div className="py-10 border-b border-[#E8E8E8]">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
             <SectionLabel>Energy Profile</SectionLabel>
@@ -311,6 +321,94 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
           </div>
         </div>
       )}
+
+      {/* ———— Vocal Direction (folded in from Vocalist Persona) ———— */}
+      {vocalistPersona && (
+        <VocalDirection vocalistPersona={vocalistPersona} />
+      )}
+    </div>
+  );
+}
+
+/* ——— Vocal Direction Section ——— */
+
+function VocalDirection({ vocalistPersona }: { vocalistPersona: I2VocalistPersona }) {
+  const [copied, setCopied] = useState(false);
+  const prompt = buildVocalPrompt(vocalistPersona);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(prompt);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* fallback */
+    }
+  };
+
+  return (
+    <div className="py-10">
+      <SectionLabel>Vocal Direction</SectionLabel>
+
+      {/* Two-column: character + delivery */}
+      <div className="mt-5 grid grid-cols-2 gap-4">
+        <div className="bg-[#F7F7F5] px-5 py-4">
+          <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-2">
+            Vocal Character
+          </p>
+          <p className="text-[14px] text-[#1A1A1A] leading-relaxed">
+            {vocalistPersona.vocal_character}
+          </p>
+        </div>
+        <div className="bg-[#F7F7F5] px-5 py-4">
+          <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-2">
+            Delivery Style
+          </p>
+          <p className="text-[14px] text-[#1A1A1A] leading-relaxed">
+            {vocalistPersona.delivery_style}
+          </p>
+        </div>
+      </div>
+
+      {/* Tone keywords + Suno vocal prompt */}
+      <div className="mt-4 grid grid-cols-2 gap-4">
+        {/* Tone keywords */}
+        <div>
+          {vocalistPersona.tone_keywords && vocalistPersona.tone_keywords.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {vocalistPersona.tone_keywords.map((kw, i) => (
+                <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
+                  {kw}
+                </span>
+              ))}
+            </div>
+          )}
+          {vocalistPersona.reference_vocalists && vocalistPersona.reference_vocalists.length > 0 && (
+            <div className="mt-4">
+              <p className="text-[11px] text-[#C4C4C4] mb-2">Reference vocalists (context only — not in prompts)</p>
+              <p className="text-[13px] text-[#8A8A8A]">
+                {vocalistPersona.reference_vocalists.join(', ')}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Suno vocal prompt — copyable */}
+        <div className="bg-[#F7F7F5] px-5 py-4">
+          <div className="flex items-center justify-between mb-2">
+            <Badge variant="orange">Suno Vocal Prompt</Badge>
+            <button
+              onClick={handleCopy}
+              className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
+            >
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+          </div>
+          <pre className="text-[13px] font-mono text-[#1A1A1A] whitespace-pre-wrap leading-relaxed">
+            {prompt}
+          </pre>
+        </div>
+      </div>
     </div>
   );
 }
