@@ -36,11 +36,12 @@ export async function chat(
 
 export async function analyze(
   systemPrompt: string,
-  userPrompt: string
+  userPrompt: string,
+  options?: { maxTokens?: number }
 ): Promise<string> {
   const response = await getClient().messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 8192,
+    max_tokens: options?.maxTokens ?? 8192,
     system: systemPrompt,
     messages: [
       {

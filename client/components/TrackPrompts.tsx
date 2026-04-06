@@ -43,9 +43,13 @@ function TrackCard({
   const [creatingSession, setCreatingSession] = useState(false);
   const sunoCharCount = track.suno_prompt.length;
 
+  // Normalize escaped newlines from JSON into real newlines
+  const normalizeLyrics = (text: string) => text.replace(/\\n/g, '\n');
+
   const handleCopy = async (text: string, field: 'suno' | 'lyrics') => {
     try {
-      await navigator.clipboard.writeText(text);
+      const normalized = field === 'lyrics' ? normalizeLyrics(text) : text;
+      await navigator.clipboard.writeText(normalized);
       setCopiedField(field);
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
@@ -60,7 +64,7 @@ function TrackCard({
       const session = await api.createLyricSession(id, {
         entry_mode: 'paste',
         title: track.title,
-        lyrics: track.lyrics,
+        lyrics: normalizeLyrics(track.lyrics),
       });
       window.location.href = `/projects/${id}/lyrics/${session.id}`;
     } catch (err) {
@@ -72,7 +76,9 @@ function TrackCard({
   // Format lyrics with structure tags highlighted
   const renderLyrics = (lyrics: string) => {
     if (!lyrics) return null;
-    const lines = lyrics.split('\n');
+    // Handle both literal \n (from JSON) and actual newlines
+    const normalized = lyrics.replace(/\\n/g, '\n');
+    const lines = normalized.split('\n');
     return lines.map((line, i) => {
       const trimmed = line.trim();
       // Structure tags like [Chorus], [Verse 1], etc.
