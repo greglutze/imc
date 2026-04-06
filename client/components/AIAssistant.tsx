@@ -122,7 +122,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
       >
         {/* Header */}
         <div className="border-b border-[#E8E8E8] p-4 flex items-center justify-between flex-shrink-0">
-          <h2 className="text-heading-sm font-bold text-black">IMC Assistant</h2>
+          <h2 className="text-[22px]-sm font-bold text-black">IMC Assistant</h2>
           <button
             onClick={() => setIsOpen(false)}
             className="w-8 h-8 flex items-center justify-center hover:bg-[#F7F7F5] transition-colors"
@@ -148,7 +148,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 && (
             <div className="flex items-center justify-center h-full text-center">
-              <p className="text-body-sm text-[#8A8A8A]">
+              <p className="text-[13px] text-[#8A8A8A]">
                 {projectId
                   ? 'Ask me anything about your project — creative direction, market insights, or next steps.'
                   : 'Open a project to start chatting about your music.'}
@@ -171,7 +171,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
                   }
                 `}
               >
-                <p className="text-body-sm whitespace-pre-wrap break-words">
+                <p className="text-[13px] whitespace-pre-wrap break-words">
                   {message.content}
                 </p>
               </div>
@@ -204,7 +204,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
               className={`
                 flex-1 px-3 py-2
                 border border-[#E8E8E8]
-                text-body-sm
+                text-[13px]
                 placeholder-[#C4C4C4]
                 focus:outline-none focus:border-[#E8E8E8]
                 disabled:bg-[#F7F7F5] disabled:text-[#C4C4C4]
@@ -214,7 +214,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
               onClick={handleSendMessage}
               disabled={isLoading || !projectId || !input.trim()}
               className={`
-                px-3 py-2 bg-black text-white text-body-sm font-medium
+                px-3 py-2 bg-black text-white text-[13px] font-medium
                 hover:bg-[#1A1A1A] transition-colors
                 disabled:bg-[#C4C4C4] disabled:cursor-not-allowed
               `}

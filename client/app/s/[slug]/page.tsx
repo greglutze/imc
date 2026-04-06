@@ -184,7 +184,7 @@ export default function ListenerPage() {
   if (loading) {
     return (
       <div className={`min-h-screen ${bg} flex items-center justify-center`}>
-        <span className={`text-label uppercase tracking-widest ${textSecondary}`}>Loading...</span>
+        <span className={`text-[12px] uppercase tracking-widest ${textSecondary}`}>Loading...</span>
       </div>
     );
   }
@@ -193,7 +193,7 @@ export default function ListenerPage() {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center">
-          <span className="text-label uppercase tracking-widest text-[#8A8A8A]">{error}</span>
+          <span className="text-[12px] uppercase tracking-widest text-[#8A8A8A]">{error}</span>
         </div>
       </div>
     );
@@ -211,7 +211,7 @@ export default function ListenerPage() {
               <img src={resolveUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
             </div>
           )}
-          <h1 className={`text-heading font-bold ${textPrimary} text-center mb-8`}>{share.title}</h1>
+          <h1 className={`text-[22px] font-bold ${textPrimary} text-center mb-8`}>{share.title}</h1>
           <div className="space-y-3">
             <input
               type="password"
@@ -222,11 +222,11 @@ export default function ListenerPage() {
               className={`w-full text-small ${inputBg} border  px-4 py-3 outline-none focus:border-[#8A8A8A] ${textPrimary}`}
             />
             {passwordError && (
-              <p className="text-micro text-red-500">Incorrect password.</p>
+              <p className="text-[11px] text-red-500">Incorrect password.</p>
             )}
             <button
               onClick={handleVerifyPassword}
-              className={`w-full py-3 ${isDark ? 'bg-white text-black hover:bg-[#E8E8E8]' : 'bg-black text-white hover:bg-[#1A1A1A]'} text-label font-bold uppercase tracking-widest  transition-colors duration-fast`}
+              className={`w-full py-3 ${isDark ? 'bg-white text-black hover:bg-[#E8E8E8]' : 'bg-black text-white hover:bg-[#1A1A1A]'} text-[12px] font-bold uppercase tracking-widest  transition-colors duration-fast`}
             >
               Listen
             </button>
@@ -252,7 +252,7 @@ export default function ListenerPage() {
               <span className={`text-display ${textMuted}`}>♫</span>
             </div>
           )}
-          <h1 className={`text-heading font-bold ${textPrimary}`}>{share.title}</h1>
+          <h1 className={`text-[22px] font-bold ${textPrimary}`}>{share.title}</h1>
         </div>
 
         {/* Showreel — quick preview mix */}
@@ -288,7 +288,7 @@ export default function ListenerPage() {
                 <span className={`text-small w-5 text-center shrink-0 ${isActive && isPlaying ? textPrimary : textSecondary}`}>
                   {isActive && isPlaying ? '▮▮' : isActive ? '▶' : (idx + 1)}
                 </span>
-                <span className={`flex-1 text-body ${isActive ? textPrimary + ' font-bold' : textPrimary}`}>
+                <span className={`flex-1 text-[14px] ${isActive ? textPrimary + ' font-bold' : textPrimary}`}>
                   {track.title}
                 </span>
                 {share.downloads_enabled && (
@@ -296,7 +296,7 @@ export default function ListenerPage() {
                     href={track.dropbox_url}
                     download={`${track.title}.${track.format}`}
                     onClick={(e) => e.stopPropagation()}
-                    className={`text-micro ${textSecondary} ${isDark ? 'hover:text-white' : 'hover:text-black'} transition-colors duration-fast`}
+                    className={`text-[11px] ${textSecondary} ${isDark ? 'hover:text-white' : 'hover:text-black'} transition-colors duration-fast`}
                     title="Download"
                   >
                     ↓
@@ -313,14 +313,14 @@ export default function ListenerPage() {
             <div className="flex items-center gap-4 mb-3">
               <button
                 onClick={togglePlayPause}
-                className={`${textPrimary} text-body shrink-0`}
+                className={`${textPrimary} text-[14px] shrink-0`}
               >
                 {isPlaying ? '▮▮' : '▶'}
               </button>
               <span className={`text-small ${textPrimary} font-bold flex-1 truncate`}>
                 {currentTrack.title}
               </span>
-              <span className={`text-micro ${textSecondary} shrink-0`}>
+              <span className={`text-[11px] ${textSecondary} shrink-0`}>
                 {formatTime(currentTime)} / {formatTime(duration || 0)}
               </span>
             </div>
@@ -338,7 +338,7 @@ export default function ListenerPage() {
 
         {/* Footer */}
         <div className={`text-center mt-16 pt-8 border-t ${border}`}>
-          <span className={`text-micro ${textMuted} uppercase tracking-widest`}>Shared via IMC</span>
+          <span className={`text-[11px] ${textMuted} uppercase tracking-widest`}>Shared via IMC</span>
         </div>
       </div>
     </div>

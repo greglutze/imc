@@ -67,29 +67,29 @@ const variantActiveOverrides: Partial<Record<ButtonVariant, string>> = {
 
 const sizeStyles: Record<ButtonVariant, Record<ButtonSize, string>> = {
   primary: {
-    sm: 'h-8 px-4 text-micro',
-    md: 'h-10 px-6 text-label',
-    lg: 'h-12 px-8 text-label',
+    sm: 'h-8 px-4 text-[11px]',
+    md: 'h-10 px-6 text-[12px]',
+    lg: 'h-12 px-8 text-[12px]',
   },
   secondary: {
-    sm: 'h-8 px-4 text-micro',
-    md: 'h-10 px-6 text-label',
-    lg: 'h-12 px-8 text-label',
+    sm: 'h-8 px-4 text-[11px]',
+    md: 'h-10 px-6 text-[12px]',
+    lg: 'h-12 px-8 text-[12px]',
   },
   ghost: {
-    sm: 'text-micro',
-    md: 'text-micro',
-    lg: 'text-label',
+    sm: 'text-[11px]',
+    md: 'text-[11px]',
+    lg: 'text-[12px]',
   },
   danger: {
-    sm: 'h-8 px-4 text-micro',
-    md: 'h-10 px-6 text-label',
-    lg: 'h-12 px-8 text-label',
+    sm: 'h-8 px-4 text-[11px]',
+    md: 'h-10 px-6 text-[12px]',
+    lg: 'h-12 px-8 text-[12px]',
   },
   'danger-ghost': {
-    sm: 'text-micro',
-    md: 'text-micro',
-    lg: 'text-label',
+    sm: 'text-[11px]',
+    md: 'text-[11px]',
+    lg: 'text-[12px]',
   },
   media: {
     sm: 'w-8 h-8',

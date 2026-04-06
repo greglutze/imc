@@ -33,7 +33,7 @@ export default function Home() {
       <div className="animate-fade-in flex items-center justify-center h-full">
         <div className="text-center">
           <p className="text-[120px] leading-[0.85] font-medium text-[#E8E8E8]">IMC</p>
-          <p className="text-body text-[#8A8A8A] mt-4">Loading...</p>
+          <p className="text-[14px] text-[#8A8A8A] mt-4">Loading...</p>
         </div>
       </div>
     );
@@ -62,10 +62,10 @@ export default function Home() {
 
         <div className="max-w-[1400px] mx-auto px-10 py-32">
           <p className="text-[120px] leading-[0.85] font-medium text-[#E8E8E8] -ml-1">IMC</p>
-          <p className="t-display text-black mt-6 max-w-xl">
+          <p className="text-[40px] leading-[1.1] font-medium tracking-tight text-black mt-6 max-w-xl">
             Your creative intelligence engine
           </p>
-          <p className="text-body-lg text-[#8A8A8A] mt-6 max-w-md">
+          <p className="text-[16px] text-[#8A8A8A] mt-6 max-w-md">
             Define your concept. Research your market. Generate production-ready prompts — all from one brief.
           </p>
           <div className="mt-10 flex items-center gap-3">
@@ -81,8 +81,8 @@ export default function Home() {
         {/* Colophon */}
         <div className="border-t border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
-            <p className="text-micro font-mono text-[#C4C4C4]">IMC v0.1.0</p>
-            <p className="text-micro font-mono text-[#C4C4C4]">Music Intelligence Platform</p>
+            <p className="text-[11px] font-mono text-[#C4C4C4]">IMC v0.1.0</p>
+            <p className="text-[11px] font-mono text-[#C4C4C4]">Music Intelligence Platform</p>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function Home() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <p className="text-micro font-mono text-[#C4C4C4]">
+            <p className="text-[11px] font-mono text-[#C4C4C4]">
               {user?.name}
             </p>
           </div>
@@ -139,7 +139,7 @@ export default function Home() {
               {/* Header row */}
               <div className="flex items-end justify-between pt-16 pb-10">
                 <div>
-                  <h1 className="t-display-sm text-black">
+                  <h1 className="text-[40px] leading-[1.1] font-medium tracking-tight-sm text-black">
                     My Projects
                   </h1>
                 </div>
@@ -176,10 +176,10 @@ export default function Home() {
             /* No projects yet */
             <div className="py-32">
               <p className="text-[120px] leading-[0.85] font-medium text-[#E8E8E8] -ml-1">00</p>
-              <p className="t-display text-black mt-6">
+              <p className="text-[40px] leading-[1.1] font-medium tracking-tight text-black mt-6">
                 Start Something
               </p>
-              <p className="text-body-lg text-[#8A8A8A] mt-4 max-w-md">
+              <p className="text-[16px] text-[#8A8A8A] mt-4 max-w-md">
                 Every project begins with a concept. Create one and we&apos;ll help you build the research, prompts, and sound around it.
               </p>
               <ButtonV2 as="a" href="/projects/new" size="lg" className="mt-8">
@@ -193,8 +193,8 @@ export default function Home() {
       {/* Colophon */}
       <div className="border-t border-[#E8E8E8] shrink-0">
         <div className="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
-          <p className="text-micro font-mono text-[#C4C4C4]">IMC v0.1.0</p>
-          <p className="text-micro font-mono text-[#C4C4C4]">Music Intelligence Platform</p>
+          <p className="text-[11px] font-mono text-[#C4C4C4]">IMC v0.1.0</p>
+          <p className="text-[11px] font-mono text-[#C4C4C4]">Music Intelligence Platform</p>
         </div>
       </div>
     </div>

@@ -31,7 +31,7 @@ export default function Tabs({ tabs, activeTab, onTabChange, className = '' }: T
           key={tab.id}
           onClick={() => handleChange(tab.id)}
           className={`
-            relative px-5 py-3 text-label font-semibold uppercase tracking-wide transition-colors duration-150
+            relative px-5 py-3 text-[12px] font-semibold uppercase tracking-wide transition-colors duration-150
             ${active === tab.id
               ? 'text-black'
               : 'text-[#8A8A8A] hover:text-[#666]'
@@ -42,7 +42,7 @@ export default function Tabs({ tabs, activeTab, onTabChange, className = '' }: T
             {tab.label}
             {tab.count !== undefined && (
               <span className={`
-                text-micro font-mono px-1.5 py-0.5
+                text-[11px] font-mono px-1.5 py-0.5
                 ${active === tab.id ? 'bg-black text-white' : 'bg-[#F7F7F5] text-[#C4C4C4]'}
               `}>
                 {tab.count}

@@ -28,9 +28,9 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
         <div className="flex items-center gap-4">
           <a
             href="/"
-            className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-150 flex items-center gap-2"
+            className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-150 flex items-center gap-2"
           >
-            <span className="text-body">&#8592;</span>
+            <span className="text-[14px]">&#8592;</span>
             IMC
           </a>
           <span className="text-[#E8E8E8]">/</span>
@@ -43,7 +43,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
                 <img src={resolveArtworkUrl(imageUrl) || ''} alt={artistName} className="w-full h-full object-cover object-top" />
               </div>
             )}
-            <span className="text-micro font-semibold uppercase tracking-wide text-black">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-black">
               {artistName}
             </span>
           </a>
@@ -51,7 +51,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
         <nav className="flex items-center gap-3">
           {links.map((link) => {
             const isActive = activePage === link.key;
-            const baseClass = `text-micro font-semibold uppercase tracking-wide px-3 py-3 transition-colors duration-150`;
+            const baseClass = `text-[11px] font-semibold uppercase tracking-wide px-3 py-3 transition-colors duration-150`;
             const activeClass = isActive ? 'text-black border-b-2 border-black -mb-px' : 'text-[#8A8A8A] hover:text-[#1A1A1A]';
 
             // If onNavigate is provided and this is research, use button for in-page nav

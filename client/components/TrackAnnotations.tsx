@@ -110,15 +110,15 @@ export default function TrackAnnotations({
       {/* Header */}
       <div className="px-5 py-3 border-b border-[#E8E8E8] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-label font-semibold uppercase tracking-wide text-black">
+          <span className="text-[12px] font-semibold uppercase tracking-wide text-black">
             Notes
           </span>
-          <span className="text-micro text-[#C4C4C4]">
+          <span className="text-[11px] text-[#C4C4C4]">
             {trackTitle}
           </span>
         </div>
         {unresolvedCount > 0 && (
-          <span className="text-micro font-semibold uppercase tracking-wide text-yellow-600">
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-yellow-600">
             {unresolvedCount} open
           </span>
         )}
@@ -126,7 +126,7 @@ export default function TrackAnnotations({
 
       {/* Add annotation input */}
       <div className="px-5 py-3 border-b border-[#E8E8E8] flex items-center gap-3">
-        <span className="text-micro font-mono text-[#C4C4C4] shrink-0 w-10 text-center">
+        <span className="text-[11px] font-mono text-[#C4C4C4] shrink-0 w-10 text-center">
           {formatTimestamp(currentTimeMs)}
         </span>
         <input
@@ -149,7 +149,7 @@ export default function TrackAnnotations({
         </div>
       ) : annotations.length === 0 ? (
         <div className="px-5 py-6 text-center">
-          <p className="text-body-sm text-[#C4C4C4]">
+          <p className="text-[13px] text-[#C4C4C4]">
             No notes yet — pause playback and add one.
           </p>
         </div>
@@ -177,7 +177,7 @@ export default function TrackAnnotations({
               {/* Timestamp — clickable to seek */}
               <button
                 onClick={() => onSeek?.(annotation.timestamp_ms)}
-                className="text-micro font-mono text-[#C4C4C4] hover:text-black transition-colors duration-150 shrink-0 w-10 text-center mt-0.5"
+                className="text-[11px] font-mono text-[#C4C4C4] hover:text-black transition-colors duration-150 shrink-0 w-10 text-center mt-0.5"
                 title="Jump to this timestamp"
               >
                 {formatTimestamp(annotation.timestamp_ms)}

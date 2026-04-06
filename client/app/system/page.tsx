@@ -7,13 +7,13 @@ export default function SystemPage() {
     <div className="min-h-screen bg-white text-[#1A1A1A]">
       {/* Header */}
       <div className="border-b border-[#E8E8E8] px-12 py-10">
-        <p className="text-micro font-bold uppercase tracking-widest text-[#C4C4C4] mb-3">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-[#C4C4C4] mb-3">
           IMC Design System
         </p>
         <h1 className="text-display font-bold tracking-tight text-black">
           Component Reference
         </h1>
-        <p className="text-body text-[#8A8A8A] mt-2 max-w-xl">
+        <p className="text-[14px] text-[#8A8A8A] mt-2 max-w-xl">
           Dieter Rams meets Virgil Abloh. Functional color, Swiss typography, considered space.
         </p>
       </div>
@@ -26,54 +26,54 @@ export default function SystemPage() {
 
           <div className="space-y-6 mt-6">
             <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">display-lg / 64px</span>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">display-lg / 64px</span>
               <p className="text-display-lg font-bold text-black">Instruments</p>
             </div>
             <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">display / 48px</span>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">display / 48px</span>
               <p className="text-display font-bold text-black">Mass Creation</p>
             </div>
             <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">heading-lg / 36px</span>
-              <p className="text-heading-lg font-bold text-black">Market Research</p>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">heading-lg / 36px</span>
+              <p className="text-[22px]-lg font-bold text-black">Market Research</p>
             </div>
             <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">heading / 28px</span>
-              <p className="text-heading font-bold text-black">Artist Concept</p>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">heading / 28px</span>
+              <p className="text-[22px] font-bold text-black">Artist Concept</p>
             </div>
             <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">heading-sm / 20px</span>
-              <p className="text-heading-sm font-bold text-black">Prompt Generation</p>
-            </div>
-
-            <Divider />
-
-            <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">body-lg / 17px</span>
-              <p className="text-body-lg text-[#333]">The Sonic Engine processes musical DNA through AI-assisted research and prompt engineering.</p>
-            </div>
-            <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">body / 15px</span>
-              <p className="text-body text-[#666]">Each instrument serves a specific function in the creative pipeline. Research informs prompts. Prompts inform production.</p>
-            </div>
-            <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">body-sm / 13px</span>
-              <p className="text-body-sm text-[#8A8A8A]">Confidence scores are calculated from multiple data signals across Spotify&apos;s API.</p>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">heading-sm / 20px</span>
+              <p className="text-[22px]-sm font-bold text-black">Prompt Generation</p>
             </div>
 
             <Divider />
 
             <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">label / 12px — uppercase</span>
-              <p className="text-label font-bold uppercase tracking-widest text-[#8A8A8A]">Instrument One</p>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">body-lg / 17px</span>
+              <p className="text-[16px] text-[#333]">The Sonic Engine processes musical DNA through AI-assisted research and prompt engineering.</p>
             </div>
             <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">caption / 11px</span>
-              <p className="text-caption text-[#C4C4C4]">Last updated 3 hours ago</p>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">body / 15px</span>
+              <p className="text-[14px] text-[#666]">Each instrument serves a specific function in the creative pipeline. Research informs prompts. Prompts inform production.</p>
             </div>
             <div>
-              <span className="text-micro text-[#C4C4C4] font-mono">mono / JetBrains Mono</span>
-              <p className="font-mono text-body-sm text-[#666]">confidence: 87 — genre_match: 0.92</p>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">body-sm / 13px</span>
+              <p className="text-[13px] text-[#8A8A8A]">Confidence scores are calculated from multiple data signals across Spotify&apos;s API.</p>
+            </div>
+
+            <Divider />
+
+            <div>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">label / 12px — uppercase</span>
+              <p className="text-[12px] font-bold uppercase tracking-widest text-[#8A8A8A]">Instrument One</p>
+            </div>
+            <div>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">caption / 11px</span>
+              <p className="text-[11px] text-[#C4C4C4]">Last updated 3 hours ago</p>
+            </div>
+            <div>
+              <span className="text-[11px] text-[#C4C4C4] font-mono">mono / JetBrains Mono</span>
+              <p className="font-mono text-[13px] text-[#666]">confidence: 87 — genre_match: 0.92</p>
             </div>
           </div>
         </section>
@@ -81,7 +81,7 @@ export default function SystemPage() {
         {/* ———————— COLORS ———————— */}
         <section>
           <SectionLabel>Signal Colors</SectionLabel>
-          <p className="text-body-sm text-[#8A8A8A] mt-2 mb-6">
+          <p className="text-[13px] text-[#8A8A8A] mt-2 mb-6">
             Color conveys meaning. Never decoration.
           </p>
 
@@ -98,7 +98,7 @@ export default function SystemPage() {
             {['bg-black', 'bg-[#0a0a0a]', 'bg-[#1A1A1A]', 'bg-[#333]', 'bg-[#555]', 'bg-[#8A8A8A]'].map((bg, i) => (
               <div key={i} className="space-y-1">
                 <div className={`h-12 ${bg}`} />
-                <p className="text-micro text-[#C4C4C4] font-mono">{['black', '900', '800', '700', '600', '500'][i]}</p>
+                <p className="text-[11px] text-[#C4C4C4] font-mono">{['black', '900', '800', '700', '600', '500'][i]}</p>
               </div>
             ))}
           </div>
@@ -106,7 +106,7 @@ export default function SystemPage() {
             {['bg-[#C4C4C4]', 'bg-[#C4C4C4]', 'bg-[#E8E8E8]', 'bg-[#F7F7F5]', 'bg-[#F7F7F5]', 'bg-white'].map((bg, i) => (
               <div key={i} className="space-y-1">
                 <div className={`h-12  border border-[#E8E8E8] ${bg}`} />
-                <p className="text-micro text-[#C4C4C4] font-mono">{['400', '300', '200', '100', '50', 'white'][i]}</p>
+                <p className="text-[11px] text-[#C4C4C4] font-mono">{['400', '300', '200', '100', '50', 'white'][i]}</p>
               </div>
             ))}
           </div>
@@ -167,7 +167,7 @@ export default function SystemPage() {
         {/* ———————— SIGNALS ———————— */}
         <section>
           <SectionLabel>Signals</SectionLabel>
-          <p className="text-body-sm text-[#8A8A8A] mt-2 mb-6">
+          <p className="text-[13px] text-[#8A8A8A] mt-2 mb-6">
             Status at a glance. No words needed.
           </p>
 
@@ -198,7 +198,7 @@ export default function SystemPage() {
           </div>
 
           <div className="space-y-2 mt-6 max-w-md">
-            <p className="text-caption text-[#C4C4C4]">Compact variant</p>
+            <p className="text-[11px] text-[#C4C4C4]">Compact variant</p>
             <ConfidenceMeter value={87} label="Overall" size="sm" />
           </div>
         </section>
@@ -250,7 +250,7 @@ export default function SystemPage() {
         {/* ———————— SPACING ———————— */}
         <section>
           <SectionLabel>Spacing Scale</SectionLabel>
-          <p className="text-body-sm text-[#8A8A8A] mt-2 mb-6">
+          <p className="text-[13px] text-[#8A8A8A] mt-2 mb-6">
             4px base grid. Everything aligns.
           </p>
 
@@ -266,7 +266,7 @@ export default function SystemPage() {
               { name: '12', px: '48px' },
             ].map(({ name, px }) => (
               <div key={name} className="flex items-center gap-4">
-                <span className="text-micro font-mono text-[#C4C4C4] w-16">{name} / {px}</span>
+                <span className="text-[11px] font-mono text-[#C4C4C4] w-16">{name} / {px}</span>
                 <div className="h-3 bg-black/5 border border-black/10 " style={{ width: px }} />
               </div>
             ))}
@@ -276,7 +276,7 @@ export default function SystemPage() {
         {/* Footer */}
         <div className="pb-20">
           <Divider label="End" />
-          <p className="text-caption text-[#C4C4C4] mt-6 text-center">
+          <p className="text-[11px] text-[#C4C4C4] mt-6 text-center">
             IMC Design System v0.1 — Helvetica Neue Bold × JetBrains Mono × Signal Colors
           </p>
         </div>
@@ -290,7 +290,7 @@ export default function SystemPage() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-micro font-bold uppercase tracking-widest text-black">
+    <h2 className="text-[11px] font-bold uppercase tracking-widest text-black">
       {children}
     </h2>
   );
@@ -301,9 +301,9 @@ function ColorSwatch({ color, label, hex, usage }: { color: string; label: strin
     <div className="space-y-2">
       <div className={`h-16  ${color}`} />
       <div>
-        <p className="text-label font-bold text-black">{label}</p>
-        <p className="text-micro font-mono text-[#C4C4C4]">{hex}</p>
-        <p className="text-caption text-[#C4C4C4] mt-0.5">{usage}</p>
+        <p className="text-[12px] font-bold text-black">{label}</p>
+        <p className="text-[11px] font-mono text-[#C4C4C4]">{hex}</p>
+        <p className="text-[11px] text-[#C4C4C4] mt-0.5">{usage}</p>
       </div>
     </div>
   );

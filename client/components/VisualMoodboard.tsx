@@ -228,13 +228,13 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       {/* Editorial header */}
       <div className="px-10 pt-10 pb-8 flex items-start justify-between">
         <div>
-          <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
             Visual World
           </p>
           <p className="text-[40px] leading-[1.1] font-medium text-black tracking-tight">
             Audio/Visuals
           </p>
-          <p className="text-body-lg text-[#8A8A8A] mt-4 max-w-lg">
+          <p className="text-[16px] text-[#8A8A8A] mt-4 max-w-lg">
             {images.length > 0
               ? `${imageCount} images shaping the sound and vision of your project.`
               : 'Drop in anything that feels like your sound — photos, textures, artwork, color palettes, film stills.'
@@ -264,7 +264,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
             <p className="text-[28px] font-bold text-[#E8E8E8] tracking-tight">
               Start your visual world
             </p>
-            <p className="text-body text-[#8A8A8A] mt-3">
+            <p className="text-[14px] text-[#8A8A8A] mt-3">
               Drop images here or click to browse. JPG, PNG, WEBP — up to 30.
             </p>
           </div>
@@ -298,7 +298,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                     }}
                     className={`
                       absolute top-2 right-2 w-7 h-7 flex items-center justify-center
-                      text-white text-label font-bold transition-all duration-150
+                      text-white text-[12px] font-bold transition-all duration-150
                       ${deleteConfirm === img.id
                         ? 'bg-red-500 opacity-100'
                         : 'bg-black/50 opacity-0 group-hover:opacity-100 hover:bg-black/70'
@@ -308,7 +308,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                     {deleteConfirm === img.id ? '?' : '×'}
                   </button>
                   {deleteConfirm === img.id && (
-                    <div className="absolute top-2 right-11 bg-red-500 text-white text-micro font-semibold uppercase tracking-wide px-2 py-1">
+                    <div className="absolute top-2 right-11 bg-red-500 text-white text-[11px] font-semibold uppercase tracking-wide px-2 py-1">
                       Click to remove
                     </div>
                   )}
@@ -319,13 +319,13 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
             {/* Upload status */}
             {uploading && (
               <div className="mt-4">
-                <p className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                   Uploading...
                 </p>
               </div>
             )}
             {images.length > 0 && images.length < 5 && !brief && (
-              <p className="text-body-sm text-[#C4C4C4] mt-4">
+              <p className="text-[13px] text-[#C4C4C4] mt-4">
                 Add more images for a richer sonic brief
               </p>
             )}
@@ -337,10 +337,10 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       {palette.length > 0 && (
         <div className="px-10 py-6 border-t border-[#E8E8E8]">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
               Extracted Palette
             </p>
-            <p className="text-micro text-[#C4C4C4]">
+            <p className="text-[11px] text-[#C4C4C4]">
               Click to copy hex
             </p>
           </div>
@@ -360,7 +360,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                 <span
                   className={`
                     absolute inset-0 flex items-center justify-center
-                    text-micro font-semibold uppercase tracking-wide
+                    text-[11px] font-semibold uppercase tracking-wide
                     opacity-0 group-hover:opacity-100 transition-opacity duration-150
                     ${isLightColor(color.rgb) ? 'text-black/70' : 'text-white/80'}
                   `}
@@ -378,7 +378,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                   className="w-3 h-3 rounded-full shrink-0 border border-[#E8E8E8]"
                   style={{ backgroundColor: color.hex }}
                 />
-                <span className="text-micro font-mono text-[#C4C4C4]">
+                <span className="text-[11px] font-mono text-[#C4C4C4]">
                   {color.hex}
                 </span>
               </div>
@@ -536,12 +536,12 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
             Generate Sonic Brief
           </ButtonV2>
           {analyzeError && (
-            <p className="text-body-sm text-red-500 mt-2">
+            <p className="text-[13px] text-red-500 mt-2">
               {analyzeError}
             </p>
           )}
           {!analyzeError && images.length < 5 && (
-            <p className="text-body-sm text-[#C4C4C4] mt-2">
+            <p className="text-[13px] text-[#C4C4C4] mt-2">
               More images will produce a richer brief
             </p>
           )}
@@ -554,10 +554,10 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 function BriefTag({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline gap-2">
-      <span className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+      <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
         {label}
       </span>
-      <span className="text-body-sm text-black">
+      <span className="text-[13px] text-black">
         {value}
       </span>
     </div>

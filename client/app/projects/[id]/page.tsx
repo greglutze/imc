@@ -352,7 +352,7 @@ export default function ProjectPage() {
               <div className="col-span-7">
                 <div className="flex items-center gap-3 mb-6">
                   <div className={`w-2 h-2 rounded-full ${project?.status === 'complete' ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                  <span className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                  <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                     {statusLabel}
                   </span>
                   {conceptReady && (
@@ -392,7 +392,7 @@ export default function ProjectPage() {
                       className="w-full h-full object-cover object-top"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center">
-                      <span className="text-white text-micro font-semibold uppercase tracking-wide">
+                      <span className="text-white text-[11px] font-semibold uppercase tracking-wide">
                         {uploadingImage ? 'Uploading...' : 'Replace Image'}
                       </span>
                     </div>
@@ -405,7 +405,7 @@ export default function ProjectPage() {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center">
-                      <span className="text-white text-micro font-semibold uppercase tracking-wide">
+                      <span className="text-white text-[11px] font-semibold uppercase tracking-wide">
                         {uploadingImage ? 'Uploading...' : 'Add Image'}
                       </span>
                     </div>
@@ -415,7 +415,7 @@ export default function ProjectPage() {
                     <span className="text-[120px] font-medium text-[#E8E8E8]">
                       {artistName.charAt(0).toUpperCase()}
                     </span>
-                    <span className="text-micro text-[#C4C4C4] uppercase tracking-wide mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                    <span className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                       {uploadingImage ? 'Uploading...' : 'Add Image'}
                     </span>
                   </div>
@@ -438,7 +438,7 @@ export default function ProjectPage() {
                 <div className="py-10 border-b border-[#E8E8E8]">
                   <div className="flex items-center gap-3 mb-5">
                     <div className="w-2 h-2 rounded-full bg-green-500" />
-                    <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                       Creative Brief
                     </p>
                   </div>
@@ -450,18 +450,18 @@ export default function ProjectPage() {
                 {/* Three-column data strip */}
                 <div className="grid grid-cols-12 gap-x-8 py-8">
                   <div className="col-span-4">
-                    <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                       Sound
                     </p>
                     <div className="space-y-2">
-                      <p className="text-body font-semibold text-black">{toTitleCase(concept.genre_primary)}</p>
+                      <p className="text-[14px] font-semibold text-black">{toTitleCase(concept.genre_primary)}</p>
                       {concept.genre_secondary && concept.genre_secondary.length > 0 && (
-                        <p className="text-body-sm text-[#8A8A8A]">{concept.genre_secondary.map(g => toTitleCase(g)).join(', ')}</p>
+                        <p className="text-[13px] text-[#8A8A8A]">{concept.genre_secondary.map(g => toTitleCase(g)).join(', ')}</p>
                       )}
                     </div>
                   </div>
                   <div className="col-span-4">
-                    <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                       Influences
                     </p>
                     <div className="space-y-2">
@@ -471,16 +471,16 @@ export default function ProjectPage() {
                           href={`https://open.spotify.com/search/${encodeURIComponent(artist)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-body font-bold text-black hover:text-green-600 transition-colors duration-150"
+                          className="block text-[14px] font-bold text-black hover:text-green-600 transition-colors duration-150"
                         >
                           {artist}
-                          <span className="text-[#C4C4C4] ml-1.5 text-caption">&#8599;</span>
+                          <span className="text-[#C4C4C4] ml-1.5 text-[11px]">&#8599;</span>
                         </a>
                       ))}
                     </div>
                   </div>
                   <div className="col-span-4">
-                    <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                       Tracklist
                     </p>
                     {demoTracks.length > 0 ? (
@@ -491,10 +491,10 @@ export default function ProjectPage() {
                             href={`/projects/${id}/prompts`}
                             className="flex items-baseline gap-2 group"
                           >
-                            <span className="text-caption font-mono text-[#C4C4C4]">
+                            <span className="text-[11px] font-mono text-[#C4C4C4]">
                               {String(t.track_number).padStart(2, '0')}
                             </span>
-                            <span className="text-body font-bold text-black group-hover:text-[#666] transition-colors duration-150 truncate">
+                            <span className="text-[14px] font-bold text-black group-hover:text-[#666] transition-colors duration-150 truncate">
                               {t.title}
                             </span>
                           </a>
@@ -502,14 +502,14 @@ export default function ProjectPage() {
                         {demoTracks.length > 4 && (
                           <a
                             href={`/projects/${id}/prompts`}
-                            className="text-caption text-[#8A8A8A] hover:text-black transition-colors duration-150 mt-1 block"
+                            className="text-[11px] text-[#8A8A8A] hover:text-black transition-colors duration-150 mt-1 block"
                           >
                             View all {demoTracks.length} tracks
                           </a>
                         )}
                       </div>
                     ) : (
-                      <p className="text-body-sm text-[#8A8A8A]">
+                      <p className="text-[13px] text-[#8A8A8A]">
                         {concept.track_count} tracks planned
                       </p>
                     )}
@@ -528,7 +528,7 @@ export default function ProjectPage() {
               <div className="py-10 border-b border-[#E8E8E8]">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-2 h-2 rounded-full bg-violet-500" />
-                  <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                     Vocal Character
                   </p>
                 </div>
@@ -561,7 +561,7 @@ export default function ProjectPage() {
               <div className="py-10 border-b border-[#E8E8E8]">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-2 h-2 rounded-full bg-amber-500" />
-                  <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                     Visual World &rarr; Sonic Brief
                   </p>
                 </div>
@@ -574,7 +574,7 @@ export default function ProjectPage() {
             {/* Visual World — inline moodboard */}
             <div className="py-12 border-b border-[#E8E8E8]">
               <div className="flex items-center justify-between mb-6">
-                <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                   Visual World
                 </p>
                 <a
@@ -618,12 +618,12 @@ export default function ProjectPage() {
             {latestTrack && latestShareProject && (
               <div className="py-12 border-b border-[#E8E8E8]">
                 <div className="flex items-center justify-between mb-6">
-                  <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                     Latest Track
                   </p>
                   <a
                     href={`/projects/${id}/share/${latestShareProject.id}`}
-                    className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black transition-colors duration-150"
+                    className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black transition-colors duration-150"
                   >
                     View All Tracks
                   </a>
@@ -634,7 +634,7 @@ export default function ProjectPage() {
 
             {/* Instruments grid */}
             <div className="py-12">
-              <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-8">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-8">
                 Your Toolkit
               </p>
               <div className="grid grid-cols-3 gap-5">
@@ -684,7 +684,7 @@ export default function ProjectPage() {
 
             {/* Danger Zone */}
             <div className="py-12 border-t border-red-200 bg-red-50">
-              <p className="text-micro font-semibold uppercase tracking-wide text-red-600 mb-6">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-red-600 mb-6">
                 Danger Zone
               </p>
               <button
@@ -744,7 +744,7 @@ export default function ProjectPage() {
                   <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
                     Researching Your Market
                   </p>
-                  <p className="text-body-lg text-[#8A8A8A] mt-5 max-w-sm">
+                  <p className="text-[16px] text-[#8A8A8A] mt-5 max-w-sm">
                     Pulling Spotify data, mapping comparable artists, and building your market intelligence report. This usually takes about a minute.
                   </p>
                   <div className="mt-8 flex items-center gap-2">
@@ -760,7 +760,7 @@ export default function ProjectPage() {
                   <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
                     Concept Not Ready
                   </p>
-                  <p className="text-body-lg text-[#8A8A8A] mt-5 max-w-sm">
+                  <p className="text-[16px] text-[#8A8A8A] mt-5 max-w-sm">
                     Your project concept needs to be defined before research can run. This happens automatically during project creation.
                   </p>
                 </div>
@@ -899,8 +899,8 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
       {/* Track info + progress */}
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2 mb-2">
-          <p className="text-body font-bold text-black truncate">{track.title}</p>
-          <span className="text-caption text-[#8A8A8A] shrink-0">{shareTitle}</span>
+          <p className="text-[14px] font-bold text-black truncate">{track.title}</p>
+          <span className="text-[11px] text-[#8A8A8A] shrink-0">{shareTitle}</span>
         </div>
 
         {/* Progress bar */}
@@ -916,8 +916,8 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
 
         {/* Time */}
         <div className="flex justify-between mt-1.5">
-          <span className="text-micro font-mono text-[#8A8A8A]">{formatTime(currentTime)}</span>
-          <span className="text-micro font-mono text-[#8A8A8A]">{duration > 0 ? formatTime(duration) : '--:--'}</span>
+          <span className="text-[11px] font-mono text-[#8A8A8A]">{formatTime(currentTime)}</span>
+          <span className="text-[11px] font-mono text-[#8A8A8A]">{duration > 0 ? formatTime(duration) : '--:--'}</span>
         </div>
       </div>
     </div>
@@ -987,7 +987,7 @@ function SonicIdentitySection({ styleProfile }: { styleProfile: I2StyleProfile }
     <div className="py-10 border-b border-[#E8E8E8]">
       <div className="flex items-center gap-3 mb-5">
         <div className="w-2 h-2 rounded-full bg-blue-500" />
-        <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
           Sonic Identity
         </p>
       </div>
@@ -1028,7 +1028,7 @@ function SonicIdentitySection({ styleProfile }: { styleProfile: I2StyleProfile }
       <div className="flex flex-wrap items-start gap-8">
         {tempo && (
           <div>
-            <p className="text-micro font-semibold uppercase tracking-wide text-[#C4C4C4] mb-1.5">Tempo</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-1.5">Tempo</p>
             <p className="text-[14px] font-medium text-[#1A1A1A]">{tempo.bpm}</p>
             {tempo.detail && (
               <p className="text-[12px] text-[#8A8A8A] mt-0.5 max-w-[220px] leading-relaxed">{tempo.detail}</p>
@@ -1037,7 +1037,7 @@ function SonicIdentitySection({ styleProfile }: { styleProfile: I2StyleProfile }
         )}
         {keys.length > 0 && (
           <div>
-            <p className="text-micro font-semibold uppercase tracking-wide text-[#C4C4C4] mb-1.5">Keys</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-1.5">Keys</p>
             <div className="flex flex-wrap gap-1.5">
               {keys.map((k, i) => (
                 <span

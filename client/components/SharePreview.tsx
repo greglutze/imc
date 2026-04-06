@@ -127,7 +127,7 @@ export default function SharePreview({
       {/* Visibility badge */}
       <div className="mt-3 flex items-center justify-center gap-2">
         <div className={`w-1.5 h-1.5 rounded-full ${isPublic ? 'bg-green-500' : 'bg-[#C4C4C4]'}`} />
-        <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">
+        <span className="text-[11px] text-[#8A8A8A] uppercase tracking-wide">
           {isPublic ? 'Public' : 'Private'}
           {passwordProtected ? ' · Password Protected' : ''}
         </span>

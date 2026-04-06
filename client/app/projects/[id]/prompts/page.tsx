@@ -202,7 +202,7 @@ export default function PromptsPage() {
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-[1400px] mx-auto px-10 py-10">
             <div className="mb-10">
-              <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                 Production Aesthetic
               </p>
               <blockquote className="text-[22px] leading-[1.4] text-[#1A1A1A]/60 max-w-3xl animate-pulse">
@@ -211,7 +211,7 @@ export default function PromptsPage() {
             </div>
 
             <div className="mb-8">
-              <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                 Sonic Signatures
               </p>
               <div className="flex flex-wrap gap-2">
@@ -226,7 +226,7 @@ export default function PromptsPage() {
             {/* Track count skeleton */}
             {concept?.track_count && (
               <div>
-                <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                   Tracks
                 </p>
                 <div className="space-y-3">

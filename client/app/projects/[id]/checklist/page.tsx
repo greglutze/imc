@@ -41,7 +41,7 @@ export default function ChecklistPage() {
     return (
       <div className="animate-fade-in">
         <div className="border-b border-[#E8E8E8] px-8 py-10">
-          <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
             Instrument 00
           </p>
           <div className="h-16 w-96 bg-[#F7F7F5] animate-pulse" />

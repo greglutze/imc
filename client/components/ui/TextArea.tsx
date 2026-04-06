@@ -13,7 +13,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <div className="space-y-1.5">
         {label && (
-          <label className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] block">
+          <label className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A] block">
             {label}
           </label>
         )}
@@ -21,7 +21,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           ref={ref}
           className={`
             w-full bg-white border px-4 py-3
-            text-body text-black placeholder-[#C4C4C4]
+            text-[14px] text-black placeholder-[#C4C4C4]
             transition-colors duration-150 resize-none
             focus:outline-none focus:ring-1
             ${error
@@ -33,10 +33,10 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           {...props}
         />
         {error && (
-          <p className="text-caption text-signal-red">{error}</p>
+          <p className="text-[11px] text-signal-red">{error}</p>
         )}
         {hint && !error && (
-          <p className="text-caption text-[#C4C4C4]">{hint}</p>
+          <p className="text-[11px] text-[#C4C4C4]">{hint}</p>
         )}
       </div>
     );

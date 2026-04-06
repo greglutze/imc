@@ -393,7 +393,7 @@ export default function ShareManagePage() {
       <div className="min-h-screen bg-white">
         <ProjectNav projectId={id} artistName={project?.artist_name || ''} imageUrl={project?.image_url} activePage="share" />
         <div className="max-w-[1400px] mx-auto px-10 py-20">
-          <div className="text-[#8A8A8A] text-label uppercase tracking-wide">Share project not found.</div>
+          <div className="text-[#8A8A8A] text-[12px] uppercase tracking-wide">Share project not found.</div>
         </div>
       </div>
     );
@@ -417,7 +417,7 @@ export default function ShareManagePage() {
           size="sm"
           className="mb-8 flex items-center gap-2"
         >
-          <span className="text-body">←</span> All Share Links
+          <span className="text-[14px]">←</span> All Share Links
         </ButtonV2>
 
         <div className="grid grid-cols-[1fr_340px] gap-12">
@@ -467,7 +467,7 @@ export default function ShareManagePage() {
             {/* Add track via Dropbox link */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                <span className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                   Tracks ({share.tracks.length})
                 </span>
               </div>
@@ -484,7 +484,7 @@ export default function ShareManagePage() {
                   Add
                 </ButtonV2>
               </div>
-              <p className="text-micro text-[#8A8A8A] mt-1.5">
+              <p className="text-[11px] text-[#8A8A8A] mt-1.5">
                 Right-click a file in Dropbox → Copy link → paste here. Multiple links? Shift+Enter for new lines.
               </p>
             </div>
@@ -505,7 +505,7 @@ export default function ShareManagePage() {
                 <p className="text-[28px] font-medium text-[#E8E8E8] tracking-tight">
                   Add your first track
                 </p>
-                <p className="text-body text-[#8A8A8A] mt-3 max-w-sm mx-auto">
+                <p className="text-[14px] text-[#8A8A8A] mt-3 max-w-sm mx-auto">
                   Paste a Dropbox link above — your music will be streamable instantly, no upload needed.
                 </p>
               </div>
@@ -541,7 +541,7 @@ export default function ShareManagePage() {
                       </ButtonV2>
 
                       {/* Track number */}
-                      <span className="text-caption font-mono text-[#C4C4C4] w-5 text-center shrink-0">
+                      <span className="text-[11px] font-mono text-[#C4C4C4] w-5 text-center shrink-0">
                         {String(idx + 1).padStart(2, '0')}
                       </span>
 
@@ -553,13 +553,13 @@ export default function ShareManagePage() {
                             value={trackTitleValue}
                             onChange={(e) => setTrackTitleValue(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') handleRenameTrack(track.id); if (e.key === 'Escape') setEditingTrackId(null); }}
-                            className="text-body font-semibold text-black border-b border-black bg-transparent outline-none w-full"
+                            className="text-[14px] font-semibold text-black border-b border-black bg-transparent outline-none w-full"
                             autoFocus
                           />
                         ) : (
                           <span
                             onClick={() => { setEditingTrackId(track.id); setTrackTitleValue(track.title); }}
-                            className="text-body font-semibold text-black cursor-pointer truncate block"
+                            className="text-[14px] font-semibold text-black cursor-pointer truncate block"
                             title="Click to rename"
                           >
                             {track.title}
@@ -569,16 +569,16 @@ export default function ShareManagePage() {
 
                       {/* Time display for active track */}
                       {isActiveTrack && duration > 0 && (
-                        <span className="text-micro font-mono text-[#8A8A8A] shrink-0">
+                        <span className="text-[11px] font-mono text-[#8A8A8A] shrink-0">
                           {formatTime(currentTime)} / {formatTime(duration)}
                         </span>
                       )}
 
                       {/* Meta */}
-                      <span className="text-micro text-[#C4C4C4] shrink-0 uppercase tracking-wide">
+                      <span className="text-[11px] text-[#C4C4C4] shrink-0 uppercase tracking-wide">
                         {track.format}
                       </span>
-                      <span className="text-micro text-[#8A8A8A] shrink-0">
+                      <span className="text-[11px] text-[#8A8A8A] shrink-0">
                         {track.play_count > 0 ? `${track.play_count} play${track.play_count !== 1 ? 's' : ''}` : '—'}
                       </span>
 
@@ -632,11 +632,11 @@ export default function ShareManagePage() {
                       </span>
                     </ButtonV2>
                     <div className="flex-1 min-w-0">
-                      <span className="text-body font-semibold text-black truncate block">
+                      <span className="text-[14px] font-semibold text-black truncate block">
                         {activeTrack.title}
                       </span>
                     </div>
-                    <span className="text-micro text-[#8A8A8A] shrink-0">
+                    <span className="text-[11px] text-[#8A8A8A] shrink-0">
                       {formatTime(currentTime)} / {formatTime(duration || 0)}
                     </span>
                   </div>
@@ -676,13 +676,13 @@ export default function ShareManagePage() {
             <div className="flex items-center gap-0 border border-[#E8E8E8]  overflow-hidden">
               <button
                 onClick={() => setRightPanel('settings')}
-                className={`flex-1 py-2 text-micro font-semibold uppercase tracking-wide transition-colors duration-150 ${rightPanel === 'settings' ? 'bg-black text-white' : 'text-[#8A8A8A] hover:text-black'}`}
+                className={`flex-1 py-2 text-[11px] font-semibold uppercase tracking-wide transition-colors duration-150 ${rightPanel === 'settings' ? 'bg-black text-white' : 'text-[#8A8A8A] hover:text-black'}`}
               >
                 Settings
               </button>
               <button
                 onClick={() => setRightPanel('preview')}
-                className={`flex-1 py-2 text-micro font-semibold uppercase tracking-wide transition-colors duration-150 ${rightPanel === 'preview' ? 'bg-black text-white' : 'text-[#8A8A8A] hover:text-black'}`}
+                className={`flex-1 py-2 text-[11px] font-semibold uppercase tracking-wide transition-colors duration-150 ${rightPanel === 'preview' ? 'bg-black text-white' : 'text-[#8A8A8A] hover:text-black'}`}
               >
                 Preview
               </button>
@@ -707,7 +707,7 @@ export default function ShareManagePage() {
             <>
             {/* Artwork */}
             <div>
-              <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
+              <span className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
                 Artwork
               </span>
               <div
@@ -718,7 +718,7 @@ export default function ShareManagePage() {
                   <>
                     <img src={resolveArtworkUrl(share.artwork_url) || ''} alt="Artwork" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center">
-                      <span className="text-white text-micro font-semibold uppercase tracking-wide">
+                      <span className="text-white text-[11px] font-semibold uppercase tracking-wide">
                         {uploadingArtwork ? 'Uploading...' : 'Replace'}
                       </span>
                     </div>
@@ -726,7 +726,7 @@ export default function ShareManagePage() {
                 ) : (
                   <div className="w-full h-full bg-[#F7F7F5] flex flex-col items-center justify-center">
                     <span className="text-[#8A8A8A] text-display mb-2">♫</span>
-                    <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">
+                    <span className="text-[11px] text-[#8A8A8A] uppercase tracking-wide">
                       {uploadingArtwork ? 'Uploading...' : 'Add artwork'}
                     </span>
                   </div>
@@ -743,7 +743,7 @@ export default function ShareManagePage() {
 
             {/* Share Link */}
             <div>
-              <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
+              <span className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
                 Share Link
               </span>
               <div className="flex items-center gap-2">
@@ -764,7 +764,7 @@ export default function ShareManagePage() {
 
             {/* Settings */}
             <div>
-              <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
+              <span className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
                 Settings
               </span>
               <div className="space-y-3">
@@ -775,7 +775,7 @@ export default function ShareManagePage() {
                   className="w-full flex items-center justify-between px-4 py-3 border border-[#E8E8E8]  hover:border-[#E8E8E8] transition-colors duration-150"
                 >
                   <span className="text-small text-black">Public</span>
-                  <span className={`text-micro font-semibold uppercase tracking-wide ${share.is_public ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
+                  <span className={`text-[11px] font-semibold uppercase tracking-wide ${share.is_public ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
                     {share.is_public ? 'On' : 'Off'}
                   </span>
                 </button>
@@ -787,7 +787,7 @@ export default function ShareManagePage() {
                   className="w-full flex items-center justify-between px-4 py-3 border border-[#E8E8E8]  hover:border-[#E8E8E8] transition-colors duration-150"
                 >
                   <span className="text-small text-black">Allow Downloads</span>
-                  <span className={`text-micro font-semibold uppercase tracking-wide ${share.downloads_enabled ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
+                  <span className={`text-[11px] font-semibold uppercase tracking-wide ${share.downloads_enabled ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
                     {share.downloads_enabled ? 'On' : 'Off'}
                   </span>
                 </button>
@@ -805,7 +805,7 @@ export default function ShareManagePage() {
                     className="w-full flex items-center justify-between px-4 py-3 hover:bg-[#F7F7F5] transition-colors duration-150"
                   >
                     <span className="text-small text-black">Password Protection</span>
-                    <span className={`text-micro font-semibold uppercase tracking-wide ${share.password_hash ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
+                    <span className={`text-[11px] font-semibold uppercase tracking-wide ${share.password_hash ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
                       {share.password_hash ? 'On' : 'Off'}
                     </span>
                   </button>
@@ -832,17 +832,17 @@ export default function ShareManagePage() {
 
             {/* Analytics */}
             <div>
-              <span className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
+              <span className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3 block">
                 Analytics
               </span>
               <div className="grid grid-cols-2 gap-3">
                 <div className="border border-[#E8E8E8]  p-4">
                   <span className="text-display font-medium text-black block">{share.total_plays}</span>
-                  <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">Total Plays</span>
+                  <span className="text-[11px] text-[#8A8A8A] uppercase tracking-wide">Total Plays</span>
                 </div>
                 <div className="border border-[#E8E8E8]  p-4">
                   <span className="text-display font-medium text-black block">{share.download_count}</span>
-                  <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">Downloads</span>
+                  <span className="text-[11px] text-[#8A8A8A] uppercase tracking-wide">Downloads</span>
                 </div>
               </div>
             </div>

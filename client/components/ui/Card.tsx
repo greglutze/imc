@@ -32,7 +32,7 @@ export function CardHeader({ children, className = '' }: { children: React.React
 
 export function CardTitle({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <h3 className={`text-heading-sm font-bold text-black ${className}`}>
+    <h3 className={`text-[22px]-sm font-bold text-black ${className}`}>
       {children}
     </h3>
   );
@@ -40,7 +40,7 @@ export function CardTitle({ children, className = '' }: { children: React.ReactN
 
 export function CardDescription({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <p className={`text-body-sm text-[#8A8A8A] ${className}`}>
+    <p className={`text-[13px] text-[#8A8A8A] ${className}`}>
       {children}
     </p>
   );

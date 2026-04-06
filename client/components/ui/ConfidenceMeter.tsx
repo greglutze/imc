@@ -37,10 +37,10 @@ export default function ConfidenceMeter({
       {(label || showValue) && (
         <div className="flex items-center justify-between">
           {label && (
-            <span className="text-caption text-[#8A8A8A]">{label}</span>
+            <span className="text-[11px] text-[#8A8A8A]">{label}</span>
           )}
           {showValue && (
-            <span className={`text-caption font-mono font-bold ${getTextColor(clampedValue)}`}>
+            <span className={`text-[11px] font-mono font-bold ${getTextColor(clampedValue)}`}>
               {clampedValue}
             </span>
           )}

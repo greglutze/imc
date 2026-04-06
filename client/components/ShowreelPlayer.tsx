@@ -238,10 +238,10 @@ export default function ShowreelPlayer({
       {/* Header */}
       <div className="px-5 py-3 flex items-center justify-between border-b border-[#E8E8E8]">
         <div className="flex items-center gap-3">
-          <span className="text-label font-semibold uppercase tracking-wide text-black">
+          <span className="text-[12px] font-semibold uppercase tracking-wide text-black">
             Showreel
           </span>
-          <span className="text-micro text-[#C4C4C4]">
+          <span className="text-[11px] text-[#C4C4C4]">
             {totalDuration}s preview · {Math.min(tracks.length, clipCount)} tracks
           </span>
         </div>
@@ -264,17 +264,17 @@ export default function ShowreelPlayer({
 
           <div className="flex-1 min-w-0">
             {isPlaying && currentTrack ? (
-              <span className="text-body-sm text-black truncate block">
+              <span className="text-[13px] text-black truncate block">
                 {currentTrack.title}
               </span>
             ) : (
-              <span className="text-body-sm text-[#C4C4C4]">
+              <span className="text-[13px] text-[#C4C4C4]">
                 {loading ? 'Loading tracks...' : 'Play a quick preview of your project'}
               </span>
             )}
           </div>
 
-          <span className="text-micro font-mono text-[#C4C4C4] shrink-0">
+          <span className="text-[11px] font-mono text-[#C4C4C4] shrink-0">
             {formatTime(elapsed)} / {formatTime(totalDuration)}
           </span>
         </div>
