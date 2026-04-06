@@ -73,7 +73,6 @@ export default function ProjectPage() {
             const reportData = await api.getReport(id);
             setReport({ report: reportData.report, confidence: reportData.confidence });
             setReportVersion(reportData.version);
-            setTotalVersions(reportData.version);
           } catch {
             // No report yet
           }
@@ -213,8 +212,7 @@ export default function ProjectPage() {
   // ──────────────────────────────────────────
   // PROJECT OVERVIEW
   // ──────────────────────────────────────────
-  {
-    const statusLabel = project?.status === 'draft' ? 'In Development' : project?.status === 'complete' ? 'Complete' : 'In Progress';
+  const statusLabel = project?.status === 'draft' ? 'In Development' : project?.status === 'complete' ? 'Complete' : 'In Progress';
     // Build instrument cards for the grid
     const instruments = [
       {
@@ -595,7 +593,6 @@ export default function ProjectPage() {
         </div>
       </div>
     );
-  }
 }
 
 /* ———————— Dashboard Player ———————— */
