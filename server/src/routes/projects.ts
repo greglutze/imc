@@ -266,6 +266,14 @@ router.delete('/:id', async (req: AuthRequest, res: Response): Promise<void> => 
       return;
     }
 
+    // Delete child rows that lack ON DELETE CASCADE
+    await pool.query('DELETE FROM instrument3_analyses WHERE project_id = $1', [id]);
+    await pool.query('DELETE FROM instrument2_prompts WHERE project_id = $1', [id]);
+    await pool.query('DELETE FROM instrument1_reports WHERE project_id = $1', [id]);
+    await pool.query('DELETE FROM concept_conversations WHERE project_id = $1', [id]);
+    await pool.query('DELETE FROM audio_files WHERE project_id = $1', [id]);
+
+    // Delete project (remaining child tables have ON DELETE CASCADE)
     await pool.query('DELETE FROM projects WHERE id = $1', [id]);
 
     res.status(204).send();
