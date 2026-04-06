@@ -39,9 +39,34 @@ export async function analyze(
   userPrompt: string,
   options?: { maxTokens?: number }
 ): Promise<string> {
+  const maxTokens = options?.maxTokens ?? 8192;
+
+  // Use streaming for large token budgets to avoid Anthropic SDK timeout
+  if (maxTokens > 8192) {
+    let result = '';
+    const stream = getClient().messages.stream({
+      model: 'claude-sonnet-4-6',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    });
+
+    for await (const event of stream) {
+      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+        result += event.delta.text;
+      }
+    }
+
+    if (!result) {
+      throw new Error('Empty response from Claude API (streaming)');
+    }
+    return result;
+  }
+
+  // Standard non-streaming for smaller requests
   const response = await getClient().messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: options?.maxTokens ?? 8192,
+    max_tokens: maxTokens,
     system: systemPrompt,
     messages: [
       {
