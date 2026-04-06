@@ -13,6 +13,61 @@ function truncateToChars(text: string, maxChars: number): string {
   return text.slice(0, maxChars);
 }
 
+/**
+ * Repair JSON that contains raw newlines inside string values.
+ * Claude often writes lyrics with actual line breaks in JSON strings,
+ * which makes JSON.parse fail. This finds string values and escapes
+ * any raw newlines/tabs inside them.
+ */
+function repairJsonNewlines(raw: string): string {
+  // Strategy: walk through the string character by character,
+  // tracking whether we're inside a JSON string value.
+  // If we encounter a raw newline inside a string, replace with \n.
+  let result = '';
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i];
+
+    if (escaped) {
+      result += ch;
+      escaped = false;
+      continue;
+    }
+
+    if (ch === '\\' && inString) {
+      result += ch;
+      escaped = true;
+      continue;
+    }
+
+    if (ch === '"') {
+      inString = !inString;
+      result += ch;
+      continue;
+    }
+
+    if (inString && ch === '\n') {
+      result += '\\n';
+      continue;
+    }
+
+    if (inString && ch === '\r') {
+      continue; // skip carriage returns
+    }
+
+    if (inString && ch === '\t') {
+      result += '\\t';
+      continue;
+    }
+
+    result += ch;
+  }
+
+  return result;
+}
+
 const PROMPT_ENGINEERING_SYSTEM_PROMPT = `You are IMC's prompt engineering and songwriting system. You translate artist concepts and market intelligence into precision-engineered prompts for AI music generation AND original lyrics for each track.
 
 Given the artist concept and market data, generate:
@@ -204,8 +259,26 @@ export async function generatePrompts(
 
     const jsonMatch = response.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
+      let jsonStr = jsonMatch[0];
+      let parsed: any;
+
+      // First attempt: parse raw JSON
       try {
-        const parsed = JSON.parse(jsonMatch[0]);
+        parsed = JSON.parse(jsonStr);
+      } catch (_e) {
+        // Second attempt: repair newlines inside string values (common with lyrics)
+        console.log('[instrument2] JSON parse failed, attempting repair...');
+        try {
+          jsonStr = repairJsonNewlines(jsonStr);
+          parsed = JSON.parse(jsonStr);
+          console.log('[instrument2] JSON repair succeeded');
+        } catch (e2) {
+          console.error('[instrument2] JSON repair also failed:', e2);
+          console.error('[instrument2] First 500 chars of response:', response.slice(0, 500));
+        }
+      }
+
+      if (parsed) {
         return {
           style_profile: parsed.style_profile || defaultResponse.style_profile,
           vocalist_persona:
@@ -221,12 +294,12 @@ export async function generatePrompts(
             notes: t.notes || '',
           })),
         };
-      } catch (e) {
-        console.error('Failed to parse prompts JSON:', e);
       }
+    } else {
+      console.error('[instrument2] No JSON found in response. First 500 chars:', response.slice(0, 500));
     }
   } catch (e) {
-    console.error('Failed to generate prompts:', e);
+    console.error('[instrument2] Failed to generate prompts:', e);
   }
 
   return defaultResponse;
@@ -296,8 +369,23 @@ Return a JSON object with these exact fields:
 
     const jsonMatch = response.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
+      let jsonStr = jsonMatch[0];
+      let parsed: any;
+
       try {
-        const parsed = JSON.parse(jsonMatch[0]);
+        parsed = JSON.parse(jsonStr);
+      } catch (_e) {
+        console.log('[instrument2] Track JSON parse failed, attempting repair...');
+        try {
+          jsonStr = repairJsonNewlines(jsonStr);
+          parsed = JSON.parse(jsonStr);
+          console.log('[instrument2] Track JSON repair succeeded');
+        } catch (e2) {
+          console.error('[instrument2] Track JSON repair also failed:', e2);
+        }
+      }
+
+      if (parsed) {
         return {
           track_number: trackNumber,
           title: parsed.title || `Track ${trackNumber}`,
@@ -308,12 +396,12 @@ Return a JSON object with these exact fields:
             '[Intro] [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus] [Outro]',
           notes: parsed.notes || '',
         };
-      } catch (e) {
-        console.error('Failed to parse track JSON:', e);
       }
+    } else {
+      console.error('[instrument2] No JSON found in track response');
     }
   } catch (e) {
-    console.error('Failed to regenerate track:', e);
+    console.error('[instrument2] Failed to regenerate track:', e);
   }
 
   return defaultTrack;
