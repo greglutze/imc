@@ -665,29 +665,6 @@ export default function ProjectPage() {
                 <p className="text-[15px] leading-[1.6] text-[#8A8A8A] max-w-3xl">
                   {moodboardBriefData.prose}
                 </p>
-                {/* Brief attributes */}
-                <div className="flex flex-wrap gap-4 mt-5">
-                  {moodboardBriefData.texture && (
-                    <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
-                      {moodboardBriefData.texture}
-                    </span>
-                  )}
-                  {moodboardBriefData.atmosphere && (
-                    <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
-                      {moodboardBriefData.atmosphere}
-                    </span>
-                  )}
-                  {moodboardBriefData.emotional_register && (
-                    <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
-                      {moodboardBriefData.emotional_register}
-                    </span>
-                  )}
-                  {moodboardBriefData.production_era && (
-                    <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
-                      {moodboardBriefData.production_era}
-                    </span>
-                  )}
-                </div>
               </div>
             )}
 
