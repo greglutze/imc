@@ -147,8 +147,6 @@ export default function LyricAdvisorPage() {
               A creative collaborator that helps you find the right words — without writing them for you.
             </p>
 
-            {/* Sonic seeds — words & ideas pulled from the moodboard brief */}
-            {moodboard && <SonicSeeds brief={moodboard} />}
           </div>
 
           {/* New Session button */}
@@ -307,89 +305,3 @@ export default function LyricAdvisorPage() {
   );
 }
 
-/**
- * Extract evocative words and themes from the moodboard brief
- * and render them as small pills for lyrical inspiration.
- */
-function SonicSeeds({ brief }: { brief: MoodboardBrief }) {
-  const seeds = extractSeeds(brief);
-  if (seeds.length === 0) return null;
-
-  return (
-    <div className="flex flex-wrap gap-2 mt-5">
-      {seeds.map((seed, i) => (
-        <span
-          key={i}
-          className="text-[11px] font-medium text-[#8A8A8A] bg-[#F7F7F5] px-3 py-1.5 rounded-full border border-[#E8E8E8]"
-        >
-          {seed}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-/** Pull interesting words from the brief's structured fields and prose. */
-function extractSeeds(brief: MoodboardBrief): string[] {
-  const seeds = new Set<string>();
-
-  // Structured fields — short, evocative values
-  if (brief.tempo_feel) seeds.add(brief.tempo_feel.toLowerCase());
-  if (brief.texture) seeds.add(brief.texture.toLowerCase());
-  if (brief.atmosphere) seeds.add(brief.atmosphere.toLowerCase());
-  if (brief.emotional_register) seeds.add(brief.emotional_register.toLowerCase());
-  if (brief.production_era) seeds.add(brief.production_era.toLowerCase());
-  if (brief.arrangement_density) seeds.add(brief.arrangement_density);
-  if (brief.dynamic_range) seeds.add(brief.dynamic_range);
-
-  // Sonic references as-is
-  brief.sonic_references.forEach((ref) => seeds.add(ref));
-
-  // Mine interesting words from prose — adjectives, nouns, imagery
-  if (brief.prose) {
-    // Common stop words to skip
-    const stop = new Set([
-      'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'of', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'be', 'been',
-      'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
-      'could', 'should', 'may', 'might', 'shall', 'can', 'that', 'which',
-      'who', 'whom', 'this', 'these', 'those', 'it', 'its', 'they', 'them',
-      'their', 'we', 'our', 'you', 'your', 'he', 'she', 'his', 'her',
-      'not', 'no', 'nor', 'so', 'if', 'then', 'than', 'too', 'very',
-      'just', 'about', 'up', 'out', 'into', 'over', 'after', 'before',
-      'between', 'through', 'during', 'each', 'every', 'all', 'both',
-      'more', 'most', 'other', 'some', 'such', 'only', 'own', 'same',
-      'also', 'how', 'when', 'where', 'while', 'what', 'there', 'here',
-      'as', 'like', 'even', 'still', 'well', 'back', 'much', 'many',
-      'way', 'long', 'make', 'made', 'take', 'come', 'get', 'give',
-      'think', 'feel', 'find', 'know', 'want', 'see', 'look', 'use',
-      'work', 'call', 'try', 'ask', 'need', 'keep', 'let', 'begin',
-      'seem', 'help', 'show', 'turn', 'play', 'run', 'move', 'live',
-      'music', 'sound', 'sounds', 'track', 'tracks', 'song', 'songs',
-      'production', 'mix', 'elements', 'overall', 'creates', 'create',
-      'using', 'used', 'sense', 'within', 'across', 'against', 'around',
-    ]);
-
-    const words = brief.prose
-      .replace(/[""'']/g, '')
-      .replace(/[^a-zA-Z\s-]/g, ' ')
-      .split(/\s+/)
-      .map((w) => w.toLowerCase().replace(/^-+|-+$/g, ''))
-      .filter((w) => w.length >= 4 && !stop.has(w));
-
-    // Count frequency, pick the most interesting ones
-    const freq = new Map<string, number>();
-    words.forEach((w) => freq.set(w, (freq.get(w) || 0) + 1));
-
-    // Sort by frequency desc, take top evocative words
-    const ranked = [...freq.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 8)
-      .map(([w]) => w);
-
-    ranked.forEach((w) => seeds.add(w));
-  }
-
-  // Cap total and return
-  return [...seeds].slice(0, 14);
-}
