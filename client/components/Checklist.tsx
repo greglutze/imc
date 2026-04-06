@@ -55,7 +55,7 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
         <h2 className="text-[64px] leading-[0.9] font-medium tracking-tight text-black">
           Launch Checklist
         </h2>
-        <p className="text-body-lg text-neutral-500 mt-4 max-w-md">
+        <p className="text-body-lg text-[#8A8A8A] mt-4 max-w-md">
           {progressCopy()}
         </p>
       </div>
@@ -70,7 +70,7 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
             {summary.checked} / {summary.total}
           </p>
         </div>
-        <div className="h-1 bg-neutral-100 rounded-full overflow-hidden">
+        <div className="h-1 bg-[#F7F7F5] rounded-full overflow-hidden">
           <div
             className="h-full bg-black rounded-full transition-all duration-500 ease-out"
             style={{ width: `${percent}%` }}
@@ -80,9 +80,9 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
 
       {/* Completion celebration */}
       {percent >= 100 && (
-        <div className="border-b border-[#E8E8E8] px-8 py-8 bg-neutral-50">
+        <div className="border-b border-[#E8E8E8] px-8 py-8 bg-[#F7F7F5]">
           <p className="text-heading font-bold text-black">Launch-ready</p>
-          <p className="text-body text-neutral-500 mt-1">
+          <p className="text-body text-[#8A8A8A] mt-1">
             Every item is checked. You&apos;re ready to release.
           </p>
         </div>
@@ -175,17 +175,17 @@ function CategorySection({
         className="w-full px-8 py-6 flex items-center justify-between hover:bg-[#F7F7F5] transition-colors"
       >
         <div className="flex items-center gap-4">
-          <span className="text-heading font-bold font-mono text-neutral-200">
+          <span className="text-heading font-bold font-mono text-[#E8E8E8]">
             {category.number}
           </span>
           <h3 className="text-heading font-semibold text-black">{category.label}</h3>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-body-sm font-mono text-neutral-400">
+          <span className="text-body-sm font-mono text-[#C4C4C4]">
             {summary.checked} / {summary.total}
           </span>
           <svg
-            className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${
+            className={`w-4 h-4 text-[#C4C4C4] transition-transform duration-200 ${
               isCollapsed ? '' : 'rotate-180'
             }`}
             fill="none"
@@ -203,7 +203,7 @@ function CategorySection({
         <div className="px-8 pb-6">
           {/* Per-category progress bar */}
           <div className="mb-4">
-            <div className="h-0.5 bg-neutral-100 rounded-full overflow-hidden">
+            <div className="h-0.5 bg-[#F7F7F5] rounded-full overflow-hidden">
               <div
                 className="h-full bg-black rounded-full transition-all duration-500 ease-out"
                 style={{
@@ -236,7 +236,7 @@ function CategorySection({
                     }
                   }}
                   placeholder="What needs to happen?"
-                  className="flex-1 text-body text-black bg-transparent border-b border-neutral-300 pb-1 outline-none focus:border-black transition-colors placeholder:text-neutral-300"
+                  className="flex-1 text-body text-black bg-transparent border-b border-[#E8E8E8] pb-1 outline-none focus:border-black transition-colors placeholder:text-[#C4C4C4]"
                 />
                 <ButtonV2 onClick={handleAddItem} variant="ghost" size="sm">
                   Add
@@ -331,7 +331,7 @@ function ChecklistItemRow({
           className={`mt-0.5 w-5 h-5 border flex-shrink-0 flex items-center justify-center transition-all ${
             item.is_checked
               ? 'bg-black border-black'
-              : 'border-neutral-300 hover:border-black'
+              : 'border-[#E8E8E8] hover:border-black'
           }`}
           aria-label={item.is_checked ? 'Uncheck item' : 'Check item'}
         >
@@ -347,7 +347,7 @@ function ChecklistItemRow({
           <div className="flex items-start gap-2">
             <p
               className={`text-body cursor-pointer select-none transition-colors ${
-                item.is_checked ? 'line-through text-neutral-400' : 'text-black'
+                item.is_checked ? 'line-through text-[#C4C4C4]' : 'text-black'
               }`}
               onClick={handleToggle}
             >
@@ -358,7 +358,7 @@ function ChecklistItemRow({
             {hasGuide && (
               <button
                 onClick={() => setShowGuide(!showGuide)}
-                className="mt-1 flex-shrink-0 w-4 h-4 flex items-center justify-center text-neutral-300 hover:text-black transition-colors"
+                className="mt-1 flex-shrink-0 w-4 h-4 flex items-center justify-center text-[#C4C4C4] hover:text-black transition-colors"
                 aria-label={showGuide ? 'Hide info' : 'More info'}
               >
                 <svg
@@ -376,7 +376,7 @@ function ChecklistItemRow({
 
           {/* Guide text — expandable */}
           {showGuide && hasGuide && (
-            <p className="text-body-sm text-neutral-500 mt-2 leading-relaxed max-w-xl">
+            <p className="text-body-sm text-[#8A8A8A] mt-2 leading-relaxed max-w-xl">
               {item.guide}
             </p>
           )}
@@ -398,7 +398,7 @@ function ChecklistItemRow({
 
         {/* Saving indicator */}
         {saving && (
-          <span className="text-micro text-neutral-300 mt-1">Saving...</span>
+          <span className="text-micro text-[#C4C4C4] mt-1">Saving...</span>
         )}
       </div>
 
@@ -411,7 +411,7 @@ function ChecklistItemRow({
             onBlur={handleNotesBlur}
             placeholder="Add a note..."
             rows={2}
-            className="w-full text-body-sm text-neutral-600 bg-neutral-50 border border-[#E8E8E8] px-3 py-2 outline-none focus:border-neutral-400 transition-colors resize-none placeholder:text-neutral-300"
+            className="w-full text-body-sm text-[#666] bg-[#F7F7F5] border border-[#E8E8E8] px-3 py-2 outline-none focus:border-[#C4C4C4] transition-colors resize-none placeholder:text-[#C4C4C4]"
           />
         </div>
       )}

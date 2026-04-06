@@ -37,7 +37,7 @@ export default function ConfidenceMeter({
       {(label || showValue) && (
         <div className="flex items-center justify-between">
           {label && (
-            <span className="text-caption text-neutral-500">{label}</span>
+            <span className="text-caption text-[#8A8A8A]">{label}</span>
           )}
           {showValue && (
             <span className={`text-caption font-mono font-bold ${getTextColor(clampedValue)}`}>
@@ -46,7 +46,7 @@ export default function ConfidenceMeter({
           )}
         </div>
       )}
-      <div className={`w-full ${height} bg-neutral-100 rounded-full overflow-hidden`}>
+      <div className={`w-full ${height} bg-[#F7F7F5] rounded-full overflow-hidden`}>
         <div
           className={`${height} ${getColor(clampedValue)} rounded-full transition-all duration-150`}
           style={{ width: `${clampedValue}%` }}

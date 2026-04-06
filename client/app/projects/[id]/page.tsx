@@ -240,13 +240,13 @@ export default function ProjectPage() {
         <div className="border-b border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="h-3 w-8 bg-neutral-100 animate-pulse" />
-              <span className="text-neutral-200">/</span>
-              <div className="h-3 w-24 bg-neutral-100 animate-pulse" />
+              <div className="h-3 w-8 bg-[#F7F7F5] animate-pulse" />
+              <span className="text-[#E8E8E8]">/</span>
+              <div className="h-3 w-24 bg-[#F7F7F5] animate-pulse" />
             </div>
             <div className="flex items-center gap-3">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-3 w-14 bg-neutral-100 animate-pulse" />
+                <div key={i} className="h-3 w-14 bg-[#F7F7F5] animate-pulse" />
               ))}
             </div>
           </div>
@@ -256,23 +256,23 @@ export default function ProjectPage() {
           <div className="grid grid-cols-12 gap-x-8 pt-16 pb-12">
             <div className="col-span-7">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-2 h-2 rounded-full bg-neutral-100 animate-pulse" />
-                <div className="h-3 w-20 bg-neutral-100 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-[#F7F7F5] animate-pulse" />
+                <div className="h-3 w-20 bg-[#F7F7F5] animate-pulse" />
               </div>
-              <div className="h-20 w-80 bg-neutral-100 animate-pulse mb-6" />
-              <div className="h-3 w-48 bg-neutral-50 animate-pulse" />
+              <div className="h-20 w-80 bg-[#F7F7F5] animate-pulse mb-6" />
+              <div className="h-3 w-48 bg-[#F7F7F5] animate-pulse" />
             </div>
             <div className="col-span-5 flex justify-end">
-              <div className="w-full max-w-[400px] aspect-square bg-neutral-100 animate-pulse" />
+              <div className="w-full max-w-[400px] aspect-square bg-[#F7F7F5] animate-pulse" />
             </div>
           </div>
           {/* Instrument cards skeleton */}
           <div className="grid grid-cols-3 gap-4 pt-12">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="border border-[#E8E8E8] p-6 h-32">
-                <div className="h-3 w-16 bg-neutral-100 animate-pulse mb-4" />
-                <div className="h-5 w-28 bg-neutral-100 animate-pulse mb-3" />
-                <div className="h-3 w-full bg-neutral-50 animate-pulse" />
+                <div className="h-3 w-16 bg-[#F7F7F5] animate-pulse mb-4" />
+                <div className="h-5 w-28 bg-[#F7F7F5] animate-pulse mb-3" />
+                <div className="h-3 w-full bg-[#F7F7F5] animate-pulse" />
               </div>
             ))}
           </div>
@@ -411,11 +411,11 @@ export default function ProjectPage() {
                     </div>
                   </>
                 ) : (
-                  <div className="w-full h-full bg-neutral-50 flex flex-col items-center justify-center">
-                    <span className="text-[120px] font-medium text-neutral-100">
+                  <div className="w-full h-full bg-[#F7F7F5] flex flex-col items-center justify-center">
+                    <span className="text-[120px] font-medium text-[#E8E8E8]">
                       {artistName.charAt(0).toUpperCase()}
                     </span>
-                    <span className="text-micro text-neutral-300 uppercase tracking-wide mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                    <span className="text-micro text-[#C4C4C4] uppercase tracking-wide mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                       {uploadingImage ? 'Uploading...' : 'Add Image'}
                     </span>
                   </div>
@@ -435,7 +435,7 @@ export default function ProjectPage() {
             {concept && (
               <div className="border-b border-[#E8E8E8]">
                 {/* Creative direction as hero quote */}
-                <div className="py-10 border-b border-neutral-100">
+                <div className="py-10 border-b border-[#E8E8E8]">
                   <div className="flex items-center gap-3 mb-5">
                     <div className="w-2 h-2 rounded-full bg-green-500" />
                     <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
@@ -456,7 +456,7 @@ export default function ProjectPage() {
                     <div className="space-y-2">
                       <p className="text-body font-semibold text-black">{toTitleCase(concept.genre_primary)}</p>
                       {concept.genre_secondary && concept.genre_secondary.length > 0 && (
-                        <p className="text-body-sm text-neutral-500">{concept.genre_secondary.map(g => toTitleCase(g)).join(', ')}</p>
+                        <p className="text-body-sm text-[#8A8A8A]">{concept.genre_secondary.map(g => toTitleCase(g)).join(', ')}</p>
                       )}
                     </div>
                   </div>
@@ -474,7 +474,7 @@ export default function ProjectPage() {
                           className="block text-body font-bold text-black hover:text-green-600 transition-colors duration-150"
                         >
                           {artist}
-                          <span className="text-neutral-300 ml-1.5 text-caption">&#8599;</span>
+                          <span className="text-[#C4C4C4] ml-1.5 text-caption">&#8599;</span>
                         </a>
                       ))}
                     </div>
@@ -491,10 +491,10 @@ export default function ProjectPage() {
                             href={`/projects/${id}/prompts`}
                             className="flex items-baseline gap-2 group"
                           >
-                            <span className="text-caption font-mono text-neutral-300">
+                            <span className="text-caption font-mono text-[#C4C4C4]">
                               {String(t.track_number).padStart(2, '0')}
                             </span>
-                            <span className="text-body font-bold text-black group-hover:text-neutral-600 transition-colors duration-150 truncate">
+                            <span className="text-body font-bold text-black group-hover:text-[#666] transition-colors duration-150 truncate">
                               {t.title}
                             </span>
                           </a>
@@ -654,7 +654,7 @@ export default function ProjectPage() {
                           <div className={`w-1.5 h-1.5 rounded-full ${
                             inst.color === 'green' ? 'bg-green-500' :
                             inst.color === 'yellow' ? 'bg-yellow-500' :
-                            'bg-neutral-300'
+                            'bg-[#C4C4C4]'
                           }`} />
                           <span className="text-[11px] font-medium text-[#8A8A8A]">
                             {inst.statusLabel}
@@ -744,7 +744,7 @@ export default function ProjectPage() {
                   <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
                     Researching Your Market
                   </p>
-                  <p className="text-body-lg text-neutral-500 mt-5 max-w-sm">
+                  <p className="text-body-lg text-[#8A8A8A] mt-5 max-w-sm">
                     Pulling Spotify data, mapping comparable artists, and building your market intelligence report. This usually takes about a minute.
                   </p>
                   <div className="mt-8 flex items-center gap-2">
@@ -760,7 +760,7 @@ export default function ProjectPage() {
                   <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
                     Concept Not Ready
                   </p>
-                  <p className="text-body-lg text-neutral-500 mt-5 max-w-sm">
+                  <p className="text-body-lg text-[#8A8A8A] mt-5 max-w-sm">
                     Your project concept needs to be defined before research can run. This happens automatically during project creation.
                   </p>
                 </div>
@@ -874,11 +874,11 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
       />
 
       {/* Artwork */}
-      <div className="w-16 h-16 overflow-hidden bg-neutral-100 shrink-0 flex items-center justify-center">
+      <div className="w-16 h-16 overflow-hidden bg-[#F7F7F5] shrink-0 flex items-center justify-center">
         {artworkUrl ? (
           <img src={resolveArtworkUrl(artworkUrl) || ''} alt={shareTitle} className="w-full h-full object-cover" />
         ) : (
-          <span className="text-[24px] font-bold text-neutral-300">&#9835;</span>
+          <span className="text-[24px] font-bold text-[#C4C4C4]">&#9835;</span>
         )}
       </div>
 
@@ -905,11 +905,11 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
 
         {/* Progress bar */}
         <div
-          className="h-1.5 bg-neutral-100 rounded-full cursor-pointer group"
+          className="h-1.5 bg-[#F7F7F5] rounded-full cursor-pointer group"
           onClick={handleSeek}
         >
           <div
-            className="h-full bg-black rounded-full transition-all duration-100 group-hover:bg-neutral-700"
+            className="h-full bg-black rounded-full transition-all duration-100 group-hover:bg-[#333]"
             style={{ width: `${progress}%` }}
           />
         </div>

@@ -205,7 +205,7 @@ export default function LyricSessionPage() {
   if (authLoading || pageLoading) {
     return (
       <div className="animate-fade-in px-8 py-16 max-w-2xl">
-        <p className="text-[120px] leading-[0.85] font-bold text-neutral-100 -ml-1">LA</p>
+        <p className="text-[120px] leading-[0.85] font-bold text-[#E8E8E8] -ml-1">LA</p>
         <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
           Loading...
         </p>
@@ -222,11 +222,11 @@ export default function LyricSessionPage() {
         <div className="flex items-center gap-3">
           <a
             href={`/projects/${id}/lyrics`}
-            className="text-caption text-neutral-400 hover:text-black transition-colors duration-150"
+            className="text-caption text-[#C4C4C4] hover:text-black transition-colors duration-150"
           >
             &#8592; Sessions
           </a>
-          <span className="text-neutral-200">/</span>
+          <span className="text-[#E8E8E8]">/</span>
           {editingTitle ? (
             <input
               type="text"
@@ -240,17 +240,17 @@ export default function LyricSessionPage() {
           ) : (
             <button
               onClick={() => { setTitleInput(sessionTitle); setEditingTitle(true); }}
-              className="text-body font-semibold text-black hover:text-neutral-600 transition-colors duration-150"
+              className="text-body font-semibold text-black hover:text-[#666] transition-colors duration-150"
             >
               {sessionTitle}
             </button>
           )}
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-caption text-neutral-400 italic">
+          <span className="text-caption text-[#C4C4C4] italic">
             Everything you write is yours.
           </span>
-          <span className={`text-caption ${saveStatus === 'saved' ? 'text-neutral-300' : saveStatus === 'saving' ? 'text-signal-violet' : 'text-signal-amber'}`}>
+          <span className={`text-caption ${saveStatus === 'saved' ? 'text-[#C4C4C4]' : saveStatus === 'saving' ? 'text-signal-violet' : 'text-signal-amber'}`}>
             {saveStatus === 'saved' ? 'Saved' : saveStatus === 'saving' ? 'Saving...' : 'Unsaved'}
           </span>
         </div>
@@ -260,7 +260,7 @@ export default function LyricSessionPage() {
       <div className="flex-1 flex overflow-hidden">
         {/* Left: Lyrics editor */}
         <div className="w-1/2 flex flex-col border-r border-[#E8E8E8]">
-          <div className="px-6 py-3 border-b border-neutral-100 flex items-center justify-between">
+          <div className="px-6 py-3 border-b border-[#E8E8E8] flex items-center justify-between">
             <p className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A]">Lyrics</p>
             <LyricsStats lyrics={lyrics} />
           </div>
@@ -273,7 +273,7 @@ export default function LyricSessionPage() {
                 ? 'Paste your lyrics here...'
                 : 'Start writing your lyrics...'
             }
-            className="flex-1 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none px-6 py-5 text-body text-black leading-relaxed font-mono bg-white placeholder-neutral-300"
+            className="flex-1 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none px-6 py-5 text-body text-black leading-relaxed font-mono bg-white placeholder-[#C4C4C4]"
             spellCheck={false}
           />
           {/* Wayfinding — show when lyrics have substance */}
@@ -299,8 +299,8 @@ export default function LyricSessionPage() {
         </div>
 
         {/* Right: Advisor panel */}
-        <div className="w-1/2 flex flex-col bg-neutral-50">
-          <div className="px-6 py-3 border-b border-neutral-100 flex items-center justify-between">
+        <div className="w-1/2 flex flex-col bg-[#F7F7F5]">
+          <div className="px-6 py-3 border-b border-[#E8E8E8] flex items-center justify-between">
             <div className="flex items-center gap-2">
               <p className="text-label font-semibold uppercase tracking-wide text-[#8A8A8A]">Advisor</p>
               {sending && <Signal color="violet" label="" pulse />}
@@ -311,7 +311,7 @@ export default function LyricSessionPage() {
           <div className="flex-1 overflow-y-auto px-6 py-5">
             {messages.length === 0 && !sending && (
               <div className="py-8">
-                <p className="text-body text-neutral-400">
+                <p className="text-body text-[#C4C4C4]">
                   {session?.entry_mode === 'paste'
                     ? 'Paste your lyrics on the left, then ask for feedback here.'
                     : session?.entry_mode === 'vibe'
@@ -334,14 +334,14 @@ export default function LyricSessionPage() {
                         <p className={`text-caption font-semibold uppercase tracking-wide mb-1 ${isUser ? 'text-[#8A8A8A]' : 'text-signal-violet'}`}>
                           {isUser ? 'You' : 'Advisor'}
                         </p>
-                        <div className="text-body-sm text-neutral-700 leading-relaxed whitespace-pre-wrap">
+                        <div className="text-body-sm text-[#333] leading-relaxed whitespace-pre-wrap">
                           {msg.content}
                         </div>
                       </div>
                       {!isUser && (
                         <button
                           onClick={() => handleDismiss(i)}
-                          className="opacity-0 group-hover:opacity-100 text-caption text-neutral-300 hover:text-neutral-500 transition-all duration-150 shrink-0 mt-1"
+                          className="opacity-0 group-hover:opacity-100 text-caption text-[#C4C4C4] hover:text-[#8A8A8A] transition-all duration-150 shrink-0 mt-1"
                           title="Dismiss"
                         >
                           &#x2715;
@@ -360,9 +360,9 @@ export default function LyricSessionPage() {
                       Advisor
                     </p>
                     <div className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-neutral-300 rounded-full animate-pulse" />
-                      <span className="w-1.5 h-1.5 bg-neutral-300 rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
-                      <span className="w-1.5 h-1.5 bg-neutral-300 rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
+                      <span className="w-1.5 h-1.5 bg-[#C4C4C4] rounded-full animate-pulse" />
+                      <span className="w-1.5 h-1.5 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1.5 h-1.5 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
                     </div>
                   </div>
                 </div>
@@ -397,7 +397,7 @@ export default function LyricSessionPage() {
                 placeholder="Ask the Advisor..."
                 disabled={sending}
                 rows={1}
-                className="flex-1 bg-transparent text-body-sm text-black placeholder-neutral-400 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-0.5"
+                className="flex-1 bg-transparent text-body-sm text-black placeholder-[#C4C4C4] resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-0.5"
                 style={{ minHeight: '24px', maxHeight: '96px' }}
               />
               <button
@@ -406,8 +406,8 @@ export default function LyricSessionPage() {
                 className={`
                   text-label font-semibold uppercase tracking-wide px-4 h-8                   transition-colors duration-150 shrink-0 text-caption
                   ${input.trim() && !sending
-                    ? 'bg-black text-white hover:bg-neutral-800'
-                    : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
+                    ? 'bg-black text-white hover:bg-[#1A1A1A]'
+                    : 'bg-[#F7F7F5] text-[#C4C4C4] cursor-not-allowed'
                   }
                 `}
               >
@@ -428,7 +428,7 @@ function LyricsStats({ lyrics }: { lyrics: string }) {
   if (!words) return null;
 
   return (
-    <span className="text-caption text-neutral-300">
+    <span className="text-caption text-[#C4C4C4]">
       {words} words &middot; {lines} lines
     </span>
   );

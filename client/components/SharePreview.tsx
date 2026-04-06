@@ -38,23 +38,23 @@ export default function SharePreview({
   const isDark = theme === 'dark';
 
   // Theme tokens matching the real listener page
-  const bg = isDark ? 'bg-neutral-950' : 'bg-white';
+  const bg = isDark ? 'bg-[#0a0a0a]' : 'bg-white';
   const textPrimary = isDark ? 'text-white' : 'text-black';
-  const textSecondary = isDark ? 'text-neutral-400' : 'text-neutral-500';
-  const textMuted = isDark ? 'text-neutral-600' : 'text-neutral-300';
-  const border = isDark ? 'border-neutral-800' : 'border-[#E8E8E8]';
+  const textSecondary = isDark ? 'text-[#C4C4C4]' : 'text-[#8A8A8A]';
+  const textMuted = isDark ? 'text-[#666]' : 'text-[#C4C4C4]';
+  const border = isDark ? 'border-[#1A1A1A]' : 'border-[#E8E8E8]';
 
   return (
     <div className="relative">
       {/* Phone frame */}
-      <div className={`border-2 ${isDark ? 'border-neutral-700' : 'border-neutral-300'} overflow-hidden shadow-lg`}>
+      <div className={`border-2 ${isDark ? 'border-[#333]' : 'border-[#E8E8E8]'} overflow-hidden shadow-lg`}>
         {/* Status bar mock */}
-        <div className={`${isDark ? 'bg-neutral-900' : 'bg-neutral-100'} px-4 py-1.5 flex items-center justify-between`}>
+        <div className={`${isDark ? 'bg-[#0a0a0a]' : 'bg-[#F7F7F5]'} px-4 py-1.5 flex items-center justify-between`}>
           <span className={`text-[9px] font-mono ${textSecondary}`}>9:41</span>
-          <div className={`w-16 h-1 rounded-full ${isDark ? 'bg-neutral-700' : 'bg-neutral-300'}`} />
+          <div className={`w-16 h-1 rounded-full ${isDark ? 'bg-[#333]' : 'bg-[#C4C4C4]'}`} />
           <div className="flex items-center gap-1">
-            <div className={`w-2.5 h-1.5 ${isDark ? 'bg-neutral-600' : 'bg-neutral-400'}`} />
-            <div className={`w-1 h-1.5 ${isDark ? 'bg-neutral-600' : 'bg-neutral-400'}`} />
+            <div className={`w-2.5 h-1.5 ${isDark ? 'bg-[#555]' : 'bg-[#C4C4C4]'}`} />
+            <div className={`w-1 h-1.5 ${isDark ? 'bg-[#555]' : 'bg-[#C4C4C4]'}`} />
           </div>
         </div>
 
@@ -63,7 +63,7 @@ export default function SharePreview({
           {/* Password gate preview */}
           {passwordProtected && (
             <div className="absolute top-12 right-3">
-              <span className={`text-[8px] font-semibold uppercase tracking-wide px-1.5 py-0.5 ${isDark ? 'bg-neutral-800 text-[#8A8A8A]' : 'bg-neutral-100 text-neutral-500'}`}>
+              <span className={`text-[8px] font-semibold uppercase tracking-wide px-1.5 py-0.5 ${isDark ? 'bg-[#1A1A1A] text-[#8A8A8A]' : 'bg-[#F7F7F5] text-[#8A8A8A]'}`}>
                 Password
               </span>
             </div>
@@ -126,7 +126,7 @@ export default function SharePreview({
 
       {/* Visibility badge */}
       <div className="mt-3 flex items-center justify-center gap-2">
-        <div className={`w-1.5 h-1.5 rounded-full ${isPublic ? 'bg-green-500' : 'bg-neutral-400'}`} />
+        <div className={`w-1.5 h-1.5 rounded-full ${isPublic ? 'bg-green-500' : 'bg-[#C4C4C4]'}`} />
         <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">
           {isPublic ? 'Public' : 'Private'}
           {passwordProtected ? ' · Password Protected' : ''}

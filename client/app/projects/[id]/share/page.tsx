@@ -66,9 +66,9 @@ export default function SharePage() {
           activePage="share"
         />
         <div className="max-w-[1400px] mx-auto px-10 pt-10 w-full">
-          <div className="h-3 w-32 bg-neutral-100 animate-pulse mb-4" />
-          <div className="h-10 w-28 bg-neutral-100 animate-pulse mb-4" />
-          <div className="h-4 w-72 bg-neutral-50 animate-pulse mb-10" />
+          <div className="h-3 w-32 bg-[#F7F7F5] animate-pulse mb-4" />
+          <div className="h-10 w-28 bg-[#F7F7F5] animate-pulse mb-4" />
+          <div className="h-4 w-72 bg-[#F7F7F5] animate-pulse mb-10" />
           <div className="space-y-3">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="bg-[#F7F7F5] p-6 flex items-center gap-5">

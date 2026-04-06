@@ -44,11 +44,11 @@ export default function ChecklistPage() {
           <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
             Instrument 00
           </p>
-          <div className="h-16 w-96 bg-neutral-100 animate-pulse" />
+          <div className="h-16 w-96 bg-[#F7F7F5] animate-pulse" />
         </div>
         <div className="px-8 py-8 space-y-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-8 bg-neutral-50 animate-pulse" />
+            <div key={i} className="h-8 bg-[#F7F7F5] animate-pulse" />
           ))}
         </div>
       </div>

@@ -48,21 +48,21 @@ type ButtonProps = ButtonAsButton | ButtonAsAnchor;
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-black text-white hover:bg-neutral-800 active:bg-neutral-700',
+    'bg-black text-white hover:bg-[#1A1A1A] active:bg-[#333]',
   secondary:
-    'border border-neutral-200 text-black hover:border-black active:bg-neutral-50',
+    'border border-[#E8E8E8] text-black hover:border-black active:bg-[#F7F7F5]',
   ghost:
-    'text-neutral-400 hover:text-black',
+    'text-[#C4C4C4] hover:text-black',
   danger:
     'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
   'danger-ghost':
-    'text-neutral-400 hover:text-red-500',
+    'text-[#C4C4C4] hover:text-red-500',
   media:
-    'rounded-full bg-neutral-100 text-neutral-500 hover:bg-black hover:text-white',
+    'rounded-full bg-[#F7F7F5] text-[#8A8A8A] hover:bg-black hover:text-white',
 };
 
 const variantActiveOverrides: Partial<Record<ButtonVariant, string>> = {
-  media: 'rounded-full bg-black text-white hover:bg-neutral-800',
+  media: 'rounded-full bg-black text-white hover:bg-[#1A1A1A]',
 };
 
 const sizeStyles: Record<ButtonVariant, Record<ButtonSize, string>> = {

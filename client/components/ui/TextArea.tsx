@@ -21,7 +21,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           ref={ref}
           className={`
             w-full bg-white border px-4 py-3
-            text-body text-black placeholder-neutral-300
+            text-body text-black placeholder-[#C4C4C4]
             transition-colors duration-150 resize-none
             focus:outline-none focus:ring-1
             ${error
@@ -36,7 +36,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           <p className="text-caption text-signal-red">{error}</p>
         )}
         {hint && !error && (
-          <p className="text-caption text-neutral-400">{hint}</p>
+          <p className="text-caption text-[#C4C4C4]">{hint}</p>
         )}
       </div>
     );

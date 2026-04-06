@@ -90,7 +90,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
         className={`
           fixed bottom-6 right-6 w-12 h-12 z-40
           bg-black rounded-full flex items-center justify-center
-          hover:bg-neutral-800 transition-colors duration-200
+          hover:bg-[#1A1A1A] transition-colors duration-200
           shadow-lg hover:shadow-xl
         `}
         aria-label="Open assistant"
@@ -114,22 +114,22 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
       <div
         className={`
           fixed right-0 top-0 w-96 h-screen z-50
-          bg-white border-l border-neutral-200
+          bg-white border-l border-[#E8E8E8]
           flex flex-col
           transition-transform duration-300 ease-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         `}
       >
         {/* Header */}
-        <div className="border-b border-neutral-200 p-4 flex items-center justify-between flex-shrink-0">
+        <div className="border-b border-[#E8E8E8] p-4 flex items-center justify-between flex-shrink-0">
           <h2 className="text-heading-sm font-bold text-black">IMC Assistant</h2>
           <button
             onClick={() => setIsOpen(false)}
-            className="w-8 h-8 flex items-center justify-center hover:bg-neutral-100 transition-colors"
+            className="w-8 h-8 flex items-center justify-center hover:bg-[#F7F7F5] transition-colors"
             aria-label="Close assistant"
           >
             <svg
-              className="w-5 h-5 text-neutral-600"
+              className="w-5 h-5 text-[#666]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -148,7 +148,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 && (
             <div className="flex items-center justify-center h-full text-center">
-              <p className="text-body-sm text-neutral-500">
+              <p className="text-body-sm text-[#8A8A8A]">
                 {projectId
                   ? 'Ask me anything about your project — creative direction, market insights, or next steps.'
                   : 'Open a project to start chatting about your music.'}
@@ -167,7 +167,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
                   ${
                     message.role === 'user'
                       ? 'bg-black text-white'
-                      : 'bg-neutral-100 text-black'
+                      : 'bg-[#F7F7F5] text-black'
                   }
                 `}
               >
@@ -180,10 +180,10 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
 
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-neutral-100 text-black px-4 py-2 flex gap-1 items-center">
-                <span className="w-2 h-2 bg-neutral-400 rounded-full animate-pulse"></span>
-                <span className="w-2 h-2 bg-neutral-400 rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></span>
-                <span className="w-2 h-2 bg-neutral-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></span>
+              <div className="bg-[#F7F7F5] text-black px-4 py-2 flex gap-1 items-center">
+                <span className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse"></span>
+                <span className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></span>
+                <span className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></span>
               </div>
             </div>
           )}
@@ -192,7 +192,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
         </div>
 
         {/* Input Area */}
-        <div className="border-t border-neutral-200 p-4 flex-shrink-0">
+        <div className="border-t border-[#E8E8E8] p-4 flex-shrink-0">
           <div className="flex gap-2">
             <input
               type="text"
@@ -203,11 +203,11 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
               disabled={isLoading || !projectId}
               className={`
                 flex-1 px-3 py-2
-                border border-neutral-200
+                border border-[#E8E8E8]
                 text-body-sm
-                placeholder-neutral-400
-                focus:outline-none focus:border-neutral-300
-                disabled:bg-neutral-50 disabled:text-neutral-400
+                placeholder-[#C4C4C4]
+                focus:outline-none focus:border-[#E8E8E8]
+                disabled:bg-[#F7F7F5] disabled:text-[#C4C4C4]
               `}
             />
             <button
@@ -215,8 +215,8 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
               disabled={isLoading || !projectId || !input.trim()}
               className={`
                 px-3 py-2 bg-black text-white text-body-sm font-medium
-                hover:bg-neutral-800 transition-colors
-                disabled:bg-neutral-300 disabled:cursor-not-allowed
+                hover:bg-[#1A1A1A] transition-colors
+                disabled:bg-[#C4C4C4] disabled:cursor-not-allowed
               `}
             >
               Send

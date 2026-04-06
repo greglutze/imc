@@ -170,16 +170,16 @@ export default function ListenerPage() {
   }, []);
 
   const isDark = share?.theme === 'dark';
-  const bg = isDark ? 'bg-neutral-950' : 'bg-white';
+  const bg = isDark ? 'bg-[#0a0a0a]' : 'bg-white';
   const textPrimary = isDark ? 'text-white' : 'text-black';
-  const textSecondary = isDark ? 'text-neutral-400' : 'text-neutral-500';
-  const textMuted = isDark ? 'text-neutral-600' : 'text-neutral-300';
-  const border = isDark ? 'border-neutral-800' : 'border-neutral-200';
-  const hoverBorder = isDark ? 'hover:border-neutral-600' : 'hover:border-neutral-400';
-  const trackActive = isDark ? 'bg-neutral-900' : 'bg-neutral-50';
-  const progressBg = isDark ? 'bg-neutral-800' : 'bg-neutral-200';
+  const textSecondary = isDark ? 'text-[#C4C4C4]' : 'text-[#8A8A8A]';
+  const textMuted = isDark ? 'text-[#666]' : 'text-[#C4C4C4]';
+  const border = isDark ? 'border-[#1A1A1A]' : 'border-[#E8E8E8]';
+  const hoverBorder = isDark ? 'hover:border-[#8A8A8A]' : 'hover:border-[#C4C4C4]';
+  const trackActive = isDark ? 'bg-[#0a0a0a]' : 'bg-[#F7F7F5]';
+  const progressBg = isDark ? 'bg-[#1A1A1A]' : 'bg-[#E8E8E8]';
   const progressFill = isDark ? 'bg-white' : 'bg-black';
-  const inputBg = isDark ? 'bg-neutral-900 border-neutral-700' : 'bg-white border-neutral-200';
+  const inputBg = isDark ? 'bg-[#0a0a0a] border-[#333]' : 'bg-white border-[#E8E8E8]';
 
   if (loading) {
     return (
@@ -191,9 +191,9 @@ export default function ListenerPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center">
-          <span className="text-label uppercase tracking-widest text-neutral-500">{error}</span>
+          <span className="text-label uppercase tracking-widest text-[#8A8A8A]">{error}</span>
         </div>
       </div>
     );
@@ -207,7 +207,7 @@ export default function ListenerPage() {
       <div className={`min-h-screen ${bg} flex items-center justify-center`}>
         <div className="w-full max-w-sm px-6">
           {share.artwork_url && (
-            <div className="w-32 h-32 mx-auto mb-8  overflow-hidden border border-neutral-800">
+            <div className="w-32 h-32 mx-auto mb-8  overflow-hidden border border-[#1A1A1A]">
               <img src={resolveUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
             </div>
           )}
@@ -219,14 +219,14 @@ export default function ListenerPage() {
               onChange={(e) => setPasswordInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') handleVerifyPassword(); }}
               placeholder="Enter password"
-              className={`w-full text-small ${inputBg} border  px-4 py-3 outline-none focus:border-neutral-500 ${textPrimary}`}
+              className={`w-full text-small ${inputBg} border  px-4 py-3 outline-none focus:border-[#8A8A8A] ${textPrimary}`}
             />
             {passwordError && (
               <p className="text-micro text-red-500">Incorrect password.</p>
             )}
             <button
               onClick={handleVerifyPassword}
-              className={`w-full py-3 ${isDark ? 'bg-white text-black hover:bg-neutral-200' : 'bg-black text-white hover:bg-neutral-800'} text-label font-bold uppercase tracking-widest  transition-colors duration-fast`}
+              className={`w-full py-3 ${isDark ? 'bg-white text-black hover:bg-[#E8E8E8]' : 'bg-black text-white hover:bg-[#1A1A1A]'} text-label font-bold uppercase tracking-widest  transition-colors duration-fast`}
             >
               Listen
             </button>

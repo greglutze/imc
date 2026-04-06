@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="theme-open">
-      <body className="bg-white text-neutral-900 font-sans">
+      <body className="bg-white text-[#1A1A1A] font-sans">
         <AuthProvider>
           <div className="flex h-screen">
             {/* Sidebar — slim, editorial */}

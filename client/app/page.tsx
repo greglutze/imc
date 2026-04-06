@@ -32,7 +32,7 @@ export default function Home() {
     return (
       <div className="animate-fade-in flex items-center justify-center h-full">
         <div className="text-center">
-          <p className="text-[120px] leading-[0.85] font-medium text-neutral-100">IMC</p>
+          <p className="text-[120px] leading-[0.85] font-medium text-[#E8E8E8]">IMC</p>
           <p className="text-body text-[#8A8A8A] mt-4">Loading...</p>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function Home() {
         </div>
 
         <div className="max-w-[1400px] mx-auto px-10 py-32">
-          <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">IMC</p>
+          <p className="text-[120px] leading-[0.85] font-medium text-[#E8E8E8] -ml-1">IMC</p>
           <p className="t-display text-black mt-6 max-w-xl">
             Your creative intelligence engine
           </p>
@@ -81,8 +81,8 @@ export default function Home() {
         {/* Colophon */}
         <div className="border-t border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
-            <p className="text-micro font-mono text-neutral-300">IMC v0.1.0</p>
-            <p className="text-micro font-mono text-neutral-300">Music Intelligence Platform</p>
+            <p className="text-micro font-mono text-[#C4C4C4]">IMC v0.1.0</p>
+            <p className="text-micro font-mono text-[#C4C4C4]">Music Intelligence Platform</p>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function Home() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <p className="text-micro font-mono text-neutral-300">
+            <p className="text-micro font-mono text-[#C4C4C4]">
               {user?.name}
             </p>
           </div>
@@ -114,22 +114,22 @@ export default function Home() {
             <div className="pt-16 pb-10">
               <div className="flex items-end justify-between mb-10">
                 <div>
-                  <div className="h-3 w-16 bg-neutral-100 animate-pulse mb-3" />
-                  <div className="h-14 w-16 bg-neutral-100 animate-pulse" />
+                  <div className="h-3 w-16 bg-[#F7F7F5] animate-pulse mb-3" />
+                  <div className="h-14 w-16 bg-[#F7F7F5] animate-pulse" />
                 </div>
-                <div className="h-10 w-32 bg-neutral-100 animate-pulse" />
+                <div className="h-10 w-32 bg-[#F7F7F5] animate-pulse" />
               </div>
               <div className="border-t border-[#E8E8E8]">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="flex items-center gap-6 py-6 border-b border-[#E8E8E8]">
-                    <div className="w-16 h-16 bg-neutral-100 animate-pulse shrink-0" />
+                    <div className="w-16 h-16 bg-[#F7F7F5] animate-pulse shrink-0" />
                     <div className="flex-1">
-                      <div className="h-5 w-40 bg-neutral-100 animate-pulse mb-2" />
-                      <div className="h-3 w-64 bg-neutral-50 animate-pulse mb-2" />
-                      <div className="h-2 w-24 bg-neutral-50 animate-pulse" />
+                      <div className="h-5 w-40 bg-[#F7F7F5] animate-pulse mb-2" />
+                      <div className="h-3 w-64 bg-[#F7F7F5] animate-pulse mb-2" />
+                      <div className="h-2 w-24 bg-[#F7F7F5] animate-pulse" />
                     </div>
-                    <div className="h-4 w-16 bg-neutral-50 animate-pulse" />
-                    <div className="h-4 w-20 bg-neutral-50 animate-pulse" />
+                    <div className="h-4 w-16 bg-[#F7F7F5] animate-pulse" />
+                    <div className="h-4 w-20 bg-[#F7F7F5] animate-pulse" />
                   </div>
                 ))}
               </div>
@@ -175,11 +175,11 @@ export default function Home() {
           ) : (
             /* No projects yet */
             <div className="py-32">
-              <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">00</p>
+              <p className="text-[120px] leading-[0.85] font-medium text-[#E8E8E8] -ml-1">00</p>
               <p className="t-display text-black mt-6">
                 Start Something
               </p>
-              <p className="text-body-lg text-neutral-500 mt-4 max-w-md">
+              <p className="text-body-lg text-[#8A8A8A] mt-4 max-w-md">
                 Every project begins with a concept. Create one and we&apos;ll help you build the research, prompts, and sound around it.
               </p>
               <ButtonV2 as="a" href="/projects/new" size="lg" className="mt-8">
@@ -193,8 +193,8 @@ export default function Home() {
       {/* Colophon */}
       <div className="border-t border-[#E8E8E8] shrink-0">
         <div className="max-w-[1400px] mx-auto px-10 py-4 flex items-center justify-between">
-          <p className="text-micro font-mono text-neutral-300">IMC v0.1.0</p>
-          <p className="text-micro font-mono text-neutral-300">Music Intelligence Platform</p>
+          <p className="text-micro font-mono text-[#C4C4C4]">IMC v0.1.0</p>
+          <p className="text-micro font-mono text-[#C4C4C4]">Music Intelligence Platform</p>
         </div>
       </div>
     </div>
@@ -271,7 +271,7 @@ function ProjectCard({ project, projectCode, statusLabel, statusColor, projects,
             <div className={`w-1.5 h-1.5 rounded-full ${
               statusColor === 'green' ? 'bg-green-500' :
               statusColor === 'yellow' ? 'bg-yellow-500' :
-              'bg-neutral-300'
+              'bg-[#C4C4C4]'
             }`} />
             <span className="text-[11px] font-medium text-[#8A8A8A]">
               {statusLabel}

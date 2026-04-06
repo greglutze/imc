@@ -108,12 +108,12 @@ export default function TrackAnnotations({
   return (
     <div className="border border-[#E8E8E8] mt-4">
       {/* Header */}
-      <div className="px-5 py-3 border-b border-neutral-100 flex items-center justify-between">
+      <div className="px-5 py-3 border-b border-[#E8E8E8] flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-label font-semibold uppercase tracking-wide text-black">
             Notes
           </span>
-          <span className="text-micro text-neutral-400">
+          <span className="text-micro text-[#C4C4C4]">
             {trackTitle}
           </span>
         </div>
@@ -125,8 +125,8 @@ export default function TrackAnnotations({
       </div>
 
       {/* Add annotation input */}
-      <div className="px-5 py-3 border-b border-neutral-100 flex items-center gap-3">
-        <span className="text-micro font-mono text-neutral-400 shrink-0 w-10 text-center">
+      <div className="px-5 py-3 border-b border-[#E8E8E8] flex items-center gap-3">
+        <span className="text-micro font-mono text-[#C4C4C4] shrink-0 w-10 text-center">
           {formatTimestamp(currentTimeMs)}
         </span>
         <input
@@ -135,7 +135,7 @@ export default function TrackAnnotations({
           onChange={(e) => setNewContent(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
           placeholder="Add a note at this timestamp..."
-          className="flex-1 text-small bg-transparent outline-none text-black placeholder:text-neutral-300"
+          className="flex-1 text-small bg-transparent outline-none text-black placeholder:text-[#C4C4C4]"
         />
         <ButtonV2 onClick={handleAdd} disabled={adding || !newContent.trim()} variant="ghost" size="sm" className="shrink-0">
           {adding ? '...' : 'Add'}
@@ -145,11 +145,11 @@ export default function TrackAnnotations({
       {/* Annotation list */}
       {loading ? (
         <div className="px-5 py-4">
-          <div className="h-3 w-48 bg-neutral-100 animate-pulse" />
+          <div className="h-3 w-48 bg-[#F7F7F5] animate-pulse" />
         </div>
       ) : annotations.length === 0 ? (
         <div className="px-5 py-6 text-center">
-          <p className="text-body-sm text-neutral-300">
+          <p className="text-body-sm text-[#C4C4C4]">
             No notes yet — pause playback and add one.
           </p>
         </div>
@@ -166,7 +166,7 @@ export default function TrackAnnotations({
                 className={`w-4 h-4 border shrink-0 mt-0.5 flex items-center justify-center transition-colors duration-150 ${
                   annotation.resolved
                     ? 'bg-green-500 border-green-500 text-white'
-                    : 'border-neutral-300 hover:border-black'
+                    : 'border-[#E8E8E8] hover:border-black'
                 }`}
               >
                 {annotation.resolved && (
@@ -177,7 +177,7 @@ export default function TrackAnnotations({
               {/* Timestamp — clickable to seek */}
               <button
                 onClick={() => onSeek?.(annotation.timestamp_ms)}
-                className="text-micro font-mono text-neutral-400 hover:text-black transition-colors duration-150 shrink-0 w-10 text-center mt-0.5"
+                className="text-micro font-mono text-[#C4C4C4] hover:text-black transition-colors duration-150 shrink-0 w-10 text-center mt-0.5"
                 title="Jump to this timestamp"
               >
                 {formatTimestamp(annotation.timestamp_ms)}
@@ -203,7 +203,7 @@ export default function TrackAnnotations({
                       setEditingId(annotation.id);
                       setEditContent(annotation.content);
                     }}
-                    className={`text-small cursor-pointer ${annotation.resolved ? 'text-neutral-400 line-through' : 'text-black'}`}
+                    className={`text-small cursor-pointer ${annotation.resolved ? 'text-[#C4C4C4] line-through' : 'text-black'}`}
                   >
                     {annotation.content}
                   </span>
@@ -213,7 +213,7 @@ export default function TrackAnnotations({
               {/* Delete */}
               <button
                 onClick={() => handleDelete(annotation.id)}
-                className="text-neutral-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-150 text-small shrink-0"
+                className="text-[#C4C4C4] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-150 text-small shrink-0"
               >
                 ×
               </button>

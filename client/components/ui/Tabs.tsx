@@ -34,7 +34,7 @@ export default function Tabs({ tabs, activeTab, onTabChange, className = '' }: T
             relative px-5 py-3 text-label font-semibold uppercase tracking-wide transition-colors duration-150
             ${active === tab.id
               ? 'text-black'
-              : 'text-[#8A8A8A] hover:text-neutral-600'
+              : 'text-[#8A8A8A] hover:text-[#666]'
             }
           `}
         >
@@ -43,7 +43,7 @@ export default function Tabs({ tabs, activeTab, onTabChange, className = '' }: T
             {tab.count !== undefined && (
               <span className={`
                 text-micro font-mono px-1.5 py-0.5
-                ${active === tab.id ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-400'}
+                ${active === tab.id ? 'bg-black text-white' : 'bg-[#F7F7F5] text-[#C4C4C4]'}
               `}>
                 {tab.count}
               </span>

@@ -356,30 +356,30 @@ export default function ShareManagePage() {
       <div className="min-h-screen bg-white">
         <ProjectNav projectId={id} artistName="..." activePage="share" />
         <div className="max-w-[1400px] mx-auto px-10 py-12">
-          <div className="h-3 w-24 bg-neutral-100  animate-pulse mb-8" />
+          <div className="h-3 w-24 bg-[#F7F7F5]  animate-pulse mb-8" />
           <div className="grid grid-cols-[1fr_340px] gap-12">
             <div>
-              <div className="h-12 w-64 bg-neutral-100  animate-pulse mb-8" />
-              <div className="h-3 w-20 bg-neutral-100  animate-pulse mb-4" />
+              <div className="h-12 w-64 bg-[#F7F7F5]  animate-pulse mb-8" />
+              <div className="h-3 w-20 bg-[#F7F7F5]  animate-pulse mb-4" />
               <div className="space-y-1">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="flex items-center gap-3 px-4 py-3 border border-[#E8E8E8] ">
-                    <div className="w-7 h-7 rounded-full bg-neutral-100 animate-pulse shrink-0" />
-                    <div className="w-4 h-3 bg-neutral-100  animate-pulse" />
-                    <div className="flex-1 h-4 bg-neutral-100  animate-pulse" />
-                    <div className="w-10 h-3 bg-neutral-50  animate-pulse" />
+                    <div className="w-7 h-7 rounded-full bg-[#F7F7F5] animate-pulse shrink-0" />
+                    <div className="w-4 h-3 bg-[#F7F7F5]  animate-pulse" />
+                    <div className="flex-1 h-4 bg-[#F7F7F5]  animate-pulse" />
+                    <div className="w-10 h-3 bg-[#F7F7F5]  animate-pulse" />
                   </div>
                 ))}
               </div>
             </div>
             <div className="space-y-8">
               <div>
-                <div className="h-3 w-16 bg-neutral-100  animate-pulse mb-3" />
-                <div className="aspect-square bg-neutral-100  animate-pulse" />
+                <div className="h-3 w-16 bg-[#F7F7F5]  animate-pulse mb-3" />
+                <div className="aspect-square bg-[#F7F7F5]  animate-pulse" />
               </div>
               <div>
-                <div className="h-3 w-20 bg-neutral-100  animate-pulse mb-3" />
-                <div className="h-9 w-full bg-neutral-100  animate-pulse" />
+                <div className="h-3 w-20 bg-[#F7F7F5]  animate-pulse mb-3" />
+                <div className="h-9 w-full bg-[#F7F7F5]  animate-pulse" />
               </div>
             </div>
           </div>
@@ -442,7 +442,7 @@ export default function ShareManagePage() {
               ) : (
                 <h1
                   onClick={() => { setEditingTitle(true); setTitleValue(share.title); }}
-                  className="text-display font-medium tracking-tight text-black cursor-pointer hover:text-neutral-600 transition-colors duration-150"
+                  className="text-display font-medium tracking-tight text-black cursor-pointer hover:text-[#666] transition-colors duration-150"
                   title="Click to edit"
                 >
                   {share.title}
@@ -477,7 +477,7 @@ export default function ShareManagePage() {
                   onChange={(e) => setDropboxInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAddTrack(); } }}
                   placeholder="Paste Dropbox link(s) here — one per line for multiple tracks"
-                  className="flex-1 text-small bg-neutral-50 border border-[#E8E8E8]  px-3 py-2.5 outline-none focus:border-neutral-400 resize-none min-h-[42px]"
+                  className="flex-1 text-small bg-[#F7F7F5] border border-[#E8E8E8]  px-3 py-2.5 outline-none focus:border-[#C4C4C4] resize-none min-h-[42px]"
                   rows={dropboxInput.includes('\n') ? 3 : 1}
                 />
                 <ButtonV2 onClick={handleAddTrack} disabled={!dropboxInput.trim()} loading={addingTrack} size="sm" className="shrink-0 self-end">
@@ -502,7 +502,7 @@ export default function ShareManagePage() {
             {/* Track list */}
             {share.tracks.length === 0 ? (
               <div className="border-2 border-dashed border-[#E8E8E8]  py-16 px-8 text-center">
-                <p className="text-[28px] font-medium text-neutral-200 tracking-tight">
+                <p className="text-[28px] font-medium text-[#E8E8E8] tracking-tight">
                   Add your first track
                 </p>
                 <p className="text-body text-[#8A8A8A] mt-3 max-w-sm mx-auto">
@@ -517,12 +517,12 @@ export default function ShareManagePage() {
                   return (
                   <div
                     key={track.id}
-                    className={`relative border  group transition-all duration-150 overflow-hidden ${isActiveTrack ? 'border-black' : 'border-[#E8E8E8] hover:border-neutral-300'}`}
+                    className={`relative border  group transition-all duration-150 overflow-hidden ${isActiveTrack ? 'border-black' : 'border-[#E8E8E8] hover:border-[#E8E8E8]'}`}
                   >
                     {/* Inline progress bar — sits behind content */}
                     {isActiveTrack && (
                       <div
-                        className="absolute inset-y-0 left-0 bg-neutral-50 transition-all duration-100 pointer-events-none"
+                        className="absolute inset-y-0 left-0 bg-[#F7F7F5] transition-all duration-100 pointer-events-none"
                         style={{ width: `${progress}%` }}
                       />
                     )}
@@ -541,7 +541,7 @@ export default function ShareManagePage() {
                       </ButtonV2>
 
                       {/* Track number */}
-                      <span className="text-caption font-mono text-neutral-300 w-5 text-center shrink-0">
+                      <span className="text-caption font-mono text-[#C4C4C4] w-5 text-center shrink-0">
                         {String(idx + 1).padStart(2, '0')}
                       </span>
 
@@ -641,7 +641,7 @@ export default function ShareManagePage() {
                     </span>
                   </div>
                   <div
-                    className="w-full h-1.5 bg-neutral-200 rounded-full cursor-pointer"
+                    className="w-full h-1.5 bg-[#E8E8E8] rounded-full cursor-pointer"
                     onClick={handleSeek}
                   >
                     <div
@@ -712,7 +712,7 @@ export default function ShareManagePage() {
               </span>
               <div
                 onClick={() => artworkInputRef.current?.click()}
-                className="aspect-square  overflow-hidden border border-[#E8E8E8] cursor-pointer hover:border-neutral-400 transition-colors duration-150 relative group"
+                className="aspect-square  overflow-hidden border border-[#E8E8E8] cursor-pointer hover:border-[#C4C4C4] transition-colors duration-150 relative group"
               >
                 {share.artwork_url ? (
                   <>
@@ -724,7 +724,7 @@ export default function ShareManagePage() {
                     </div>
                   </>
                 ) : (
-                  <div className="w-full h-full bg-neutral-50 flex flex-col items-center justify-center">
+                  <div className="w-full h-full bg-[#F7F7F5] flex flex-col items-center justify-center">
                     <span className="text-[#8A8A8A] text-display mb-2">♫</span>
                     <span className="text-micro text-[#8A8A8A] uppercase tracking-wide">
                       {uploadingArtwork ? 'Uploading...' : 'Add artwork'}
@@ -751,7 +751,7 @@ export default function ShareManagePage() {
                   type="text"
                   value={shareUrl}
                   readOnly
-                  className="flex-1 text-small text-neutral-600 bg-neutral-50 border border-[#E8E8E8]  px-3 py-2 truncate"
+                  className="flex-1 text-small text-[#666] bg-[#F7F7F5] border border-[#E8E8E8]  px-3 py-2 truncate"
                 />
                 <ButtonV2 onClick={handleCopyLink} variant="secondary" size="sm" className="shrink-0">
                   {copied ? 'Copied!' : 'Copy'}
@@ -772,7 +772,7 @@ export default function ShareManagePage() {
                 <button
                   onClick={handleTogglePublic}
                   disabled={saving}
-                  className="w-full flex items-center justify-between px-4 py-3 border border-[#E8E8E8]  hover:border-neutral-300 transition-colors duration-150"
+                  className="w-full flex items-center justify-between px-4 py-3 border border-[#E8E8E8]  hover:border-[#E8E8E8] transition-colors duration-150"
                 >
                   <span className="text-small text-black">Public</span>
                   <span className={`text-micro font-semibold uppercase tracking-wide ${share.is_public ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
@@ -784,7 +784,7 @@ export default function ShareManagePage() {
                 <button
                   onClick={handleToggleDownloads}
                   disabled={saving}
-                  className="w-full flex items-center justify-between px-4 py-3 border border-[#E8E8E8]  hover:border-neutral-300 transition-colors duration-150"
+                  className="w-full flex items-center justify-between px-4 py-3 border border-[#E8E8E8]  hover:border-[#E8E8E8] transition-colors duration-150"
                 >
                   <span className="text-small text-black">Allow Downloads</span>
                   <span className={`text-micro font-semibold uppercase tracking-wide ${share.downloads_enabled ? 'text-green-600' : 'text-[#8A8A8A]'}`}>
@@ -817,7 +817,7 @@ export default function ShareManagePage() {
                           value={passwordValue}
                           onChange={(e) => setPasswordValue(e.target.value)}
                           placeholder="Enter password"
-                          className="flex-1 text-small bg-neutral-50 border border-[#E8E8E8]  px-3 py-1.5 outline-none focus:border-neutral-400"
+                          className="flex-1 text-small bg-[#F7F7F5] border border-[#E8E8E8]  px-3 py-1.5 outline-none focus:border-[#C4C4C4]"
                           onKeyDown={(e) => { if (e.key === 'Enter') handleSetPassword(); }}
                         />
                         <ButtonV2 onClick={handleSetPassword} disabled={!passwordValue.trim() || saving} size="sm">

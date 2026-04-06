@@ -200,13 +200,13 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
   if (loading) {
     return (
-      <div className="animate-fade-in px-8 pt-10 pb-8">
-        <div className="h-3 w-32 bg-neutral-100 animate-pulse mb-4" />
-        <div className="h-10 w-48 bg-neutral-100 animate-pulse mb-4" />
-        <div className="h-4 w-80 bg-neutral-50 animate-pulse mb-8" />
+      <div className="animate-fade-in px-10 pt-10 pb-8">
+        <div className="h-3 w-32 bg-[#F7F7F5] animate-pulse mb-4" />
+        <div className="h-10 w-48 bg-[#F7F7F5] animate-pulse mb-4" />
+        <div className="h-4 w-80 bg-[#F7F7F5] animate-pulse mb-8" />
         <div className="grid grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="aspect-square bg-neutral-100 animate-pulse" />
+            <div key={i} className="aspect-square bg-[#F7F7F5] animate-pulse" />
           ))}
         </div>
       </div>
@@ -226,7 +226,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       />
 
       {/* Editorial header */}
-      <div className="px-8 pt-10 pb-8 flex items-start justify-between">
+      <div className="px-10 pt-10 pb-8 flex items-start justify-between">
         <div>
           <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
             Visual World
@@ -234,7 +234,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
           <p className="text-[40px] leading-[1.1] font-medium text-black tracking-tight">
             Audio/Visuals
           </p>
-          <p className="text-body-lg text-neutral-500 mt-4 max-w-lg">
+          <p className="text-body-lg text-[#8A8A8A] mt-4 max-w-lg">
             {images.length > 0
               ? `${imageCount} images shaping the sound and vision of your project.`
               : 'Drop in anything that feels like your sound — photos, textures, artwork, color palettes, film stills.'
@@ -250,7 +250,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Upload area / Grid */}
       <div
-        className={`px-8 pb-8 ${dragOver ? 'bg-neutral-50' : ''} transition-colors duration-150`}
+        className={`px-10 pb-8 ${dragOver ? 'bg-[#F7F7F5]' : ''} transition-colors duration-150`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -258,10 +258,10 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         {/* Empty state */}
         {images.length === 0 && !uploading && (
           <div
-            className="border-2 border-dashed border-[#E8E8E8] py-16 px-8 text-center cursor-pointer hover:border-neutral-400 transition-colors duration-150"
+            className="border-2 border-dashed border-[#E8E8E8] py-16 px-10 text-center cursor-pointer hover:border-[#C4C4C4] transition-colors duration-150"
             onClick={() => fileInputRef.current?.click()}
           >
-            <p className="text-[28px] font-bold text-neutral-200 tracking-tight">
+            <p className="text-[28px] font-bold text-[#E8E8E8] tracking-tight">
               Start your visual world
             </p>
             <p className="text-body text-[#8A8A8A] mt-3">
@@ -325,7 +325,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
               </div>
             )}
             {images.length > 0 && images.length < 5 && !brief && (
-              <p className="text-body-sm text-neutral-400 mt-4">
+              <p className="text-body-sm text-[#C4C4C4] mt-4">
                 Add more images for a richer sonic brief
               </p>
             )}
@@ -335,12 +335,12 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Color Palette Strip */}
       {palette.length > 0 && (
-        <div className="px-8 py-6 border-t border-neutral-100">
+        <div className="px-10 py-6 border-t border-[#E8E8E8]">
           <div className="flex items-center justify-between mb-4">
             <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
               Extracted Palette
             </p>
-            <p className="text-micro text-neutral-300">
+            <p className="text-micro text-[#C4C4C4]">
               Click to copy hex
             </p>
           </div>
@@ -378,7 +378,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                   className="w-3 h-3 rounded-full shrink-0 border border-[#E8E8E8]"
                   style={{ backgroundColor: color.hex }}
                 />
-                <span className="text-micro font-mono text-neutral-400">
+                <span className="text-micro font-mono text-[#C4C4C4]">
                   {color.hex}
                 </span>
               </div>
@@ -387,11 +387,11 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         </div>
       )}
       {extractingColors && images.length > 0 && palette.length === 0 && (
-        <div className="px-8 py-6 border-t border-neutral-100">
-          <div className="h-3 w-32 bg-neutral-100 animate-pulse mb-4" />
+        <div className="px-10 py-6 border-t border-[#E8E8E8]">
+          <div className="h-3 w-32 bg-[#F7F7F5] animate-pulse mb-4" />
           <div className="flex gap-0 overflow-hidden h-16">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex-1 bg-neutral-100 animate-pulse" style={{ animationDelay: `${i * 100}ms` }} />
+              <div key={i} className="flex-1 bg-[#F7F7F5] animate-pulse" style={{ animationDelay: `${i * 100}ms` }} />
             ))}
           </div>
         </div>
@@ -399,7 +399,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Sonic Brief */}
       {(brief || analyzing) && (
-        <div className="px-8 py-8">
+        <div className="px-10 py-8">
           <div className="bg-[#F7F7F5] px-7 py-8">
             {analyzing && (
               <div className="max-w-2xl">
@@ -531,7 +531,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Generate brief button — shown when images exist but no brief */}
       {images.length >= 1 && !brief && !analyzing && (
-        <div className="border-t border-[#E8E8E8] px-8 py-6">
+        <div className="border-t border-[#E8E8E8] px-10 py-6">
           <ButtonV2 onClick={handleAnalyze}>
             Generate Sonic Brief
           </ButtonV2>
@@ -541,7 +541,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
             </p>
           )}
           {!analyzeError && images.length < 5 && (
-            <p className="text-body-sm text-neutral-400 mt-2">
+            <p className="text-body-sm text-[#C4C4C4] mt-2">
               More images will produce a richer brief
             </p>
           )}

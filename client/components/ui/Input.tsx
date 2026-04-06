@@ -29,7 +29,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             w-full h-10 px-3
             bg-white text-black text-body-sm
             border border-[#E8E8E8]
-            placeholder:text-neutral-400
+            placeholder:text-[#C4C4C4]
             hover:border-[#1A1A1A]
             focus:border-black focus:ring-0 focus:outline-none
             transition-colors duration-150
@@ -43,7 +43,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <p className="text-caption text-signal-red">{error}</p>
         )}
         {hint && !error && (
-          <p className="text-caption text-neutral-400">{hint}</p>
+          <p className="text-caption text-[#C4C4C4]">{hint}</p>
         )}
       </div>
     );

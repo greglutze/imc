@@ -236,12 +236,12 @@ export default function ShowreelPlayer({
   return (
     <div className="border border-[#E8E8E8] overflow-hidden">
       {/* Header */}
-      <div className="px-5 py-3 flex items-center justify-between border-b border-neutral-100">
+      <div className="px-5 py-3 flex items-center justify-between border-b border-[#E8E8E8]">
         <div className="flex items-center gap-3">
           <span className="text-label font-semibold uppercase tracking-wide text-black">
             Showreel
           </span>
-          <span className="text-micro text-neutral-400">
+          <span className="text-micro text-[#C4C4C4]">
             {totalDuration}s preview · {Math.min(tracks.length, clipCount)} tracks
           </span>
         </div>
@@ -268,19 +268,19 @@ export default function ShowreelPlayer({
                 {currentTrack.title}
               </span>
             ) : (
-              <span className="text-body-sm text-neutral-400">
+              <span className="text-body-sm text-[#C4C4C4]">
                 {loading ? 'Loading tracks...' : 'Play a quick preview of your project'}
               </span>
             )}
           </div>
 
-          <span className="text-micro font-mono text-neutral-400 shrink-0">
+          <span className="text-micro font-mono text-[#C4C4C4] shrink-0">
             {formatTime(elapsed)} / {formatTime(totalDuration)}
           </span>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+        <div className="w-full h-1.5 bg-[#F7F7F5] rounded-full overflow-hidden">
           <div
             className="h-full bg-black rounded-full transition-all duration-100"
             style={{ width: `${progress}%` }}
@@ -297,8 +297,8 @@ export default function ShowreelPlayer({
                   idx < currentTrackIdx
                     ? 'bg-black'
                     : idx === currentTrackIdx
-                      ? 'bg-neutral-400'
-                      : 'bg-neutral-100'
+                      ? 'bg-[#C4C4C4]'
+                      : 'bg-[#F7F7F5]'
                 }`}
                 title={track.title}
               />
