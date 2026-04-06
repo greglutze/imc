@@ -5,13 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../lib/auth-context';
 import { api } from '../../lib/api';
 import StepWelcome from './steps/StepWelcome';
-import StepExperience from './steps/StepExperience';
-import StepName from './steps/StepName';
-import StepGenre from './steps/StepGenre';
 import StepVision from './steps/StepVision';
 import StepImages from './steps/StepImages';
 import StepArtists from './steps/StepArtists';
-import StepShape from './steps/StepShape';
+import StepShapeName from './steps/StepShapeName';
 import StepBuilding from './steps/StepBuilding';
 
 // ── Types ──────────────────────────────────────────
@@ -43,37 +40,30 @@ export interface CuratedImage {
 
 type StepId =
   | 'welcome'
-  | 'experience'
-  | 'name'
-  | 'genre'
   | 'vision'
   | 'images'
   | 'artists'
-  | 'shape'
+  | 'shape-name'
   | 'building';
 
 interface StepDef {
   id: StepId;
   progress: number;
-  condition?: (data: OnboardingData) => boolean;
 }
 
-// ── Step definitions with conditional logic ──────────
+// ── Step definitions — flat, no conditionals ──────────
 
 const ALL_STEPS: StepDef[] = [
   { id: 'welcome', progress: 0 },
-  { id: 'experience', progress: 10 },
-  { id: 'genre', progress: 20, condition: (d) => d.experienceLevel === 'explorer' },
-  { id: 'vision', progress: 30 },
-  { id: 'images', progress: 50 },
-  { id: 'artists', progress: 65 },
-  { id: 'shape', progress: 78 },
-  { id: 'name', progress: 88 },
+  { id: 'vision', progress: 20 },
+  { id: 'images', progress: 40 },
+  { id: 'artists', progress: 60 },
+  { id: 'shape-name', progress: 80 },
   { id: 'building', progress: 92 },
 ];
 
-function getActiveSteps(data: OnboardingData): StepDef[] {
-  return ALL_STEPS.filter((s) => !s.condition || s.condition(data));
+function getActiveSteps(): StepDef[] {
+  return ALL_STEPS;
 }
 
 // ── Progress Bar ──────────────────────────────────────
@@ -99,7 +89,7 @@ export default function OnboardingFlow() {
   const [transitioning, setTransitioning] = useState(false);
 
   const [data, setData] = useState<OnboardingData>({
-    experienceLevel: null,
+    experienceLevel: 'professional', // Default — experience step removed
     projectName: '',
     genres: [],
     visionText: '',
@@ -140,7 +130,7 @@ export default function OnboardingFlow() {
   }, []);
 
   // Navigation helpers
-  const activeSteps = getActiveSteps(data);
+  const activeSteps = getActiveSteps();
   const currentIndex = activeSteps.findIndex((s) => s.id === currentStepId);
   const currentStep = activeSteps[currentIndex];
 
@@ -389,38 +379,8 @@ export default function OnboardingFlow() {
           {currentStepId === 'welcome' && (
             <StepWelcome onContinue={goNext} />
           )}
-          {currentStepId === 'experience' && (
-            <StepExperience
-              value={data.experienceLevel}
-              onChange={(level) => {
-                updateData({ experienceLevel: level });
-                // Slight delay so the user sees their selection highlight
-                setTimeout(goNext, 300);
-              }}
-            />
-          )}
-          {currentStepId === 'name' && (
-            <StepName
-              value={data.projectName}
-              onboardingData={data}
-              onChange={(name) => updateData({ projectName: name })}
-              onContinue={() => startBuilding()}
-              onSkip={() => {
-                updateData({ projectName: '' });
-                startBuilding();
-              }}
-            />
-          )}
-          {currentStepId === 'genre' && (
-            <StepGenre
-              selected={data.genres}
-              onChange={(genres) => updateData({ genres })}
-              onContinue={goNext}
-            />
-          )}
           {currentStepId === 'vision' && (
             <StepVision
-              experienceLevel={data.experienceLevel!}
               visionText={data.visionText}
               moodChips={data.moodChips}
               onChangeText={(text) => updateData({ visionText: text })}
@@ -433,14 +393,10 @@ export default function OnboardingFlow() {
               selectedIds={data.selectedImageIds}
               onChange={(ids) => updateData({ selectedImageIds: ids })}
               onContinue={goNext}
-              onSkip={
-                data.experienceLevel === 'professional'
-                  ? () => {
-                      updateData({ selectedImageIds: [] });
-                      goNext();
-                    }
-                  : undefined
-              }
+              onSkip={() => {
+                updateData({ selectedImageIds: [] });
+                goNext();
+              }}
             />
           )}
           {currentStepId === 'artists' && (
@@ -448,18 +404,24 @@ export default function OnboardingFlow() {
               selected={data.referenceArtists}
               onChange={(artists) => updateData({ referenceArtists: artists })}
               onContinue={goNext}
-              experienceLevel={data.experienceLevel!}
               genres={data.genres}
+              moodChips={data.moodChips}
             />
           )}
-          {currentStepId === 'shape' && (
-            <StepShape
-              value={data.projectShape}
-              experienceLevel={data.experienceLevel!}
+          {currentStepId === 'shape-name' && (
+            <StepShapeName
+              shape={data.projectShape}
               customTrackCount={data.customTrackCount}
-              onChange={(shape, count) => {
+              projectName={data.projectName}
+              onboardingData={data}
+              onChangeShape={(shape, count) => {
                 updateData({ projectShape: shape, customTrackCount: count });
-                setTimeout(goNext, 300);
+              }}
+              onChangeName={(name) => updateData({ projectName: name })}
+              onContinue={() => startBuilding()}
+              onSkip={() => {
+                updateData({ projectName: '' });
+                startBuilding();
               }}
             />
           )}
@@ -521,14 +483,7 @@ function buildConceptMessage(data: OnboardingData): string {
     parts.push(`I'm working on a project called "${data.projectName}".`);
   }
 
-  // Experience-level context helps the AI calibrate its responses
-  if (data.experienceLevel === 'explorer') {
-    parts.push("I'm pretty new to music creation and exploring what's possible.");
-  } else if (data.experienceLevel === 'professional') {
-    parts.push("I'm an experienced musician with a clear vision for this project.");
-  }
-
-  // Genre selections
+  // Genre selections (may be empty since genre step was removed)
   if (data.genres.length > 0) {
     parts.push(`I'm drawn to ${data.genres.join(', ')}.`);
   }

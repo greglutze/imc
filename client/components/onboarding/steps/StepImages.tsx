@@ -9,7 +9,7 @@ interface Props {
   selectedIds: string[];
   onChange: (ids: string[]) => void;
   onContinue: () => void;
-  onSkip?: () => void; // Only shown for professionals
+  onSkip?: () => void;
 }
 
 const CATEGORIES = [
@@ -51,7 +51,7 @@ export default function StepImages({ selectedIds, onChange, onContinue, onSkip }
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-[#E8E8E8] pt-8 pb-4 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-3">
-            Step 4
+            Visual world
           </p>
           <h2 className="text-[28px] md:text-[36px] leading-[1.1] font-medium tracking-tight text-[#1A1A1A] mb-5">
             Tap the images that feel like your sound.

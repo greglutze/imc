@@ -2,13 +2,12 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import ConceptChat from '../../../components/ConceptChat';
 import ResearchReport from '../../../components/ResearchReport';
 import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../lib/api';
-import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, I2StyleProfile, I2VocalistPersona, MoodboardBrief } from '../../../lib/api';
+import type { ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, I2StyleProfile, I2VocalistPersona, MoodboardBrief } from '../../../lib/api';
 import { extractPaletteFromImages, type ExtractedColor } from '../../../lib/colorExtract';
 import { ButtonV2 } from '../../../components/ui';
 
@@ -18,7 +17,7 @@ function toTitleCase(str: string): string {
   return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
 }
 
-type ViewState = 'home' | 'interview' | 'moodboard' | 'report';
+type ViewState = 'home' | 'moodboard' | 'report';
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +29,6 @@ export default function ProjectPage() {
   const tabParam = searchParams.get('tab');
   const tabFromParam = (param: string | null): ViewState => {
     if (param === 'research') return 'report';
-    if (param === 'interview' || param === 'concept') return 'interview';
     if (param === 'moodboard') return 'moodboard';
     return 'home';
   };
@@ -40,8 +38,6 @@ export default function ProjectPage() {
   useEffect(() => {
     setActiveTab(tabFromParam(tabParam));
   }, [tabParam]);
-  const [messages, setMessages] = useState<ConversationMessage[]>([]);
-  const [loading, setLoading] = useState(false);
   const [conceptReady, setConceptReady] = useState(false);
   const [concept, setConcept] = useState<ProjectConcept | null>(null);
   const [report, setReport] = useState<{ report: I1Report; confidence: I1Confidence } | null>(null);
@@ -90,16 +86,6 @@ export default function ProjectPage() {
         if (proj.concept && proj.concept.genre_primary) {
           setConcept(proj.concept);
           setConceptReady(true);
-        }
-
-        // Fetch conversation messages
-        try {
-          const conv = await api.getConversation(id);
-          if (conv.messages && conv.messages.length > 0) {
-            setMessages(conv.messages);
-          }
-        } catch {
-          // Conversation might not exist yet for new projects
         }
 
         // Fetch latest research report if status is past draft
@@ -160,33 +146,6 @@ export default function ProjectPage() {
 
     loadProject();
   }, [isAuthenticated, id]);
-
-  // Send message to concept conversation via API
-  const handleSendMessage = useCallback(async (content: string) => {
-    if (!id) return;
-
-    setMessages(prev => [...prev, { role: 'user', content }]);
-    setLoading(true);
-
-    try {
-      const res = await api.sendConceptMessage(id, content);
-
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: res.response,
-      }]);
-
-      if (res.conceptReady && res.concept) {
-        setConceptReady(true);
-        setConcept(res.concept);
-      }
-    } catch (err) {
-      console.error('Failed to send message:', err);
-      setMessages(prev => prev.slice(0, -1));
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
 
   // Run market research via API
   const handleRunResearch = useCallback(async () => {
@@ -330,28 +289,18 @@ export default function ProjectPage() {
     const instruments = [
       {
         number: '01',
-        name: 'Concept',
-        description: conceptReady
-          ? `${toTitleCase(concept?.genre_primary || 'Defined')}${concept?.mood_keywords?.length ? ' · ' + concept.mood_keywords.slice(0, 2).map(k => toTitleCase(k)).join(', ') : ''}`
-          : 'Describe your sound, influences, and creative direction.',
-        href: `/projects/${id}?tab=interview`,
-        statusLabel: conceptReady ? 'Locked In' : 'Start Here',
-        color: conceptReady ? 'green' as const : 'yellow' as const,
-      },
-      {
-        number: '02',
         name: 'Research',
         description: report
           ? 'Market intelligence, audience profile, and sonic positioning — ready to review.'
           : conceptReady
             ? 'Your concept is locked in. Research is ready to run.'
-            : 'Finish your concept first — research builds on it.',
+            : 'Research builds on your concept, which is defined during project creation.',
         href: `/projects/${id}?tab=research`,
         statusLabel: report ? `v${reportVersion}` : conceptReady ? 'Ready to Run' : 'Needs Concept',
         color: report ? 'green' as const : conceptReady ? 'yellow' as const : 'neutral' as const,
       },
       {
-        number: '03',
+        number: '02',
         name: 'Sonic Engine',
         description: hasPrompts
           ? `${demoTracks.length} track prompts generated from your concept and research.`
@@ -361,8 +310,8 @@ export default function ProjectPage() {
         color: hasPrompts ? 'green' as const : 'neutral' as const,
       },
       {
-        number: '04',
-        name: 'LyriCol',
+        number: '03',
+        name: 'Lyrics',
         description: lyricSessionCount > 0
           ? `${lyricSessionCount} session${lyricSessionCount !== 1 ? 's' : ''} — keep writing, keep refining.`
           : 'Talk through lyrics, find the right words, shape your narrative.',
@@ -371,7 +320,7 @@ export default function ProjectPage() {
         color: lyricSessionCount > 0 ? 'green' as const : 'neutral' as const,
       },
       {
-        number: '05',
+        number: '04',
         name: 'Tracks',
         description: shareCount > 0
           ? `${shareCount} share link${shareCount !== 1 ? 's' : ''} — private listening, on your terms.`
@@ -818,20 +767,8 @@ export default function ProjectPage() {
 
       {/* Content area — key forces remount for crossfade */}
       <div className="flex-1 overflow-hidden">
-        <div key={activeTab} className={`animate-fade-in ${activeTab === 'interview' ? 'h-full' : 'h-full overflow-y-auto'}`}>
+        <div key={activeTab} className="animate-fade-in h-full overflow-y-auto">
           <div className="max-w-[1400px] mx-auto h-full">
-          {activeTab === 'interview' && (
-            <div className="h-full">
-              <ConceptChat
-                messages={messages}
-                onSend={handleSendMessage}
-                loading={loading}
-                conceptReady={conceptReady}
-                concept={concept}
-              />
-            </div>
-          )}
-
           {activeTab === 'moodboard' && (
             <VisualMoodboard projectId={id} />
           )}
@@ -840,7 +777,6 @@ export default function ProjectPage() {
             <>
               {researchRunning && (
                 <div className="px-8 py-16 max-w-2xl">
-                  <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">03</p>
                   <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
                     Researching Your Market
                   </p>
@@ -857,12 +793,11 @@ export default function ProjectPage() {
 
               {!researchRunning && !report && !conceptReady && (
                 <div className="px-8 py-16 max-w-2xl">
-                  <p className="text-[120px] leading-[0.85] font-medium text-neutral-100 -ml-1">03</p>
                   <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
-                    Start With Your Concept
+                    Concept Not Ready
                   </p>
                   <p className="text-body-lg text-neutral-500 mt-5 max-w-sm">
-                    Head to the Concept tab and describe your vision first. Once that&apos;s locked in, research will run automatically when you come back here.
+                    Your project concept needs to be defined before research can run. This happens automatically during project creation.
                   </p>
                 </div>
               )}

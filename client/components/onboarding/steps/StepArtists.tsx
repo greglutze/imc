@@ -2,14 +2,13 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { ButtonV2 } from '../../ui';
-import type { ExperienceLevel } from '../OnboardingFlow';
 
 interface Props {
   selected: string[];
   onChange: (artists: string[]) => void;
   onContinue: () => void;
-  experienceLevel: ExperienceLevel;
   genres: string[];
+  moodChips?: string[];
 }
 
 // Suggested artists by genre for Explorer path
@@ -32,7 +31,23 @@ const GENRE_SUGGESTIONS: Record<string, string[]> = {
   'reggaeton': ['Bad Bunny', 'Daddy Yankee', 'J Balvin', 'Ozuna', 'Rauw Alejandro', 'Karol G'],
 };
 
-export default function StepArtists({ selected, onChange, onContinue, experienceLevel, genres }: Props) {
+// Mood-to-genre mapping for suggesting artists when no genre is explicitly selected
+const MOOD_GENRE_MAP: Record<string, string[]> = {
+  'Dreamy': ['ambient', 'indie', 'electronic'],
+  'Aggressive': ['metal', 'punk', 'hip-hop'],
+  'Melancholic': ['indie', 'folk', 'classical'],
+  'Euphoric': ['electronic', 'pop', 'rnb'],
+  'Cinematic': ['classical', 'ambient', 'electronic'],
+  'Intimate': ['folk', 'indie', 'jazz'],
+  'Chaotic': ['punk', 'metal', 'electronic'],
+  'Serene': ['ambient', 'classical', 'folk'],
+  'Dark': ['metal', 'electronic', 'hip-hop'],
+  'Playful': ['pop', 'indie', 'electronic'],
+  'Nostalgic': ['indie', 'folk', 'rock'],
+  'Futuristic': ['electronic', 'hip-hop', 'ambient'],
+};
+
+export default function StepArtists({ selected, onChange, onContinue, genres, moodChips = [] }: Props) {
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -40,8 +55,14 @@ export default function StepArtists({ selected, onChange, onContinue, experience
     setTimeout(() => inputRef.current?.focus(), 400);
   }, []);
 
-  // Get suggestions based on selected genres
-  const suggestions = genres.flatMap((g) => GENRE_SUGGESTIONS[g] || [])
+  // Get suggestions based on selected genres + mood chips
+  const moodGenres = moodChips.flatMap((m) => MOOD_GENRE_MAP[m] || []);
+  const allGenres = [...genres, ...moodGenres].filter((g, i, arr) => arr.indexOf(g) === i);
+  const suggestions = (allGenres.length > 0
+    ? allGenres.flatMap((g) => GENRE_SUGGESTIONS[g] || [])
+    : // Fallback: mix of popular artists across genres
+      ['Frank Ocean', 'Tame Impala', 'SZA', 'Fred Again', 'Bon Iver', 'Billie Eilish', 'Kendrick Lamar', 'Bonobo', 'Phoebe Bridgers', 'Arctic Monkeys']
+  )
     .filter((a, i, arr) => arr.indexOf(a) === i) // dedupe
     .filter((a) => !selected.includes(a))
     .slice(0, 8);
@@ -77,7 +98,7 @@ export default function StepArtists({ selected, onChange, onContinue, experience
     <div className="min-h-screen flex flex-col items-center justify-center px-6">
       <div className="max-w-xl w-full">
         <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-4 text-center">
-          Step 5
+          Influences
         </p>
         <h2 className="text-[32px] md:text-[40px] leading-[1.1] font-medium tracking-tight text-[#1A1A1A] text-center mb-3">
           Name a few artists that<br />inspire this project.
@@ -124,11 +145,11 @@ export default function StepArtists({ selected, onChange, onContinue, experience
           </div>
         )}
 
-        {/* Suggestions — visible for Explorer path */}
-        {experienceLevel === 'explorer' && suggestions.length > 0 && selected.length < 5 && (
+        {/* Suggestions — always visible */}
+        {suggestions.length > 0 && selected.length < 5 && (
           <div className="mb-8">
             <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-3">
-              Popular in your genres
+              Suggestions based on your vibe
             </p>
             <div className="flex flex-wrap gap-2">
               {suggestions.map((artist) => (
