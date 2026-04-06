@@ -10,6 +10,7 @@ import { api, resolveArtworkUrl } from '../../../lib/api';
 import type { ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, I2StyleProfile, I2VocalistPersona, MoodboardBrief } from '../../../lib/api';
 import { extractPaletteFromImages, type ExtractedColor } from '../../../lib/colorExtract';
 import { ButtonV2 } from '../../../components/ui';
+import NextStepBanner from '../../../components/NextStepBanner';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -789,6 +790,11 @@ export default function ProjectPage() {
                     artistName={artistName}
                     createdAt={new Date().toISOString()}
                     onVersionChange={handleVersionChange}
+                  />
+                  <NextStepBanner
+                    completedLabel="Research complete"
+                    primary={{ label: 'Open Sonic Engine', href: `/projects/${id}/prompts` }}
+                    secondary={{ label: 'Back to overview', href: `/projects/${id}` }}
                   />
                 </>
               )}

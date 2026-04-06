@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import StyleProfile from '../../../../components/StyleProfile';
 import TrackPrompts from '../../../../components/TrackPrompts';
 import ProjectNav from '../../../../components/ProjectNav';
+import NextStepBanner from '../../../../components/NextStepBanner';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
 import type { I2StyleProfile, I2VocalistPersona, I2Track, Project, I1Report } from '../../../../lib/api';
@@ -376,6 +377,13 @@ export default function PromptsPage() {
             />
           )}
         </div>
+
+        {/* Wayfinding — next steps */}
+        <NextStepBanner
+          completedLabel="Production intelligence ready"
+          primary={{ label: 'Start Writing Lyrics', href: `/projects/${id}/lyrics` }}
+          secondary={{ label: 'Back to overview', href: `/projects/${id}` }}
+        />
       </div>
     </div>
   );

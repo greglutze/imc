@@ -276,6 +276,26 @@ export default function LyricSessionPage() {
             className="flex-1 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none px-6 py-5 text-body text-black leading-relaxed font-mono bg-white placeholder-neutral-300"
             spellCheck={false}
           />
+          {/* Wayfinding — show when lyrics have substance */}
+          {lyrics.trim().split(/\s+/).length > 20 && (
+            <div className="border-t border-[#E8E8E8] px-6 py-2.5 flex items-center justify-between bg-[#FAFAF8]">
+              <span className="text-[11px] text-[#C4C4C4]">Looking good.</span>
+              <div className="flex items-center gap-4">
+                <a
+                  href={`/projects/${id}/lyrics`}
+                  className="text-[11px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-150"
+                >
+                  All sessions
+                </a>
+                <a
+                  href={`/projects/${id}/share`}
+                  className="text-[11px] font-medium text-[#1A1A1A] hover:text-black transition-colors duration-150"
+                >
+                  Publish &rarr;
+                </a>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right: Advisor panel */}
