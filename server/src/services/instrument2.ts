@@ -26,20 +26,29 @@ CRITICAL RULES:
 - Suno prompts use bracketed category tags. Max 1000 characters. Format each prompt as a continuous string of bracketed sections:
   [Genres: ...] [Moods: ...] [Instrumentation: ... — include exclusions like "no guitar, no 808"] [Tempo: BPM range, feel description — "played not programmed"] [Vocal Style: specific character — include what NOT to do] [Production: aesthetic description — reference textures, recording approach, analog vs digital] [Structure: section-by-section flow in plain language, not bracket notation] [Sound Design: evocative scene-setting — describe the physical space and emotional landscape the listener inhabits]
   Be poetic and specific in each category. Use em dashes for contrast and exclusions. Each section should read like a creative brief, not a tag list.
-- LYRICS: This is CRITICAL. Write COMPLETE, FULL-LENGTH, ORIGINAL song lyrics for EVERY track. These are the actual words a vocalist sings — not placeholders, not summaries, not descriptions of what the lyrics should be about. REAL LYRICS.
+- LYRICS: This is CRITICAL. Write COMPLETE, FULL-LENGTH, ORIGINAL song lyrics for EVERY track.
+  THE LYRICS FIELD MUST CONTAIN THE ACTUAL WORDS A SINGER WOULD SING. NOT a description of the song's sound. NOT a production brief. NOT "Cinematic intro with rain sounds..." — that belongs in suno_prompt. The lyrics field is ONLY for singable words with song structure tags.
+
+  WRONG (this is a production description, NOT lyrics):
+  "Cinematic experimental hip-hop intro. Opens with synthetic rain layered under a slowly evolving C minor analog pad..."
+
+  RIGHT (these are actual song lyrics):
+  "[Verse 1]\\nNeon bleeding through the rain on glass\\nEvery streetlight holds a ghost I know by name\\nMidnight traffic like a pulse beneath my skin\\nI keep walking but the city pulls me in"
+
+  Rules:
   * Every section in the structure field MUST have corresponding lyrics. No skipping sections.
   * Include song structure tags as brackets on their own lines: [Intro], [Verse 1], [Pre-Chorus], [Chorus], [Verse 2], [Bridge], [Outro], etc.
   * Each [Verse] must have 4-8 lines of lyrics. Each [Chorus] must have 4-6 lines. [Bridge] must have 2-4 lines. [Pre-Chorus] must have 2-4 lines.
-  * When a [Chorus] repeats in the structure, you can write "repeat" or write slight variations — but the first appearance MUST be full lyrics.
-  * Lyrics should match the mood, theme, creative direction, and vocalist persona of the project
-  * Each track's lyrics should tell a story or explore a distinct emotional theme that fits the project's world
-  * Write with rhythm, cadence, and syllable count in mind — these need to be SINGABLE at the track's tempo
-  * Use natural line breaks (one phrase per line, \\n between lines)
-  * Be evocative and specific — avoid generic filler lines like "oh yeah" or "baby baby" unless the genre calls for it
-  * Choruses should be HOOKY — melodically implied by the rhythm of the words, designed to stick
-  * Total lyrics per track: 25-50 lines minimum. This is a FULL SONG, not a sketch.
-  * IMPORTANT: The lyrics field in JSON uses \\n for newlines. Example format:
-    "[Verse 1]\\nFirst line of the verse\\nSecond line continues the thought\\nThird line builds the narrative\\nFourth line lands the image\\n\\n[Pre-Chorus]\\nTension building here\\nLeading into the hook\\n\\n[Chorus]\\nThis is the hook that sticks\\nMemorable and singable\\nEmotional peak of the song\\nResolves with impact\\n\\n[Verse 2]\\nNew perspective or development\\nDeeper into the story\\nRaising the stakes\\nEmotional complexity grows"
+  * [Intro] can have 1-4 atmospheric or spoken-word lines, or simply the tag alone if instrumental
+  * [Outro] can repeat a chorus line, fade with a final image, or be tagged as instrumental
+  * When a [Chorus] repeats, write "(repeat)" or write slight variations — but the first appearance MUST be full lyrics
+  * Lyrics must match the mood, theme, creative direction, and vocalist persona
+  * Each track tells a distinct story or explores a unique emotional theme within the project's world
+  * Write with rhythm, cadence, and syllable count in mind — SINGABLE at the track's tempo, not poetry
+  * Use \\n for line breaks in JSON. Separate sections with \\n\\n
+  * Be evocative and specific — avoid generic filler
+  * Choruses must be HOOKY — designed to stick in the listener's head
+  * Total lyrics per track: 25-50 lines minimum. This is a FULL SONG.
 - Maintain 80%+ genre consistency across tracks while allowing creative variation
 - Each track should have a distinct identity within the project's sonic universe
 - Structure notation uses: [Intro] [Verse 1] [Verse 2] [Pre-Chorus] [Chorus] [Bridge] [Outro] [Drop] [Break]
@@ -65,7 +74,7 @@ Return JSON:
       "track_number": 1,
       "title": "Evocative working title that captures the track's identity",
       "suno_prompt": "[Genres: ...] [Moods: ...] [Instrumentation: ... — be exhaustive, include exclusions like 'no acoustic guitar, no 808'] [Tempo: specific BPM with feel] [Vocal Style: specific character — what to do AND what to avoid] [Production: detailed aesthetic — reference textures, recording approach, analog vs digital, spatial qualities] [Structure: section-by-section flow in plain language] [Sound Design: evocative scene-setting — describe the physical space the listener inhabits] — MINIMUM 400 characters, aim for 600-800. Fill the 1000 char limit with rich detail.",
-      "lyrics": "[Verse 1]\\nFour to eight lines of original lyrics\\nEach line singable at the track tempo\\nEvocative imagery tied to the track theme\\nLanding on a strong final image\\n\\n[Pre-Chorus]\\nTwo to four lines building tension\\nLeading directly into the hook\\n\\n[Chorus]\\nThe hook — memorable, rhythmic, emotional peak\\nSecond line reinforces the hook\\nThird line expands or resolves\\nFourth line closes with impact\\n\\n[Verse 2]\\nNew angle on the theme — deeper, more complex\\nDevelops the narrative or emotion\\nRaises stakes from Verse 1\\nLands on a stronger image\\n\\n[Pre-Chorus]\\nVariation on the pre-chorus\\nHeightened urgency\\n\\n[Chorus]\\n(repeat or slight variation)\\n\\n[Bridge]\\nEmotional pivot — new melody implied\\nThe moment of vulnerability or revelation\\nTwo to four lines that shift perspective\\n\\n[Chorus]\\n(final chorus — can add ad-libs or variations)\\n\\n[Outro]\\nClosing lines — fade or resolve",
+      "lyrics": "[Verse 1]\\nWoke up to the sound of sirens fading out\\nSunlight cutting through the blinds like something sharp\\nYour jacket on the chair, your coffee getting cold\\nI trace the ring you left around the dark\\n\\n[Pre-Chorus]\\nAnd I know you said don't wait up\\nBut the silence sounds like giving up\\n\\n[Chorus]\\nSo I'll leave the light on\\nEven if you don't come home tonight\\nI'll leave the light on\\nCause the dark don't know us like I do\\n\\n[Verse 2]\\nThirty-seven missed calls from a version of myself\\nWho believed in permanence and parking spots for two\\nNow I'm talking to your voicemail like a prayer\\nHoping something in my voice still gets to you\\n\\n[Pre-Chorus]\\nAnd I know the door is open\\nBut it feels like something broken\\n\\n[Chorus]\\n(repeat)\\n\\n[Bridge]\\nMaybe love is just the courage\\nTo stand still when everything is moving\\nMaybe I've been running from the quiet\\nThat was always trying to prove it\\n\\n[Chorus]\\nSo I'll leave the light on\\nEven when the morning takes your place\\nI'll leave the light on\\nCause the dark don't know us like I do\\n\\n[Outro]\\nLeave the light on\\nLeave the light on",
       "structure": "[Intro] [Verse 1] [Pre-Chorus] [Chorus] [Verse 2] [Pre-Chorus] [Chorus] [Bridge] [Chorus] [Outro]",
       "notes": "2-3 sentences of generation guidance: what makes this track unique in the project, what to watch for, what would make it great vs generic."
     }
@@ -74,7 +83,7 @@ Return JSON:
 
 Generate EXACTLY the number of tracks specified in track_count. Each track must have a distinct identity within the project's sonic universe — different enough to be interesting, cohesive enough to belong. Every prompt should be RICH and DETAILED — sparse prompts produce generic music. Fill the suno_prompt character limit.
 
-LYRICS ARE NON-NEGOTIABLE: Every track MUST have COMPLETE, FULL-LENGTH lyrics — not stubs, not descriptions of what lyrics should be, not "lyrics about love and loss." Write the ACTUAL WORDS the singer would sing. Every section in the structure must have real lyrics. If a track has 10 sections in its structure, the lyrics field must contain all 10 sections with real words. This is the most important part of the output — the artist needs singable lyrics they can use immediately.
+LYRICS ARE NON-NEGOTIABLE: Every track MUST have COMPLETE, FULL-LENGTH lyrics with real words a singer would sing. The lyrics field is NOT for production descriptions or sonic briefs — those go in suno_prompt. The lyrics field contains ONLY song lyrics with [Section] tags and singable lines. If you put a production description in the lyrics field, you have failed. Every section in the structure must have corresponding lyrics. 25-50 lines per track minimum. This is the most important part of the output.
 
 Be creative but commercially aware.`;
 
