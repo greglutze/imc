@@ -48,7 +48,7 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="border-b border-[#E8E8E8] px-8 py-10">
+      <div className="border-b border-[#E8E8E8] px-10 py-10">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
           Instrument 00
         </p>
@@ -61,7 +61,7 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
       </div>
 
       {/* Global progress bar */}
-      <div className="border-b border-[#E8E8E8] px-8 py-4">
+      <div className="border-b border-[#E8E8E8] px-10 py-4">
         <div className="flex items-center justify-between mb-2">
           <p className="text-[11px] text-[#8A8A8A] uppercase tracking-wide font-semibold">
             Overall Progress
@@ -80,7 +80,7 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
 
       {/* Completion celebration */}
       {percent >= 100 && (
-        <div className="border-b border-[#E8E8E8] px-8 py-8 bg-[#F7F7F5]">
+        <div className="border-b border-[#E8E8E8] px-10 py-8 bg-[#F7F7F5]">
           <p className="text-[22px] font-bold text-black">Launch-ready</p>
           <p className="text-[14px] text-[#8A8A8A] mt-1">
             Every item is checked. You&apos;re ready to release.
@@ -172,7 +172,7 @@ function CategorySection({
       {/* Category header — clickable to collapse */}
       <button
         onClick={onToggleCollapse}
-        className="w-full px-8 py-6 flex items-center justify-between hover:bg-[#F7F7F5] transition-colors"
+        className="w-full px-10 py-6 flex items-center justify-between hover:bg-[#F7F7F5] transition-colors"
       >
         <div className="flex items-center gap-4">
           <span className="text-[22px] font-bold font-mono text-[#E8E8E8]">
@@ -200,7 +200,7 @@ function CategorySection({
 
       {/* Items — collapsible */}
       {!isCollapsed && (
-        <div className="px-8 pb-6">
+        <div className="px-10 pb-6">
           {/* Per-category progress bar */}
           <div className="mb-4">
             <div className="h-0.5 bg-[#F7F7F5] rounded-full overflow-hidden">
@@ -411,7 +411,7 @@ function ChecklistItemRow({
             onBlur={handleNotesBlur}
             placeholder="Add a note..."
             rows={2}
-            className="w-full text-[13px] text-[#666] bg-[#F7F7F5] border border-[#E8E8E8] px-3 py-2 outline-none focus:border-[#C4C4C4] transition-colors resize-none placeholder:text-[#C4C4C4]"
+            className="w-full text-[13px] text-[#8A8A8A] bg-[#F7F7F5] border border-[#E8E8E8] px-3 py-2 outline-none focus:border-[#C4C4C4] transition-colors resize-none placeholder:text-[#C4C4C4]"
           />
         </div>
       )}

@@ -129,7 +129,7 @@ export default function AIAssistant({ projectId }: AIAssistantProps) {
             aria-label="Close assistant"
           >
             <svg
-              className="w-5 h-5 text-[#666]"
+              className="w-5 h-5 text-[#8A8A8A]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

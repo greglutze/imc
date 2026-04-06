@@ -4,7 +4,7 @@
 
 import { resolveArtworkUrl } from '../lib/api';
 
-type NavPage = 'home' | 'checklist' | 'moodboard' | 'research' | 'prompts' | 'lyrics' | 'share';
+type NavPage = 'home' | 'research' | 'prompts' | 'lyrics' | 'share';
 
 interface ProjectNavProps {
   projectId: string;

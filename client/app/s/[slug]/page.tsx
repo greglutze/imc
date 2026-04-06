@@ -173,7 +173,7 @@ export default function ListenerPage() {
   const bg = isDark ? 'bg-[#0a0a0a]' : 'bg-white';
   const textPrimary = isDark ? 'text-white' : 'text-black';
   const textSecondary = isDark ? 'text-[#C4C4C4]' : 'text-[#8A8A8A]';
-  const textMuted = isDark ? 'text-[#666]' : 'text-[#C4C4C4]';
+  const textMuted = isDark ? 'text-[#8A8A8A]' : 'text-[#C4C4C4]';
   const border = isDark ? 'border-[#1A1A1A]' : 'border-[#E8E8E8]';
   const hoverBorder = isDark ? 'hover:border-[#8A8A8A]' : 'hover:border-[#C4C4C4]';
   const trackActive = isDark ? 'bg-[#0a0a0a]' : 'bg-[#F7F7F5]';

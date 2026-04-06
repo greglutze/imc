@@ -522,7 +522,6 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
               <NextStepBanner
                 completedLabel="Visual brief complete"
                 primary={{ label: 'Run Research', href: `/projects/${projectId}?tab=research` }}
-                secondary={{ label: 'Back to overview', href: `/projects/${projectId}` }}
               />
             </div>
           </div>

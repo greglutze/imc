@@ -41,7 +41,7 @@ export default function SharePreview({
   const bg = isDark ? 'bg-[#0a0a0a]' : 'bg-white';
   const textPrimary = isDark ? 'text-white' : 'text-black';
   const textSecondary = isDark ? 'text-[#C4C4C4]' : 'text-[#8A8A8A]';
-  const textMuted = isDark ? 'text-[#666]' : 'text-[#C4C4C4]';
+  const textMuted = isDark ? 'text-[#8A8A8A]' : 'text-[#C4C4C4]';
   const border = isDark ? 'border-[#1A1A1A]' : 'border-[#E8E8E8]';
 
   return (

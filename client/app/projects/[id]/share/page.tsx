@@ -118,7 +118,7 @@ export default function SharePage() {
           {/* Share projects list */}
           <div className="pt-10">
             {shares.length === 0 ? (
-              <div className="bg-[#F7F7F5] py-20 px-8 text-center">
+              <div className="bg-[#F7F7F5] py-20 px-10 text-center">
                 <p className="text-[22px] font-medium text-[#C4C4C4] tracking-tight">
                   Your first release starts here
                 </p>

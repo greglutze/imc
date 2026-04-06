@@ -442,7 +442,7 @@ export default function ShareManagePage() {
               ) : (
                 <h1
                   onClick={() => { setEditingTitle(true); setTitleValue(share.title); }}
-                  className="text-[40px] font-medium tracking-tight text-black cursor-pointer hover:text-[#666] transition-colors duration-150"
+                  className="text-[40px] font-medium tracking-tight text-black cursor-pointer hover:text-[#8A8A8A] transition-colors duration-150"
                   title="Click to edit"
                 >
                   {share.title}
@@ -501,7 +501,7 @@ export default function ShareManagePage() {
 
             {/* Track list */}
             {share.tracks.length === 0 ? (
-              <div className="border-2 border-dashed border-[#E8E8E8]  py-16 px-8 text-center">
+              <div className="border-2 border-dashed border-[#E8E8E8] py-16 px-10 text-center">
                 <p className="text-[28px] font-medium text-[#E8E8E8] tracking-tight">
                   Add your first track
                 </p>
@@ -751,7 +751,7 @@ export default function ShareManagePage() {
                   type="text"
                   value={shareUrl}
                   readOnly
-                  className="flex-1 text-[13px] text-[#666] bg-[#F7F7F5] border border-[#E8E8E8] px-3 py-2 truncate"
+                  className="flex-1 text-[13px] text-[#8A8A8A] bg-[#F7F7F5] border border-[#E8E8E8] px-3 py-2 truncate"
                 />
                 <ButtonV2 onClick={handleCopyLink} variant="secondary" size="sm" className="shrink-0">
                   {copied ? 'Copied!' : 'Copy'}

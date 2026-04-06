@@ -34,7 +34,7 @@ export default function Tabs({ tabs, activeTab, onTabChange, className = '' }: T
             relative px-5 py-3 text-[12px] font-semibold uppercase tracking-wide transition-colors duration-150
             ${active === tab.id
               ? 'text-black'
-              : 'text-[#8A8A8A] hover:text-[#666]'
+              : 'text-[#8A8A8A] hover:text-[#1A1A1A]'
             }
           `}
         >

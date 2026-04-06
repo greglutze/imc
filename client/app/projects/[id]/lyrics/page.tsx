@@ -118,7 +118,7 @@ export default function LyricAdvisorPage() {
 
   if (authLoading || pageLoading) {
     return (
-      <div className="animate-fade-in px-8 py-16 max-w-2xl">
+      <div className="animate-fade-in px-10 py-16 max-w-2xl">
         <p className="text-[13px] font-medium text-[#C4C4C4] mb-3">05</p>
         <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] mt-4 tracking-tight">
           Loading...

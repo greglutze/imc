@@ -18,7 +18,7 @@ function toTitleCase(str: string): string {
   return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
 }
 
-type ViewState = 'home' | 'moodboard' | 'report';
+type ViewState = 'home' | 'report';
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +30,6 @@ export default function ProjectPage() {
   const tabParam = searchParams.get('tab');
   const tabFromParam = (param: string | null): ViewState => {
     if (param === 'research') return 'report';
-    if (param === 'moodboard') return 'moodboard';
     return 'home';
   };
   const [activeTab, setActiveTab] = useState<ViewState>(tabFromParam(tabParam));
@@ -50,7 +49,6 @@ export default function ProjectPage() {
   const autoResearchTriggered = useRef(false);
 
   // Index page data
-  const [checklistSummary, setChecklistSummary] = useState<{ total: number; checked: number } | null>(null);
   const [hasPrompts, setHasPrompts] = useState(false);
   const [lyricSessionCount, setLyricSessionCount] = useState(0);
   const [shareCount, setShareCount] = useState(0);
@@ -102,7 +100,6 @@ export default function ProjectPage() {
         }
 
         // Load index page data (non-blocking)
-        api.getChecklistSummary(id).then(setChecklistSummary).catch(() => {});
         api.getPrompts(id).then(prompts => {
           setHasPrompts(true);
           if (prompts.tracks && prompts.tracks.length > 0) {
@@ -494,7 +491,7 @@ export default function ProjectPage() {
                             <span className="text-[11px] font-mono text-[#C4C4C4]">
                               {String(t.track_number).padStart(2, '0')}
                             </span>
-                            <span className="text-[14px] font-bold text-black group-hover:text-[#666] transition-colors duration-150 truncate">
+                            <span className="text-[14px] font-bold text-black group-hover:text-[#8A8A8A] transition-colors duration-150 truncate">
                               {t.title}
                             </span>
                           </a>
@@ -516,6 +513,11 @@ export default function ProjectPage() {
                   </div>
                 </div>
               </div>
+            )}
+
+            {/* Market Snapshot — 3 key insights from research */}
+            {report && (
+              <MarketSnapshot report={report} projectId={id} />
             )}
 
             {/* Style Profile — production aesthetic & sonic signatures */}
@@ -556,62 +558,9 @@ export default function ProjectPage() {
               </div>
             )}
 
-            {/* Moodboard brief prose */}
-            {moodboardBriefData?.prose && (
-              <div className="py-10 border-b border-[#E8E8E8]">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-2 h-2 rounded-full bg-amber-500" />
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                    Visual World &rarr; Sonic Brief
-                  </p>
-                </div>
-                <p className="text-[15px] leading-[1.6] text-[#8A8A8A] max-w-3xl">
-                  {moodboardBriefData.prose}
-                </p>
-              </div>
-            )}
-
-            {/* Visual World — inline moodboard */}
-            <div className="py-12 border-b border-[#E8E8E8]">
-              <div className="flex items-center justify-between mb-6">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                  Visual World
-                </p>
-                <a
-                  href={`/projects/${id}?tab=moodboard`}
-                  className="text-[11px] font-medium text-[#8A8A8A] hover:text-black transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
-                >
-                  {moodboardImages.length > 0 ? 'Manage Images' : 'Add Images'}
-                </a>
-              </div>
-              {moodboardImages.length > 0 ? (
-                <div className="grid grid-cols-6 gap-2">
-                  {moodboardImages.slice(0, 6).map((img, i) => (
-                    <div
-                      key={img.id}
-                      className="overflow-hidden aspect-square"
-                    >
-                      {img.image_data && (
-                        <img
-                          src={img.image_data}
-                          alt={`Moodboard ${i + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="border border-dashed border-[#E8E8E8] py-16 flex flex-col items-center justify-center">
-                  <p className="text-[14px] text-[#C4C4C4] mb-2">No visual references yet</p>
-                  <a
-                    href={`/projects/${id}?tab=moodboard`}
-                    className="text-[13px] font-medium text-[#1A1A1A] hover:underline"
-                  >
-                    Add images that feel like your sound &rarr;
-                  </a>
-                </div>
-              )}
+            {/* Visual World — full moodboard inline */}
+            <div className="border-b border-[#E8E8E8]">
+              <VisualMoodboard projectId={id} />
             </div>
 
             {/* Latest track player */}
@@ -632,12 +581,17 @@ export default function ProjectPage() {
               </div>
             )}
 
-            {/* Instruments grid */}
+            {/* Smart Progress + Instruments grid */}
             <div className="py-12">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-8">
-                Your Toolkit
-              </p>
-              <div className="grid grid-cols-3 gap-5">
+              <SmartProgress
+                conceptReady={conceptReady}
+                hasResearch={!!report}
+                hasPrompts={hasPrompts}
+                trackCount={demoTracks.length}
+                lyricSessionCount={lyricSessionCount}
+                shareCount={shareCount}
+              />
+              <div className="grid grid-cols-3 gap-5 mt-8">
                 {instruments.map((inst) => (
                   <a
                     key={inst.number}
@@ -733,14 +687,10 @@ export default function ProjectPage() {
       <div className="flex-1 overflow-hidden">
         <div key={activeTab} className="animate-fade-in h-full overflow-y-auto">
           <div className="max-w-[1400px] mx-auto h-full">
-          {activeTab === 'moodboard' && (
-            <VisualMoodboard projectId={id} />
-          )}
-
           {activeTab === 'report' && (
             <>
               {researchRunning && (
-                <div className="px-8 py-16 max-w-2xl">
+                <div className="px-10 py-16 max-w-2xl">
                   <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
                     Researching Your Market
                   </p>
@@ -756,7 +706,7 @@ export default function ProjectPage() {
               )}
 
               {!researchRunning && !report && !conceptReady && (
-                <div className="px-8 py-16 max-w-2xl">
+                <div className="px-10 py-16 max-w-2xl">
                   <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
                     Concept Not Ready
                   </p>
@@ -769,7 +719,7 @@ export default function ProjectPage() {
               {!researchRunning && report && (
                 <>
                   {/* Regenerate button — top-right of section */}
-                  <div className="px-8 pt-6 pb-0 flex items-center justify-between max-w-[1400px]">
+                  <div className="px-10 pt-6 pb-0 flex items-center justify-between max-w-[1400px]">
                     <div />
                     <ButtonV2
                       onClick={() => {
@@ -968,6 +918,195 @@ function parseTempoBpm(raw: string): { bpm: string; detail: string } {
     return { bpm: single[1], detail: after };
   }
   return { bpm: raw.slice(0, 30), detail: '' };
+}
+
+/* ———————— Smart Progress ———————— */
+
+function SmartProgress({
+  conceptReady,
+  hasResearch,
+  hasPrompts,
+  trackCount,
+  lyricSessionCount,
+  shareCount,
+}: {
+  conceptReady: boolean;
+  hasResearch: boolean;
+  hasPrompts: boolean;
+  trackCount: number;
+  lyricSessionCount: number;
+  shareCount: number;
+}) {
+  const steps = [
+    { label: 'Concept defined', done: conceptReady },
+    { label: 'Research complete', done: hasResearch },
+    { label: 'Sonic Engine ready', done: hasPrompts },
+    { label: lyricSessionCount > 0 ? `${lyricSessionCount} lyric session${lyricSessionCount !== 1 ? 's' : ''}` : 'Lyrics started', done: lyricSessionCount > 0 },
+    { label: shareCount > 0 ? `${shareCount} track${shareCount !== 1 ? 's' : ''} shared` : 'Tracks shared', done: shareCount > 0 },
+  ];
+
+  const completed = steps.filter((s) => s.done).length;
+  const percent = Math.round((completed / steps.length) * 100);
+
+  const progressCopy = () => {
+    if (completed === 0) return "Let\u2019s get started";
+    if (percent >= 100) return 'Launch-ready';
+    if (percent >= 80) return 'Almost there';
+    if (percent >= 60) return 'Good momentum';
+    return `${completed} of ${steps.length} milestones`;
+  };
+
+  return (
+    <div className="mb-2">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+          Progress
+        </p>
+        <p className="text-[12px] font-medium text-[#8A8A8A]">
+          {progressCopy()}
+        </p>
+      </div>
+
+      {/* Progress bar */}
+      <div className="h-1 bg-[#F7F7F5] rounded-full overflow-hidden mb-4">
+        <div
+          className="h-full bg-black rounded-full transition-all duration-500 ease-out"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+
+      {/* Step indicators */}
+      <div className="flex flex-wrap gap-2">
+        {steps.map((step, i) => (
+          <span
+            key={i}
+            className={`inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full transition-colors ${
+              step.done
+                ? 'bg-[#F7F7F5] text-[#1A1A1A] font-medium'
+                : 'bg-transparent text-[#C4C4C4] border border-[#E8E8E8]'
+            }`}
+          >
+            {step.done && (
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+            {step.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ———————— Market Snapshot ———————— */
+
+function formatListeners(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
+  return String(n);
+}
+
+function MarketSnapshot({ report, projectId }: { report: { report: I1Report; confidence: I1Confidence }; projectId: string }) {
+  const { comparable_artists, audience_profile, opportunities } = report.report;
+  const topComps = (comparable_artists || []).slice(0, 3);
+  const topOpp = (opportunities || [])[0];
+  const topMarkets = (audience_profile?.top_markets || []).slice(0, 3);
+
+  return (
+    <div className="py-10 border-b border-[#E8E8E8]">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-emerald-500" />
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+            Market Snapshot
+          </p>
+        </div>
+        <a
+          href={`/projects/${projectId}?tab=research`}
+          className="text-[11px] font-medium text-[#8A8A8A] hover:text-black transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
+        >
+          Full Report
+        </a>
+      </div>
+
+      <div className="grid grid-cols-12 gap-8">
+        {/* Comparable Artists */}
+        <div className="col-span-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-4">
+            Comparable Artists
+          </p>
+          {topComps.length > 0 ? (
+            <div className="space-y-3">
+              {topComps.map((artist, i) => (
+                <div key={i}>
+                  <p className="text-[14px] font-bold text-black">{artist.name}</p>
+                  <p className="text-[12px] text-[#8A8A8A]">
+                    {formatListeners(artist.monthly_listeners)} listeners
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-[13px] text-[#C4C4C4]">Run research to discover comps</p>
+          )}
+        </div>
+
+        {/* Audience Profile */}
+        <div className="col-span-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-4">
+            Audience
+          </p>
+          {audience_profile ? (
+            <div className="space-y-3">
+              {audience_profile.primary_age_range && (
+                <div>
+                  <p className="text-[12px] text-[#8A8A8A]">Age</p>
+                  <p className="text-[14px] font-bold text-black">{audience_profile.primary_age_range}</p>
+                </div>
+              )}
+              {audience_profile.gender_split && (
+                <div>
+                  <p className="text-[12px] text-[#8A8A8A]">Gender</p>
+                  <p className="text-[14px] font-bold text-black">{audience_profile.gender_split}</p>
+                </div>
+              )}
+              {topMarkets.length > 0 && (
+                <div>
+                  <p className="text-[12px] text-[#8A8A8A]">Top Markets</p>
+                  <p className="text-[14px] font-bold text-black">{topMarkets.join(', ')}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-[13px] text-[#C4C4C4]">Run research to profile your audience</p>
+          )}
+        </div>
+
+        {/* Key Opportunity */}
+        <div className="col-span-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-4">
+            Opportunity
+          </p>
+          {topOpp ? (
+            <div>
+              <p className="text-[14px] font-bold text-black leading-snug">{topOpp.gap}</p>
+              <div className="flex items-center gap-3 mt-2">
+                <span className="text-[11px] text-[#8A8A8A]">
+                  Market score: {topOpp.market_score}
+                </span>
+                <span className="text-[11px] text-[#8A8A8A]">
+                  Success: {topOpp.success_probability}%
+                </span>
+              </div>
+            </div>
+          ) : (
+            <p className="text-[13px] text-[#C4C4C4]">Run research to find your gap</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function SonicIdentitySection({ styleProfile }: { styleProfile: I2StyleProfile }) {

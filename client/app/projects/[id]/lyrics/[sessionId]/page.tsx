@@ -240,7 +240,7 @@ export default function LyricSessionPage() {
           ) : (
             <button
               onClick={() => { setTitleInput(sessionTitle); setEditingTitle(true); }}
-              className="text-[14px] font-semibold text-black hover:text-[#666] transition-colors duration-150"
+              className="text-[14px] font-semibold text-black hover:text-[#8A8A8A] transition-colors duration-150"
             >
               {sessionTitle}
             </button>
