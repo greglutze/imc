@@ -13,23 +13,32 @@ function truncateToChars(text: string, maxChars: number): string {
   return text.slice(0, maxChars);
 }
 
-const PROMPT_ENGINEERING_SYSTEM_PROMPT = `You are IMC's prompt engineering system. You translate artist concepts and market intelligence into precision-engineered prompts for AI music generation platforms (Suno and Udio).
+const PROMPT_ENGINEERING_SYSTEM_PROMPT = `You are IMC's prompt engineering and songwriting system. You translate artist concepts and market intelligence into precision-engineered prompts for AI music generation AND original lyrics for each track.
 
 Given the artist concept and market data, generate:
 
 1. A style_profile capturing the overall sonic identity
 2. A vocalist_persona defining the vocal character
-3. Individual track prompts optimized for both Suno and Udio
+3. Individual track prompts optimized for Suno, PLUS full lyrics for each track
 
 CRITICAL RULES:
-- NEVER include real person names, band names, or artist names in ANY Suno prompt or Udio prompt. Describe the sound, style, and aesthetic using descriptive language only. For example, instead of "vocals like Sam Carter" write "soaring clean vocals with aggressive screamed passages". This applies to suno_prompt fields, udio_prompt fields, and the vocalist_persona vocal_character/delivery_style fields. The reference_vocalists and reference_artists fields in the data model are for internal context only and must NEVER appear in any prompt text.
+- NEVER include real person names, band names, or artist names in ANY Suno prompt. Describe the sound, style, and aesthetic using descriptive language only. For example, instead of "vocals like Sam Carter" write "soaring clean vocals with aggressive screamed passages". This applies to suno_prompt fields and the vocalist_persona vocal_character/delivery_style fields. The reference_vocalists and reference_artists fields in the data model are for internal context only and must NEVER appear in any prompt text.
 - Suno prompts use bracketed category tags. Max 1000 characters. Format each prompt as a continuous string of bracketed sections:
   [Genres: ...] [Moods: ...] [Instrumentation: ... — include exclusions like "no guitar, no 808"] [Tempo: BPM range, feel description — "played not programmed"] [Vocal Style: specific character — include what NOT to do] [Production: aesthetic description — reference textures, recording approach, analog vs digital] [Structure: section-by-section flow in plain language, not bracket notation] [Sound Design: evocative scene-setting — describe the physical space and emotional landscape the listener inhabits]
   Be poetic and specific in each category. Use em dashes for contrast and exclusions. Each section should read like a creative brief, not a tag list.
-- Udio prompts are more narrative. Describe the sound in natural language. Include production style, era references, sonic textures. Max ~500 chars. Do NOT reference any real artists or bands by name.
+- LYRICS: Write complete, original lyrics for each track. These are the actual words a vocalist would sing.
+  * Include song structure tags as brackets on their own lines: [Intro], [Verse 1], [Pre-Chorus], [Chorus], [Verse 2], [Bridge], [Outro], etc.
+  * Match the structure field — if structure says [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus], the lyrics must follow that same flow
+  * Lyrics should match the mood, theme, creative direction, and vocalist persona of the project
+  * Each track's lyrics should have a distinct narrative/emotional arc while fitting the project's world
+  * Write with rhythm and cadence in mind — these need to be singable, not poetry
+  * Use natural line breaks within each section (one phrase per line)
+  * Be evocative and specific — avoid generic pop clichés unless the genre calls for them
+  * Aim for 20-40 lines per track depending on structure (full verses, full choruses)
+  * Choruses should be memorable and hooky — designed to stick in the listener's head
 - Maintain 80%+ genre consistency across tracks while allowing creative variation
 - Each track should have a distinct identity within the project's sonic universe
-- Structure notation uses: [Intro] [Verse] [Pre-Chorus] [Chorus] [Bridge] [Outro] [Drop] [Break]
+- Structure notation uses: [Intro] [Verse 1] [Verse 2] [Pre-Chorus] [Chorus] [Bridge] [Outro] [Drop] [Break]
 - If market data is available, use the sonic blueprint to inform production choices
 - If a visual moodboard brief is provided, treat it as the atmospheric north star for the project. Let it shape the texture, mood, and production character of every prompt. The moodboard brief represents the artist's visual world translated into sonic language — it should infuse every aspect of the output without overriding the artist's explicit concept direction.
 
@@ -52,14 +61,14 @@ Return JSON:
       "track_number": 1,
       "title": "Evocative working title that captures the track's identity",
       "suno_prompt": "[Genres: ...] [Moods: ...] [Instrumentation: ... — be exhaustive, include exclusions like 'no acoustic guitar, no 808'] [Tempo: specific BPM with feel] [Vocal Style: specific character — what to do AND what to avoid] [Production: detailed aesthetic — reference textures, recording approach, analog vs digital, spatial qualities] [Structure: section-by-section flow in plain language] [Sound Design: evocative scene-setting — describe the physical space the listener inhabits] — MINIMUM 400 characters, aim for 600-800. Fill the 1000 char limit with rich detail.",
-      "udio_prompt": "Detailed narrative description of the track. 300-500 chars. Describe how it SOUNDS and FEELS — the opening moment, how the beat enters, how the chorus lifts, what textures dominate. Written like a producer describing the finished track to someone who hasn't heard it yet.",
-      "structure": "[Intro] [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus] [Outro]",
+      "lyrics": "[Verse 1]\\nFirst line of verse...\\nSecond line...\\n\\n[Pre-Chorus]\\nBuilding tension line...\\n\\n[Chorus]\\nHook line — memorable, singable...\\nSecond hook line...\\n\\n[Verse 2]\\n...etc. Full lyrics with all sections. Structure tags on their own lines. 20-40 lines total.",
+      "structure": "[Intro] [Verse 1] [Pre-Chorus] [Chorus] [Verse 2] [Pre-Chorus] [Chorus] [Bridge] [Chorus] [Outro]",
       "notes": "2-3 sentences of generation guidance: what makes this track unique in the project, what to watch for, what would make it great vs generic."
     }
   ]
 }
 
-Generate EXACTLY the number of tracks specified in track_count. Each track must have a distinct identity within the project's sonic universe — different enough to be interesting, cohesive enough to belong. Every prompt should be RICH and DETAILED — sparse prompts produce generic music. Fill the suno_prompt character limit. Be creative but commercially aware.`;
+Generate EXACTLY the number of tracks specified in track_count. Each track must have a distinct identity within the project's sonic universe — different enough to be interesting, cohesive enough to belong. Every prompt should be RICH and DETAILED — sparse prompts produce generic music. Fill the suno_prompt character limit. Lyrics should be complete, singable, and emotionally aligned with each track's sonic prompt. Be creative but commercially aware.`;
 
 interface PromptContext {
   concept: ProjectConcept;
@@ -165,7 +174,7 @@ export async function generatePrompts(
       track_number: i + 1,
       title: `Track ${i + 1}`,
       suno_prompt: `[Genres: ${concept.genre_primary}${concept.genre_secondary.length ? ', ' + concept.genre_secondary.join(', ') : ''}] [Moods: ${concept.mood_keywords.join(', ')}]`,
-      udio_prompt: `A ${concept.genre_primary} track with ${concept.mood_keywords.join(', ')} mood.`,
+      lyrics: `[Verse 1]\nLyrics will be generated here\n\n[Chorus]\nAwaiting generation...\n\n[Verse 2]\nRegenerate this track for full lyrics`,
       structure: '[Intro] [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus] [Outro]',
       notes: 'Auto-generated from concept — regenerate for full prompt',
     })),
@@ -186,7 +195,7 @@ export async function generatePrompts(
             track_number: idx + 1,
             title: t.title || `Track ${idx + 1}`,
             suno_prompt: truncateToChars(t.suno_prompt || '', 1000),
-            udio_prompt: t.udio_prompt || '',
+            lyrics: t.lyrics || '',
             structure:
               t.structure ||
               '[Intro] [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus] [Outro]',
@@ -232,16 +241,16 @@ ${currentPrompts.tracks
   .filter((t) => t.track_number !== trackNumber)
   .map(
     (t) =>
-      `Track ${t.track_number}: ${t.title}\nSuno: ${t.suno_prompt}\nUdio: ${t.udio_prompt}`
+      `Track ${t.track_number}: ${t.title}\nSuno: ${t.suno_prompt}\nLyrics: ${t.lyrics}`
   )
   .join('\n\n')}
 
-Now regenerate Track ${trackNumber} keeping the style consistent with the rest of the project. CRITICAL: Do NOT include any real person, band, or artist names in the suno_prompt or udio_prompt. Use descriptive language only. Return a JSON object with these exact fields:
+Now regenerate Track ${trackNumber} keeping the style consistent with the rest of the project. CRITICAL: Do NOT include any real person, band, or artist names in the suno_prompt. Use descriptive language only. Return a JSON object with these exact fields:
 {
   "track_number": ${trackNumber},
   "title": "Track title",
   "suno_prompt": "[Genres: ...] [Moods: ...] [Instrumentation: ...] [Tempo: ...] [Vocal Style: ...] [Production: ...] [Structure: ...] [Sound Design: ...]",
-  "udio_prompt": "narrative prompt for Udio",
+  "lyrics": "[Verse 1]\\nLyric lines...\\n\\n[Chorus]\\nHook lines...\\n(complete lyrics with structure tags, matching the structure field)",
   "structure": "[Section] [Section] ...",
   "notes": "Generation guidance"
 }`;
@@ -250,7 +259,7 @@ Now regenerate Track ${trackNumber} keeping the style consistent with the rest o
     track_number: trackNumber,
     title: `Track ${trackNumber}`,
     suno_prompt: '',
-    udio_prompt: '',
+    lyrics: '',
     structure: '[Intro] [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus] [Outro]',
     notes: '',
   };
@@ -269,7 +278,7 @@ Now regenerate Track ${trackNumber} keeping the style consistent with the rest o
           track_number: trackNumber,
           title: parsed.title || `Track ${trackNumber}`,
           suno_prompt: truncateToChars(parsed.suno_prompt || '', 1000),
-          udio_prompt: parsed.udio_prompt || '',
+          lyrics: parsed.lyrics || '',
           structure:
             parsed.structure ||
             '[Intro] [Verse] [Chorus] [Verse] [Chorus] [Bridge] [Chorus] [Outro]',

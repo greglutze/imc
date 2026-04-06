@@ -109,7 +109,19 @@ router.get(
         return;
       }
 
-      res.json(result.rows[0]);
+      // Backward compat: migrate udio_prompt → lyrics in JSONB tracks
+      const row = result.rows[0];
+      if (row.tracks && Array.isArray(row.tracks)) {
+        row.tracks = row.tracks.map((t: any) => {
+          if (t.udio_prompt !== undefined && t.lyrics === undefined) {
+            const { udio_prompt, ...rest } = t;
+            return { ...rest, lyrics: udio_prompt };
+          }
+          return t;
+        });
+      }
+
+      res.json(row);
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Internal server error' });

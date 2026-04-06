@@ -18,7 +18,7 @@ const DEFAULT_ITEMS: Array<{ category: ChecklistCategory; label: string; guide: 
   {
     category: 'creative',
     label: 'Create a reference playlist (10–20 tracks)',
-    guide: 'Curate tracks that represent the sound, energy, and production quality you\'re aiming for. This becomes a shared language between you, producers, and engineers — and helps AI tools like Suno and Udio understand your target.',
+    guide: 'Curate tracks that represent the sound, energy, and production quality you\'re aiming for. This becomes a shared language between you, producers, and engineers — and helps AI tools like Suno understand your target.',
   },
   {
     category: 'creative',

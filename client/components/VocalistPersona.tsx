@@ -41,7 +41,7 @@ export default function VocalistPersona({ vocalistPersona }: VocalistPersonaProp
         </div>
       </div>
 
-      {/* Two-column prompt cards — matches Suno/Udio layout */}
+      {/* Two-column prompt cards — matches Suno/Lyrics layout */}
       <div className="grid grid-cols-2 gap-4 mb-8">
         {/* Delivery Style card */}
         <div className="bg-[#F7F7F5] rounded-lg p-5">

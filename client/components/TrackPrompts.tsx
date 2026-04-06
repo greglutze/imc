@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useParams } from 'next/navigation';
 import { Badge, ButtonV2 } from './ui';
+import { api } from '../lib/api';
 import type { I2Track } from '../lib/api';
 
 interface TrackPromptsProps {
@@ -36,10 +38,12 @@ function TrackCard({
   onRegenerate?: (trackNumber: number) => void;
   isRegenerating: boolean;
 }) {
-  const [copiedField, setCopiedField] = useState<'suno' | 'udio' | null>(null);
+  const { id } = useParams<{ id: string }>();
+  const [copiedField, setCopiedField] = useState<'suno' | 'lyrics' | null>(null);
+  const [creatingSession, setCreatingSession] = useState(false);
   const sunoCharCount = track.suno_prompt.length;
 
-  const handleCopy = async (text: string, field: 'suno' | 'udio') => {
+  const handleCopy = async (text: string, field: 'suno' | 'lyrics') => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(field);
@@ -47,6 +51,49 @@ function TrackCard({
     } catch {
       // Fallback
     }
+  };
+
+  const handleEditInLyriCol = useCallback(async () => {
+    if (!id || creatingSession) return;
+    setCreatingSession(true);
+    try {
+      const session = await api.createLyricSession(id, {
+        entry_mode: 'paste',
+        title: track.title,
+        lyrics: track.lyrics,
+      });
+      window.location.href = `/projects/${id}/lyrics/${session.id}`;
+    } catch (err) {
+      console.error('Failed to create LyriCol session:', err);
+      setCreatingSession(false);
+    }
+  }, [id, track, creatingSession]);
+
+  // Format lyrics with structure tags highlighted
+  const renderLyrics = (lyrics: string) => {
+    if (!lyrics) return null;
+    const lines = lyrics.split('\n');
+    return lines.map((line, i) => {
+      const trimmed = line.trim();
+      // Structure tags like [Chorus], [Verse 1], etc.
+      if (/^\[.+\]$/.test(trimmed)) {
+        return (
+          <p key={i} className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mt-4 mb-1 first:mt-0">
+            {trimmed}
+          </p>
+        );
+      }
+      // Empty lines = section spacing
+      if (trimmed === '') {
+        return <div key={i} className="h-2" />;
+      }
+      // Regular lyric line
+      return (
+        <p key={i} className="text-[14px] text-[#1A1A1A] leading-relaxed">
+          {trimmed}
+        </p>
+      );
+    });
   };
 
   return (
@@ -69,13 +116,13 @@ function TrackCard({
         )}
       </div>
 
-      {/* Prompts — two-column cards */}
+      {/* Two-column: Suno Prompt + Lyrics */}
       <div className="grid grid-cols-2 gap-4">
         {/* Suno prompt */}
         <div className="bg-[#F7F7F5] rounded-lg p-5">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <Badge variant="orange">Suno</Badge>
+              <Badge variant="orange">Suno Prompt</Badge>
               <span className={`text-[11px] font-mono ${sunoCharCount > 1000 ? 'text-signal-red' : 'text-[#C4C4C4]'}`}>
                 {sunoCharCount}/1000
               </span>
@@ -92,20 +139,29 @@ function TrackCard({
           </p>
         </div>
 
-        {/* Udio prompt */}
+        {/* Lyrics */}
         <div className="bg-[#F7F7F5] rounded-lg p-5">
           <div className="flex items-center justify-between mb-3">
-            <Badge variant="violet">Udio</Badge>
-            <button
-              onClick={() => handleCopy(track.udio_prompt, 'udio')}
-              className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
-            >
-              {copiedField === 'udio' ? 'Copied' : 'Copy'}
-            </button>
+            <Badge variant="violet">Lyrics</Badge>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleCopy(track.lyrics, 'lyrics')}
+                className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
+              >
+                {copiedField === 'lyrics' ? 'Copied' : 'Copy'}
+              </button>
+              <button
+                onClick={handleEditInLyriCol}
+                disabled={creatingSession || !track.lyrics}
+                className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A] disabled:opacity-40"
+              >
+                {creatingSession ? 'Opening...' : 'Edit in LyriCol →'}
+              </button>
+            </div>
           </div>
-          <p className="text-[13px] text-[#1A1A1A] leading-relaxed">
-            {track.udio_prompt}
-          </p>
+          <div className="max-h-[400px] overflow-y-auto pr-2">
+            {renderLyrics(track.lyrics)}
+          </div>
         </div>
       </div>
 

@@ -139,7 +139,7 @@ export interface I2Track {
   track_number: number;
   title: string;
   suno_prompt: string;
-  udio_prompt: string;
+  lyrics: string;
   structure: string;
   notes: string;
 }

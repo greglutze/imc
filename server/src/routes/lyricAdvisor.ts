@@ -376,7 +376,7 @@ router.get('/:projectId/themes', async (req: AuthRequest, res: Response): Promis
     }
 
     // Fetch tracks from instrument2_prompts if they exist
-    let tracks: Array<{ track_number: number; title: string; suno_prompt: string; udio_prompt: string; structure: string; notes: string }> = [];
+    let tracks: Array<{ track_number: number; title: string; suno_prompt: string; lyrics: string; structure: string; notes: string }> = [];
     try {
       const tracksResult = await pool.query(
         `SELECT tracks FROM instrument2_prompts WHERE project_id = $1 ORDER BY version DESC LIMIT 1`,
