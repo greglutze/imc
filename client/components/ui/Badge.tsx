@@ -25,7 +25,6 @@ export default function Badge({ children, variant = 'default', className = '' }:
         inline-flex items-center
         h-5 px-2
         text-micro font-semibold uppercase tracking-wide
-        rounded-md
         ${variantStyles[variant]}
         ${className}
       `}

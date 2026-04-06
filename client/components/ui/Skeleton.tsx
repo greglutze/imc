@@ -6,7 +6,7 @@ interface SkeletonProps {
 }
 
 export default function Skeleton({ className = '', variant = 'line' }: SkeletonProps) {
-  const base = 'bg-neutral-100 animate-pulse rounded-sm';
+  const base = 'bg-neutral-100 animate-pulse';
 
   if (variant === 'circle') {
     return <div className={`${base} w-8 h-8 rounded-full ${className}`} />;

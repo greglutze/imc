@@ -133,21 +133,21 @@ export default function PromptsPage() {
         <div className="border-b border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="h-3 w-8 bg-neutral-100 rounded-sm animate-pulse" />
+              <div className="h-3 w-8 bg-neutral-100 animate-pulse" />
               <span className="text-neutral-200">/</span>
-              <div className="h-3 w-24 bg-neutral-100 rounded-sm animate-pulse" />
+              <div className="h-3 w-24 bg-neutral-100 animate-pulse" />
             </div>
             <div className="flex items-center gap-3">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-3 w-14 bg-neutral-100 rounded-sm animate-pulse" />
+                <div key={i} className="h-3 w-14 bg-neutral-100 animate-pulse" />
               ))}
             </div>
           </div>
         </div>
         <div className="max-w-[1400px] mx-auto w-full px-10 pt-10 pb-6">
-          <div className="h-3 w-32 bg-neutral-100 rounded-sm animate-pulse mb-4" />
-          <div className="h-10 w-64 bg-neutral-100 rounded-sm animate-pulse mb-4" />
-          <div className="h-4 w-96 bg-neutral-50 rounded-sm animate-pulse" />
+          <div className="h-3 w-32 bg-neutral-100 animate-pulse mb-4" />
+          <div className="h-10 w-64 bg-neutral-100 animate-pulse mb-4" />
+          <div className="h-4 w-96 bg-neutral-50 animate-pulse" />
         </div>
       </div>
     );
@@ -236,7 +236,7 @@ export default function PromptsPage() {
                   {Array.from({ length: concept.track_count }, (_, i) => (
                     <div key={i} className="flex items-center gap-4 animate-pulse">
                       <span className="text-[13px] font-mono text-[#C4C4C4] w-6">{String(i + 1).padStart(2, '0')}</span>
-                      <div className="h-4 bg-neutral-100 rounded-sm" style={{ width: `${120 + Math.random() * 100}px` }} />
+                      <div className="h-4 bg-neutral-100" style={{ width: `${120 + Math.random() * 100}px` }} />
                     </div>
                   ))}
                 </div>

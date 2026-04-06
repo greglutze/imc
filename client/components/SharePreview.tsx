@@ -47,14 +47,14 @@ export default function SharePreview({
   return (
     <div className="relative">
       {/* Phone frame */}
-      <div className={`rounded-lg border-2 ${isDark ? 'border-neutral-700' : 'border-neutral-300'} overflow-hidden shadow-lg`}>
+      <div className={`border-2 ${isDark ? 'border-neutral-700' : 'border-neutral-300'} overflow-hidden shadow-lg`}>
         {/* Status bar mock */}
         <div className={`${isDark ? 'bg-neutral-900' : 'bg-neutral-100'} px-4 py-1.5 flex items-center justify-between`}>
           <span className={`text-[9px] font-mono ${textSecondary}`}>9:41</span>
           <div className={`w-16 h-1 rounded-full ${isDark ? 'bg-neutral-700' : 'bg-neutral-300'}`} />
           <div className="flex items-center gap-1">
-            <div className={`w-2.5 h-1.5 rounded-sm ${isDark ? 'bg-neutral-600' : 'bg-neutral-400'}`} />
-            <div className={`w-1 h-1.5 rounded-sm ${isDark ? 'bg-neutral-600' : 'bg-neutral-400'}`} />
+            <div className={`w-2.5 h-1.5 ${isDark ? 'bg-neutral-600' : 'bg-neutral-400'}`} />
+            <div className={`w-1 h-1.5 ${isDark ? 'bg-neutral-600' : 'bg-neutral-400'}`} />
           </div>
         </div>
 
@@ -63,7 +63,7 @@ export default function SharePreview({
           {/* Password gate preview */}
           {passwordProtected && (
             <div className="absolute top-12 right-3">
-              <span className={`text-[8px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-md ${isDark ? 'bg-neutral-800 text-[#8A8A8A]' : 'bg-neutral-100 text-neutral-500'}`}>
+              <span className={`text-[8px] font-semibold uppercase tracking-wide px-1.5 py-0.5 ${isDark ? 'bg-neutral-800 text-[#8A8A8A]' : 'bg-neutral-100 text-neutral-500'}`}>
                 Password
               </span>
             </div>
@@ -72,7 +72,7 @@ export default function SharePreview({
           {/* Artwork */}
           <div className="text-center mb-5">
             {artworkUrl ? (
-              <div className={`w-28 h-28 mx-auto mb-4 rounded-md overflow-hidden border ${border}`}>
+              <div className={`w-28 h-28 mx-auto mb-4 overflow-hidden border ${border}`}>
                 <img
                   src={resolveArtworkUrl(artworkUrl) || ''}
                   alt={title}
@@ -80,7 +80,7 @@ export default function SharePreview({
                 />
               </div>
             ) : (
-              <div className={`w-28 h-28 mx-auto mb-4 rounded-md border ${border} flex items-center justify-center`}>
+              <div className={`w-28 h-28 mx-auto mb-4 border ${border} flex items-center justify-center`}>
                 <span className={`text-[32px] ${textMuted}`}>♫</span>
               </div>
             )}
@@ -95,7 +95,7 @@ export default function SharePreview({
               {tracks.map((track, idx) => (
                 <div
                   key={track.id}
-                  className={`flex items-center gap-2 px-2.5 py-2 rounded-md border ${border}`}
+                  className={`flex items-center gap-2 px-2.5 py-2 border ${border}`}
                 >
                   <span className={`text-[9px] w-3 text-center shrink-0 ${textSecondary}`}>
                     {idx + 1}
@@ -110,7 +110,7 @@ export default function SharePreview({
               ))}
             </div>
           ) : (
-            <div className={`text-center py-6 border ${border} rounded-md border-dashed`}>
+            <div className={`text-center py-6 border ${border} border-dashed`}>
               <span className={`text-[10px] ${textMuted}`}>No tracks yet</span>
             </div>
           )}

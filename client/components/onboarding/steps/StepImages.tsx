@@ -90,7 +90,7 @@ export default function StepImages({ selectedIds, onChange, onContinue, onSkip }
                 <button
                   key={image.id}
                   onClick={() => toggle(image.id)}
-                  className="group relative aspect-square rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] focus:ring-offset-2"
+                  className="group relative aspect-square overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] focus:ring-offset-2"
                 >
                   {/* Placeholder */}
                   {!isLoaded && (
@@ -106,13 +106,13 @@ export default function StepImages({ selectedIds, onChange, onContinue, onSkip }
                     className={`
                       w-full h-full object-cover transition-all duration-300
                       ${isLoaded ? 'opacity-100' : 'opacity-0'}
-                      ${isSelected ? 'scale-[0.92] rounded-lg' : 'group-hover:scale-[0.97]'}
+                      ${isSelected ? 'scale-[0.92]' : 'group-hover:scale-[0.97]'}
                     `}
                   />
 
                   {/* Selection overlay */}
                   {isSelected && (
-                    <div className="absolute inset-0 ring-[3px] ring-inset ring-[#1A1A1A] rounded-lg">
+                    <div className="absolute inset-0 ring-[3px] ring-inset ring-[#1A1A1A]">
                       {/* Checkmark */}
                       <div className="absolute top-2 right-2 w-6 h-6 bg-[#1A1A1A] rounded-full flex items-center justify-center">
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">

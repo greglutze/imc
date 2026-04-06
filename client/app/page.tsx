@@ -114,22 +114,22 @@ export default function Home() {
             <div className="pt-16 pb-10">
               <div className="flex items-end justify-between mb-10">
                 <div>
-                  <div className="h-3 w-16 bg-neutral-100 rounded-md animate-pulse mb-3" />
-                  <div className="h-14 w-16 bg-neutral-100 rounded-md animate-pulse" />
+                  <div className="h-3 w-16 bg-neutral-100 animate-pulse mb-3" />
+                  <div className="h-14 w-16 bg-neutral-100 animate-pulse" />
                 </div>
-                <div className="h-10 w-32 bg-neutral-100 rounded-md animate-pulse" />
+                <div className="h-10 w-32 bg-neutral-100 animate-pulse" />
               </div>
               <div className="border-t border-[#E8E8E8]">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="flex items-center gap-6 py-6 border-b border-[#E8E8E8]">
-                    <div className="w-16 h-16 rounded-md bg-neutral-100 animate-pulse shrink-0" />
+                    <div className="w-16 h-16 bg-neutral-100 animate-pulse shrink-0" />
                     <div className="flex-1">
-                      <div className="h-5 w-40 bg-neutral-100 rounded-md animate-pulse mb-2" />
-                      <div className="h-3 w-64 bg-neutral-50 rounded-md animate-pulse mb-2" />
-                      <div className="h-2 w-24 bg-neutral-50 rounded-md animate-pulse" />
+                      <div className="h-5 w-40 bg-neutral-100 animate-pulse mb-2" />
+                      <div className="h-3 w-64 bg-neutral-50 animate-pulse mb-2" />
+                      <div className="h-2 w-24 bg-neutral-50 animate-pulse" />
                     </div>
-                    <div className="h-4 w-16 bg-neutral-50 rounded-md animate-pulse" />
-                    <div className="h-4 w-20 bg-neutral-50 rounded-md animate-pulse" />
+                    <div className="h-4 w-16 bg-neutral-50 animate-pulse" />
+                    <div className="h-4 w-20 bg-neutral-50 animate-pulse" />
                   </div>
                 ))}
               </div>
@@ -159,10 +159,10 @@ export default function Home() {
                     <a
                       key={project.id}
                       href={`/projects/${project.id}`}
-                      className="group bg-[#F7F7F5] rounded-lg hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6"
+                      className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6"
                     >
                       {/* Artwork thumbnail */}
-                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#EEEDEB] shrink-0">
+                      <div className="w-16 h-16 overflow-hidden bg-[#EEEDEB] shrink-0">
                         {project.image_url ? (
                           <img
                             src={resolveArtworkUrl(project.image_url) || ''}

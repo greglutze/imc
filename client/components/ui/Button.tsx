@@ -126,7 +126,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
       ? `${layoutBase} ${transitionBase} ${disabledBase}`
       : isGhost
         ? `${textBase} ${transitionBase} ${disabledBase}`
-        : `${layoutBase} ${textBase} rounded-sm ${transitionBase} ${disabledBase}`;
+        : `${layoutBase} ${textBase} ${transitionBase} ${disabledBase}`;
 
     const variantStyle = isActive && variantActiveOverrides[variant]
       ? variantActiveOverrides[variant]

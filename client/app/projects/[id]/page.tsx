@@ -280,13 +280,13 @@ export default function ProjectPage() {
         <div className="border-b border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="h-3 w-8 bg-neutral-100 rounded-md animate-pulse" />
+              <div className="h-3 w-8 bg-neutral-100 animate-pulse" />
               <span className="text-neutral-200">/</span>
-              <div className="h-3 w-24 bg-neutral-100 rounded-md animate-pulse" />
+              <div className="h-3 w-24 bg-neutral-100 animate-pulse" />
             </div>
             <div className="flex items-center gap-3">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-3 w-14 bg-neutral-100 rounded-md animate-pulse" />
+                <div key={i} className="h-3 w-14 bg-neutral-100 animate-pulse" />
               ))}
             </div>
           </div>
@@ -297,22 +297,22 @@ export default function ProjectPage() {
             <div className="col-span-7">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-2 h-2 rounded-full bg-neutral-100 animate-pulse" />
-                <div className="h-3 w-20 bg-neutral-100 rounded-md animate-pulse" />
+                <div className="h-3 w-20 bg-neutral-100 animate-pulse" />
               </div>
-              <div className="h-20 w-80 bg-neutral-100 rounded-md animate-pulse mb-6" />
-              <div className="h-3 w-48 bg-neutral-50 rounded-md animate-pulse" />
+              <div className="h-20 w-80 bg-neutral-100 animate-pulse mb-6" />
+              <div className="h-3 w-48 bg-neutral-50 animate-pulse" />
             </div>
             <div className="col-span-5 flex justify-end">
-              <div className="w-full max-w-[400px] aspect-square bg-neutral-100 rounded-md animate-pulse" />
+              <div className="w-full max-w-[400px] aspect-square bg-neutral-100 animate-pulse" />
             </div>
           </div>
           {/* Instrument cards skeleton */}
           <div className="grid grid-cols-3 gap-4 pt-12">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="border border-[#E8E8E8] rounded-md p-6 h-32">
-                <div className="h-3 w-16 bg-neutral-100 rounded-md animate-pulse mb-4" />
-                <div className="h-5 w-28 bg-neutral-100 rounded-md animate-pulse mb-3" />
-                <div className="h-3 w-full bg-neutral-50 rounded-md animate-pulse" />
+              <div key={i} className="border border-[#E8E8E8] p-6 h-32">
+                <div className="h-3 w-16 bg-neutral-100 animate-pulse mb-4" />
+                <div className="h-5 w-28 bg-neutral-100 animate-pulse mb-3" />
+                <div className="h-3 w-full bg-neutral-50 animate-pulse" />
               </div>
             ))}
           </div>
@@ -444,7 +444,7 @@ export default function ProjectPage() {
               <div className="col-span-5 flex justify-end">
                 <div
                   onClick={() => imageInputRef.current?.click()}
-                  className="w-full max-w-[400px] aspect-square overflow-hidden rounded-md cursor-pointer relative group"
+                  className="w-full max-w-[400px] aspect-square overflow-hidden cursor-pointer relative group"
                 >
                 {project?.image_url ? (
                   <>
@@ -711,7 +711,7 @@ export default function ProjectPage() {
                   {moodboardImages.slice(0, 6).map((img, i) => (
                     <div
                       key={img.id}
-                      className="overflow-hidden rounded-md aspect-square"
+                      className="overflow-hidden aspect-square"
                     >
                       {img.image_data && (
                         <img
@@ -754,7 +754,7 @@ export default function ProjectPage() {
                   <a
                     key={inst.number}
                     href={inst.href}
-                    className="group bg-[#F7F7F5] rounded-lg p-7 pb-6 hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col justify-between min-h-[220px]"
+                    className="group bg-[#F7F7F5] p-7 pb-6 hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col justify-between min-h-[220px]"
                   >
                     <div>
                       {/* Number + status row */}
@@ -969,7 +969,7 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
       />
 
       {/* Artwork */}
-      <div className="w-16 h-16 rounded-md overflow-hidden bg-neutral-100 shrink-0 flex items-center justify-center">
+      <div className="w-16 h-16 overflow-hidden bg-neutral-100 shrink-0 flex items-center justify-center">
         {artworkUrl ? (
           <img src={resolveArtworkUrl(artworkUrl) || ''} alt={shareTitle} className="w-full h-full object-cover" />
         ) : (

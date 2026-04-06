@@ -359,7 +359,7 @@ export default function LyricSessionPage() {
                 key={action}
                 onClick={() => handleQuickAction(action.toLowerCase())}
                 disabled={sending}
-                className="text-caption font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black bg-white border border-[#E8E8E8] px-3 py-1.5 rounded-md transition-colors duration-150 disabled:opacity-50"
+                className="text-caption font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black bg-white border border-[#E8E8E8] px-3 py-1.5  transition-colors duration-150 disabled:opacity-50"
               >
                 {action}
               </button>
@@ -368,7 +368,7 @@ export default function LyricSessionPage() {
 
           {/* Chat input */}
           <form onSubmit={handleSubmit} className="px-6 py-4 border-t border-[#E8E8E8]">
-            <div className="bg-white rounded-md px-4 py-3 flex items-end gap-3 border border-[#E8E8E8]">
+            <div className="bg-white  px-4 py-3 flex items-end gap-3 border border-[#E8E8E8]">
               <textarea
                 ref={inputRef}
                 value={input}
@@ -384,8 +384,7 @@ export default function LyricSessionPage() {
                 type="submit"
                 disabled={!input.trim() || sending}
                 className={`
-                  text-label font-semibold uppercase tracking-wide px-4 h-8 rounded-md
-                  transition-colors duration-150 shrink-0 text-caption
+                  text-label font-semibold uppercase tracking-wide px-4 h-8                   transition-colors duration-150 shrink-0 text-caption
                   ${input.trim() && !sending
                     ? 'bg-black text-white hover:bg-neutral-800'
                     : 'bg-neutral-100 text-neutral-300 cursor-not-allowed'

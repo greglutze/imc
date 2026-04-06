@@ -20,7 +20,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         <textarea
           ref={ref}
           className={`
-            w-full bg-white border rounded-md px-4 py-3
+            w-full bg-white border px-4 py-3
             text-body text-black placeholder-neutral-300
             transition-colors duration-150 resize-none
             focus:outline-none focus:ring-1

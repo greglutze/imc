@@ -207,7 +207,7 @@ export default function ListenerPage() {
       <div className={`min-h-screen ${bg} flex items-center justify-center`}>
         <div className="w-full max-w-sm px-6">
           {share.artwork_url && (
-            <div className="w-32 h-32 mx-auto mb-8 rounded-sm overflow-hidden border border-neutral-800">
+            <div className="w-32 h-32 mx-auto mb-8  overflow-hidden border border-neutral-800">
               <img src={resolveUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
             </div>
           )}
@@ -219,14 +219,14 @@ export default function ListenerPage() {
               onChange={(e) => setPasswordInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') handleVerifyPassword(); }}
               placeholder="Enter password"
-              className={`w-full text-small ${inputBg} border rounded-sm px-4 py-3 outline-none focus:border-neutral-500 ${textPrimary}`}
+              className={`w-full text-small ${inputBg} border  px-4 py-3 outline-none focus:border-neutral-500 ${textPrimary}`}
             />
             {passwordError && (
               <p className="text-micro text-red-500">Incorrect password.</p>
             )}
             <button
               onClick={handleVerifyPassword}
-              className={`w-full py-3 ${isDark ? 'bg-white text-black hover:bg-neutral-200' : 'bg-black text-white hover:bg-neutral-800'} text-label font-bold uppercase tracking-widest rounded-sm transition-colors duration-fast`}
+              className={`w-full py-3 ${isDark ? 'bg-white text-black hover:bg-neutral-200' : 'bg-black text-white hover:bg-neutral-800'} text-label font-bold uppercase tracking-widest  transition-colors duration-fast`}
             >
               Listen
             </button>
@@ -244,11 +244,11 @@ export default function ListenerPage() {
         {/* Artwork + Title */}
         <div className="text-center mb-12">
           {share.artwork_url ? (
-            <div className={`w-64 h-64 mx-auto mb-8 rounded-sm overflow-hidden border ${border}`}>
+            <div className={`w-64 h-64 mx-auto mb-8  overflow-hidden border ${border}`}>
               <img src={resolveUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
             </div>
           ) : (
-            <div className={`w-64 h-64 mx-auto mb-8 rounded-sm border ${border} flex items-center justify-center`}>
+            <div className={`w-64 h-64 mx-auto mb-8  border ${border} flex items-center justify-center`}>
               <span className={`text-display ${textMuted}`}>♫</span>
             </div>
           )}
@@ -283,7 +283,7 @@ export default function ListenerPage() {
                     playTrack(idx);
                   }
                 }}
-                className={`w-full text-left flex items-center gap-4 px-4 py-3 rounded-sm border ${border} ${hoverBorder} transition-colors duration-fast ${isActive ? trackActive : ''}`}
+                className={`w-full text-left flex items-center gap-4 px-4 py-3  border ${border} ${hoverBorder} transition-colors duration-fast ${isActive ? trackActive : ''}`}
               >
                 <span className={`text-small w-5 text-center shrink-0 ${isActive && isPlaying ? textPrimary : textSecondary}`}>
                   {isActive && isPlaying ? '▮▮' : isActive ? '▶' : (idx + 1)}

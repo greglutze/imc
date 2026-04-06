@@ -234,7 +234,7 @@ export default function ShowreelPlayer({
   const currentTrack = tracks[currentTrackIdx];
 
   return (
-    <div className="border border-[#E8E8E8] rounded-md overflow-hidden">
+    <div className="border border-[#E8E8E8] overflow-hidden">
       {/* Header */}
       <div className="px-5 py-3 flex items-center justify-between border-b border-neutral-100">
         <div className="flex items-center gap-3">

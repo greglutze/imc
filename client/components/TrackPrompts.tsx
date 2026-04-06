@@ -125,7 +125,7 @@ function TrackCard({
       {/* Two-column: Suno Prompt + Lyrics */}
       <div className="grid grid-cols-2 gap-4">
         {/* Suno prompt */}
-        <div className="bg-[#F7F7F5] rounded-lg p-5">
+        <div className="bg-[#F7F7F5] p-5">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <Badge variant="orange">Suno Prompt</Badge>
@@ -146,7 +146,7 @@ function TrackCard({
         </div>
 
         {/* Lyrics */}
-        <div className="bg-[#F7F7F5] rounded-lg p-5">
+        <div className="bg-[#F7F7F5] p-5">
           <div className="flex items-center justify-between mb-3">
             <Badge variant="violet">Lyrics</Badge>
             <div className="flex items-center gap-2">

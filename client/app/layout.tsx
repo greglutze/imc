@@ -35,7 +35,7 @@ export default function RootLayout({
 
               {/* Footer */}
               <div className="py-4">
-                <div className="w-6 h-6 rounded-full bg-[#F7F7F5] border border-[#E8E8E8]" />
+                <div className="w-6 h-6 rounded-full bg-[#F7F7F5] border border-[#E8E8E8]" /> {/* Keep rounded-full for circular avatar */}
               </div>
             </aside>
 

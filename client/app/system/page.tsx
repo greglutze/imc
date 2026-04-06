@@ -97,7 +97,7 @@ export default function SystemPage() {
           <div className="grid grid-cols-6 gap-2 mt-8">
             {['bg-black', 'bg-neutral-900', 'bg-neutral-800', 'bg-neutral-700', 'bg-neutral-600', 'bg-neutral-500'].map((bg, i) => (
               <div key={i} className="space-y-1">
-                <div className={`h-12 rounded-sm ${bg}`} />
+                <div className={`h-12 ${bg}`} />
                 <p className="text-micro text-neutral-400 font-mono">{['black', '900', '800', '700', '600', '500'][i]}</p>
               </div>
             ))}
@@ -105,7 +105,7 @@ export default function SystemPage() {
           <div className="grid grid-cols-6 gap-2 mt-2">
             {['bg-neutral-400', 'bg-neutral-300', 'bg-neutral-200', 'bg-neutral-100', 'bg-neutral-50', 'bg-white'].map((bg, i) => (
               <div key={i} className="space-y-1">
-                <div className={`h-12 rounded-sm border border-neutral-200 ${bg}`} />
+                <div className={`h-12  border border-neutral-200 ${bg}`} />
                 <p className="text-micro text-neutral-400 font-mono">{['400', '300', '200', '100', '50', 'white'][i]}</p>
               </div>
             ))}
@@ -267,7 +267,7 @@ export default function SystemPage() {
             ].map(({ name, px }) => (
               <div key={name} className="flex items-center gap-4">
                 <span className="text-micro font-mono text-neutral-400 w-16">{name} / {px}</span>
-                <div className="h-3 bg-black/5 border border-black/10 rounded-sm" style={{ width: px }} />
+                <div className="h-3 bg-black/5 border border-black/10 " style={{ width: px }} />
               </div>
             ))}
           </div>
@@ -299,7 +299,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function ColorSwatch({ color, label, hex, usage }: { color: string; label: string; hex: string; usage: string }) {
   return (
     <div className="space-y-2">
-      <div className={`h-16 rounded-sm ${color}`} />
+      <div className={`h-16  ${color}`} />
       <div>
         <p className="text-label font-bold text-black">{label}</p>
         <p className="text-micro font-mono text-neutral-400">{hex}</p>

@@ -62,7 +62,7 @@ export default function DesignComparison() {
       {/* Side-by-side */}
       <div className="grid grid-cols-2 gap-6 p-6 max-w-[1800px] mx-auto">
         {/* ═══ V1: Current Design ═══ */}
-        <div className="bg-white rounded-md overflow-hidden border border-neutral-200">
+        <div className="bg-white overflow-hidden border border-neutral-200">
           <div className="bg-black text-white px-6 py-3">
             <span className="text-micro font-bold uppercase tracking-widest">V1 — Current</span>
           </div>
@@ -70,7 +70,7 @@ export default function DesignComparison() {
         </div>
 
         {/* ═══ V2: Open-Influenced ═══ */}
-        <div className="theme-open bg-white rounded-md overflow-hidden border border-neutral-200">
+        <div className="theme-open bg-white overflow-hidden border border-neutral-200">
           <div style={{ background: '#1A1A1A', color: '#fff', padding: '12px 24px' }}>
             <span style={{ fontFamily: 'Instrument Sans, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>V2 — Open</span>
           </div>
@@ -81,7 +81,7 @@ export default function DesignComparison() {
       {/* Button showcase */}
       <div className="grid grid-cols-2 gap-6 px-6 pb-12 max-w-[1800px] mx-auto">
         {/* V1 buttons */}
-        <div className="bg-white rounded-md overflow-hidden border border-neutral-200 p-8">
+        <div className="bg-white overflow-hidden border border-neutral-200 p-8">
           <p className="text-micro font-bold uppercase tracking-widest text-neutral-400 mb-6">V1 Buttons</p>
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <Button>Primary</Button>
@@ -109,7 +109,7 @@ export default function DesignComparison() {
         </div>
 
         {/* V2 buttons */}
-        <div className="theme-open bg-white rounded-md overflow-hidden border border-neutral-200 p-8">
+        <div className="theme-open bg-white overflow-hidden border border-neutral-200 p-8">
           <p className="t-label" style={{ color: 'var(--color-muted)', marginBottom: 24 }}>V2 Buttons</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, marginBottom: 24 }}>
             <ButtonV2>Primary</ButtonV2>
@@ -191,7 +191,7 @@ function V1Demo() {
         <span className="text-label font-bold uppercase tracking-widest text-neutral-400 mb-3 block">
           Color Palette
         </span>
-        <div className="flex gap-0 rounded-sm overflow-hidden h-10">
+        <div className="flex gap-0 overflow-hidden h-10">
           {PALETTE.map((c) => (
             <div key={c.hex} style={{ backgroundColor: c.hex, flex: c.pct }} />
           ))}
@@ -207,7 +207,7 @@ function V1Demo() {
         </div>
         <div className="space-y-1">
           {TRACKS.map((t) => (
-            <div key={t.id} className="flex items-center gap-4 px-4 py-3 border border-neutral-200 rounded-sm hover:border-neutral-300 transition-colors duration-fast">
+            <div key={t.id} className="flex items-center gap-4 px-4 py-3 border border-neutral-200 hover:border-neutral-300 transition-colors duration-fast">
               <Button variant="media" size="sm">
                 <span className="text-[10px] leading-none">▶</span>
               </Button>
@@ -285,7 +285,7 @@ function V2Demo() {
         <span className="t-label" style={{ color: 'var(--color-muted)', display: 'block', marginBottom: 12 }}>
           Color Palette
         </span>
-        <div style={{ display: 'flex', gap: 3, borderRadius: 'var(--radius-md)', overflow: 'hidden', height: 40 }}>
+        <div style={{ display: 'flex', gap: 3, overflow: 'hidden', height: 40 }}>
           {PALETTE.map((c) => (
             <div key={c.hex} style={{ backgroundColor: c.hex, flex: c.pct }} />
           ))}
@@ -318,7 +318,6 @@ function V2Demo() {
                 alignItems: 'center',
                 gap: 16,
                 padding: '14px 16px',
-                borderRadius: 'var(--radius-sm)',
                 border: '1px solid var(--color-border)',
                 transition: 'border-color 150ms',
                 cursor: 'pointer',

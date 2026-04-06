@@ -328,7 +328,7 @@ function ChecklistItemRow({
         {/* Checkbox */}
         <button
           onClick={handleToggle}
-          className={`mt-0.5 w-5 h-5 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${
+          className={`mt-0.5 w-5 h-5 border flex-shrink-0 flex items-center justify-center transition-all ${
             item.is_checked
               ? 'bg-black border-black'
               : 'border-neutral-300 hover:border-black'
@@ -411,7 +411,7 @@ function ChecklistItemRow({
             onBlur={handleNotesBlur}
             placeholder="Add a note..."
             rows={2}
-            className="w-full text-body-sm text-neutral-600 bg-neutral-50 border border-[#E8E8E8] rounded-md px-3 py-2 outline-none focus:border-neutral-400 transition-colors resize-none placeholder:text-neutral-300"
+            className="w-full text-body-sm text-neutral-600 bg-neutral-50 border border-[#E8E8E8] px-3 py-2 outline-none focus:border-neutral-400 transition-colors resize-none placeholder:text-neutral-300"
           />
         </div>
       )}

@@ -59,7 +59,7 @@ export default function ResearchReport({
                     <button
                       key={v}
                       onClick={() => onVersionChange(v)}
-                      className={`w-6 h-6 rounded-md text-[11px] font-mono font-bold transition-colors duration-150 ${
+                      className={`w-6 h-6 text-[11px] font-mono font-bold transition-colors duration-150 ${
                         v === version
                           ? 'bg-[#1A1A1A] text-white'
                           : 'bg-[#F7F7F5] text-[#8A8A8A] hover:bg-[#E8E8E8] hover:text-[#1A1A1A]'
@@ -76,7 +76,7 @@ export default function ResearchReport({
               </ButtonV2>
             </div>
           </div>
-          <div className="bg-[#F7F7F5] rounded-lg px-6 py-5 text-center">
+          <div className="bg-[#F7F7F5] px-6 py-5 text-center">
             <p className="text-[40px] leading-none font-medium font-mono text-[#1A1A1A]">
               {confidence.overall_score}
             </p>
@@ -127,7 +127,7 @@ export default function ResearchReport({
         >
           <div className="grid grid-cols-2 gap-3">
             {report.comparable_artists.map((artist, i) => (
-              <div key={i} className="bg-white rounded-lg p-5 border border-[#E8E8E8]">
+              <div key={i} className="bg-white p-5 border border-[#E8E8E8]">
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <p className="text-[16px] font-medium text-[#1A1A1A]">{artist.name}</p>
@@ -227,7 +227,7 @@ export default function ResearchReport({
           <p className="text-[13px] text-[#8A8A8A] mb-6 leading-relaxed">{report.playlist_landscape.curator_patterns}</p>
           <div className="space-y-3">
             {report.playlist_landscape.target_playlists.map((pl, i) => (
-              <div key={i} className="flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-[#E8E8E8]">
+              <div key={i} className="flex items-center justify-between bg-white px-4 py-3 border border-[#E8E8E8]">
                 <div className="flex items-center gap-4">
                   <span className="text-[11px] font-mono text-[#C4C4C4]">{String(i + 1).padStart(2, '0')}</span>
                   <span className="text-[14px] font-medium text-[#1A1A1A]">{pl.name}</span>
@@ -249,7 +249,7 @@ export default function ResearchReport({
         >
           <div className="grid grid-cols-3 gap-3">
             {report.opportunities.map((opp, i) => (
-              <div key={i} className="bg-white rounded-lg p-5 border border-[#E8E8E8]">
+              <div key={i} className="bg-white p-5 border border-[#E8E8E8]">
                 <span className="text-[13px] font-medium text-[#C4C4C4]">
                   {String(i + 1).padStart(2, '0')}
                 </span>
@@ -285,7 +285,7 @@ export default function ResearchReport({
         >
           <div className="space-y-3">
             {report.risk_assessment.map((risk, i) => (
-              <div key={i} className="flex items-start gap-3 bg-white rounded-lg px-4 py-3 border border-[#E8E8E8]">
+              <div key={i} className="flex items-start gap-3 bg-white px-4 py-3 border border-[#E8E8E8]">
                 <SeverityDot severity={risk.severity} />
                 <div className="flex-1">
                   <p className="text-[13px] text-[#1A1A1A] font-medium">{risk.risk}</p>
@@ -304,7 +304,7 @@ export default function ResearchReport({
         >
           <div className="space-y-3">
             {report.recommendations.map((rec, i) => (
-              <div key={i} className="flex items-start gap-4 bg-white rounded-lg px-5 py-4 border border-[#E8E8E8]">
+              <div key={i} className="flex items-start gap-4 bg-white px-5 py-4 border border-[#E8E8E8]">
                 <span className="text-[13px] font-medium text-[#C4C4C4] shrink-0 pt-0.5">
                   {String(rec.priority).padStart(2, '0')}
                 </span>
@@ -348,7 +348,7 @@ function SectionCard({ number, title, summary, isOpen, onToggle, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className={`bg-[#F7F7F5] rounded-lg transition-all duration-200 ${isOpen ? '' : 'hover:bg-[#F0F0ED]'}`}>
+    <div className={`bg-[#F7F7F5] transition-all duration-200 ${isOpen ? '' : 'hover:bg-[#F0F0ED]'}`}>
       <button
         onClick={onToggle}
         className="w-full px-7 py-6 flex items-center justify-between group text-left"
@@ -404,7 +404,7 @@ function MetricDisplay({ label, value, color }: { label: string; value: string; 
 
 function RevenueCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-white rounded-lg p-5 border border-[#E8E8E8]">
+    <div className="bg-white p-5 border border-[#E8E8E8]">
       <p className="text-[11px] font-medium text-[#C4C4C4] mb-2">{label}</p>
       <p className="text-[14px] font-medium text-[#1A1A1A]">{value}</p>
     </div>

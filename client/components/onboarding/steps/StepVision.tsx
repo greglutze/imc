@@ -72,7 +72,7 @@ export default function StepVision({
           onChange={(e) => onChangeText(e.target.value)}
           placeholder={PLACEHOLDER_TEXT[experienceLevel]}
           rows={experienceLevel === 'professional' ? 6 : 4}
-          className="w-full bg-[#F7F7F5] rounded-lg px-6 py-5 text-[16px] md:text-[18px] text-[#1A1A1A] placeholder:text-[#C4C4C4] outline-none resize-none leading-relaxed focus:ring-2 focus:ring-[#1A1A1A]/10 transition-all duration-200"
+          className="w-full bg-[#F7F7F5] px-6 py-5 text-[16px] md:text-[18px] text-[#1A1A1A] placeholder:text-[#C4C4C4] outline-none resize-none leading-relaxed focus:ring-2 focus:ring-[#1A1A1A]/10 transition-all duration-200"
         />
 
         {/* Mood chips — not shown for professionals */}

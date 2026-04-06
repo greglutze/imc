@@ -41,7 +41,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
             className="flex items-center gap-2 hover:opacity-70 transition-opacity duration-fast"
           >
             {imageUrl && (
-              <div className="w-6 h-6 rounded-md overflow-hidden border border-[#E8E8E8] shrink-0">
+              <div className="w-6 h-6 overflow-hidden border border-[#E8E8E8] shrink-0">
                 <img src={resolveArtworkUrl(imageUrl) || ''} alt={artistName} className="w-full h-full object-cover object-top" />
               </div>
             )}

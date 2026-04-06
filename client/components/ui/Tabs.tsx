@@ -42,7 +42,7 @@ export default function Tabs({ tabs, activeTab, onTabChange, className = '' }: T
             {tab.label}
             {tab.count !== undefined && (
               <span className={`
-                text-micro font-mono px-1.5 py-0.5 rounded-sm
+                text-micro font-mono px-1.5 py-0.5
                 ${active === tab.id ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-400'}
               `}>
                 {tab.count}

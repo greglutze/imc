@@ -108,7 +108,7 @@ export default function ConceptChat({
 
             {/* Input */}
             <form onSubmit={handleSubmit} className="px-10 lg:pr-0 py-5 shrink-0 border-t border-[#E8E8E8]">
-              <div className="max-w-lg bg-[#F7F7F5] rounded-lg px-5 py-4 flex items-end gap-3">
+              <div className="max-w-lg bg-[#F7F7F5] px-5 py-4 flex items-end gap-3">
                 <textarea
                   ref={inputRef}
                   value={input}
@@ -131,7 +131,7 @@ export default function ConceptChat({
           {conceptReady && concept && (
             <div className="lg:w-[480px] shrink-0 px-10 lg:px-0 lg:pr-10 py-8 lg:pt-8 border-t lg:border-t-0 border-[#E8E8E8]">
               <div className="lg:sticky lg:top-8">
-                <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
+                <div className="bg-[#F7F7F5] px-7 py-8">
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-green-500" />

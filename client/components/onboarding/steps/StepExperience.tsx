@@ -47,7 +47,7 @@ export default function StepExperience({ value, onChange }: Props) {
                 key={opt.id}
                 onClick={() => onChange(opt.id)}
                 className={`
-                  w-full text-left px-7 py-6 rounded-lg transition-all duration-200 group
+                  w-full text-left px-7 py-6 transition-all duration-200 group
                   ${isSelected
                     ? 'bg-[#1A1A1A] text-white ring-2 ring-[#1A1A1A]'
                     : 'bg-[#F7F7F5] hover:bg-[#F0F0ED] text-[#1A1A1A]'

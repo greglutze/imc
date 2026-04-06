@@ -200,12 +200,12 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
   if (loading) {
     return (
       <div className="animate-fade-in px-8 pt-10 pb-8">
-        <div className="h-3 w-32 bg-neutral-100 rounded-md animate-pulse mb-4" />
-        <div className="h-10 w-48 bg-neutral-100 rounded-md animate-pulse mb-4" />
-        <div className="h-4 w-80 bg-neutral-50 rounded-md animate-pulse mb-8" />
+        <div className="h-3 w-32 bg-neutral-100 animate-pulse mb-4" />
+        <div className="h-10 w-48 bg-neutral-100 animate-pulse mb-4" />
+        <div className="h-4 w-80 bg-neutral-50 animate-pulse mb-8" />
         <div className="grid grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="aspect-square bg-neutral-100 rounded-md animate-pulse" />
+            <div key={i} className="aspect-square bg-neutral-100 animate-pulse" />
           ))}
         </div>
       </div>
@@ -257,7 +257,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         {/* Empty state */}
         {images.length === 0 && !uploading && (
           <div
-            className="border-2 border-dashed border-[#E8E8E8] rounded-md py-16 px-8 text-center cursor-pointer hover:border-neutral-400 transition-colors duration-150"
+            className="border-2 border-dashed border-[#E8E8E8] py-16 px-8 text-center cursor-pointer hover:border-neutral-400 transition-colors duration-150"
             onClick={() => fileInputRef.current?.click()}
           >
             <p className="text-[28px] font-bold text-neutral-200 tracking-tight">
@@ -284,7 +284,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                   <img
                     src={img.image_data}
                     alt=""
-                    className="w-full rounded-lg"
+                    className="w-full"
                   />
                   {/* Delete button — hover */}
                   <button
@@ -296,7 +296,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                       }
                     }}
                     className={`
-                      absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center
+                      absolute top-2 right-2 w-7 h-7 flex items-center justify-center
                       text-white text-label font-bold transition-all duration-150
                       ${deleteConfirm === img.id
                         ? 'bg-red-500 opacity-100'
@@ -307,7 +307,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                     {deleteConfirm === img.id ? '?' : '×'}
                   </button>
                   {deleteConfirm === img.id && (
-                    <div className="absolute top-2 right-11 bg-red-500 text-white text-micro font-semibold uppercase tracking-wide px-2 py-1 rounded-md">
+                    <div className="absolute top-2 right-11 bg-red-500 text-white text-micro font-semibold uppercase tracking-wide px-2 py-1">
                       Click to remove
                     </div>
                   )}
@@ -343,7 +343,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
               Click to copy hex
             </p>
           </div>
-          <div className="flex gap-0 rounded-md overflow-hidden h-16">
+          <div className="flex gap-0 overflow-hidden h-16">
             {palette.map((color) => (
               <button
                 key={color.hex}
@@ -387,8 +387,8 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       )}
       {extractingColors && images.length > 0 && palette.length === 0 && (
         <div className="px-8 py-6 border-t border-neutral-100">
-          <div className="h-3 w-32 bg-neutral-100 rounded-md animate-pulse mb-4" />
-          <div className="flex gap-0 rounded-md overflow-hidden h-16">
+          <div className="h-3 w-32 bg-neutral-100 animate-pulse mb-4" />
+          <div className="flex gap-0 overflow-hidden h-16">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="flex-1 bg-neutral-100 animate-pulse" style={{ animationDelay: `${i * 100}ms` }} />
             ))}
@@ -399,7 +399,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       {/* Sonic Brief */}
       {(brief || analyzing) && (
         <div className="px-8 py-8">
-          <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
+          <div className="bg-[#F7F7F5] px-7 py-8">
             {analyzing && (
               <div className="max-w-2xl">
                 <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-3">

@@ -184,7 +184,7 @@ export default function LyricAdvisorPage() {
               {themesLoading ? (
                 <div className="grid grid-cols-3 gap-3">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="bg-[#F7F7F5] rounded-lg p-7 min-h-[200px] animate-pulse" />
+                    <div key={i} className="bg-[#F7F7F5] p-7 min-h-[200px] animate-pulse" />
                   ))}
                 </div>
               ) : themes.length > 0 ? (
@@ -196,7 +196,7 @@ export default function LyricAdvisorPage() {
                         key={theme.id}
                         onClick={() => handleThemeSelect(theme)}
                         disabled={creating !== null}
-                        className="text-left bg-[#F7F7F5] rounded-lg overflow-hidden hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col group"
+                        className="text-left bg-[#F7F7F5] overflow-hidden hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col group"
                       >
                         {/* Image strip */}
                         {imageUrl && (
@@ -239,7 +239,7 @@ export default function LyricAdvisorPage() {
 
                         {/* Loading state */}
                         {creating === theme.id && (
-                          <div className="absolute inset-0 bg-[#F7F7F5]/80 rounded-lg flex items-center justify-center">
+                          <div className="absolute inset-0 bg-[#F7F7F5]/80 flex items-center justify-center">
                             <div className="w-5 h-5 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin" />
                           </div>
                         )}
@@ -262,7 +262,7 @@ export default function LyricAdvisorPage() {
                   <a
                     key={session.id}
                     href={`/projects/${id}/lyrics/${session.id}`}
-                    className="group bg-[#F7F7F5] rounded-lg hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-5 block"
+                    className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-5 block"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-[16px] font-medium text-[#1A1A1A]">
@@ -291,7 +291,7 @@ export default function LyricAdvisorPage() {
 
           {/* Empty state */}
           {!hasConcept && (
-            <div className="bg-[#F7F7F5] rounded-lg p-8 text-center mt-4">
+            <div className="bg-[#F7F7F5] p-8 text-center mt-4">
               <p className="text-[14px] text-[#8A8A8A]">
                 Define your artist concept first to unlock AI-generated writing themes based on your sonic moodboard.
               </p>

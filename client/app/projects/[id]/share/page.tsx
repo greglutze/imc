@@ -66,16 +66,16 @@ export default function SharePage() {
           activePage="share"
         />
         <div className="max-w-[1400px] mx-auto px-10 pt-10 w-full">
-          <div className="h-3 w-32 bg-neutral-100 rounded-sm animate-pulse mb-4" />
-          <div className="h-10 w-28 bg-neutral-100 rounded-sm animate-pulse mb-4" />
-          <div className="h-4 w-72 bg-neutral-50 rounded-sm animate-pulse mb-10" />
+          <div className="h-3 w-32 bg-neutral-100 animate-pulse mb-4" />
+          <div className="h-10 w-28 bg-neutral-100 animate-pulse mb-4" />
+          <div className="h-4 w-72 bg-neutral-50 animate-pulse mb-10" />
           <div className="space-y-3">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="bg-[#F7F7F5] rounded-lg p-6 flex items-center gap-5">
-                <div className="w-14 h-14 rounded-lg bg-[#EEEDEB] animate-pulse shrink-0" />
+              <div key={i} className="bg-[#F7F7F5] p-6 flex items-center gap-5">
+                <div className="w-14 h-14 bg-[#EEEDEB] animate-pulse shrink-0" />
                 <div className="flex-1">
-                  <div className="h-4 w-40 bg-[#EEEDEB] rounded-sm animate-pulse mb-2" />
-                  <div className="h-3 w-28 bg-[#EEEDEB] rounded-sm animate-pulse" />
+                  <div className="h-4 w-40 bg-[#EEEDEB] animate-pulse mb-2" />
+                  <div className="h-3 w-28 bg-[#EEEDEB] animate-pulse" />
                 </div>
               </div>
             ))}
@@ -118,7 +118,7 @@ export default function SharePage() {
           {/* Share projects list */}
           <div className="pt-10">
             {shares.length === 0 ? (
-              <div className="bg-[#F7F7F5] rounded-lg py-20 px-8 text-center">
+              <div className="bg-[#F7F7F5] py-20 px-8 text-center">
                 <p className="text-[22px] font-medium text-[#C4C4C4] tracking-tight">
                   Your first release starts here
                 </p>
@@ -137,16 +137,16 @@ export default function SharePage() {
                   <button
                     key={share.id}
                     onClick={() => router.push(`/projects/${id}/share/${share.id}`)}
-                    className="w-full text-left bg-[#F7F7F5] rounded-lg hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6 group"
+                    className="w-full text-left bg-[#F7F7F5] hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6 group"
                   >
                     {/* Artwork thumbnail */}
                     {share.artwork_url ? (
-                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#EEEDEB] shrink-0">
+                      <div className="w-16 h-16 overflow-hidden bg-[#EEEDEB] shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={resolveArtworkUrl(share.artwork_url) || ''} alt={share.title} className="w-full h-full object-cover" />
                       </div>
                     ) : (
-                      <div className="w-16 h-16 rounded-lg bg-[#EEEDEB] shrink-0 flex items-center justify-center">
+                      <div className="w-16 h-16 bg-[#EEEDEB] shrink-0 flex items-center justify-center">
                         <span className="text-[#C4C4C4] text-[24px]">&#9835;</span>
                       </div>
                     )}

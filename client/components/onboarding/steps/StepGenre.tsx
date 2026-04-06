@@ -91,7 +91,7 @@ export default function StepGenre({ selected, onChange, onContinue }: Props) {
                 key={genre.id}
                 onClick={() => toggle(genre.id)}
                 className={`
-                  relative px-5 py-4 rounded-lg text-left transition-all duration-200
+                  relative px-5 py-4 text-left transition-all duration-200
                   ${isSelected
                     ? 'bg-[#1A1A1A] text-white ring-2 ring-[#1A1A1A] scale-[1.02]'
                     : 'bg-[#F7F7F5] hover:bg-[#F0F0ED] text-[#1A1A1A]'

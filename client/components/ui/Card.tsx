@@ -12,7 +12,7 @@ export default function Card({ children, className = '', hoverable = false, onCl
     <div
       onClick={onClick}
       className={`
-        bg-white border border-neutral-200 rounded-md p-6
+        bg-white border border-neutral-200 p-6
         ${hoverable ? 'hover:border-neutral-300 hover:shadow-elevated transition-all duration-fast cursor-pointer' : ''}
         ${className}
       `}

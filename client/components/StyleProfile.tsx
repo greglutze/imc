@@ -77,7 +77,7 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
             </div>
           </div>
 
-          <div className="col-span-5 bg-[#F7F7F5] rounded-lg px-7 py-8">
+          <div className="col-span-5 bg-[#F7F7F5] px-7 py-8">
             <div className="space-y-6">
               <div className="border-b border-[#E8E8E8] pb-4">
                 <SectionLabel>Tempo Range</SectionLabel>
@@ -112,7 +112,7 @@ export default function StyleProfile({ styleProfile, concept, sonicBlueprint }: 
       {/* Energy Profile — card */}
       {sonicBlueprint?.energy_profile && (
         <div className="py-10">
-          <div className="bg-[#F7F7F5] rounded-lg px-7 py-8">
+          <div className="bg-[#F7F7F5] px-7 py-8">
             <div className="grid grid-cols-12 gap-8">
               <div className="col-span-7">
                 <div className="flex items-center gap-3 mb-4">

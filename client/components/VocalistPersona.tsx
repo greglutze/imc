@@ -44,7 +44,7 @@ export default function VocalistPersona({ vocalistPersona }: VocalistPersonaProp
       {/* Two-column prompt cards — matches Suno/Lyrics layout */}
       <div className="grid grid-cols-2 gap-4 mb-8">
         {/* Delivery Style card */}
-        <div className="bg-[#F7F7F5] rounded-lg p-5">
+        <div className="bg-[#F7F7F5] p-5">
           <div className="mb-3">
             <Badge variant="blue">Delivery</Badge>
           </div>
@@ -111,7 +111,7 @@ function VocalPromptCard({ vocalistPersona }: { vocalistPersona: I2VocalistPerso
   };
 
   return (
-    <div className="bg-[#F7F7F5] rounded-lg p-5">
+    <div className="bg-[#F7F7F5] p-5">
       <div className="flex items-center justify-between mb-3">
         <Badge variant="orange">Suno Vocal Prompt</Badge>
         <button
