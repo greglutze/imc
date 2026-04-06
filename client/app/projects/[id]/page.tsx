@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import ResearchReport from '../../../components/ResearchReport';
+import { useParams, useRouter } from 'next/navigation';
 import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
@@ -10,7 +9,6 @@ import { api, resolveArtworkUrl } from '../../../lib/api';
 import type { ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, I2StyleProfile, I2VocalistPersona, MoodboardBrief } from '../../../lib/api';
 import { extractPaletteFromImages, type ExtractedColor } from '../../../lib/colorExtract';
 import { ButtonV2 } from '../../../components/ui';
-import NextStepBanner from '../../../components/NextStepBanner';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -18,35 +16,17 @@ function toTitleCase(str: string): string {
   return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
 }
 
-type ViewState = 'home' | 'report';
-
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { isAuthenticated, loading: authLoading } = useAuth();
 
-  // Read ?tab= param to determine initial view
-  const tabParam = searchParams.get('tab');
-  const tabFromParam = (param: string | null): ViewState => {
-    if (param === 'research') return 'report';
-    return 'home';
-  };
-  const [activeTab, setActiveTab] = useState<ViewState>(tabFromParam(tabParam));
-
-  // Sync tab state when URL params change (e.g. browser refresh, back/forward)
-  useEffect(() => {
-    setActiveTab(tabFromParam(tabParam));
-  }, [tabParam]);
   const [conceptReady, setConceptReady] = useState(false);
   const [concept, setConcept] = useState<ProjectConcept | null>(null);
   const [report, setReport] = useState<{ report: I1Report; confidence: I1Confidence } | null>(null);
-  const [researchRunning, setResearchRunning] = useState(false);
   const [project, setProject] = useState<Project | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [reportVersion, setReportVersion] = useState(1);
-  const [totalVersions, setTotalVersions] = useState(1);
-  const autoResearchTriggered = useRef(false);
 
   // Index page data
   const [hasPrompts, setHasPrompts] = useState(false);
@@ -145,54 +125,6 @@ export default function ProjectPage() {
     loadProject();
   }, [isAuthenticated, id]);
 
-  // Run market research via API
-  const handleRunResearch = useCallback(async () => {
-    if (!id) return;
-
-    setResearchRunning(true);
-
-    try {
-      const reportData = await api.runResearch(id);
-      setReport({ report: reportData.report, confidence: reportData.confidence });
-      setReportVersion(reportData.version);
-      setTotalVersions(reportData.version);
-    } catch (err) {
-      console.error('Failed to run research:', err);
-    } finally {
-      setResearchRunning(false);
-    }
-  }, [id]);
-
-  // Auto-run research when switching to Research tab with concept ready but no report
-  useEffect(() => {
-    if (
-      activeTab === 'report' &&
-      conceptReady &&
-      !report &&
-      !researchRunning &&
-      !pageLoading &&
-      !autoResearchTriggered.current &&
-      id
-    ) {
-      autoResearchTriggered.current = true;
-      handleRunResearch();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, conceptReady, report, researchRunning, pageLoading, id]);
-
-  // Load a specific report version
-  const handleVersionChange = useCallback(async (version: number) => {
-    if (!id) return;
-
-    try {
-      const reportData = await api.getReportVersion(id, version);
-      setReport({ report: reportData.report, confidence: reportData.confidence });
-      setReportVersion(version);
-    } catch (err) {
-      console.error('Failed to load version:', err);
-    }
-  }, [id]);
-
   const handleExportBrief = useCallback(async () => {
     setExportingBrief(true);
     try {
@@ -279,9 +211,9 @@ export default function ProjectPage() {
   }
 
   // ──────────────────────────────────────────
-  // PROJECT INDEX / HOME VIEW
+  // PROJECT OVERVIEW
   // ──────────────────────────────────────────
-  if (activeTab === 'home') {
+  {
     const statusLabel = project?.status === 'draft' ? 'In Development' : project?.status === 'complete' ? 'Complete' : 'In Progress';
     // Build instrument cards for the grid
     const instruments = [
@@ -293,7 +225,7 @@ export default function ProjectPage() {
           : conceptReady
             ? 'Your concept is locked in. Research is ready to run.'
             : 'Research builds on your concept, which is defined during project creation.',
-        href: `/projects/${id}?tab=research`,
+        href: `/projects/${id}/research`,
         statusLabel: report ? `v${reportVersion}` : conceptReady ? 'Ready to Run' : 'Needs Concept',
         color: report ? 'green' as const : conceptReady ? 'yellow' as const : 'neutral' as const,
       },
@@ -336,9 +268,6 @@ export default function ProjectPage() {
           artistName={artistName}
           imageUrl={project?.image_url}
           activePage="home"
-          onNavigate={(page) => {
-            if (page === 'research') setActiveTab('report');
-          }}
         />
 
         <div className="flex-1 overflow-y-auto">
@@ -667,94 +596,6 @@ export default function ProjectPage() {
       </div>
     );
   }
-
-  // ──────────────────────────────────────────
-  // CONCEPT / RESEARCH VIEWS
-  // ──────────────────────────────────────────
-  return (
-    <div className="animate-fade-in h-full flex flex-col">
-      <ProjectNav
-        projectId={id}
-        artistName={artistName}
-        imageUrl={project?.image_url}
-        activePage={activeTab === 'report' ? 'research' : 'home'}
-        onNavigate={(page) => {
-          if (page === 'research') setActiveTab('report');
-        }}
-      />
-
-      {/* Content area — key forces remount for crossfade */}
-      <div className="flex-1 overflow-hidden">
-        <div key={activeTab} className="animate-fade-in h-full overflow-y-auto">
-          <div className="max-w-[1400px] mx-auto h-full">
-          {activeTab === 'report' && (
-            <>
-              {researchRunning && (
-                <div className="px-10 py-16 max-w-2xl">
-                  <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
-                    Researching Your Market
-                  </p>
-                  <p className="text-[16px] text-[#8A8A8A] mt-5 max-w-sm">
-                    Pulling Spotify data, mapping comparable artists, and building your market intelligence report. This usually takes about a minute.
-                  </p>
-                  <div className="mt-8 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-signal-violet rounded-full animate-pulse" />
-                    <div className="w-2 h-2 bg-signal-violet rounded-full animate-pulse" style={{ animationDelay: '200ms' }} />
-                    <div className="w-2 h-2 bg-signal-violet rounded-full animate-pulse" style={{ animationDelay: '400ms' }} />
-                  </div>
-                </div>
-              )}
-
-              {!researchRunning && !report && !conceptReady && (
-                <div className="px-10 py-16 max-w-2xl">
-                  <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
-                    Concept Not Ready
-                  </p>
-                  <p className="text-[16px] text-[#8A8A8A] mt-5 max-w-sm">
-                    Your project concept needs to be defined before research can run. This happens automatically during project creation.
-                  </p>
-                </div>
-              )}
-
-              {!researchRunning && report && (
-                <>
-                  {/* Regenerate button — top-right of section */}
-                  <div className="px-10 pt-6 pb-0 flex items-center justify-between max-w-[1400px]">
-                    <div />
-                    <ButtonV2
-                      onClick={() => {
-                        autoResearchTriggered.current = false;
-                        handleRunResearch();
-                      }}
-                      variant="ghost"
-                      size="sm"
-                    >
-                      Regenerate
-                    </ButtonV2>
-                  </div>
-                  <ResearchReport
-                    report={report.report}
-                    confidence={report.confidence}
-                    version={reportVersion}
-                    totalVersions={totalVersions}
-                    artistName={artistName}
-                    createdAt={new Date().toISOString()}
-                    onVersionChange={handleVersionChange}
-                  />
-                  <NextStepBanner
-                    completedLabel="Research complete"
-                    primary={{ label: 'Open Sonic Engine', href: `/projects/${id}/prompts` }}
-                    secondary={{ label: 'Back to overview', href: `/projects/${id}` }}
-                  />
-                </>
-              )}
-            </>
-          )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 /* ———————— Dashboard Player ———————— */
@@ -1023,7 +864,7 @@ function MarketSnapshot({ report, projectId }: { report: { report: I1Report; con
           </p>
         </div>
         <a
-          href={`/projects/${projectId}?tab=research`}
+          href={`/projects/${projectId}/research`}
           className="text-[11px] font-medium text-[#8A8A8A] hover:text-black transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
         >
           Full Report

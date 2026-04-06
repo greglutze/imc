@@ -4,19 +4,17 @@
 
 import { resolveArtworkUrl } from '../lib/api';
 
-type NavPage = 'home' | 'research' | 'prompts' | 'lyrics' | 'share';
+type NavPage = 'home' | 'prompts' | 'lyrics' | 'share';
 
 interface ProjectNavProps {
   projectId: string;
   artistName: string;
   imageUrl?: string | null;
   activePage: NavPage;
-  onNavigate?: (page: NavPage) => void;
 }
 
-export default function ProjectNav({ projectId, artistName, imageUrl, activePage, onNavigate }: ProjectNavProps) {
+export default function ProjectNav({ projectId, artistName, imageUrl, activePage }: ProjectNavProps) {
   const links: Array<{ key: NavPage; label: string; href: string }> = [
-    { key: 'research', label: 'Research', href: `/projects/${projectId}?tab=research` },
     { key: 'prompts', label: 'Sonic Engine', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'Lyrics', href: `/projects/${projectId}/lyrics` },
     { key: 'share', label: 'Tracks', href: `/projects/${projectId}/share` },
@@ -53,19 +51,6 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
             const isActive = activePage === link.key;
             const baseClass = `text-[11px] font-semibold uppercase tracking-wide px-3 py-3 transition-colors duration-150`;
             const activeClass = isActive ? 'text-black border-b-2 border-black -mb-px' : 'text-[#8A8A8A] hover:text-[#1A1A1A]';
-
-            // If onNavigate is provided and this is research, use button for in-page nav
-            if (onNavigate && link.key === 'research') {
-              return (
-                <button
-                  key={link.key}
-                  onClick={() => onNavigate(link.key)}
-                  className={`${baseClass} ${activeClass}`}
-                >
-                  {link.label}
-                </button>
-              );
-            }
 
             return (
               <a

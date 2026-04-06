@@ -521,7 +521,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
             <div className="mt-6">
               <NextStepBanner
                 completedLabel="Visual brief complete"
-                primary={{ label: 'Run Research', href: `/projects/${projectId}?tab=research` }}
+                primary={{ label: 'Run Research', href: `/projects/${projectId}/research` }}
               />
             </div>
           </div>
