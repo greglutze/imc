@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { AuthProvider } from '../lib/auth-context';
+import AIAssistantWrapper from '../components/AIAssistantWrapper';
 import './globals.css';
 import './theme-open.css';
 
@@ -45,6 +46,7 @@ export default function RootLayout({
                 {children}
               </main>
             </div>
+            <AIAssistantWrapper />
           </div>
         </AuthProvider>
       </body>

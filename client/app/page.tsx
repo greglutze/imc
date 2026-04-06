@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Signal, ButtonV2 } from '../components/ui';
 import { useAuth } from '../lib/auth-context';
 import { api, resolveArtworkUrl, type Project } from '../lib/api';
@@ -156,56 +156,15 @@ export default function Home() {
                   const projectCode = `(IMC\u00AE \u2014 ${String(index + 1).padStart(2, '0')}${(project.artist_name || 'U').charAt(0).toUpperCase()})`;
 
                   return (
-                    <a
+                    <ProjectCard
                       key={project.id}
-                      href={`/projects/${project.id}`}
-                      className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6"
-                    >
-                      {/* Artwork thumbnail */}
-                      <div className="w-16 h-16 overflow-hidden bg-[#EEEDEB] shrink-0">
-                        {project.image_url ? (
-                          <img
-                            src={resolveArtworkUrl(project.image_url) || ''}
-                            alt={project.artist_name || 'Artist'}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-[24px] font-medium text-[#D4D4D0]">
-                              {(project.artist_name || 'U').charAt(0).toUpperCase()}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-1">
-                          <span className="text-[11px] font-medium text-[#C4C4C4]">
-                            {projectCode}
-                          </span>
-                          <div className="flex items-center gap-1.5">
-                            <div className={`w-1.5 h-1.5 rounded-full ${
-                              statusColor === 'green' ? 'bg-green-500' :
-                              statusColor === 'yellow' ? 'bg-yellow-500' :
-                              'bg-neutral-300'
-                            }`} />
-                            <span className="text-[11px] font-medium text-[#8A8A8A]">
-                              {statusLabel}
-                            </span>
-                          </div>
-                        </div>
-                        <h2 className="text-[22px] leading-tight font-medium text-[#1A1A1A] truncate">
-                          {project.artist_name || 'Untitled'}
-                        </h2>
-                      </div>
-
-                      {/* CTA */}
-                      <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150 shrink-0">
-                        Open Project
-                        <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
-                      </span>
-                    </a>
+                      project={project}
+                      projectCode={projectCode}
+                      statusLabel={statusLabel}
+                      statusColor={statusColor}
+                      projects={projects}
+                      setProjects={setProjects}
+                    />
                   );
                 })}
               </div>
@@ -238,6 +197,128 @@ export default function Home() {
           <p className="text-micro font-mono text-neutral-300">Music Intelligence Platform</p>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ———————— Project Card with Menu ———————— */
+
+interface ProjectCardProps {
+  project: Project;
+  projectCode: string;
+  statusLabel: string;
+  statusColor: string;
+  projects: Project[];
+  setProjects: (projects: Project[]) => void;
+}
+
+function ProjectCard({ project, projectCode, statusLabel, statusColor, projects, setProjects }: ProjectCardProps) {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [menuOpen]);
+
+  const handleDelete = async () => {
+    const confirmed = window.confirm("Delete this project? This can't be undone.");
+    if (!confirmed) return;
+
+    try {
+      await api.deleteProject(project.id);
+      setProjects(projects.filter(p => p.id !== project.id));
+      setMenuOpen(false);
+    } catch (err) {
+      console.error('Failed to delete project:', err);
+    }
+  };
+
+  return (
+    <div className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6">
+      {/* Artwork thumbnail */}
+      <a href={`/projects/${project.id}`} className="w-16 h-16 overflow-hidden bg-[#EEEDEB] shrink-0 block">
+        {project.image_url ? (
+          <img
+            src={resolveArtworkUrl(project.image_url) || ''}
+            alt={project.artist_name || 'Artist'}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-[24px] font-medium text-[#D4D4D0]">
+              {(project.artist_name || 'U').charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
+      </a>
+
+      {/* Info */}
+      <a href={`/projects/${project.id}`} className="flex-1 min-w-0 block">
+        <div className="flex items-center gap-3 mb-1">
+          <span className="text-[11px] font-medium text-[#C4C4C4]">
+            {projectCode}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <div className={`w-1.5 h-1.5 rounded-full ${
+              statusColor === 'green' ? 'bg-green-500' :
+              statusColor === 'yellow' ? 'bg-yellow-500' :
+              'bg-neutral-300'
+            }`} />
+            <span className="text-[11px] font-medium text-[#8A8A8A]">
+              {statusLabel}
+            </span>
+          </div>
+        </div>
+        <h2 className="text-[22px] leading-tight font-medium text-[#1A1A1A] truncate">
+          {project.artist_name || 'Untitled'}
+        </h2>
+      </a>
+
+      {/* Menu button */}
+      <div className="relative" ref={menuRef}>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen(!menuOpen);
+          }}
+          className="text-[20px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-150 shrink-0 px-2 py-1 -mx-2"
+        >
+          ⋯
+        </button>
+
+        {menuOpen && (
+          <div className="absolute right-0 top-full mt-2 bg-white border border-[#E8E8E8] z-50">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete();
+              }}
+              className="block w-full text-left px-4 py-2 text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors duration-150"
+            >
+              Delete Project
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* CTA */}
+      <a
+        href={`/projects/${project.id}`}
+        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150 shrink-0"
+        onClick={(e) => e.stopPropagation()}
+      >
+        Open Project
+        <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+      </a>
     </div>
   );
 }

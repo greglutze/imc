@@ -792,6 +792,30 @@ export default function ProjectPage() {
               </div>
             </div>
 
+            {/* Danger Zone */}
+            <div className="py-12 border-t border-red-200 bg-red-50">
+              <p className="text-micro font-semibold uppercase tracking-wide text-red-600 mb-6">
+                Danger Zone
+              </p>
+              <button
+                onClick={() => {
+                  const confirmed = window.confirm("Delete this project? This can't be undone.");
+                  if (confirmed) {
+                    api.deleteProject(id)
+                      .then(() => {
+                        window.location.href = '/';
+                      })
+                      .catch((err) => {
+                        console.error('Failed to delete project:', err);
+                      });
+                  }
+                }}
+                className="inline-flex items-center text-[13px] font-medium text-red-600 border border-red-200 px-4 py-2"
+              >
+                Delete Project
+              </button>
+            </div>
+
             {/* Footer spacer */}
             <div className="h-12" />
           </div>

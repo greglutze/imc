@@ -476,6 +476,27 @@ class ApiClient {
     });
   }
 
+  async deleteProject(id: string): Promise<void> {
+    const token = this.getToken();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(`${API_BASE}/api/projects/${id}`, {
+      method: 'DELETE',
+      headers,
+    });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ message: res.statusText }));
+      throw new Error(error.message || `API error: ${res.status}`);
+    }
+  }
+
   /* — Concept Conversation — */
 
   async getConversation(projectId: string): Promise<{ messages: ConversationMessage[] }> {
