@@ -153,24 +153,95 @@ export default function PromptsPage() {
     );
   }
 
-  // Generating state (first time or regenerate all)
+  // Generating state (first time or regenerate all) — show page structure with skeleton
   if (generating) {
+    // Build concept-derived preview content so user sees something meaningful
+    const concept = project?.concept;
+    const previewAesthetic = concept
+      ? `A ${concept.genre_primary}-rooted project${concept.mood_keywords?.length ? ` with ${concept.mood_keywords.slice(0, 3).join(', ')} sensibilities` : ''}. ${concept.creative_direction ? concept.creative_direction.slice(0, 300) : 'Building your sonic identity...'}`
+      : 'Building your sonic identity...';
+    const previewSignatures = concept?.mood_keywords?.length
+      ? concept.mood_keywords.slice(0, 6).map((m: string) => `${m} textures`)
+      : ['Loading sonic signatures...'];
+
     return (
       <div className="animate-fade-in h-full flex flex-col">
         <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
-        <div className="max-w-[1400px] mx-auto px-10 py-16">
-          <p className="text-[13px] font-medium text-[#C4C4C4] mb-3">02</p>
-          <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] mt-4 tracking-tight">
-            Building Your Sound
-          </p>
-          <p className="text-[14px] text-[#8A8A8A] mt-5 max-w-sm leading-relaxed">
-            Translating your concept and market research into production-ready prompts, style direction, and vocal personas.
-          </p>
-          <div className="mt-8 flex items-center gap-2">
-            <div className="w-2 h-2 bg-signal-blue rounded-full animate-pulse" />
-            <div className="w-2 h-2 bg-signal-blue rounded-full animate-pulse" style={{ animationDelay: '200ms' }} />
-            <div className="w-2 h-2 bg-signal-blue rounded-full animate-pulse" style={{ animationDelay: '400ms' }} />
+        <div className="max-w-[1400px] mx-auto w-full px-10">
+          <div className="pt-10 pb-6">
+            <div className="flex items-center gap-3 mb-2">
+              <p className="text-[13px] font-medium text-[#C4C4C4]">
+                Production Intelligence
+              </p>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 bg-signal-blue rounded-full animate-pulse" />
+                <span className="text-[11px] text-[#8A8A8A]">Generating...</span>
+              </div>
+            </div>
+            <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
+              Sonic Engine
+            </p>
+            <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-lg leading-relaxed">
+              Translating your concept and market data into production-ready style profiles, vocal direction, and per-track prompts.
+            </p>
+          </div>
+
+          {/* Skeleton tabs */}
+          <div className="flex items-center gap-6 border-b border-[#E8E8E8] pb-0">
+            <span className="text-[11px] font-semibold uppercase tracking-wide pb-3 text-black border-b-2 border-black -mb-px">
+              Style Profile
+            </span>
+            <span className="text-[11px] font-semibold uppercase tracking-wide pb-3 text-[#8A8A8A]">
+              Demo Prompts
+            </span>
+            <span className="text-[11px] font-semibold uppercase tracking-wide pb-3 text-[#8A8A8A]">
+              Vocalist Persona
+            </span>
+          </div>
+        </div>
+
+        {/* Skeleton style profile preview using concept data */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-[1400px] mx-auto px-10 py-10">
+            <div className="mb-10">
+              <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                Production Aesthetic
+              </p>
+              <blockquote className="text-[22px] leading-[1.4] text-[#1A1A1A]/60 max-w-3xl animate-pulse">
+                {previewAesthetic}
+              </blockquote>
+            </div>
+
+            <div className="mb-8">
+              <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                Sonic Signatures
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {previewSignatures.map((sig: string, i: number) => (
+                  <span key={i} className="text-[13px] text-[#8A8A8A] bg-[#F7F7F5] px-4 py-2 rounded-full border border-[#E8E8E8] animate-pulse">
+                    {sig}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Track count skeleton */}
+            {concept?.track_count && (
+              <div>
+                <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                  Tracks
+                </p>
+                <div className="space-y-3">
+                  {Array.from({ length: concept.track_count }, (_, i) => (
+                    <div key={i} className="flex items-center gap-4 animate-pulse">
+                      <span className="text-[13px] font-mono text-[#C4C4C4] w-6">{String(i + 1).padStart(2, '0')}</span>
+                      <div className="h-4 bg-neutral-100 rounded-sm" style={{ width: `${120 + Math.random() * 100}px` }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

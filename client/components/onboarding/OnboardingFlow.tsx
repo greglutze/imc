@@ -304,6 +304,14 @@ export default function OnboardingFlow() {
           'chat'
         );
         console.log('[onboarding] Lyrics session created');
+
+        // Pre-cache lyric themes so LyriCol page loads instantly with content
+        try {
+          await api.getLyricThemes(projectId);
+          console.log('[onboarding] Lyric themes pre-cached');
+        } catch (err) {
+          console.warn('[onboarding] Theme caching skipped:', err);
+        }
       } catch (err) {
         console.warn('[onboarding] LyriCol skipped:', err);
       }

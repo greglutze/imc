@@ -8,7 +8,7 @@ import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../lib/api';
-import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, MoodboardBrief } from '../../../lib/api';
+import type { ConversationMessage, ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, I2StyleProfile, I2VocalistPersona, MoodboardBrief } from '../../../lib/api';
 import { extractPaletteFromImages, type ExtractedColor } from '../../../lib/colorExtract';
 import { ButtonV2 } from '../../../components/ui';
 
@@ -61,6 +61,8 @@ export default function ProjectPage() {
   const [latestTrack, setLatestTrack] = useState<ShareTrack | null>(null);
   const [latestShareProject, setLatestShareProject] = useState<ShareProject | null>(null);
   const [demoTracks, setDemoTracks] = useState<I2Track[]>([]);
+  const [styleProfile, setStyleProfile] = useState<I2StyleProfile | null>(null);
+  const [vocalistPersona, setVocalistPersona] = useState<I2VocalistPersona | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [exportingBrief, setExportingBrief] = useState(false);
   const [dashboardPalette, setDashboardPalette] = useState<ExtractedColor[]>([]);
@@ -119,6 +121,8 @@ export default function ProjectPage() {
           if (prompts.tracks && prompts.tracks.length > 0) {
             setDemoTracks(prompts.tracks);
           }
+          if (prompts.style_profile) setStyleProfile(prompts.style_profile);
+          if (prompts.vocalist_persona) setVocalistPersona(prompts.vocalist_persona);
         }).catch(() => {});
         api.getLyricSessions(id).then(res => setLyricSessionCount(res.sessions.length)).catch(() => {});
         api.getShareProjects(id).then(res => {
@@ -572,6 +576,119 @@ export default function ProjectPage() {
                       </p>
                     )}
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Style Profile — production aesthetic & sonic signatures */}
+            {styleProfile && (
+              <div className="py-10 border-b border-[#E8E8E8]">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                    Sonic Identity
+                  </p>
+                </div>
+                <blockquote className="text-[20px] leading-[1.4] text-[#1A1A1A] max-w-3xl mb-8">
+                  {styleProfile.production_aesthetic}
+                </blockquote>
+
+                {/* Sonic signatures as pills */}
+                {styleProfile.sonic_signatures && styleProfile.sonic_signatures.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {styleProfile.sonic_signatures.map((sig, i) => (
+                      <span key={i} className="text-[12px] text-[#8A8A8A] bg-[#F7F7F5] px-3 py-1.5 rounded-full border border-[#E8E8E8]">
+                        {sig}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Tempo + key info */}
+                <div className="flex items-center gap-6">
+                  {styleProfile.tempo_range && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-micro font-semibold uppercase tracking-wide text-[#C4C4C4]">Tempo</span>
+                      <span className="text-[13px] text-[#1A1A1A]">{styleProfile.tempo_range}</span>
+                    </div>
+                  )}
+                  {styleProfile.key_preferences && styleProfile.key_preferences.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-micro font-semibold uppercase tracking-wide text-[#C4C4C4]">Keys</span>
+                      <span className="text-[13px] text-[#1A1A1A]">{styleProfile.key_preferences.join(', ')}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Vocalist Persona */}
+            {vocalistPersona && (
+              <div className="py-10 border-b border-[#E8E8E8]">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-2 h-2 rounded-full bg-violet-500" />
+                  <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                    Vocal Character
+                  </p>
+                </div>
+                <div className="grid grid-cols-12 gap-x-8">
+                  <div className="col-span-6">
+                    <p className="text-[16px] leading-[1.5] text-[#1A1A1A]">
+                      {vocalistPersona.vocal_character}
+                    </p>
+                  </div>
+                  <div className="col-span-6">
+                    <p className="text-[16px] leading-[1.5] text-[#8A8A8A]">
+                      {vocalistPersona.delivery_style}
+                    </p>
+                  </div>
+                </div>
+                {vocalistPersona.tone_keywords && vocalistPersona.tone_keywords.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-5">
+                    {vocalistPersona.tone_keywords.map((kw, i) => (
+                      <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
+                        {kw}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Moodboard brief prose */}
+            {moodboardBriefData?.prose && (
+              <div className="py-10 border-b border-[#E8E8E8]">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-2 h-2 rounded-full bg-amber-500" />
+                  <p className="text-micro font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                    Visual World &rarr; Sonic Brief
+                  </p>
+                </div>
+                <p className="text-[15px] leading-[1.6] text-[#8A8A8A] max-w-3xl">
+                  {moodboardBriefData.prose}
+                </p>
+                {/* Brief attributes */}
+                <div className="flex flex-wrap gap-4 mt-5">
+                  {moodboardBriefData.texture && (
+                    <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+                      {moodboardBriefData.texture}
+                    </span>
+                  )}
+                  {moodboardBriefData.atmosphere && (
+                    <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+                      {moodboardBriefData.atmosphere}
+                    </span>
+                  )}
+                  {moodboardBriefData.emotional_register && (
+                    <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+                      {moodboardBriefData.emotional_register}
+                    </span>
+                  )}
+                  {moodboardBriefData.production_era && (
+                    <span className="text-[11px] font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+                      {moodboardBriefData.production_era}
+                    </span>
+                  )}
                 </div>
               </div>
             )}
