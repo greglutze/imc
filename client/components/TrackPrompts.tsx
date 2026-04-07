@@ -104,21 +104,25 @@ function TrackCard({
 
   return (
     <div className={`border-b border-[#E8E8E8] pb-8 mb-4 last:border-b-0 ${isRegenerating ? 'opacity-50' : ''}`}>
-      {/* Track header */}
-      <div className="flex items-start justify-between mb-6">
+      {/* Track header — title + short notes + regenerate badge */}
+      <div className="flex items-start justify-between mb-5">
         <div className="flex items-start gap-4">
           <span className="text-[13px] font-medium text-[#C4C4C4] pt-1">
             {String(track.track_number).padStart(2, '0')}
           </span>
           <div>
             <p className="text-[22px] leading-tight font-medium text-[#1A1A1A]">{track.title}</p>
-            <p className="text-[11px] text-[#8A8A8A] font-mono mt-1">{track.structure}</p>
+            {track.notes && (
+              <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-1 max-w-xl">
+                {track.notes.length > 120 ? track.notes.slice(0, 120).trim() + '...' : track.notes}
+              </p>
+            )}
           </div>
         </div>
         {onRegenerate && (
-          <ButtonV2 onClick={() => onRegenerate(track.track_number)} loading={isRegenerating} variant="ghost" size="sm">
-            Regenerate
-          </ButtonV2>
+          <Badge variant="action" onClick={() => onRegenerate(track.track_number)}>
+            {isRegenerating ? 'Regenerating...' : 'Regenerate'}
+          </Badge>
         )}
       </div>
 
@@ -127,12 +131,12 @@ function TrackCard({
         {/* Suno prompt */}
         <div className="bg-[#F7F7F5] p-5">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <Badge variant="orange">Suno Prompt</Badge>
-              <span className={`text-[11px] font-mono ${sunoCharCount > 1000 ? 'text-signal-red' : 'text-[#C4C4C4]'}`}>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+              Suno Prompt
+              <span className={`ml-2 font-mono ${sunoCharCount > 1000 ? 'text-signal-red' : 'text-[#C4C4C4]'}`}>
                 {sunoCharCount}/1000
               </span>
-            </div>
+            </p>
             <Badge variant="action" copyText={track.suno_prompt}>Copy</Badge>
           </div>
           <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
@@ -143,32 +147,23 @@ function TrackCard({
         {/* Lyrics */}
         <div className="bg-[#F7F7F5] p-5 flex flex-col">
           <div className="flex items-center justify-between mb-3">
-            <Badge variant="violet">Lyrics</Badge>
-            <Badge variant="action" copyText={track.lyrics}>Copy</Badge>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+              Lyrics
+            </p>
+            <div className="flex items-center gap-2">
+              {track.lyrics && (
+                <Badge variant="action" onClick={handleEditInLyrics}>
+                  {creatingSession ? 'Opening...' : 'Refine in Lyrics'}
+                </Badge>
+              )}
+              <Badge variant="action" copyText={track.lyrics}>Copy</Badge>
+            </div>
           </div>
           <div className="max-h-[400px] overflow-y-auto pr-2 flex-1">
             {renderLyrics(track.lyrics)}
           </div>
-          {/* Edit in Lyrics bridge */}
-          {track.lyrics && (
-            <button
-              onClick={handleEditInLyrics}
-              disabled={creatingSession}
-              className="mt-4 w-full py-2.5 bg-[#1A1A1A] text-white text-[13px] font-medium hover:bg-black transition-colors duration-150 disabled:opacity-40 flex items-center justify-center gap-2"
-            >
-              {creatingSession ? 'Opening...' : 'Refine in Lyrics'}
-              {!creatingSession && <span>&rarr;</span>}
-            </button>
-          )}
         </div>
       </div>
-
-      {/* Notes */}
-      {track.notes && (
-        <p className="text-[13px] text-[#8A8A8A] leading-relaxed mt-4">
-          {track.notes}
-        </p>
-      )}
     </div>
   );
 }
