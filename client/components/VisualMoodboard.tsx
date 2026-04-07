@@ -7,7 +7,6 @@ import { api } from '../lib/api';
 import type { MoodboardImage, MoodboardBrief } from '../lib/api';
 import { extractPaletteFromImages, isLightColor, type ExtractedColor } from '../lib/colorExtract';
 import { ButtonV2, Badge } from './ui';
-import NextStepBanner from './NextStepBanner';
 
 interface VisualMoodboardProps {
   projectId: string;
@@ -512,13 +511,6 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
               </div>
             )}
 
-            {/* Wayfinding — next step after brief is ready */}
-            <div className="mt-6">
-              <NextStepBanner
-                completedLabel="Visual brief complete"
-                primary={{ label: 'Run Research', href: `/projects/${projectId}/research` }}
-              />
-            </div>
           </div>
         </div>
       )}

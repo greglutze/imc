@@ -8,7 +8,6 @@ import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
 import type { I1Report, I1Confidence } from '../../../../lib/api';
 import { ButtonV2 } from '../../../../components/ui';
-import NextStepBanner from '../../../../components/NextStepBanner';
 
 export default function ResearchPage() {
   const { id } = useParams<{ id: string }>();
@@ -184,11 +183,6 @@ export default function ResearchPage() {
                 artistName={artistName}
                 createdAt={new Date().toISOString()}
                 onVersionChange={handleVersionChange}
-              />
-              <NextStepBanner
-                completedLabel="Research complete"
-                primary={{ label: 'Open Sounds', href: `/projects/${id}/prompts` }}
-                secondary={{ label: 'Back to overview', href: `/projects/${id}` }}
               />
             </>
           )}
