@@ -417,7 +417,12 @@ export default function ProjectPage() {
                 </div>
 
                 {/* Three-column data strip */}
-                <div className="grid grid-cols-12 gap-x-8 py-8">
+                <div className="flex items-center justify-end pt-8 pb-4">
+                  <a href={`/projects/${id}/prompts`}>
+                    <Badge variant="action">View Sounds</Badge>
+                  </a>
+                </div>
+                <div className="grid grid-cols-12 gap-x-8 pb-8">
                   <div className="col-span-4">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                       Sound
