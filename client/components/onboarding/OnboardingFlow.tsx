@@ -265,7 +265,7 @@ export default function OnboardingFlow() {
         console.warn('[onboarding] Prompts skipped:', err);
       }
 
-      // ── Stage 6: Seed a LyriCol writing session ──
+      // ── Stage 6: Seed a lyrics writing session ──
       console.log('[onboarding] Stage 6: Creating lyrics session...');
       setBuildStage(6);
       setBuildProgress(97);
@@ -295,7 +295,7 @@ export default function OnboardingFlow() {
         );
         console.log('[onboarding] Lyrics session created');
 
-        // Pre-cache lyric themes so LyriCol page loads instantly with content
+        // Pre-cache lyric themes so Lyrics page loads instantly with content
         try {
           await api.getLyricThemes(projectId);
           console.log('[onboarding] Lyric themes pre-cached');
@@ -303,7 +303,7 @@ export default function OnboardingFlow() {
           console.warn('[onboarding] Theme caching skipped:', err);
         }
       } catch (err) {
-        console.warn('[onboarding] LyriCol skipped:', err);
+        console.warn('[onboarding] Lyrics session skipped:', err);
       }
 
       // ── Stage 7: Initialize checklist ──

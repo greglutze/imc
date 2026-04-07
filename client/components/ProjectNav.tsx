@@ -4,7 +4,7 @@
 
 import { resolveArtworkUrl } from '../lib/api';
 
-type NavPage = 'home' | 'research' | 'prompts' | 'lyrics' | 'share';
+type NavPage = 'home' | 'research' | 'prompts' | 'lyrics' | 'visuals' | 'share';
 
 interface ProjectNavProps {
   projectId: string;
@@ -15,10 +15,11 @@ interface ProjectNavProps {
 
 export default function ProjectNav({ projectId, artistName, imageUrl, activePage }: ProjectNavProps) {
   const links: Array<{ key: NavPage; label: string; href: string }> = [
-    { key: 'research', label: 'Research', href: `/projects/${projectId}/research` },
     { key: 'prompts', label: 'Sonic Engine', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'Lyrics', href: `/projects/${projectId}/lyrics` },
-    { key: 'share', label: 'Tracks', href: `/projects/${projectId}/share` },
+    { key: 'visuals', label: 'Visual Engine', href: `/projects/${projectId}/visuals` },
+    { key: 'share', label: 'Share', href: `/projects/${projectId}/share` },
+    { key: 'research', label: 'Research', href: `/projects/${projectId}/research` },
   ];
 
   return (

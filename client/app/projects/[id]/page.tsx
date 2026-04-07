@@ -6,7 +6,7 @@ import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../lib/api';
-import type { ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, I2StyleProfile, I2VocalistPersona, MoodboardBrief } from '../../../lib/api';
+import type { ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, MoodboardBrief } from '../../../lib/api';
 import { extractPaletteFromImages, type ExtractedColor } from '../../../lib/colorExtract';
 import { ButtonV2, Badge } from '../../../components/ui';
 
@@ -36,8 +36,6 @@ export default function ProjectPage() {
   const [latestTrack, setLatestTrack] = useState<ShareTrack | null>(null);
   const [latestShareProject, setLatestShareProject] = useState<ShareProject | null>(null);
   const [demoTracks, setDemoTracks] = useState<I2Track[]>([]);
-  const [styleProfile, setStyleProfile] = useState<I2StyleProfile | null>(null);
-  const [vocalistPersona, setVocalistPersona] = useState<I2VocalistPersona | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [exportingBrief, setExportingBrief] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -85,8 +83,6 @@ export default function ProjectPage() {
           if (prompts.tracks && prompts.tracks.length > 0) {
             setDemoTracks(prompts.tracks);
           }
-          if (prompts.style_profile) setStyleProfile(prompts.style_profile);
-          if (prompts.vocalist_persona) setVocalistPersona(prompts.vocalist_persona);
         }).catch(() => {});
         api.getLyricSessions(id).then(res => setLyricSessionCount(res.sessions.length)).catch(() => {});
         api.getShareProjects(id).then(res => {
@@ -218,18 +214,6 @@ export default function ProjectPage() {
     const instruments = [
       {
         number: '01',
-        name: 'Research',
-        description: report
-          ? 'Market intelligence, audience profile, and sonic positioning — ready to review.'
-          : conceptReady
-            ? 'Your concept is locked in. Research is ready to run.'
-            : 'Research builds on your concept, which is defined during project creation.',
-        href: `/projects/${id}/research`,
-        statusLabel: report ? `v${reportVersion}` : conceptReady ? 'Ready' : 'Needs Concept',
-        color: report ? 'green' as const : conceptReady ? 'yellow' as const : 'neutral' as const,
-      },
-      {
-        number: '02',
         name: 'Sonic Engine',
         subtitle: 'Production Prompts',
         description: hasPrompts
@@ -240,8 +224,9 @@ export default function ProjectPage() {
         color: hasPrompts ? 'green' as const : 'neutral' as const,
       },
       {
-        number: '03',
+        number: '02',
         name: 'Lyrics',
+        subtitle: 'Writing Collaborator',
         description: lyricSessionCount > 0
           ? `${lyricSessionCount} session${lyricSessionCount !== 1 ? 's' : ''} — keep writing, keep refining.`
           : 'Talk through lyrics, find the right words, shape your narrative.',
@@ -250,14 +235,35 @@ export default function ProjectPage() {
         color: lyricSessionCount > 0 ? 'green' as const : 'neutral' as const,
       },
       {
+        number: '03',
+        name: 'Visual Engine',
+        subtitle: 'Cover Art & Identity',
+        description: 'Album cover concepts, typography, color palettes, and Midjourney prompts for your visual identity.',
+        href: `/projects/${id}/visuals`,
+        statusLabel: 'Not Started',
+        color: 'neutral' as const,
+      },
+      {
         number: '04',
-        name: 'Tracks',
+        name: 'Share',
         description: shareCount > 0
           ? `${shareCount} share link${shareCount !== 1 ? 's' : ''} — private listening, on your terms.`
           : 'Share your music with collaborators, labels, or press before release.',
         href: `/projects/${id}/share`,
         statusLabel: shareCount > 0 ? `${shareCount} Links` : 'Not Started',
         color: shareCount > 0 ? 'green' as const : 'neutral' as const,
+      },
+      {
+        number: '05',
+        name: 'Research',
+        description: report
+          ? 'Market intelligence, audience profile, and sonic positioning — ready to review.'
+          : conceptReady
+            ? 'Your concept is locked in. Research is ready to run.'
+            : 'Research builds on your concept, which is defined during project creation.',
+        href: `/projects/${id}/research`,
+        statusLabel: report ? `v${reportVersion}` : conceptReady ? 'Ready' : 'Needs Concept',
+        color: report ? 'green' as const : conceptReady ? 'yellow' as const : 'neutral' as const,
       },
     ];
 
@@ -481,42 +487,6 @@ export default function ProjectPage() {
               <MarketSnapshot report={report} projectId={id} />
             )}
 
-            {/* Style Profile — production aesthetic & sonic signatures */}
-            {styleProfile && (
-              <SonicIdentitySection styleProfile={styleProfile} />
-            )}
-
-            {/* Vocalist Persona */}
-            {vocalistPersona && (
-              <div className="py-10 border-b border-[#E8E8E8]">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-2 h-2 rounded-full bg-violet-500" />
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                    Vocal Character
-                  </p>
-                </div>
-                <div className="grid grid-cols-12 gap-x-8">
-                  <div className="col-span-6">
-                    <p className="text-[16px] leading-[1.5] text-[#1A1A1A]">
-                      {vocalistPersona.vocal_character}
-                    </p>
-                  </div>
-                  <div className="col-span-6">
-                    <p className="text-[16px] leading-[1.5] text-[#8A8A8A]">
-                      {vocalistPersona.delivery_style}
-                    </p>
-                  </div>
-                </div>
-                {vocalistPersona.tone_keywords && vocalistPersona.tone_keywords.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-5">
-                    {vocalistPersona.tone_keywords.map((kw, i) => (
-                      <Badge key={i} variant="violet">{kw}</Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* Visual World — full moodboard inline */}
             <div className="border-b border-[#E8E8E8]">
               <VisualMoodboard projectId={id} />
@@ -554,7 +524,7 @@ export default function ProjectPage() {
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mt-10 mb-4">
                 Your Instruments
               </p>
-              <div className="grid grid-cols-3 gap-5 stagger-enter">
+              <div className="grid grid-cols-3 gap-4 stagger-enter">
                 {instruments.map((inst) => (
                   <a
                     key={inst.number}
@@ -775,51 +745,6 @@ function DashboardPlayer({ track, shareTitle, artworkUrl }: {
 }
 
 
-// ── Sonic Identity — collapsed, scannable overview ────────────
-
-/** Parse "Title — description" or "Title: description" into parts */
-function parseSigTitle(raw: string): { title: string; detail: string } {
-  const emDash = raw.indexOf(' — ');
-  if (emDash > 0 && emDash < 65) {
-    return { title: raw.slice(0, emDash).trim(), detail: raw.slice(emDash + 3).trim() };
-  }
-  const colon = raw.indexOf(': ');
-  if (colon > 0 && colon < 55) {
-    return { title: raw.slice(0, colon).trim(), detail: raw.slice(colon + 2).trim() };
-  }
-  if (raw.length > 55) {
-    const sp = raw.indexOf(' ', 40);
-    if (sp > 0) return { title: raw.slice(0, sp).trim(), detail: raw.slice(sp + 1).trim() };
-  }
-  return { title: raw, detail: '' };
-}
-
-/** Extract just the key name from "C minor — long description" */
-function parseKeyName(raw: string): string {
-  const emDash = raw.indexOf(' — ');
-  if (emDash > 0) return raw.slice(0, emDash).trim();
-  const colon = raw.indexOf(': ');
-  if (colon > 0) return raw.slice(0, colon).trim();
-  const comma = raw.indexOf(', ');
-  if (comma > 0 && comma < 20) return raw.slice(0, comma).trim();
-  return raw.length > 20 ? raw.slice(0, 20).trim() : raw;
-}
-
-/** Extract BPM range from tempo string like "70–140 BPM — long description" */
-function parseTempoBpm(raw: string): { bpm: string; detail: string } {
-  const bpmMatch = raw.match(/(\d+[\u2013\u2014-]\d+\s*BPM)/i);
-  if (bpmMatch) {
-    const after = raw.slice(raw.indexOf(bpmMatch[0]) + bpmMatch[0].length).replace(/^\s*[—\-:,]\s*/, '').trim();
-    return { bpm: bpmMatch[1], detail: after };
-  }
-  const single = raw.match(/(\d+\s*BPM)/i);
-  if (single) {
-    const after = raw.slice(raw.indexOf(single[0]) + single[0].length).replace(/^\s*[—\-:,]\s*/, '').trim();
-    return { bpm: single[1], detail: after };
-  }
-  return { bpm: raw.slice(0, 30), detail: '' };
-}
-
 /* ———————— Smart Progress ———————— */
 
 function SmartProgress({
@@ -844,7 +769,7 @@ function SmartProgress({
     { label: 'Research complete', done: hasResearch, href: `/projects/${projectId}/research` },
     { label: 'Sonic Engine ready', done: hasPrompts, href: `/projects/${projectId}/prompts` },
     { label: lyricSessionCount > 0 ? `${lyricSessionCount} lyric session${lyricSessionCount !== 1 ? 's' : ''}` : 'Lyrics started', done: lyricSessionCount > 0, href: `/projects/${projectId}/lyrics` },
-    { label: shareCount > 0 ? `${shareCount} track${shareCount !== 1 ? 's' : ''} shared` : 'Tracks shared', done: shareCount > 0, href: `/projects/${projectId}/share` },
+    { label: shareCount > 0 ? `${shareCount} track${shareCount !== 1 ? 's' : ''} shared` : 'Music shared', done: shareCount > 0, href: `/projects/${projectId}/share` },
   ];
 
   const completed = steps.filter((s) => s.done).length;
@@ -1014,87 +939,3 @@ function MarketSnapshot({ report, projectId }: { report: { report: I1Report; con
   );
 }
 
-function SonicIdentitySection({ styleProfile }: { styleProfile: I2StyleProfile }) {
-  const [expanded, setExpanded] = useState(false);
-
-  const sigs = (styleProfile.sonic_signatures || []).map(parseSigTitle);
-  const keys = (styleProfile.key_preferences || []).map(parseKeyName);
-  const tempo = styleProfile.tempo_range ? parseTempoBpm(styleProfile.tempo_range) : null;
-
-  const prose = styleProfile.production_aesthetic || '';
-  const needsTruncation = prose.length > 200;
-  const truncatedProse = needsTruncation
-    ? prose.slice(0, prose.indexOf(' ', 180)) + '...'
-    : prose;
-
-  return (
-    <div className="py-10 border-b border-[#E8E8E8]">
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-2 h-2 rounded-full bg-blue-500" />
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
-          Sonic Identity
-        </p>
-      </div>
-
-      {/* Production aesthetic — truncated */}
-      {prose && (
-        <div className="mb-6 max-w-3xl">
-          <p className="text-[16px] leading-[1.6] text-[#1A1A1A]">
-            {expanded ? prose : truncatedProse}
-          </p>
-          {needsTruncation && (
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="text-[12px] text-[#8A8A8A] hover:text-[#1A1A1A] mt-1.5 transition-colors duration-150"
-            >
-              {expanded ? 'Show less' : 'Read more'}
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Sonic signatures — title-only pills */}
-      {sigs.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          {sigs.map((sig, i) => (
-            <span
-              key={i}
-              className="text-[12px] text-[#8A8A8A] bg-[#F7F7F5] px-3 py-1.5 rounded-full border border-[#E8E8E8]"
-              title={sig.detail || undefined}
-            >
-              {sig.title}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Tempo + Keys — clean grid */}
-      <div className="flex flex-wrap items-start gap-8">
-        {tempo && (
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-1.5">Tempo</p>
-            <p className="text-[14px] font-medium text-[#1A1A1A]">{tempo.bpm}</p>
-            {tempo.detail && (
-              <p className="text-[12px] text-[#8A8A8A] mt-0.5 max-w-[220px] leading-relaxed">{tempo.detail}</p>
-            )}
-          </div>
-        )}
-        {keys.length > 0 && (
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-1.5">Keys</p>
-            <div className="flex flex-wrap gap-1.5">
-              {keys.map((k, i) => (
-                <span
-                  key={i}
-                  className="text-[12px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-2.5 py-1 rounded-full"
-                >
-                  {k}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}

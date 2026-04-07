@@ -57,7 +57,7 @@ function TrackCard({
     }
   };
 
-  const handleEditInLyriCol = useCallback(async () => {
+  const handleEditInLyrics = useCallback(async () => {
     if (!id || creatingSession) return;
     setCreatingSession(true);
     try {
@@ -68,7 +68,7 @@ function TrackCard({
       });
       window.location.href = `/projects/${id}/lyrics/${session.id}`;
     } catch (err) {
-      console.error('Failed to create LyriCol session:', err);
+      console.error('Failed to create lyrics session:', err);
       setCreatingSession(false);
     }
   }, [id, track, creatingSession]);
@@ -149,14 +149,14 @@ function TrackCard({
           <div className="max-h-[400px] overflow-y-auto pr-2 flex-1">
             {renderLyrics(track.lyrics)}
           </div>
-          {/* Prominent LyriCol bridge */}
+          {/* Edit in Lyrics bridge */}
           {track.lyrics && (
             <button
-              onClick={handleEditInLyriCol}
+              onClick={handleEditInLyrics}
               disabled={creatingSession}
               className="mt-4 w-full py-2.5 bg-[#1A1A1A] text-white text-[13px] font-medium hover:bg-black transition-colors duration-150 disabled:opacity-40 flex items-center justify-center gap-2"
             >
-              {creatingSession ? 'Opening...' : 'Write in LyriCol'}
+              {creatingSession ? 'Opening...' : 'Refine in Lyrics'}
               {!creatingSession && <span>&rarr;</span>}
             </button>
           )}

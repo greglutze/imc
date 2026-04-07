@@ -12,6 +12,7 @@ import type {
   Project,
   MoodboardBrief,
   MoodboardImage,
+  I2Track,
 } from '../../../../lib/api';
 
 export default function LyricAdvisorPage() {
@@ -24,6 +25,7 @@ export default function LyricAdvisorPage() {
   const [themes, setThemes] = useState<LyricTheme[]>([]);
   const [moodboard, setMoodboard] = useState<MoodboardBrief | null>(null);
   const [moodboardImages, setMoodboardImages] = useState<MoodboardImage[]>([]);
+  const [demoTracks, setDemoTracks] = useState<I2Track[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
   const [themesLoading, setThemesLoading] = useState(false);
   const [creating, setCreating] = useState<string | null>(null);
@@ -50,6 +52,13 @@ export default function LyricAdvisorPage() {
         if (proj.moodboard_brief) {
           setMoodboard(proj.moodboard_brief as MoodboardBrief);
         }
+        // Fetch demo tracks for auto-seeded lyrics
+        try {
+          const prompts = await api.getPrompts(id);
+          if (prompts.tracks && prompts.tracks.length > 0) {
+            setDemoTracks(prompts.tracks.filter((t: I2Track) => t.lyrics));
+          }
+        } catch {}
       } catch (err) {
         console.error('Failed to load lyric advisor data:', err);
       } finally {
@@ -107,6 +116,23 @@ export default function LyricAdvisorPage() {
     }
   }, [id, creating, router]);
 
+  const handleOpenTrackLyrics = useCallback(async (track: I2Track) => {
+    if (!id || creating) return;
+    setCreating(`track-${track.track_number}`);
+    try {
+      const lyrics = (track.lyrics || '').replace(/\\n/g, '\n');
+      const session = await api.createLyricSession(id, {
+        entry_mode: 'paste',
+        title: track.title,
+        lyrics,
+      });
+      router.push(`/projects/${id}/lyrics/${session.id}`);
+    } catch (err) {
+      console.error('Failed to create session from track:', err);
+      setCreating(null);
+    }
+  }, [id, creating, router]);
+
   // Map moodboard images to themes — one image per theme, cycling if fewer images
   const getImageForTheme = (index: number): string | null => {
     if (moodboardImages.length === 0) return null;
@@ -138,15 +164,14 @@ export default function LyricAdvisorPage() {
           {/* Header */}
           <div className="mb-10">
             <p className="text-[13px] font-medium text-[#C4C4C4] mb-2">
-              Lyric Collaborator
+              Writing Collaborator
             </p>
             <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
-              LyriCol
+              Lyrics
             </p>
             <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-md leading-relaxed">
               A creative collaborator that helps you find the right words — without writing them for you.
             </p>
-
           </div>
 
           {/* New Session button */}
@@ -165,12 +190,93 @@ export default function LyricAdvisorPage() {
             </button>
           </div>
 
-          {/* Starting Points — theme cards */}
+          {/* Sessions — user's work comes first */}
+          {sessions.length > 0 && (
+            <div className="mb-12">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4] mb-4">
+                Sessions
+              </p>
+              <div className="space-y-3 stagger-enter">
+                {sessions.map((session) => (
+                  <a
+                    key={session.id}
+                    href={`/projects/${id}/lyrics/${session.id}`}
+                    className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5 block"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[16px] font-medium text-[#1A1A1A]">
+                        {session.title || 'Untitled Session'}
+                      </p>
+                      {session.lyrics_preview && (
+                        <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
+                          {session.lyrics_preview}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4 shrink-0">
+                      <span className="text-[11px] font-medium text-[#C4C4C4]">
+                        {session.message_count} messages
+                      </span>
+                      <span className="text-[11px] font-medium text-[#C4C4C4]">
+                        {new Date(session.updated_at).toLocaleDateString()}
+                      </span>
+                      <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Demo Track Drafts — auto-seeded from Sonic Engine */}
+          {demoTracks.length > 0 && (
+            <div className="mb-12">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4] mb-1">
+                From Sonic Engine
+              </p>
+              <p className="text-[13px] text-[#8A8A8A] mb-4">
+                Demo lyrics generated with your tracks — click to start refining.
+              </p>
+              <div className="space-y-3 stagger-enter">
+                {demoTracks.map((track) => (
+                  <button
+                    key={track.track_number}
+                    onClick={() => handleOpenTrackLyrics(track)}
+                    disabled={creating !== null}
+                    className="group w-full text-left bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5"
+                  >
+                    <span className="text-[11px] font-mono text-[#C4C4C4] shrink-0">
+                      {String(track.track_number).padStart(2, '0')}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[16px] font-medium text-[#1A1A1A]">
+                        {track.title}
+                      </p>
+                      <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
+                        {(track.lyrics || '').replace(/\\n/g, ' ').slice(0, 100)}...
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      {creating === `track-${track.track_number}` ? (
+                        <div className="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
+                          Refine <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Starting Points — theme cards (inspiration, lower priority) */}
           {hasConcept && (
             <div className="mb-12">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4]">
-                  Starting Points
+                  Need Inspiration?
                 </p>
                 {themes.length > 0 && !themesLoading && (
                   <ButtonV2 onClick={() => loadThemes(true)} variant="ghost" size="sm">
@@ -182,7 +288,7 @@ export default function LyricAdvisorPage() {
               {themesLoading ? (
                 <div className="grid grid-cols-3 gap-3">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="bg-[#F7F7F5] p-7 min-h-[200px] animate-pulse" />
+                    <div key={i} className="bg-[#F7F7F5] p-7 min-h-[200px] skel" />
                   ))}
                 </div>
               ) : themes.length > 0 ? (
@@ -194,7 +300,7 @@ export default function LyricAdvisorPage() {
                         key={theme.id}
                         onClick={() => handleThemeSelect(theme)}
                         disabled={creating !== null}
-                        className="text-left bg-[#F7F7F5] overflow-hidden hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col group"
+                        className="text-left bg-[#F7F7F5] overflow-hidden hover:bg-[#F0F0ED] card-hover flex flex-col group relative"
                       >
                         {/* Image strip */}
                         {imageUrl && (
@@ -249,46 +355,8 @@ export default function LyricAdvisorPage() {
             </div>
           )}
 
-          {/* Previous sessions */}
-          {sessions.length > 0 && (
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4] mb-4">
-                Sessions
-              </p>
-              <div className="space-y-3 stagger-enter">
-                {sessions.map((session) => (
-                  <a
-                    key={session.id}
-                    href={`/projects/${id}/lyrics/${session.id}`}
-                    className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5 block"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[16px] font-medium text-[#1A1A1A]">
-                        {session.title || 'Untitled Session'}
-                      </p>
-                      {session.lyrics_preview && (
-                        <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
-                          {session.lyrics_preview}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-4 shrink-0">
-                      <span className="text-[11px] font-medium text-[#C4C4C4]">
-                        {session.message_count} messages
-                      </span>
-                      <span className="text-[11px] font-medium text-[#C4C4C4]">
-                        {new Date(session.updated_at).toLocaleDateString()}
-                      </span>
-                      <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Empty state */}
-          {!hasConcept && (
+          {!hasConcept && sessions.length === 0 && demoTracks.length === 0 && (
             <div className="bg-[#F7F7F5] p-8 text-center mt-4">
               <p className="text-[14px] text-[#8A8A8A]">
                 Define your artist concept first to unlock AI-generated writing themes based on your sonic moodboard.
