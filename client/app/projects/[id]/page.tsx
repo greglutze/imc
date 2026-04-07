@@ -234,17 +234,9 @@ export default function ProjectPage() {
         statusLabel: lyricSessionCount > 0 ? `${lyricSessionCount} Sessions` : 'Not Started',
         color: lyricSessionCount > 0 ? 'green' as const : 'neutral' as const,
       },
+      // Visual Engine (2.0) — page exists at /projects/[id]/visuals but hidden from nav
       {
         number: '03',
-        name: 'Visual Engine',
-        subtitle: 'Cover Art & Identity',
-        description: 'Album cover concepts, typography, color palettes, and Midjourney prompts for your visual identity.',
-        href: `/projects/${id}/visuals`,
-        statusLabel: 'Not Started',
-        color: 'neutral' as const,
-      },
-      {
-        number: '04',
         name: 'Share',
         description: shareCount > 0
           ? `${shareCount} share link${shareCount !== 1 ? 's' : ''} — private listening, on your terms.`

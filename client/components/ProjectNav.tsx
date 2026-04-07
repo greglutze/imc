@@ -17,7 +17,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
   const links: Array<{ key: NavPage; label: string; href: string }> = [
     { key: 'prompts', label: 'Sonic Engine', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'Lyrics', href: `/projects/${projectId}/lyrics` },
-    { key: 'visuals', label: 'Visual Engine', href: `/projects/${projectId}/visuals` },
+    // { key: 'visuals', label: 'Visual Engine', href: `/projects/${projectId}/visuals` }, // 2.0
     { key: 'share', label: 'Share', href: `/projects/${projectId}/share` },
     { key: 'research', label: 'Research', href: `/projects/${projectId}/research` },
   ];
