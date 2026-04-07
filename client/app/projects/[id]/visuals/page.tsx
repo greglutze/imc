@@ -8,7 +8,12 @@ import { api } from '../../../../lib/api';
 import { Badge } from '../../../../components/ui';
 import type { Project, ProjectConcept, MoodboardImage, MoodboardBrief } from '../../../../lib/api';
 import { extractPaletteFromImages, type ExtractedColor } from '../../../../lib/colorExtract';
-import { matchMovements, type MatchedMovement } from '../../../../lib/artMovements';
+import {
+  matchMovements,
+  collectGoogleFonts,
+  buildGoogleFontsUrl,
+  type MatchedMovement,
+} from '../../../../lib/artMovements';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -24,6 +29,7 @@ export default function VisualEnginePage() {
   const [palette, setPalette] = useState<ExtractedColor[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
   const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -69,11 +75,9 @@ export default function VisualEnginePage() {
   }, []);
 
   const artistName = project?.artist_name || 'Untitled';
-
-  /** Concept has real data (not just the DB default empty object) */
   const conceptReady = !!(concept && concept.genre_primary);
 
-  // ── Match art movements from concept ──
+  // ── Match art movements ──
   const matched: MatchedMovement[] = useMemo(() => {
     if (!conceptReady) return [];
     return matchMovements(concept!, 3);
@@ -82,6 +86,34 @@ export default function VisualEnginePage() {
   const primaryMovement = matched[0]?.movement ?? null;
   const secondaryMovement = matched[1]?.movement ?? null;
 
+  // ── Load Google Fonts for matched movements ──
+  useEffect(() => {
+    if (matched.length === 0) return;
+    const families = collectGoogleFonts(matched);
+    if (families.length === 0) return;
+
+    const url = buildGoogleFontsUrl(families);
+    const linkId = 'visual-engine-fonts';
+
+    // Avoid duplicate link tags
+    if (document.getElementById(linkId)) {
+      setFontsLoaded(true);
+      return;
+    }
+
+    const link = document.createElement('link');
+    link.id = linkId;
+    link.rel = 'stylesheet';
+    link.href = url;
+    link.onload = () => setFontsLoaded(true);
+    document.head.appendChild(link);
+
+    return () => {
+      const existing = document.getElementById(linkId);
+      if (existing) existing.remove();
+    };
+  }, [matched]);
+
   // ── Typography: movement-influenced ──
   const getTypeRecommendations = () => {
     if (primaryMovement) {
@@ -89,39 +121,39 @@ export default function VisualEnginePage() {
         display: primaryMovement.typeFamilies.display,
         body: primaryMovement.typeFamilies.body,
         direction: primaryMovement.typeFamilies.direction,
+        displayGoogleFont: primaryMovement.typeFamilies.displayGoogleFont,
+        bodyGoogleFont: primaryMovement.typeFamilies.bodyGoogleFont,
         source: primaryMovement.name,
       };
     }
-    // Fallback to genre-based if no movement matched
     const genre = concept?.genre_primary?.toLowerCase() || '';
     if (genre.includes('hip-hop') || genre.includes('rap') || genre.includes('trap')) {
-      return { display: 'Druk Wide / Neue Haas Grotesk', body: 'Monument Extended', direction: 'Bold, condensed, uppercase. High impact.', source: null };
+      return { display: 'Druk Wide / Neue Haas Grotesk', body: 'Monument Extended', direction: 'Bold, condensed, uppercase. High impact.', displayGoogleFont: 'Bebas Neue' as string | null, bodyGoogleFont: 'DM Sans' as string | null, source: null };
     }
     if (genre.includes('electronic') || genre.includes('house') || genre.includes('techno')) {
-      return { display: 'Neue Montreal / Space Grotesk', body: 'JetBrains Mono', direction: 'Clean geometric sans-serif. Monospaced accents. Technical precision.', source: null };
+      return { display: 'Neue Montreal / Space Grotesk', body: 'JetBrains Mono', direction: 'Clean geometric sans-serif. Monospaced accents. Technical precision.', displayGoogleFont: 'Space Grotesk' as string | null, bodyGoogleFont: 'JetBrains Mono' as string | null, source: null };
     }
     if (genre.includes('r&b') || genre.includes('soul') || genre.includes('neo')) {
-      return { display: 'Canela / Freight Display', body: 'Söhne', direction: 'Warm serif with modern proportions. Intimate, personal, editorial.', source: null };
+      return { display: 'Canela / Freight Display', body: 'Söhne', direction: 'Warm serif with modern proportions. Intimate, personal, editorial.', displayGoogleFont: 'Cormorant Garamond' as string | null, bodyGoogleFont: 'DM Sans' as string | null, source: null };
     }
     if (genre.includes('indie') || genre.includes('alternative') || genre.includes('folk')) {
-      return { display: 'GT Super / Editorial New', body: 'ABC Favorit', direction: 'Expressive serif headlines with humanist sans body. Organic and approachable.', source: null };
+      return { display: 'GT Super / Editorial New', body: 'ABC Favorit', direction: 'Expressive serif headlines with humanist sans body. Organic and approachable.', displayGoogleFont: 'Fraunces' as string | null, bodyGoogleFont: 'Work Sans' as string | null, source: null };
     }
     if (genre.includes('pop')) {
-      return { display: 'PP Neue Machina / Clash Display', body: 'General Sans', direction: 'Contemporary display type. Bold but refined. Clean with character.', source: null };
+      return { display: 'PP Neue Machina / Clash Display', body: 'General Sans', direction: 'Contemporary display type. Bold but refined. Clean with character.', displayGoogleFont: 'Syne' as string | null, bodyGoogleFont: 'Inter' as string | null, source: null };
     }
-    return { display: 'Inter / Satoshi', body: 'Source Serif Pro', direction: 'Versatile modern system. Clean, readable, adaptable across formats.', source: null };
+    return { display: 'Inter / Satoshi', body: 'Source Serif Pro', direction: 'Versatile modern system. Clean, readable, adaptable across formats.', displayGoogleFont: 'Inter' as string | null, bodyGoogleFont: 'Source Serif 4' as string | null, source: null };
   };
 
-  // ── Build prompts with movement influence ──
+  // ── Build prompts — NO artist/band references ever ──
   const movementPromptLayer = primaryMovement?.promptFragment || '';
 
   const buildCoverPrompt = () => {
     if (!conceptReady) return '';
     const parts: string[] = [];
     const genre = concept!.genre_primary;
-    parts.push(`Album cover art for a ${genre} artist.`);
+    parts.push(`Album cover art for a ${genre} project.`);
     if (concept!.mood_keywords?.length) parts.push(`Mood: ${concept!.mood_keywords.slice(0, 4).join(', ')}.`);
-    if (concept!.reference_artists?.length) parts.push(`Influenced by ${concept!.reference_artists.slice(0, 2).join(' and ')}.`);
     if (concept!.creative_direction) parts.push(concept!.creative_direction + '.');
     if (movementPromptLayer) parts.push(`Visual style: ${movementPromptLayer}.`);
     parts.push('Cinematic, editorial quality, no text. --ar 1:1 --v 6.1 --style raw');
@@ -132,7 +164,7 @@ export default function VisualEnginePage() {
     if (!conceptReady) return '';
     const parts: string[] = [];
     const genre = concept!.genre_primary;
-    parts.push(`Promotional photography for a ${genre} artist.`);
+    parts.push(`Promotional photography for a ${genre} project.`);
     if (concept!.mood_keywords?.length) parts.push(`${concept!.mood_keywords.slice(0, 3).join(', ')} atmosphere.`);
     if (secondaryMovement) parts.push(`Visual references: ${secondaryMovement.promptFragment}.`);
     parts.push('Fashion editorial style, dramatic lighting, strong composition. Environment matches the sonic world. --ar 4:5 --v 6.1 --style raw');
@@ -146,10 +178,10 @@ export default function VisualEnginePage() {
       ? primaryMovement.typeFamilies.direction.split('.')[0]
       : 'Custom lettering';
     const parts: string[] = [];
-    parts.push(`Typography design for a ${genre} artist logo.`);
+    parts.push(`Typography design for a ${genre} project logo.`);
     if (concept!.mood_keywords?.length) parts.push(`${concept!.mood_keywords.slice(0, 3).join(', ')} feeling.`);
     parts.push(`${typeStyle}.`);
-    if (movementPromptLayer) parts.push(`Inspired by ${primaryMovement!.name} design movement.`);
+    if (primaryMovement) parts.push(`Inspired by ${primaryMovement.name} design movement.`);
     parts.push('Black on white, high contrast. --ar 3:1 --v 6.1 --style raw');
     return parts.join(' ');
   };
@@ -159,9 +191,10 @@ export default function VisualEnginePage() {
     const colorHint = primaryMovement?.colorDirection
       ? `Color direction: ${primaryMovement.colorDirection.split('.')[0].toLowerCase()}.`
       : 'Warm tones, natural light.';
-    return `Behind-the-scenes studio photography. Artist in creative flow. ${colorHint} Shallow depth of field. Candid, not posed. Film grain texture. --ar 16:9 --v 6.1 --style raw`;
+    return `Behind-the-scenes studio photography. Creative flow. ${colorHint} Shallow depth of field. Candid, not posed. Film grain texture. --ar 16:9 --v 6.1 --style raw`;
   };
 
+  // ── Loading ──
   if (authLoading || pageLoading) {
     return (
       <div className="animate-fade-in h-full flex flex-col">
@@ -237,7 +270,7 @@ export default function VisualEnginePage() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {matched.map(({ movement, matchReasons }, i) => (
-                  <div key={movement.id} className="bg-[#F7F7F5] p-6 card-hover" style={{ animationDelay: `${i * 0.05}s` }}>
+                  <div key={movement.id} className="bg-[#F7F7F5] p-6 card-hover">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-[11px] font-mono text-[#C4C4C4]">{String(i + 1).padStart(2, '0')}</span>
                       <Badge variant={i === 0 ? 'green' : 'default'}>
@@ -302,7 +335,7 @@ export default function VisualEnginePage() {
               <div className="bg-[#F7F7F5] p-5 mt-2">
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-2">
                   Movement Color Direction
-                  <span className="ml-2 font-normal normal-case text-[#C4C4C4]">
+                  <span className="ml-2 font-normal normal-case">
                     via {primaryMovement.name}
                   </span>
                 </p>
@@ -333,15 +366,51 @@ export default function VisualEnginePage() {
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-2">
                   Display / Headlines
                 </p>
-                <p className="text-[28px] leading-tight font-medium text-[#1A1A1A] mb-2">
+                <p
+                  className="text-[32px] leading-tight font-medium text-[#1A1A1A] mb-2 transition-[font-family] duration-300"
+                  style={fontsLoaded && typeRecs.displayGoogleFont
+                    ? { fontFamily: `'${typeRecs.displayGoogleFont}', sans-serif` }
+                    : undefined
+                  }
+                >
                   {typeRecs.display}
                 </p>
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mt-5 mb-2">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mt-6 mb-2">
                   Body / Captions
                 </p>
-                <p className="text-[20px] leading-tight font-medium text-[#1A1A1A]">
+                <p
+                  className="text-[20px] leading-tight font-medium text-[#1A1A1A] transition-[font-family] duration-300"
+                  style={fontsLoaded && typeRecs.bodyGoogleFont
+                    ? { fontFamily: `'${typeRecs.bodyGoogleFont}', sans-serif` }
+                    : undefined
+                  }
+                >
                   {typeRecs.body}
                 </p>
+
+                {/* Font preview sentence */}
+                {fontsLoaded && typeRecs.displayGoogleFont && (
+                  <div className="mt-6 pt-5 border-t border-[#F0F0F0]">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-3">
+                      Preview
+                    </p>
+                    <p
+                      className="text-[28px] leading-snug text-[#1A1A1A] mb-2"
+                      style={{ fontFamily: `'${typeRecs.displayGoogleFont}', sans-serif` }}
+                    >
+                      {artistName}
+                    </p>
+                    <p
+                      className="text-[15px] leading-relaxed text-[#8A8A8A]"
+                      style={typeRecs.bodyGoogleFont
+                        ? { fontFamily: `'${typeRecs.bodyGoogleFont}', sans-serif` }
+                        : undefined
+                      }
+                    >
+                      The quick brown fox jumps over the lazy dog. 0123456789
+                    </p>
+                  </div>
+                )}
               </div>
               <div className="col-span-6">
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-3">
@@ -359,7 +428,13 @@ export default function VisualEnginePage() {
                   Alternate Direction
                   <span className="ml-2 font-normal normal-case">via {secondaryMovement.name}</span>
                 </p>
-                <p className="text-[14px] text-[#C4C4C4] leading-relaxed">
+                <p
+                  className="text-[14px] text-[#C4C4C4] leading-relaxed transition-[font-family] duration-300"
+                  style={fontsLoaded && secondaryMovement.typeFamilies.displayGoogleFont
+                    ? { fontFamily: `'${secondaryMovement.typeFamilies.displayGoogleFont}', sans-serif` }
+                    : undefined
+                  }
+                >
                   {secondaryMovement.typeFamilies.display} + {secondaryMovement.typeFamilies.body} — {secondaryMovement.typeFamilies.direction.split('.')[0]}.
                 </p>
               </div>
@@ -397,7 +472,7 @@ export default function VisualEnginePage() {
               Image Prompts
             </p>
             <p className="text-[13px] text-[#8A8A8A] mb-6">
-              Ready-to-use prompts for Midjourney, DALL-E, or Stable Diffusion. Built from your concept, mood,{primaryMovement ? ` ${primaryMovement.name} influence,` : ''} and references.
+              Ready-to-use prompts for Midjourney, DALL-E, or Stable Diffusion. Built from your concept, mood,{primaryMovement ? ` ${primaryMovement.name} influence,` : ''} and creative direction.
             </p>
 
             <div className="space-y-4">
