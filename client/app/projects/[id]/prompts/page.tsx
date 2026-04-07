@@ -133,21 +133,21 @@ export default function PromptsPage() {
         <div className="border-b border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="h-3 w-8 bg-[#F7F7F5] animate-pulse" />
+              <div className="h-3 w-8 skel" />
               <span className="text-[#E8E8E8]">/</span>
-              <div className="h-3 w-24 bg-[#F7F7F5] animate-pulse" />
+              <div className="h-3 w-24 skel skel-delay-1" />
             </div>
             <div className="flex items-center gap-3">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-3 w-14 bg-[#F7F7F5] animate-pulse" />
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className={`h-3 w-14 skel skel-delay-${Math.min(i + 1, 5)}`} />
               ))}
             </div>
           </div>
         </div>
         <div className="max-w-[1400px] mx-auto w-full px-10 pt-10 pb-6">
-          <div className="h-3 w-32 bg-[#F7F7F5] animate-pulse mb-4" />
-          <div className="h-10 w-64 bg-[#F7F7F5] animate-pulse mb-4" />
-          <div className="h-4 w-96 bg-[#F7F7F5] animate-pulse" />
+          <div className="h-3 w-32 skel mb-4" />
+          <div className="h-10 w-64 skel skel-delay-1 mb-4" />
+          <div className="h-4 w-96 skel skel-delay-2" />
         </div>
       </div>
     );
@@ -301,7 +301,7 @@ export default function PromptsPage() {
   ];
 
   return (
-    <div className="animate-fade-in h-full flex flex-col">
+    <div className="content-reveal h-full flex flex-col">
       <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
       {/* Editorial header */}

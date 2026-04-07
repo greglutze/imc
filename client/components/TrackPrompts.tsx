@@ -14,8 +14,8 @@ interface TrackPromptsProps {
 
 export default function TrackPrompts({ tracks, onRegenerateTrack, regenerating }: TrackPromptsProps) {
   return (
-    <div className="animate-fade-in px-10 py-10 max-w-[1400px] mx-auto">
-      <div className="space-y-4">
+    <div className="content-reveal px-10 py-10 max-w-[1400px] mx-auto">
+      <div className="space-y-4 stagger-enter">
         {tracks.map((track) => (
           <TrackCard
             key={track.track_number}

@@ -114,15 +114,17 @@ export default function ResearchPage() {
     return (
       <div className="animate-fade-in">
         <div className="px-10 py-16 max-w-2xl">
-          <div className="h-12 w-64 bg-[#F7F7F5] animate-pulse" />
-          <div className="h-4 w-96 bg-[#F7F7F5] animate-pulse mt-6" />
+          <div className="h-3 w-12 skel mb-4" />
+          <div className="h-10 w-64 skel skel-delay-1 mb-6" />
+          <div className="h-4 w-96 skel skel-delay-2 mb-3" />
+          <div className="h-4 w-72 skel skel-delay-3" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="animate-fade-in h-full flex flex-col">
+    <div className="content-reveal h-full flex flex-col">
       <ProjectNav
         projectId={id}
         artistName={artistName}
@@ -133,17 +135,17 @@ export default function ResearchPage() {
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1400px] mx-auto">
           {researchRunning && (
-            <div className="px-10 py-16 max-w-2xl">
+            <div className="px-10 py-16 max-w-2xl animate-fade-in">
               <p className="text-[40px] leading-[1.1] font-medium text-black mt-4 tracking-tight">
                 Researching Your Market
               </p>
               <p className="text-[16px] text-[#8A8A8A] mt-5 max-w-sm">
                 Pulling Spotify data, mapping comparable artists, and building your market intelligence report. This usually takes about a minute.
               </p>
-              <div className="mt-8 flex items-center gap-2">
-                <div className="w-2 h-2 bg-signal-violet rounded-full animate-pulse" />
-                <div className="w-2 h-2 bg-signal-violet rounded-full animate-pulse" style={{ animationDelay: '200ms' }} />
-                <div className="w-2 h-2 bg-signal-violet rounded-full animate-pulse" style={{ animationDelay: '400ms' }} />
+              <div className="mt-8 flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 bg-[#1A1A1A] rounded-full animate-pulse-subtle" />
+                <div className="w-1.5 h-1.5 bg-[#1A1A1A] rounded-full animate-pulse-subtle" style={{ animationDelay: '0.3s' }} />
+                <div className="w-1.5 h-1.5 bg-[#1A1A1A] rounded-full animate-pulse-subtle" style={{ animationDelay: '0.6s' }} />
               </div>
             </div>
           )}

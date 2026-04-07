@@ -72,7 +72,7 @@ export default function Checklist({ projectId, items, summary, onUpdate }: Check
         </div>
         <div className="h-1 bg-[#F7F7F5] rounded-full overflow-hidden">
           <div
-            className="h-full bg-black rounded-full transition-all duration-500 ease-out"
+            className="h-full bg-black rounded-full progress-spring"
             style={{ width: `${percent}%` }}
           />
         </div>
@@ -205,7 +205,7 @@ function CategorySection({
           <div className="mb-4">
             <div className="h-0.5 bg-[#F7F7F5] rounded-full overflow-hidden">
               <div
-                className="h-full bg-black rounded-full transition-all duration-500 ease-out"
+                className="h-full bg-black rounded-full progress-spring"
                 style={{
                   width: summary.total > 0 ? `${(summary.checked / summary.total) * 100}%` : '0%',
                 }}

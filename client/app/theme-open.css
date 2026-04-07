@@ -393,3 +393,73 @@
   background: rgba(0, 0, 0, 0.06);
   color: var(--color-fg);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   SKELETON — shimmer gradient
+   ═══════════════════════════════════════════════════════════════ */
+
+.skel {
+  background: linear-gradient(
+    90deg,
+    #F7F7F5 0%,
+    #EEEDEB 40%,
+    #F7F7F5 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+/* Stagger utility classes — apply to skeleton children */
+.skel-delay-1 { animation-delay: 0.1s; }
+.skel-delay-2 { animation-delay: 0.2s; }
+.skel-delay-3 { animation-delay: 0.3s; }
+.skel-delay-4 { animation-delay: 0.4s; }
+.skel-delay-5 { animation-delay: 0.5s; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MICRO-INTERACTIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Button press feedback */
+.theme-open .btn-v2:active:not(:disabled) {
+  transform: scale(0.97);
+  transition: transform 0.1s ease-out;
+}
+
+/* Card hover lift */
+.card-hover {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Badge appear — uses scaleIn keyframes from Tailwind config */
+.badge-enter {
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Staggered card entrance — uses cardEnter keyframes from Tailwind config */
+.stagger-enter > * {
+  opacity: 0;
+  animation: cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.stagger-enter > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-enter > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-enter > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-enter > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-enter > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-enter > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* Content reveal — uses contentReveal keyframes from Tailwind config */
+.content-reveal {
+  animation: contentReveal 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Progress bar spring */
+.progress-spring {
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}

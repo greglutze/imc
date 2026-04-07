@@ -111,6 +111,7 @@ const config: Config = {
 
       animation: {
         'fade-in': 'fadeIn 0.2s ease-out',
+        'fade-in-up': 'fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'slide-up': 'slideUp 0.3s ease-out',
         'pulse-subtle': 'pulseSubtle 2s ease-in-out infinite',
         'step-enter-right': 'stepEnterRight 0.35s ease-out forwards',
@@ -118,12 +119,21 @@ const config: Config = {
         'step-exit-left': 'stepExitLeft 0.25s ease-in forwards',
         'step-exit-right': 'stepExitRight 0.25s ease-in forwards',
         'float': 'float 6s ease-in-out infinite',
+        'shimmer': 'shimmer 1.8s ease-in-out infinite',
+        'scale-in': 'scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+        'press': 'press 0.15s ease-out',
+        'card-enter': 'cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'content-reveal': 'contentReveal 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
       },
 
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(12px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(8px)' },
@@ -152,6 +162,27 @@ const config: Config = {
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        scaleIn: {
+          '0%': { opacity: '0', transform: 'scale(0.95)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        press: {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(0.97)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        cardEnter: {
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        contentReveal: {
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
 

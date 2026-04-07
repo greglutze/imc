@@ -169,13 +169,13 @@ export default function ProjectPage() {
         <div className="border-b border-[#E8E8E8]">
           <div className="max-w-[1400px] mx-auto px-10 h-14 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="h-3 w-8 bg-[#F7F7F5] animate-pulse" />
+              <div className="h-3 w-8 skel" />
               <span className="text-[#E8E8E8]">/</span>
-              <div className="h-3 w-24 bg-[#F7F7F5] animate-pulse" />
+              <div className="h-3 w-24 skel skel-delay-1" />
             </div>
             <div className="flex items-center gap-3">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-3 w-14 bg-[#F7F7F5] animate-pulse" />
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className={`h-3 w-14 skel skel-delay-${Math.min(i + 1, 5)}`} />
               ))}
             </div>
           </div>
@@ -185,23 +185,23 @@ export default function ProjectPage() {
           <div className="grid grid-cols-12 gap-x-8 pt-16 pb-12">
             <div className="col-span-7">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-2 h-2 rounded-full bg-[#F7F7F5] animate-pulse" />
-                <div className="h-3 w-20 bg-[#F7F7F5] animate-pulse" />
+                <div className="w-2 h-2 rounded-full skel" />
+                <div className="h-3 w-20 skel skel-delay-1" />
               </div>
-              <div className="h-20 w-80 bg-[#F7F7F5] animate-pulse mb-6" />
-              <div className="h-3 w-48 bg-[#F7F7F5] animate-pulse" />
+              <div className="h-20 w-80 skel skel-delay-2 mb-6" />
+              <div className="h-3 w-48 skel skel-delay-3" />
             </div>
             <div className="col-span-5 flex justify-end">
-              <div className="w-full max-w-[400px] aspect-square bg-[#F7F7F5] animate-pulse" />
+              <div className="w-full max-w-[400px] aspect-square skel skel-delay-2" />
             </div>
           </div>
           {/* Instrument cards skeleton */}
-          <div className="grid grid-cols-3 gap-4 pt-12">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="border border-[#E8E8E8] p-6 h-32">
-                <div className="h-3 w-16 bg-[#F7F7F5] animate-pulse mb-4" />
-                <div className="h-5 w-28 bg-[#F7F7F5] animate-pulse mb-3" />
-                <div className="h-3 w-full bg-[#F7F7F5] animate-pulse" />
+          <div className="grid grid-cols-3 gap-4 pt-12 stagger-enter">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-[#F7F7F5] p-7 h-[220px]">
+                <div className="h-3 w-16 skel mb-5" />
+                <div className="h-6 w-28 skel skel-delay-1 mb-3" />
+                <div className="h-3 w-full skel skel-delay-2" />
               </div>
             ))}
           </div>
@@ -262,7 +262,7 @@ export default function ProjectPage() {
     ];
 
     return (
-      <div className="animate-fade-in h-full flex flex-col">
+      <div className="content-reveal h-full flex flex-col">
         <ProjectNav
           projectId={id}
           artistName={artistName}
@@ -554,12 +554,12 @@ export default function ProjectPage() {
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mt-10 mb-4">
                 Your Instruments
               </p>
-              <div className="grid grid-cols-3 gap-5">
+              <div className="grid grid-cols-3 gap-5 stagger-enter">
                 {instruments.map((inst) => (
                   <a
                     key={inst.number}
                     href={inst.href}
-                    className="group bg-[#F7F7F5] p-7 pb-6 hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col justify-between min-h-[220px]"
+                    className="group bg-[#F7F7F5] p-7 pb-6 card-hover hover:bg-[#F0F0ED] transition-all duration-200 flex flex-col justify-between min-h-[220px]"
                   >
                     <div>
                       {/* Number + status row */}
@@ -872,7 +872,7 @@ function SmartProgress({
       {/* Progress bar */}
       <div className="h-1 bg-[#F7F7F5] rounded-full overflow-hidden mb-4">
         <div
-          className="h-full bg-black rounded-full transition-all duration-500 ease-out"
+          className="h-full bg-black rounded-full progress-spring"
           style={{ width: `${percent}%` }}
         />
       </div>

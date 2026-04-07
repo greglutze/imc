@@ -72,7 +72,7 @@ function ProgressBar({ value }: { value: number }) {
   return (
     <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-[#E8E8E8]">
       <div
-        className="h-full bg-[#1A1A1A] transition-all duration-700 ease-in-out"
+        className="h-full bg-[#1A1A1A] progress-spring"
         style={{ width: `${value}%` }}
       />
     </div>

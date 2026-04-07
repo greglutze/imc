@@ -119,10 +119,10 @@ export default function LyricAdvisorPage() {
   if (authLoading || pageLoading) {
     return (
       <div className="animate-fade-in px-10 py-16 max-w-2xl">
-        <p className="text-[13px] font-medium text-[#C4C4C4] mb-3">05</p>
-        <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] mt-4 tracking-tight">
-          Loading...
-        </p>
+        <div className="h-3 w-12 skel mb-4" />
+        <div className="h-10 w-48 skel skel-delay-1 mb-6" />
+        <div className="h-4 w-80 skel skel-delay-2 mb-3" />
+        <div className="h-4 w-60 skel skel-delay-3" />
       </div>
     );
   }
@@ -130,7 +130,7 @@ export default function LyricAdvisorPage() {
   const hasConcept = !!project?.concept;
 
   return (
-    <div className="animate-fade-in h-full flex flex-col">
+    <div className="content-reveal h-full flex flex-col">
       <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="lyrics" />
 
       <div className="flex-1 overflow-y-auto">
@@ -255,12 +255,12 @@ export default function LyricAdvisorPage() {
               <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4] mb-4">
                 Sessions
               </p>
-              <div className="space-y-3">
+              <div className="space-y-3 stagger-enter">
                 {sessions.map((session) => (
                   <a
                     key={session.id}
                     href={`/projects/${id}/lyrics/${session.id}`}
-                    className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-5 block"
+                    className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5 block"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-[16px] font-medium text-[#1A1A1A]">

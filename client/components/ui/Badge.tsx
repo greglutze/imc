@@ -21,7 +21,7 @@ const variantStyles: Record<BadgeVariant, string> = {
   orange: 'bg-signal-orange/10 text-signal-orange',
   blue: 'bg-signal-blue/10 text-signal-blue',
   violet: 'bg-signal-violet/10 text-signal-violet',
-  action: 'bg-transparent text-[#C4C4C4] border border-[#E8E8E8] hover:text-[#1A1A1A] hover:border-[#1A1A1A] transition-colors duration-150 cursor-pointer',
+  action: 'bg-transparent text-[#C4C4C4] border border-[#E8E8E8] hover:text-[#1A1A1A] hover:border-[#1A1A1A] active:scale-95 transition-all duration-150 cursor-pointer',
 };
 
 export default function Badge({ children, variant = 'default', className = '', onClick, copyText }: BadgeProps) {

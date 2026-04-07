@@ -32,8 +32,12 @@ export default function Home() {
     return (
       <div className="animate-fade-in flex items-center justify-center h-full">
         <div className="text-center">
-          <p className="text-[120px] leading-[0.85] font-medium text-[#E8E8E8]">IMC</p>
-          <p className="text-[14px] text-[#8A8A8A] mt-4">Loading...</p>
+          <p className="text-[120px] leading-[0.85] font-medium text-[#E8E8E8] animate-pulse-subtle">IMC</p>
+          <div className="flex items-center justify-center gap-1.5 mt-6">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#C4C4C4] animate-pulse-subtle" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#C4C4C4] animate-pulse-subtle" style={{ animationDelay: '0.3s' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#C4C4C4] animate-pulse-subtle" style={{ animationDelay: '0.6s' }} />
+          </div>
         </div>
       </div>
     );
@@ -149,7 +153,7 @@ export default function Home() {
               </div>
 
               {/* Project cards — stacked full-width */}
-              <div className="space-y-3">
+              <div className="space-y-3 stagger-enter">
                 {projects.map((project, index) => {
                   const statusLabel = project.status === 'draft' ? 'Draft' : project.status === 'complete' ? 'Complete' : 'In Progress';
                   const statusColor = project.status === 'complete' ? 'green' : project.status === 'draft' ? 'neutral' : 'yellow';
@@ -244,7 +248,7 @@ function ProjectCard({ project, projectCode, statusLabel, statusColor, projects,
   };
 
   return (
-    <div className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6">
+    <div className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-6">
       {/* Artwork thumbnail */}
       <a href={`/projects/${project.id}`} className="w-16 h-16 overflow-hidden bg-[#EEEDEB] shrink-0 block">
         {project.image_url ? (

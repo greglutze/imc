@@ -66,16 +66,16 @@ export default function SharePage() {
           activePage="share"
         />
         <div className="max-w-[1400px] mx-auto px-10 pt-10 w-full">
-          <div className="h-3 w-32 bg-[#F7F7F5] animate-pulse mb-4" />
-          <div className="h-10 w-28 bg-[#F7F7F5] animate-pulse mb-4" />
-          <div className="h-4 w-72 bg-[#F7F7F5] animate-pulse mb-10" />
-          <div className="space-y-3">
+          <div className="h-3 w-32 skel mb-4" />
+          <div className="h-10 w-28 skel skel-delay-1 mb-4" />
+          <div className="h-4 w-72 skel skel-delay-2 mb-10" />
+          <div className="space-y-3 stagger-enter">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="bg-[#F7F7F5] p-6 flex items-center gap-5">
-                <div className="w-14 h-14 bg-[#EEEDEB] animate-pulse shrink-0" />
+                <div className="w-14 h-14 skel shrink-0" />
                 <div className="flex-1">
-                  <div className="h-4 w-40 bg-[#EEEDEB] animate-pulse mb-2" />
-                  <div className="h-3 w-28 bg-[#EEEDEB] animate-pulse" />
+                  <div className="h-4 w-40 skel skel-delay-1 mb-2" />
+                  <div className="h-3 w-28 skel skel-delay-2" />
                 </div>
               </div>
             ))}
@@ -86,7 +86,7 @@ export default function SharePage() {
   }
 
   return (
-    <div className="animate-fade-in h-full flex flex-col">
+    <div className="content-reveal h-full flex flex-col">
       <ProjectNav
         projectId={id}
         artistName={project?.artist_name || ''}
@@ -132,12 +132,12 @@ export default function SharePage() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 stagger-enter">
                 {shares.map((share) => (
                   <button
                     key={share.id}
                     onClick={() => router.push(`/projects/${id}/share/${share.id}`)}
-                    className="w-full text-left bg-[#F7F7F5] hover:bg-[#F0F0ED] transition-all duration-200 flex items-center gap-6 px-7 py-6 group"
+                    className="w-full text-left bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-6 group"
                   >
                     {/* Artwork thumbnail */}
                     {share.artwork_url ? (
