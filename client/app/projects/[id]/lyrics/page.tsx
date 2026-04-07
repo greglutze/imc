@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
-import { ButtonV2 } from '../../../../components/ui';
+import { Badge, ButtonV2 } from '../../../../components/ui';
 import type {
   LyricSessionListItem,
   LyricTheme,
@@ -170,7 +170,7 @@ export default function LyricAdvisorPage() {
               Lyrics
             </p>
             <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-md leading-relaxed">
-              A creative collaborator that helps you find the right words — without writing them for you.
+              A creative collaborator that helps you find the right words.
             </p>
           </div>
 
@@ -235,7 +235,7 @@ export default function LyricAdvisorPage() {
                 From Sounds
               </p>
               <p className="text-[13px] text-[#8A8A8A] mb-4">
-                Demo lyrics generated with your tracks — click to start refining.
+                Demo lyrics generated with your tracks.
               </p>
               <div className="space-y-3 stagger-enter">
                 {demoTracks.map((track) => (
@@ -276,80 +276,59 @@ export default function LyricAdvisorPage() {
             <div className="mb-12">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4]">
-                  Need Inspiration?
+                  Writing Prompts
                 </p>
                 {themes.length > 0 && !themesLoading && (
-                  <ButtonV2 onClick={() => loadThemes(true)} variant="ghost" size="sm">
+                  <Badge variant="action" onClick={() => loadThemes(true)}>
                     Regenerate
-                  </ButtonV2>
+                  </Badge>
                 )}
               </div>
 
               {themesLoading ? (
-                <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-3">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="bg-[#F7F7F5] p-7 min-h-[200px] skel" />
+                    <div key={i} className="bg-[#F7F7F5] h-20 skel" />
                   ))}
                 </div>
               ) : themes.length > 0 ? (
-                <div className="grid grid-cols-3 gap-3">
-                  {themes.map((theme, index) => {
-                    const imageUrl = getImageForTheme(index);
-                    return (
-                      <button
-                        key={theme.id}
-                        onClick={() => handleThemeSelect(theme)}
-                        disabled={creating !== null}
-                        className="text-left bg-[#F7F7F5] overflow-hidden hover:bg-[#F0F0ED] card-hover flex flex-col group relative"
-                      >
-                        {/* Image strip */}
-                        {imageUrl && (
-                          <div className="aspect-[3/1] w-full overflow-hidden bg-[#EEEDEB]">
-                            <img
-                              src={imageUrl}
-                              alt=""
-                              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                            />
-                          </div>
-                        )}
-
-                        {/* Content */}
-                        <div className="p-6 pb-5 flex flex-col flex-1 justify-between">
-                          <div>
-                            <div className="flex items-center justify-between mb-3">
-                              <span className="text-[11px] font-medium text-[#C4C4C4]">
-                                {String(index + 1).padStart(2, '0')}
-                              </span>
-                              {theme.mood && (
-                                <span className="text-[11px] font-medium text-[#8A8A8A]">
-                                  {theme.mood}
-                                </span>
-                              )}
-                            </div>
-                            <h3 className="text-[18px] leading-tight font-medium text-[#1A1A1A]">
-                              {theme.title}
-                            </h3>
-                            <p className="text-[13px] text-[#8A8A8A] mt-2 leading-relaxed">
-                              {theme.subtitle}
-                            </p>
-                          </div>
-
-                          <div className="mt-5">
-                            <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
-                              Start Writing <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                <div className="space-y-3 stagger-enter">
+                  {themes.map((theme, index) => (
+                    <button
+                      key={theme.id}
+                      onClick={() => handleThemeSelect(theme)}
+                      disabled={creating !== null}
+                      className="group w-full text-left bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5 relative"
+                    >
+                      <span className="text-[11px] font-mono text-[#C4C4C4] shrink-0">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="text-[16px] font-medium text-[#1A1A1A]">
+                            {theme.title}
+                          </h3>
+                          {theme.mood && (
+                            <span className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
+                              {theme.mood.toLowerCase()}
                             </span>
-                          </div>
+                          )}
                         </div>
-
-                        {/* Loading state */}
-                        {creating === theme.id && (
-                          <div className="absolute inset-0 bg-[#F7F7F5]/80 flex items-center justify-center">
-                            <div className="w-5 h-5 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin" />
-                          </div>
+                        <p className="text-[13px] text-[#8A8A8A] truncate max-w-lg">
+                          {theme.subtitle}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0">
+                        {creating === theme.id ? (
+                          <div className="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
+                            Start Writing <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                          </span>
                         )}
-                      </button>
-                    );
-                  })}
+                      </div>
+                    </button>
+                  ))}
                 </div>
               ) : null}
             </div>
@@ -364,9 +343,6 @@ export default function LyricAdvisorPage() {
             </div>
           )}
 
-          <p className="text-[11px] text-[#C4C4C4] mt-10 italic">
-            Everything you write is yours.
-          </p>
         </div>
       </div>
     </div>
