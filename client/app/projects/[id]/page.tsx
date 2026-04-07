@@ -289,7 +289,7 @@ export default function ProjectPage() {
                 {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-8 max-w-[85%]">
                     {concept.mood_keywords.map((keyword) => (
-                      <Badge key={keyword}>{keyword}</Badge>
+                      <Badge key={keyword} variant="violet">{keyword}</Badge>
                     ))}
                   </div>
                 )}
