@@ -70,32 +70,51 @@ export default function VisualEnginePage() {
 
   const artistName = project?.artist_name || 'Untitled';
 
+  /** Concept has real data (not just the DB default empty object) */
+  const conceptReady = !!(concept && concept.genre_primary);
+
   // ── Build visual prompts from concept data ──
   const buildCoverPrompt = () => {
-    if (!concept) return '';
-    const moods = concept.mood_keywords?.slice(0, 4).join(', ') || '';
-    const genre = concept.genre_primary || '';
-    const artists = concept.reference_artists?.slice(0, 2).join(' and ') || '';
-    return `Album cover art for a ${genre} artist. Mood: ${moods}. Influenced by ${artists}. ${concept.creative_direction || ''}. Cinematic, editorial quality, no text. --ar 1:1 --v 6.1 --style raw`;
+    if (!conceptReady) return '';
+    const parts: string[] = [];
+    const genre = concept!.genre_primary;
+    parts.push(`Album cover art for a ${genre} artist.`);
+    if (concept!.mood_keywords?.length) parts.push(`Mood: ${concept!.mood_keywords.slice(0, 4).join(', ')}.`);
+    if (concept!.reference_artists?.length) parts.push(`Influenced by ${concept!.reference_artists.slice(0, 2).join(' and ')}.`);
+    if (concept!.creative_direction) parts.push(concept!.creative_direction + '.');
+    parts.push('Cinematic, editorial quality, no text. --ar 1:1 --v 6.1 --style raw');
+    return parts.join(' ');
   };
 
   const buildPromoPrompt = () => {
-    if (!concept) return '';
-    const moods = concept.mood_keywords?.slice(0, 3).join(', ') || '';
-    const genre = concept.genre_primary || '';
-    return `Promotional photography for a ${genre} artist. ${moods} atmosphere. Fashion editorial style, dramatic lighting, strong composition. Environment matches the sonic world. --ar 4:5 --v 6.1 --style raw`;
+    if (!conceptReady) return '';
+    const parts: string[] = [];
+    const genre = concept!.genre_primary;
+    parts.push(`Promotional photography for a ${genre} artist.`);
+    if (concept!.mood_keywords?.length) parts.push(`${concept!.mood_keywords.slice(0, 3).join(', ')} atmosphere.`);
+    parts.push('Fashion editorial style, dramatic lighting, strong composition. Environment matches the sonic world. --ar 4:5 --v 6.1 --style raw');
+    return parts.join(' ');
   };
 
   const buildTypePrompt = () => {
-    if (!concept) return '';
-    const genre = concept.genre_primary || '';
-    const moods = concept.mood_keywords?.slice(0, 3).join(', ') || '';
-    return `Typography design for a ${genre} artist logo. ${moods} feeling. Custom lettering, ${genre === 'hip-hop' || genre === 'rap' ? 'bold geometric' : genre === 'electronic' ? 'futuristic minimal' : 'elegant serif'} style. Black on white, high contrast. --ar 3:1 --v 6.1 --style raw`;
+    if (!conceptReady) return '';
+    const genre = concept!.genre_primary;
+    const genreLower = genre.toLowerCase();
+    const letterStyle = genreLower.includes('hip-hop') || genreLower.includes('rap')
+      ? 'bold geometric'
+      : genreLower.includes('electronic')
+        ? 'futuristic minimal'
+        : 'elegant serif';
+    const parts: string[] = [];
+    parts.push(`Typography design for a ${genre} artist logo.`);
+    if (concept!.mood_keywords?.length) parts.push(`${concept!.mood_keywords.slice(0, 3).join(', ')} feeling.`);
+    parts.push(`Custom lettering, ${letterStyle} style. Black on white, high contrast. --ar 3:1 --v 6.1 --style raw`);
+    return parts.join(' ');
   };
 
   const buildBTSPrompt = () => {
-    if (!concept) return '';
-    return `Behind-the-scenes studio photography. Artist in creative flow. Warm tones, natural light, shallow depth of field. Candid, not posed. Film grain texture. --ar 16:9 --v 6.1 --style raw`;
+    if (!conceptReady) return '';
+    return 'Behind-the-scenes studio photography. Artist in creative flow. Warm tones, natural light, shallow depth of field. Candid, not posed. Film grain texture. --ar 16:9 --v 6.1 --style raw';
   };
 
   // ── Typography recommendations ──
@@ -164,7 +183,7 @@ export default function VisualEnginePage() {
     );
   }
 
-  if (!concept) {
+  if (!conceptReady) {
     return (
       <div className="content-reveal h-full flex flex-col">
         <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="visuals" />
