@@ -299,7 +299,7 @@ export default function PromptsPage() {
                     {styleProfile.sonic_signatures.map((sig, i) => (
                       <span
                         key={i}
-                        className="text-[13px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-4 py-2 rounded-full"
+                        className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full"
                       >
                         {sig.split(' — ')[0].split(': ').pop()?.trim() || sig}
                       </span>
@@ -354,7 +354,7 @@ export default function PromptsPage() {
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {styleProfile.key_preferences.map((k, i) => (
-                        <span key={i} className="text-[13px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-4 py-2 rounded-full">
+                        <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
                           {k.split(' — ')[0].split(': ').pop()?.trim() || k}
                         </span>
                       ))}
