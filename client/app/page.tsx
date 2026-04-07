@@ -275,7 +275,7 @@ function ProjectCard({ project, projectCode, statusLabel, statusColor, projects,
           <div className="flex items-center gap-1.5">
             <div className={`w-1.5 h-1.5 rounded-full ${
               statusColor === 'green' ? 'bg-green-500' :
-              statusColor === 'yellow' ? 'bg-yellow-500' :
+              statusColor === 'yellow' ? 'bg-signal-yellow' :
               'bg-[#C4C4C4]'
             }`} />
             <span className="text-[11px] font-medium text-[#8A8A8A]">

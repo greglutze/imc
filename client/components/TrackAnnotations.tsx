@@ -118,7 +118,7 @@ export default function TrackAnnotations({
           </span>
         </div>
         {unresolvedCount > 0 && (
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-yellow-600">
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-signal-yellow">
             {unresolvedCount} open
           </span>
         )}

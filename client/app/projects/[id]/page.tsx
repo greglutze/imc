@@ -275,7 +275,7 @@ export default function ProjectPage() {
               {/* Left: Artist info */}
               <div className="col-span-7">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className={`w-2 h-2 rounded-full ${project?.status === 'complete' ? 'bg-green-500' : 'bg-yellow-500'}`} />
+                  <div className={`w-2 h-2 rounded-full ${project?.status === 'complete' ? 'bg-green-500' : 'bg-signal-yellow'}`} />
                   <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                     {statusLabel}
                   </span>
@@ -375,7 +375,7 @@ export default function ProjectPage() {
             {!conceptReady && project?.status === 'draft' && !pageLoading && (
               <div className="border-b border-[#E8E8E8] py-10">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                  <div className="w-2 h-2 rounded-full bg-signal-yellow" />
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                     Setup Incomplete
                   </p>
@@ -581,7 +581,7 @@ export default function ProjectPage() {
                         <div className="flex items-center gap-1.5">
                           <div className={`w-1.5 h-1.5 rounded-full ${
                             inst.color === 'green' ? 'bg-green-500' :
-                            inst.color === 'yellow' ? 'bg-yellow-500' :
+                            inst.color === 'yellow' ? 'bg-signal-yellow' :
                             'bg-[#C4C4C4]'
                           }`} />
                           <span className="text-[11px] font-medium text-[#8A8A8A]">

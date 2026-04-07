@@ -423,7 +423,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                     {brief.confidence && (
                       <span className={`text-[11px] font-medium uppercase tracking-wide ${
                         brief.confidence === 'high' ? 'text-green-600' :
-                        brief.confidence === 'medium' ? 'text-yellow-600' : 'text-red-500'
+                        brief.confidence === 'medium' ? 'text-signal-yellow' : 'text-red-500'
                       }`}>
                         {brief.confidence} confidence
                       </span>

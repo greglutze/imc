@@ -30,7 +30,7 @@ const config: Config = {
         // Signal colors — Dieter Rams functional color
         // Each color exists to convey meaning, not decoration
         signal: {
-          yellow: '#FFD700',   // Brand accent, primary action
+          yellow: '#0044FF',   // In-progress, active state — neon royal blue
           orange: '#FF6B00',   // Warning, attention
           red: '#E53535',      // Error, destructive
           green: '#00FF00',    // Success, active, confidence — neon
