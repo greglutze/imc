@@ -279,11 +279,6 @@ export default function ProjectPage() {
                   <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                     {statusLabel}
                   </span>
-                  {conceptReady && (
-                    <ButtonV2 onClick={handleExportBrief} loading={exportingBrief} variant="secondary" size="sm" className="ml-auto">
-                      Export Brief
-                    </ButtonV2>
-                  )}
                 </div>
 
                 <h1 className="text-[96px] leading-[0.88] font-bold tracking-tight text-black">
