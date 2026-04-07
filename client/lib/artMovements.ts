@@ -18,16 +18,18 @@ export interface ArtMovement {
     display: string;
     body: string;
     direction: string;
-    /** Google Font family name for display preview (null = use system font) */
     displayGoogleFont: string | null;
-    /** Google Font family name for body preview (null = use system font) */
     bodyGoogleFont: string | null;
   };
   colorDirection: string;
+  /** Hex palette — 5-6 representative colors for moodboard swatches */
+  palette: string[];
   /** Injected into image prompts — MUST NOT contain artist/band names */
   promptFragment: string;
   genreAffinities: string[];
   moodAffinities: string[];
+  /** Movement IDs that aesthetically contrast with this one */
+  contrastIds: string[];
 }
 
 // ────────────────────────────────────────────
@@ -50,9 +52,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Inter',
     },
     colorDirection: 'Limited, purposeful palette. Often black + one accent color. Clean and functional.',
+    palette: ['#FFFFFF', '#1A1A1A', '#E63946', '#F1F1F1', '#A8A8A8'],
     promptFragment: 'Swiss international style, grid-based composition, objective photography, clean modernist layout, Helvetica-era precision',
     genreAffinities: ['electronic', 'techno', 'minimal', 'ambient', 'house'],
     moodAffinities: ['clean', 'precise', 'minimal', 'structured', 'refined', 'modern'],
+    contrastIds: ['psychedelic', 'memphis', 'expressionism'],
   },
   {
     id: 'bauhaus',
@@ -69,9 +73,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'DM Sans',
     },
     colorDirection: 'Primary colors (red, yellow, blue) on white/black. Bold, unambiguous.',
+    palette: ['#E63946', '#F4D03F', '#2E86AB', '#1A1A1A', '#FFFFFF'],
     promptFragment: 'Bauhaus design, geometric shapes, primary colors, functional composition, universal typography as visual element',
     genreAffinities: ['electronic', 'synth-pop', 'industrial', 'techno'],
     moodAffinities: ['geometric', 'bold', 'structured', 'functional', 'primary', 'clean'],
+    contrastIds: ['art-nouveau', 'wabi-sabi', 'dark-academia'],
   },
   {
     id: 'art-nouveau',
@@ -88,9 +94,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Cormorant',
     },
     colorDirection: 'Muted golds, sage greens, dusty roses. Natural tones with metallic accents.',
+    palette: ['#C5A572', '#7A8B6F', '#D4A0A0', '#E8DCC8', '#5C4A3A'],
     promptFragment: 'Art Nouveau style, flowing organic lines, floral ornament, decorative borders, whiplash curves, natural forms',
     genreAffinities: ['folk', 'indie-folk', 'dream-pop', 'chamber-pop', 'classical'],
     moodAffinities: ['organic', 'flowing', 'lush', 'ornate', 'romantic', 'dreamy', 'elegant'],
+    contrastIds: ['brutalism-graphic', 'constructivism', 'flat-design'],
   },
   {
     id: 'art-deco',
@@ -107,9 +115,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Bodoni Moda',
     },
     colorDirection: 'Gold, black, deep emerald, midnight blue. Opulent metallics.',
+    palette: ['#D4AF37', '#1A1A1A', '#0D5C4D', '#1B2A4A', '#F5F0E1'],
     promptFragment: 'Art Deco style, geometric symmetry, gold and black palette, streamlined luxury, chevron patterns, sunburst motifs',
     genreAffinities: ['jazz', 'soul', 'r&b', 'neo-soul', 'lounge'],
     moodAffinities: ['luxurious', 'glamorous', 'sophisticated', 'opulent', 'elegant', 'bold', 'classic'],
+    contrastIds: ['lo-fi-zine', 'brutalism-graphic', 'risograph'],
   },
   {
     id: 'constructivism',
@@ -126,9 +136,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'PT Sans',
     },
     colorDirection: 'Red, black, white. High contrast, politically charged palette.',
+    palette: ['#CC0000', '#1A1A1A', '#FFFFFF', '#C4C4C4', '#8B0000'],
     promptFragment: 'Constructivist style, dynamic diagonal composition, red and black palette, photomontage, bold propaganda typography',
     genreAffinities: ['hip-hop', 'punk', 'industrial', 'post-punk', 'rap'],
     moodAffinities: ['aggressive', 'bold', 'political', 'raw', 'powerful', 'intense', 'revolutionary'],
+    contrastIds: ['kawaii', 'art-nouveau', 'wabi-sabi'],
   },
   {
     id: 'de-stijl',
@@ -145,9 +157,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Nunito Sans',
     },
     colorDirection: 'Primary red, blue, yellow with black lines and white ground. Pure abstraction.',
+    palette: ['#E63946', '#2E86AB', '#F4D03F', '#1A1A1A', '#FFFFFF'],
     promptFragment: 'De Stijl style, grid of primary colors, geometric abstraction, horizontal and vertical lines only, neoplasticism',
     genreAffinities: ['electronic', 'minimal', 'ambient', 'experimental'],
     moodAffinities: ['minimal', 'abstract', 'geometric', 'pure', 'structured', 'balanced'],
+    contrastIds: ['surrealism', 'psychedelic', 'expressionism'],
   },
   {
     id: 'psychedelic',
@@ -164,9 +178,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Fraunces',
     },
     colorDirection: 'Saturated complementary pairs: magenta + lime, orange + purple. Vibrating color interactions.',
+    palette: ['#FF00FF', '#39FF14', '#FF6600', '#8B00FF', '#FFFF00'],
     promptFragment: 'Psychedelic poster art, melting distorted typography, saturated complementary colors, op-art patterns, 1960s counterculture',
     genreAffinities: ['psychedelic-rock', 'indie', 'neo-psychedelia', 'shoegaze', 'jam-band'],
     moodAffinities: ['trippy', 'surreal', 'colorful', 'spiritual', 'experimental', 'vibrant', 'cosmic'],
+    contrastIds: ['swiss', 'minimalism', 'modernist'],
   },
   {
     id: 'pop-art',
@@ -183,9 +199,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Source Sans 3',
     },
     colorDirection: 'Flat, saturated primaries + secondaries. CMYK printing palette. Bold, unapologetic.',
+    palette: ['#FF3333', '#FFD700', '#0066FF', '#FF69B4', '#1A1A1A'],
     promptFragment: 'Pop Art style, bold outlines, Ben-Day dots, flat saturated color, screen print aesthetic, comic-book inspired',
     genreAffinities: ['pop', 'synth-pop', 'new-wave', 'dance-pop', 'k-pop'],
     moodAffinities: ['fun', 'bold', 'ironic', 'playful', 'colorful', 'commercial', 'bright'],
+    contrastIds: ['wabi-sabi', 'minimalism', 'dark-academia'],
   },
   {
     id: 'modernist',
@@ -202,9 +220,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'EB Garamond',
     },
     colorDirection: 'Restrained: black, white, one or two brand colors. Purposeful, no excess.',
+    palette: ['#1A1A1A', '#FFFFFF', '#4A90D9', '#E8E8E8', '#2C3E50'],
     promptFragment: 'Modernist graphic design, clean grid layout, restrained color, corporate identity, rational composition',
     genreAffinities: ['jazz', 'classical', 'adult-contemporary', 'soft-rock'],
     moodAffinities: ['clean', 'refined', 'professional', 'restrained', 'sophisticated', 'classic', 'timeless'],
+    contrastIds: ['memphis', 'psychedelic', 'deconstructivism'],
   },
   {
     id: 'postmodernism',
@@ -221,9 +241,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Libre Baskerville',
     },
     colorDirection: 'Clashing, unexpected combinations. Historical palettes remixed. Nothing matches on purpose.',
+    palette: ['#E87D7D', '#5BCEFA', '#FFDA6B', '#9B59B6', '#2ECC71'],
     promptFragment: 'Postmodern graphic design, layered typography, historical pastiche, clashing fonts, ironic composition',
     genreAffinities: ['art-rock', 'post-punk', 'experimental', 'art-pop', 'new-wave'],
     moodAffinities: ['ironic', 'eclectic', 'layered', 'experimental', 'chaotic', 'playful', 'subversive'],
+    contrastIds: ['swiss', 'minimalism', 'suprematism'],
   },
   {
     id: 'deconstructivism',
@@ -240,9 +262,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Space Mono',
     },
     colorDirection: 'Murky, desaturated with sudden high-contrast spikes. Photocopied feel.',
+    palette: ['#3D3D3D', '#8B8B8B', '#D4D4D4', '#FF4500', '#1A1A1A'],
     promptFragment: 'Deconstructivist design, fragmented layout, grunge typography, anti-grid composition, collaged visual chaos',
     genreAffinities: ['grunge', 'noise-rock', 'post-hardcore', 'experimental', 'shoegaze'],
     moodAffinities: ['chaotic', 'fragmented', 'raw', 'angry', 'deconstructed', 'rebellious', 'intense'],
+    contrastIds: ['bauhaus', 'flat-design', 'mid-century-modern'],
   },
   {
     id: 'memphis',
@@ -259,9 +283,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Nunito',
     },
     colorDirection: 'Pastel pink, mint, lavender + neon accents. Terrazzo patterns. Deliberately clashing.',
+    palette: ['#FFB5C2', '#B5EAD7', '#C7CEEA', '#FF6B6B', '#FFEAA7'],
     promptFragment: 'Memphis design style, pastel and neon palette, squiggles and terrazzo patterns, geometric kitsch, bold playful forms',
     genreAffinities: ['hyper-pop', 'bubblegum-pop', 'j-pop', 'disco', 'funk'],
     moodAffinities: ['playful', 'fun', 'colorful', 'quirky', 'bold', 'campy', 'retro', 'energetic'],
+    contrastIds: ['swiss', 'minimalism', 'brutalism-arch'],
   },
   {
     id: 'brutalism-graphic',
@@ -278,9 +304,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: null,
     },
     colorDirection: 'Black and white, with occasional single harsh accent. Raw, unpolished.',
+    palette: ['#1A1A1A', '#FFFFFF', '#FF0000', '#C4C4C4', '#000000'],
     promptFragment: 'Graphic brutalism, raw exposed structure, harsh borders, system font aesthetic, anti-design, high contrast flat color',
     genreAffinities: ['punk', 'noise', 'industrial', 'hardcore', 'post-punk', 'experimental'],
     moodAffinities: ['raw', 'harsh', 'minimal', 'anti-pretty', 'confrontational', 'honest', 'stark'],
+    contrastIds: ['art-nouveau', 'kawaii', 'art-deco'],
   },
   {
     id: 'vaporwave',
@@ -297,9 +325,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Share Tech Mono',
     },
     colorDirection: 'Pastel purple, pink, cyan. Sunset gradients. Digital decay colors.',
+    palette: ['#A855F7', '#FF69B4', '#00D4FF', '#FFB347', '#E0BBE4'],
     promptFragment: 'Vaporwave aesthetic, pastel purple and pink, sunset gradients, Roman bust sculptures, retro tech, VHS glitch, 80s nostalgia',
     genreAffinities: ['vaporwave', 'lo-fi', 'synthwave', 'chillwave', 'future-funk'],
     moodAffinities: ['nostalgic', 'dreamy', 'melancholic', 'retro', 'hazy', 'lo-fi', 'ethereal'],
+    contrastIds: ['constructivism', 'brutalism-arch', 'letterpress'],
   },
   {
     id: 'brutalism-arch',
@@ -316,9 +346,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'DM Sans',
     },
     colorDirection: 'Concrete gray, charcoal, slate. Occasional warm ochre. Monochromatic and heavy.',
+    palette: ['#808080', '#5C5C5C', '#B8A88A', '#3D3D3D', '#A0A0A0'],
     promptFragment: 'Brutalist architecture aesthetic, raw concrete texture, monolithic forms, anti-ornament, heavy geometric mass',
     genreAffinities: ['industrial', 'post-punk', 'dark-wave', 'trip-hop', 'drone'],
     moodAffinities: ['heavy', 'dark', 'monolithic', 'raw', 'industrial', 'cold', 'imposing'],
+    contrastIds: ['memphis', 'kawaii', 'vaporwave'],
   },
   {
     id: 'surrealism',
@@ -335,9 +367,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'EB Garamond',
     },
     colorDirection: 'Hyper-real, uncanny. Desert earth tones, impossibly blue skies, flesh tones. Photographic realism.',
+    palette: ['#C19A6B', '#87CEEB', '#E8C5A0', '#4A6741', '#D4A76A'],
     promptFragment: 'Surrealist art, dreamscape, unexpected juxtapositions, hyper-realistic impossible scenes, melting forms, uncanny imagery',
     genreAffinities: ['art-rock', 'progressive', 'experimental', 'dream-pop', 'psychedelic'],
     moodAffinities: ['surreal', 'dreamlike', 'strange', 'mysterious', 'subconscious', 'fantastical', 'otherworldly'],
+    contrastIds: ['flat-design', 'swiss', 'bauhaus'],
   },
   {
     id: 'expressionism',
@@ -354,9 +388,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Libre Baskerville',
     },
     colorDirection: 'Raw, violent color. Heavy blacks, blood reds, cadmium yellow. Unblended, emotional.',
+    palette: ['#1A1A1A', '#CC0000', '#FFD700', '#FF4500', '#2D1B00'],
     promptFragment: 'Expressionist art, raw emotional brushwork, distorted figures, visceral mark-making, violent color, crown motifs',
     genreAffinities: ['hip-hop', 'punk', 'post-punk', 'noise-rock', 'rap', 'trap'],
     moodAffinities: ['raw', 'emotional', 'visceral', 'angry', 'passionate', 'intense', 'violent', 'expressive'],
+    contrastIds: ['minimalism', 'swiss', 'flat-design'],
   },
   {
     id: 'minimalism',
@@ -373,9 +409,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'JetBrains Mono',
     },
     colorDirection: 'Monochrome: black, white, one gray. Or single-color studies. Maximum restraint.',
+    palette: ['#1A1A1A', '#FFFFFF', '#E0E0E0', '#F5F5F5', '#808080'],
     promptFragment: 'Minimalist art, monochrome, geometric form, negative space, reduction to essentials, pure visual silence',
     genreAffinities: ['ambient', 'minimal', 'classical', 'electronic', 'post-rock'],
     moodAffinities: ['minimal', 'quiet', 'still', 'contemplative', 'sparse', 'serene', 'meditative', 'calm'],
+    contrastIds: ['memphis', 'psychedelic', 'expressionism'],
   },
   {
     id: 'risograph',
@@ -392,9 +430,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Work Sans',
     },
     colorDirection: 'Two or three spot colors that overlap: coral + blue → purple. Grain texture. Paper-white ground.',
+    palette: ['#FF6B6B', '#4ECDC4', '#7B68EE', '#FFE66D', '#F7F7F5'],
     promptFragment: 'Risograph print aesthetic, limited color offset printing, misregistration, grain texture, flat color overlaps, analog warmth',
     genreAffinities: ['indie', 'indie-pop', 'bedroom-pop', 'folk', 'lo-fi'],
     moodAffinities: ['warm', 'analog', 'handmade', 'indie', 'tactile', 'organic', 'lo-fi', 'cozy'],
+    contrastIds: ['cyberpunk', 'art-deco', 'constructivism'],
   },
   {
     id: 'wabi-sabi',
@@ -411,9 +451,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Noto Sans JP',
     },
     colorDirection: 'Earth tones, ink black, paper white. Washed-out, faded. Natural material colors.',
+    palette: ['#8B7355', '#1A1A1A', '#F5F0E8', '#C4B39A', '#6B5B4B'],
     promptFragment: 'Wabi-sabi aesthetic, beauty in imperfection, ink wash painting, asymmetry, natural materials, Japanese minimalism',
     genreAffinities: ['ambient', 'lo-fi', 'jazz', 'classical', 'world'],
     moodAffinities: ['peaceful', 'contemplative', 'imperfect', 'natural', 'quiet', 'empty', 'serene', 'intimate'],
+    contrastIds: ['pop-art', 'memphis', 'cyberpunk'],
   },
   {
     id: 'cyberpunk',
@@ -430,9 +472,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Fira Code',
     },
     colorDirection: 'Neon cyan, magenta, electric blue on black. Chrome highlights. Rain-reflected light.',
+    palette: ['#00FFFF', '#FF00FF', '#0A0A2A', '#39FF14', '#FF1493'],
     promptFragment: 'Cyberpunk aesthetic, neon lights on dark cityscape, rain-slick streets, holographic displays, chrome and decay',
     genreAffinities: ['cyberpunk', 'synthwave', 'industrial', 'drum-and-bass', 'dubstep', 'dark-electronic'],
     moodAffinities: ['dark', 'futuristic', 'dystopian', 'neon', 'gritty', 'urban', 'tech', 'nocturnal'],
+    contrastIds: ['wabi-sabi', 'letterpress', 'mid-century-modern'],
   },
   {
     id: 'flat-design',
@@ -449,9 +493,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Lato',
     },
     colorDirection: 'Solid, saturated blocks. Material design palette. Friendly, approachable colors.',
+    palette: ['#4285F4', '#EA4335', '#FBBC05', '#34A853', '#FFFFFF'],
     promptFragment: 'Flat design style, solid color blocks, clean 2D illustration, no shadows or gradients, material design inspired',
     genreAffinities: ['pop', 'edm', 'dance-pop'],
     moodAffinities: ['clean', 'friendly', 'accessible', 'modern', 'bright', 'simple'],
+    contrastIds: ['surrealism', 'deconstructivism', 'expressionism'],
   },
   {
     id: 'swiss-punk',
@@ -468,9 +514,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Inter',
     },
     colorDirection: 'Black + fluorescent accents. Photocopier artifacts. Punk zine energy with Swiss bones.',
+    palette: ['#1A1A1A', '#FFFFFF', '#FF00FF', '#39FF14', '#808080'],
     promptFragment: 'Swiss Punk typography, grid subverted by photocopy texture, rubber stamps over clean sans-serif, controlled chaos',
     genreAffinities: ['punk', 'post-punk', 'noise-rock', 'hardcore', 'garage-rock'],
     moodAffinities: ['rebellious', 'raw', 'energetic', 'subversive', 'gritty', 'loud'],
+    contrastIds: ['art-deco', 'kawaii', 'mid-century-modern'],
   },
   {
     id: 'mid-century-modern',
@@ -487,9 +535,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Libre Baskerville',
     },
     colorDirection: 'Turquoise, mustard, burnt orange, olive green, cream. Warm, optimistic earth tones.',
+    palette: ['#40B5AD', '#E8963E', '#CC5C3B', '#6B7F3B', '#F5E6C8'],
     promptFragment: 'Mid-century modern design, atomic age motifs, organic shapes, earthy turquoise palette, retro illustration, warm optimism',
     genreAffinities: ['jazz', 'bossa-nova', 'lounge', 'indie-pop', 'soul'],
     moodAffinities: ['warm', 'optimistic', 'retro', 'playful', 'organic', 'cozy', 'charming'],
+    contrastIds: ['cyberpunk', 'brutalism-graphic', 'glitch-art'],
   },
   {
     id: 'dark-academia',
@@ -506,9 +556,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Source Serif 4',
     },
     colorDirection: 'Sepia, forest green, burgundy, aged cream. Candlelight warmth. Old library palette.',
+    palette: ['#8B7355', '#2D4A22', '#6B2D3E', '#F5E6C8', '#4A3728'],
     promptFragment: 'Dark academia aesthetic, sepia tones, classical art, old library, candlelight, literary atmosphere, forest green and burgundy',
     genreAffinities: ['classical', 'chamber-pop', 'folk', 'indie-folk', 'post-rock'],
     moodAffinities: ['melancholic', 'introspective', 'romantic', 'literary', 'moody', 'contemplative', 'dark', 'nostalgic'],
+    contrastIds: ['vaporwave', 'memphis', 'pop-art'],
   },
   {
     id: 'suprematism',
@@ -525,9 +577,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Assistant',
     },
     colorDirection: 'Black, white, occasional red or yellow. Absolute reduction. White void.',
+    palette: ['#1A1A1A', '#FFFFFF', '#CC0000', '#F4D03F', '#E8E8E8'],
     promptFragment: 'Suprematist art, pure geometric abstraction, black square on white, floating forms, reductive composition',
     genreAffinities: ['minimal', 'ambient', 'experimental', 'classical'],
     moodAffinities: ['abstract', 'pure', 'minimal', 'stark', 'geometric', 'spiritual'],
+    contrastIds: ['psychedelic', 'memphis', 'art-nouveau'],
   },
   {
     id: 'letterpress',
@@ -544,9 +598,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Lora',
     },
     colorDirection: 'Ink-dark colors on warm cream/kraft stock. Single-color printing. Aged, warm.',
+    palette: ['#2C1810', '#F5E6C8', '#8B4513', '#A67B5B', '#E8D5B7'],
     promptFragment: 'Letterpress printing aesthetic, deep impression in paper, aged typefaces, ink texture, craft and authenticity, off-white stock',
     genreAffinities: ['folk', 'americana', 'country', 'bluegrass', 'singer-songwriter'],
     moodAffinities: ['authentic', 'warm', 'handmade', 'vintage', 'craft', 'honest', 'earthy', 'rustic'],
+    contrastIds: ['cyberpunk', 'vaporwave', 'glitch-art'],
   },
   {
     id: 'glitch-art',
@@ -563,9 +619,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'IBM Plex Mono',
     },
     colorDirection: 'RGB primary separation: cyan, magenta, green channels. Digital noise. Corrupted gradients.',
+    palette: ['#00FFFF', '#FF00FF', '#00FF00', '#1A1A1A', '#FF3333'],
     promptFragment: 'Glitch art, RGB channel separation, pixelation, databending, scan-line breaks, digital corruption, error aesthetic',
     genreAffinities: ['glitch', 'electronic', 'idm', 'experimental', 'noise', 'hyperpop'],
     moodAffinities: ['glitchy', 'digital', 'chaotic', 'broken', 'experimental', 'tech', 'corrupted'],
+    contrastIds: ['letterpress', 'wabi-sabi', 'mid-century-modern'],
   },
   {
     id: 'kawaii',
@@ -582,9 +640,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Nunito',
     },
     colorDirection: 'Soft pastels: baby pink, lavender, mint, butter yellow. Friendly and approachable.',
+    palette: ['#FFB5C2', '#E0BBE4', '#B5EAD7', '#FFEAA7', '#C7CEEA'],
     promptFragment: 'Kawaii aesthetic, cute Japanese design, pastel palette, round soft forms, simplified faces, playful and friendly',
     genreAffinities: ['j-pop', 'k-pop', 'bubblegum-pop', 'city-pop'],
     moodAffinities: ['cute', 'playful', 'soft', 'friendly', 'sweet', 'innocent', 'light', 'happy'],
+    contrastIds: ['constructivism', 'brutalism-graphic', 'brutalism-arch'],
   },
   {
     id: 'lo-fi-zine',
@@ -601,9 +661,11 @@ export const ART_MOVEMENTS: ArtMovement[] = [
       bodyGoogleFont: 'Courier Prime',
     },
     colorDirection: 'Black and white photocopied. Occasional highlighter accents. Kraft paper, newsprint.',
+    palette: ['#1A1A1A', '#FFFFFF', '#FFFF00', '#F5E6C8', '#808080'],
     promptFragment: 'Lo-fi zine aesthetic, DIY photocopy texture, cut-and-paste collage, typewriter text, punk rawness, imperfect alignment',
     genreAffinities: ['punk', 'indie', 'lo-fi', 'garage-rock', 'emo', 'hardcore'],
     moodAffinities: ['raw', 'DIY', 'authentic', 'underground', 'rebellious', 'intimate', 'honest', 'scrappy'],
+    contrastIds: ['art-deco', 'flat-design', 'bauhaus'],
   },
 ];
 
@@ -692,12 +754,58 @@ export function matchMovements(
     .slice(0, topN);
 }
 
-/** Collect all unique Google Font families needed for a set of matched movements */
-export function collectGoogleFonts(matches: MatchedMovement[]): string[] {
+/**
+ * Given a primary matched movement, find the best contrasting movement.
+ * Uses the explicit contrastIds list, picking the one that has
+ * *some* relevance to the concept so the contrast isn't random,
+ * but prefers the lowest-scoring option for maximum creative tension.
+ */
+export function findContrastMovement(
+  primaryId: string,
+  concept: {
+    genre_primary?: string;
+    genre_secondary?: string[];
+    mood_keywords?: string[];
+    creative_direction?: string;
+  },
+): ArtMovement | null {
+  const primary = ART_MOVEMENTS.find(m => m.id === primaryId);
+  if (!primary || primary.contrastIds.length === 0) return null;
+
+  const contrastCandidates = primary.contrastIds
+    .map(cid => ART_MOVEMENTS.find(m => m.id === cid))
+    .filter(Boolean) as ArtMovement[];
+
+  if (contrastCandidates.length === 0) return null;
+
+  // Score each contrast candidate lightly against the concept
+  const scored = matchMovements(concept, 30);
+  const scoreMap = new Map(scored.map(s => [s.movement.id, s.score]));
+
+  // Pick contrast with some relevance (> 0) but low score = most creative tension
+  const relevant = contrastCandidates
+    .map(c => ({ movement: c, score: scoreMap.get(c.id) || 0 }))
+    .sort((a, b) => {
+      if (a.score > 0 && b.score === 0) return -1;
+      if (a.score === 0 && b.score > 0) return 1;
+      return a.score - b.score;
+    });
+
+  return relevant[0]?.movement ?? contrastCandidates[0];
+}
+
+/** Collect Google Font families for matched movements + optional extra movements */
+export function collectGoogleFonts(matches: MatchedMovement[], extra?: ArtMovement[]): string[] {
   const fonts = new Set<string>();
   for (const { movement } of matches) {
     if (movement.typeFamilies.displayGoogleFont) fonts.add(movement.typeFamilies.displayGoogleFont);
     if (movement.typeFamilies.bodyGoogleFont) fonts.add(movement.typeFamilies.bodyGoogleFont);
+  }
+  if (extra) {
+    for (const mov of extra) {
+      if (mov.typeFamilies.displayGoogleFont) fonts.add(mov.typeFamilies.displayGoogleFont);
+      if (mov.typeFamilies.bodyGoogleFont) fonts.add(mov.typeFamilies.bodyGoogleFont);
+    }
   }
   return [...fonts];
 }
