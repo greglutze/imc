@@ -236,6 +236,7 @@ export default function ProjectPage() {
       {
         number: '03',
         name: 'Share',
+        subtitle: 'Private Listening',
         description: shareCount > 0
           ? `${shareCount} share link${shareCount !== 1 ? 's' : ''} — private listening, on your terms.`
           : 'Share your music with collaborators, labels, or press before release.',
@@ -244,8 +245,9 @@ export default function ProjectPage() {
         color: shareCount > 0 ? 'green' as const : 'neutral' as const,
       },
       {
-        number: '05',
+        number: '04',
         name: 'Research',
+        subtitle: 'Market Intelligence',
         description: report
           ? 'Market intelligence, audience profile, and sonic positioning — ready to review.'
           : conceptReady
@@ -495,7 +497,7 @@ export default function ProjectPage() {
               <MarketSnapshot report={report} projectId={id} />
             )}
 
-            {/* Visual World — compact strip */}
+            {/* Visual World — thumbnail strip */}
             {moodboardImages.length > 0 && (
               <div className="py-10 border-b border-[#E8E8E8]">
                 <div className="flex items-center justify-between mb-5">
@@ -511,44 +513,18 @@ export default function ProjectPage() {
                   </a>
                 </div>
 
-                {/* Thumbnail row */}
-                <div className="flex gap-2 overflow-hidden h-20 mb-4">
-                  {moodboardImages.slice(0, 8).map((img) => (
-                    <div key={img.id} className="h-20 shrink-0 overflow-hidden">
+                {/* Full-width thumbnail row */}
+                <div className="flex gap-1 overflow-hidden">
+                  {moodboardImages.map((img) => (
+                    <div key={img.id} className="flex-1 min-w-0 overflow-hidden h-24">
                       <img
                         src={img.image_data}
                         alt=""
-                        className="h-full w-auto object-cover"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   ))}
-                  {moodboardImages.length > 8 && (
-                    <a
-                      href={`/projects/${id}/visuals`}
-                      className="h-20 w-20 shrink-0 bg-[#F7F7F5] flex items-center justify-center hover:bg-[#EEEDEB] transition-colors duration-150"
-                    >
-                      <span className="text-[11px] font-semibold text-[#8A8A8A]">+{moodboardImages.length - 8}</span>
-                    </a>
-                  )}
                 </div>
-
-                {/* Extracted palette */}
-                {dashboardPalette.length > 0 && (
-                  <div className="flex gap-0 overflow-hidden h-8 rounded-sm">
-                    {dashboardPalette.map((color) => (
-                      <div
-                        key={color.hex}
-                        className="h-full"
-                        style={{
-                          backgroundColor: color.hex,
-                          flex: color.percentage / 10,
-                          minWidth: '2rem',
-                        }}
-                        title={color.hex}
-                      />
-                    ))}
-                  </div>
-                )}
               </div>
             )}
 
@@ -788,8 +764,8 @@ function SmartProgress({
   };
 
   return (
-    <div className="mb-2">
-      <div className="flex items-center justify-between mb-3">
+    <div>
+      <div className="flex items-center justify-between mb-6">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
           Progress
         </p>
@@ -798,39 +774,68 @@ function SmartProgress({
         </p>
       </div>
 
-      {/* Progress bar */}
-      <div className="h-1 bg-[#F7F7F5] rounded-full overflow-hidden mb-4">
-        <div
-          className="h-full bg-black rounded-full progress-spring"
-          style={{ width: `${percent}%` }}
-        />
-      </div>
+      {/* Timeline */}
+      <div className="relative">
+        {/* Track */}
+        <div className="h-1 bg-[#F7F7F5] rounded-full overflow-hidden">
+          <div
+            className="h-full bg-black rounded-full progress-spring"
+            style={{ width: `${percent}%` }}
+          />
+        </div>
 
-      {/* Step indicators */}
-      <div className="flex flex-wrap gap-2">
-        {steps.map((step, i) => {
-          const pill = (
-            <span
-              className={`inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full transition-colors ${
-                step.done
-                  ? 'bg-[#F7F7F5] text-[#1A1A1A] font-medium'
-                  : 'bg-transparent text-[#C4C4C4] border border-[#E8E8E8]'
-              } ${step.href ? 'hover:text-black hover:border-[#1A1A1A]' : ''}`}
-            >
-              {step.done && (
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-              {step.label}
-            </span>
-          );
-          return step.href ? (
-            <a key={i} href={step.href}>{pill}</a>
-          ) : (
-            <span key={i}>{pill}</span>
-          );
-        })}
+        {/* Milestone nodes + labels positioned along the bar */}
+        <div className="relative mt-0">
+          {steps.map((step, i) => {
+            // Position each milestone evenly: first at 0%, last at 100%
+            const position = steps.length > 1 ? (i / (steps.length - 1)) * 100 : 0;
+            const isFilled = i < completed; // filled if before current progress
+            const isCurrent = i === completed; // the next milestone to hit
+
+            const node = (
+              <div
+                key={i}
+                className="absolute flex flex-col items-center"
+                style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
+              >
+                {/* Dot on the bar */}
+                <div className={`w-3 h-3 rounded-full border-2 -mt-2 ${
+                  step.done
+                    ? 'bg-black border-black'
+                    : isCurrent
+                      ? 'bg-white border-black'
+                      : 'bg-white border-[#E8E8E8]'
+                }`}>
+                  {step.done && (
+                    <svg className="w-full h-full text-white p-[1px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+
+                {/* Label below */}
+                <span className={`text-[11px] mt-2 whitespace-nowrap transition-colors duration-150 ${
+                  step.done
+                    ? 'font-medium text-[#1A1A1A]'
+                    : isCurrent
+                      ? 'font-medium text-[#8A8A8A]'
+                      : 'text-[#C4C4C4]'
+                } ${step.href ? 'hover:text-black' : ''}`}>
+                  {step.label}
+                </span>
+              </div>
+            );
+
+            return step.href ? (
+              <a key={i} href={step.href} className="contents">{node}</a>
+            ) : (
+              <span key={i} className="contents">{node}</span>
+            );
+          })}
+        </div>
+
+        {/* Spacer for labels below the bar */}
+        <div className="h-10" />
       </div>
     </div>
   );
@@ -860,7 +865,7 @@ function MarketSnapshot({ report, projectId }: { report: { report: I1Report; con
           </p>
         </div>
         <a href={`/projects/${projectId}/research`}>
-          <Badge variant="action">Full Research Report</Badge>
+          <Badge variant="action">View Research</Badge>
         </a>
       </div>
 
