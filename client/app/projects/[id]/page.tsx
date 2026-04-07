@@ -313,8 +313,8 @@ export default function ProjectPage() {
                       alt={artistName}
                       className="w-full h-full object-cover object-top"
                     />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center">
-                      <span className="text-white text-[11px] font-semibold uppercase tracking-wide">
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end justify-center pb-4">
+                      <span className="bg-white/90 backdrop-blur-sm text-[#1A1A1A] text-[11px] font-semibold uppercase tracking-wide px-4 py-1.5 rounded-full shadow-sm">
                         {uploadingImage ? 'Uploading...' : 'Replace Image'}
                       </span>
                     </div>
@@ -326,8 +326,8 @@ export default function ProjectPage() {
                       alt={`${artistName} moodboard`}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center">
-                      <span className="text-white text-[11px] font-semibold uppercase tracking-wide">
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end justify-center pb-4">
+                      <span className="bg-white/90 backdrop-blur-sm text-[#1A1A1A] text-[11px] font-semibold uppercase tracking-wide px-4 py-1.5 rounded-full shadow-sm">
                         {uploadingImage ? 'Uploading...' : 'Add Image'}
                       </span>
                     </div>
@@ -508,7 +508,7 @@ export default function ProjectPage() {
                     </p>
                     <span className="text-[11px] text-[#C4C4C4]">{moodboardImages.length} images</span>
                   </div>
-                  <a href={`/projects/${id}/visuals`}>
+                  <a href={`/projects/${id}/moodboard`}>
                     <Badge variant="action">View Moodboard</Badge>
                   </a>
                 </div>
