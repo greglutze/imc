@@ -397,12 +397,7 @@ function VocalDirection({ vocalistPersona }: { vocalistPersona: I2VocalistPerson
         <div className="bg-[#F7F7F5] px-5 py-4">
           <div className="flex items-center justify-between mb-2">
             <Badge variant="orange">Suno Vocal Prompt</Badge>
-            <button
-              onClick={handleCopy}
-              className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
-            >
-              {copied ? 'Copied' : 'Copy'}
-            </button>
+            <Badge variant="action" copyText={prompt}>Copy</Badge>
           </div>
           <pre className="text-[13px] font-mono text-[#1A1A1A] whitespace-pre-wrap leading-relaxed">
             {prompt}

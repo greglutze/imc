@@ -9,3 +9,4 @@ export { default as ConfidenceMeter } from './ConfidenceMeter';
 export { default as Tabs } from './Tabs';
 export { default as TextArea } from './TextArea';
 export { default as Skeleton } from './Skeleton';
+export { ToastProvider, useToast } from './Toast';

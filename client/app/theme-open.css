@@ -194,6 +194,19 @@
   cursor: not-allowed;
 }
 
+.theme-open .btn-v2:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 2px;
+}
+
+/* ── Global focus-visible for all interactive elements ── */
+.theme-open a:focus-visible,
+.theme-open button:focus-visible,
+.theme-open [role="button"]:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 2px;
+}
+
 /* ── Primary: pill, filled black ── */
 .theme-open .btn-v2--primary {
   background-color: var(--color-fg);
@@ -351,18 +364,7 @@
   border-bottom-color: var(--color-border-strong);
 }
 
-/* Tag / chip — pill-shaped, thin border */
-.theme-open .tag-open {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-fg);
-}
+/* Tag / chip — now handled by Badge component (see ui/Badge.tsx) */
 
 
 /* ═══════════════════════════════════════════════════════════════

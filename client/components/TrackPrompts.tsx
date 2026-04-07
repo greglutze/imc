@@ -133,12 +133,7 @@ function TrackCard({
                 {sunoCharCount}/1000
               </span>
             </div>
-            <button
-              onClick={() => handleCopy(track.suno_prompt, 'suno')}
-              className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
-            >
-              {copiedField === 'suno' ? 'Copied' : 'Copy'}
-            </button>
+            <Badge variant="action" copyText={track.suno_prompt}>Copy</Badge>
           </div>
           <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
             {track.suno_prompt}
@@ -149,12 +144,7 @@ function TrackCard({
         <div className="bg-[#F7F7F5] p-5 flex flex-col">
           <div className="flex items-center justify-between mb-3">
             <Badge variant="violet">Lyrics</Badge>
-            <button
-              onClick={() => handleCopy(track.lyrics, 'lyrics')}
-              className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
-            >
-              {copiedField === 'lyrics' ? 'Copied' : 'Copy'}
-            </button>
+            <Badge variant="action" copyText={track.lyrics}>Copy</Badge>
           </div>
           <div className="max-h-[400px] overflow-y-auto pr-2 flex-1">
             {renderLyrics(track.lyrics)}

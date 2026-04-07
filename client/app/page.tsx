@@ -220,6 +220,7 @@ function ProjectCard({ project, projectCode, statusLabel, statusColor, projects,
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false);
+        setConfirmingDelete(false);
       }
     };
 
@@ -229,14 +230,14 @@ function ProjectCard({ project, projectCode, statusLabel, statusColor, projects,
     }
   }, [menuOpen]);
 
-  const handleDelete = async () => {
-    const confirmed = window.confirm("Delete this project? This can't be undone.");
-    if (!confirmed) return;
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
+  const handleDelete = async () => {
     try {
       await api.deleteProject(project.id);
       setProjects(projects.filter(p => p.id !== project.id));
       setMenuOpen(false);
+      setConfirmingDelete(false);
     } catch (err) {
       console.error('Failed to delete project:', err);
     }
@@ -290,22 +291,56 @@ function ProjectCard({ project, projectCode, statusLabel, statusColor, projects,
             e.stopPropagation();
             setMenuOpen(!menuOpen);
           }}
+          aria-label={`Options for ${project.artist_name || 'project'}`}
+          aria-expanded={menuOpen}
           className="text-[20px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-150 shrink-0 px-2 py-1 -mx-2"
         >
           ⋯
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 top-full mt-2 bg-white border border-[#E8E8E8] z-50">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete();
-              }}
-              className="block w-full text-left px-4 py-2 text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors duration-150"
-            >
-              Delete Project
-            </button>
+          <div className="absolute right-0 top-full mt-2 bg-white border border-[#E8E8E8] z-50 min-w-[220px]">
+            {confirmingDelete ? (
+              <div className="px-4 py-3">
+                <p className="text-[13px] font-medium text-[#1A1A1A] mb-1">
+                  Delete {project.artist_name || 'this project'}?
+                </p>
+                <p className="text-[11px] text-[#8A8A8A] mb-3">This can&apos;t be undone.</p>
+                <div className="flex items-center gap-2">
+                  <ButtonV2
+                    size="sm"
+                    className="!bg-red-600 !text-white !border-red-600 hover:!bg-red-700 text-[12px]"
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      handleDelete();
+                    }}
+                  >
+                    Delete
+                  </ButtonV2>
+                  <ButtonV2
+                    variant="ghost"
+                    size="sm"
+                    className="text-[12px]"
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      setConfirmingDelete(false);
+                    }}
+                  >
+                    Cancel
+                  </ButtonV2>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setConfirmingDelete(true);
+                }}
+                className="block w-full text-left px-4 py-2 text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors duration-150"
+              >
+                Delete Project
+              </button>
+            )}
           </div>
         )}
       </div>

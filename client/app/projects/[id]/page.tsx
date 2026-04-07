@@ -8,7 +8,7 @@ import { useAuth } from '../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../lib/api';
 import type { ProjectConcept, I1Report, I1Confidence, Project, MoodboardImage, ShareProject, ShareTrack, I2Track, I2StyleProfile, I2VocalistPersona, MoodboardBrief } from '../../../lib/api';
 import { extractPaletteFromImages, type ExtractedColor } from '../../../lib/colorExtract';
-import { ButtonV2 } from '../../../components/ui';
+import { ButtonV2, Badge } from '../../../components/ui';
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -40,6 +40,7 @@ export default function ProjectPage() {
   const [vocalistPersona, setVocalistPersona] = useState<I2VocalistPersona | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [exportingBrief, setExportingBrief] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [dashboardPalette, setDashboardPalette] = useState<ExtractedColor[]>([]);
   const [moodboardBriefData, setMoodboardBriefData] = useState<MoodboardBrief | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -224,12 +225,13 @@ export default function ProjectPage() {
             ? 'Your concept is locked in. Research is ready to run.'
             : 'Research builds on your concept, which is defined during project creation.',
         href: `/projects/${id}/research`,
-        statusLabel: report ? `v${reportVersion}` : conceptReady ? 'Ready to Run' : 'Needs Concept',
+        statusLabel: report ? `v${reportVersion}` : conceptReady ? 'Ready' : 'Needs Concept',
         color: report ? 'green' as const : conceptReady ? 'yellow' as const : 'neutral' as const,
       },
       {
         number: '02',
         name: 'Sonic Engine',
+        subtitle: 'Production Prompts',
         description: hasPrompts
           ? `${demoTracks.length} track prompts generated from your concept and research.`
           : 'Style profiles, vocal direction, and per-track prompts — built from your brief.',
@@ -244,7 +246,7 @@ export default function ProjectPage() {
           ? `${lyricSessionCount} session${lyricSessionCount !== 1 ? 's' : ''} — keep writing, keep refining.`
           : 'Talk through lyrics, find the right words, shape your narrative.',
         href: `/projects/${id}/lyrics`,
-        statusLabel: lyricSessionCount > 0 ? `${lyricSessionCount} Sessions` : 'Start Writing',
+        statusLabel: lyricSessionCount > 0 ? `${lyricSessionCount} Sessions` : 'Not Started',
         color: lyricSessionCount > 0 ? 'green' as const : 'neutral' as const,
       },
       {
@@ -254,7 +256,7 @@ export default function ProjectPage() {
           ? `${shareCount} share link${shareCount !== 1 ? 's' : ''} — private listening, on your terms.`
           : 'Share your music with collaborators, labels, or press before release.',
         href: `/projects/${id}/share`,
-        statusLabel: shareCount > 0 ? `${shareCount} Links` : 'Create',
+        statusLabel: shareCount > 0 ? `${shareCount} Links` : 'Not Started',
         color: shareCount > 0 ? 'green' as const : 'neutral' as const,
       },
     ];
@@ -294,9 +296,7 @@ export default function ProjectPage() {
                 {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-8">
                     {concept.mood_keywords.map((keyword) => (
-                      <span key={keyword} className="tag-open">
-                        {keyword}
-                      </span>
+                      <Badge key={keyword}>{keyword}</Badge>
                     ))}
                   </div>
                 )}
@@ -355,6 +355,40 @@ export default function ProjectPage() {
               </div>
             </div>
 
+            {/* Concept-failed banner — shows when project exists but concept extraction failed */}
+            {!conceptReady && project?.status === 'draft' && !pageLoading && (
+              <div className="border-b border-[#E8E8E8] py-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                    Setup Incomplete
+                  </p>
+                </div>
+                <p className="text-[16px] text-[#1A1A1A] mb-2">
+                  Your creative concept didn't finish extracting during setup.
+                </p>
+                <p className="text-[13px] text-[#8A8A8A] mb-6">
+                  This means research, sound profiles, and other sections can't generate yet. You can retry the extraction or define your concept manually.
+                </p>
+                <div className="flex items-center gap-3">
+                  <ButtonV2 size="sm" onClick={async () => {
+                    try {
+                      const result = await api.sendConceptMessage(id, 'Please extract and finalize my concept now based on everything discussed.', true);
+                      if (result.conceptReady && result.concept) {
+                        setConcept(result.concept);
+                        setConceptReady(true);
+                      }
+                    } catch {}
+                  }}>
+                    Retry Extraction
+                  </ButtonV2>
+                  <a href={`/projects/${id}/research`}>
+                    <ButtonV2 variant="ghost" size="sm">Go to Research →</ButtonV2>
+                  </a>
+                </div>
+              </div>
+            )}
+
             {/* Living brief */}
             {concept && (
               <div className="border-b border-[#E8E8E8]">
@@ -395,7 +429,7 @@ export default function ProjectPage() {
                           href={`https://open.spotify.com/search/${encodeURIComponent(artist)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-[14px] font-bold text-black hover:text-green-600 transition-colors duration-150"
+                          className="block text-[14px] font-bold text-black hover:text-[#1A1A1A] transition-colors duration-150"
                         >
                           {artist}
                           <span className="text-[#C4C4C4] ml-1.5 text-[11px]">&#8599;</span>
@@ -418,7 +452,7 @@ export default function ProjectPage() {
                             <span className="text-[11px] font-mono text-[#C4C4C4]">
                               {String(t.track_number).padStart(2, '0')}
                             </span>
-                            <span className="text-[14px] font-bold text-black group-hover:text-[#8A8A8A] transition-colors duration-150 truncate">
+                            <span className="text-[14px] font-bold text-black transition-colors duration-150 truncate">
                               {t.title}
                             </span>
                           </a>
@@ -476,9 +510,7 @@ export default function ProjectPage() {
                 {vocalistPersona.tone_keywords && vocalistPersona.tone_keywords.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-5">
                     {vocalistPersona.tone_keywords.map((kw, i) => (
-                      <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
-                        {kw}
-                      </span>
+                      <Badge key={i} variant="violet">{kw}</Badge>
                     ))}
                   </div>
                 )}
@@ -499,7 +531,7 @@ export default function ProjectPage() {
                   </p>
                   <a
                     href={`/projects/${id}/share/${latestShareProject.id}`}
-                    className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black transition-colors duration-150"
+                    className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] hover:text-black transition-colors duration-150"
                   >
                     View All Tracks
                   </a>
@@ -511,6 +543,7 @@ export default function ProjectPage() {
             {/* Smart Progress + Instruments grid */}
             <div className="py-12">
               <SmartProgress
+                projectId={id}
                 conceptReady={conceptReady}
                 hasResearch={!!report}
                 hasPrompts={hasPrompts}
@@ -518,7 +551,10 @@ export default function ProjectPage() {
                 lyricSessionCount={lyricSessionCount}
                 shareCount={shareCount}
               />
-              <div className="grid grid-cols-3 gap-5 mt-8">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mt-10 mb-4">
+                Your Instruments
+              </p>
+              <div className="grid grid-cols-3 gap-5">
                 {instruments.map((inst) => (
                   <a
                     key={inst.number}
@@ -543,9 +579,12 @@ export default function ProjectPage() {
                         </div>
                       </div>
 
-                      <h3 className="text-[22px] leading-tight font-medium text-[#1A1A1A] mb-2">
+                      <h3 className="text-[22px] leading-tight font-medium text-[#1A1A1A] mb-1">
                         {inst.name}
                       </h3>
+                      {'subtitle' in inst && inst.subtitle && (
+                        <p className="text-[11px] font-medium text-[#C4C4C4] mb-2">{inst.subtitle}</p>
+                      )}
                       <p className="text-[13px] leading-relaxed text-[#8A8A8A]">
                         {inst.description}
                       </p>
@@ -568,23 +607,46 @@ export default function ProjectPage() {
               <p className="text-[11px] font-semibold uppercase tracking-wide text-red-600 mb-6">
                 Danger Zone
               </p>
-              <button
-                onClick={() => {
-                  const confirmed = window.confirm("Delete this project? This can't be undone.");
-                  if (confirmed) {
-                    api.deleteProject(id)
-                      .then(() => {
-                        window.location.href = '/';
-                      })
-                      .catch((err) => {
-                        console.error('Failed to delete project:', err);
-                      });
-                  }
-                }}
-                className="inline-flex items-center text-[13px] font-medium text-red-600 border border-red-200 px-4 py-2"
-              >
-                Delete Project
-              </button>
+              {confirmingDelete ? (
+                <div>
+                  <p className="text-[13px] font-medium text-[#1A1A1A] mb-1">
+                    Delete {project?.artist_name || 'this project'}?
+                  </p>
+                  <p className="text-[11px] text-[#8A8A8A] mb-4">This can&apos;t be undone.</p>
+                  <div className="flex items-center gap-2">
+                    <ButtonV2
+                      size="sm"
+                      className="!bg-red-600 !text-white !border-red-600 hover:!bg-red-700 text-[12px]"
+                      onClick={() => {
+                        api.deleteProject(id)
+                          .then(() => {
+                            window.location.href = '/';
+                          })
+                          .catch((err) => {
+                            console.error('Failed to delete project:', err);
+                          });
+                      }}
+                    >
+                      Delete
+                    </ButtonV2>
+                    <ButtonV2
+                      variant="ghost"
+                      size="sm"
+                      className="text-[12px]"
+                      onClick={() => setConfirmingDelete(false)}
+                    >
+                      Cancel
+                    </ButtonV2>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmingDelete(true)}
+                  className="inline-flex items-center text-[13px] font-medium text-red-600 border border-red-200 px-4 py-2"
+                >
+                  Delete Project
+                </button>
+              )}
             </div>
 
             {/* Footer spacer */}
@@ -761,6 +823,7 @@ function parseTempoBpm(raw: string): { bpm: string; detail: string } {
 /* ———————— Smart Progress ———————— */
 
 function SmartProgress({
+  projectId,
   conceptReady,
   hasResearch,
   hasPrompts,
@@ -768,6 +831,7 @@ function SmartProgress({
   lyricSessionCount,
   shareCount,
 }: {
+  projectId: string;
   conceptReady: boolean;
   hasResearch: boolean;
   hasPrompts: boolean;
@@ -776,11 +840,11 @@ function SmartProgress({
   shareCount: number;
 }) {
   const steps = [
-    { label: 'Concept defined', done: conceptReady },
-    { label: 'Research complete', done: hasResearch },
-    { label: 'Sonic Engine ready', done: hasPrompts },
-    { label: lyricSessionCount > 0 ? `${lyricSessionCount} lyric session${lyricSessionCount !== 1 ? 's' : ''}` : 'Lyrics started', done: lyricSessionCount > 0 },
-    { label: shareCount > 0 ? `${shareCount} track${shareCount !== 1 ? 's' : ''} shared` : 'Tracks shared', done: shareCount > 0 },
+    { label: 'Concept defined', done: conceptReady, href: undefined },
+    { label: 'Research complete', done: hasResearch, href: `/projects/${projectId}/research` },
+    { label: 'Sonic Engine ready', done: hasPrompts, href: `/projects/${projectId}/prompts` },
+    { label: lyricSessionCount > 0 ? `${lyricSessionCount} lyric session${lyricSessionCount !== 1 ? 's' : ''}` : 'Lyrics started', done: lyricSessionCount > 0, href: `/projects/${projectId}/lyrics` },
+    { label: shareCount > 0 ? `${shareCount} track${shareCount !== 1 ? 's' : ''} shared` : 'Tracks shared', done: shareCount > 0, href: `/projects/${projectId}/share` },
   ];
 
   const completed = steps.filter((s) => s.done).length;
@@ -815,23 +879,29 @@ function SmartProgress({
 
       {/* Step indicators */}
       <div className="flex flex-wrap gap-2">
-        {steps.map((step, i) => (
-          <span
-            key={i}
-            className={`inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full transition-colors ${
-              step.done
-                ? 'bg-[#F7F7F5] text-[#1A1A1A] font-medium'
-                : 'bg-transparent text-[#C4C4C4] border border-[#E8E8E8]'
-            }`}
-          >
-            {step.done && (
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            )}
-            {step.label}
-          </span>
-        ))}
+        {steps.map((step, i) => {
+          const pill = (
+            <span
+              className={`inline-flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full transition-colors ${
+                step.done
+                  ? 'bg-[#F7F7F5] text-[#1A1A1A] font-medium'
+                  : 'bg-transparent text-[#C4C4C4] border border-[#E8E8E8]'
+              } ${step.href ? 'hover:text-black hover:border-[#1A1A1A]' : ''}`}
+            >
+              {step.done && (
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+              {step.label}
+            </span>
+          );
+          return step.href ? (
+            <a key={i} href={step.href}>{pill}</a>
+          ) : (
+            <span key={i}>{pill}</span>
+          );
+        })}
       </div>
     </div>
   );
@@ -860,18 +930,15 @@ function MarketSnapshot({ report, projectId }: { report: { report: I1Report; con
             Market Snapshot
           </p>
         </div>
-        <a
-          href={`/projects/${projectId}/research`}
-          className="text-[11px] font-medium text-[#8A8A8A] hover:text-black transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
-        >
-          Full Report
+        <a href={`/projects/${projectId}/research`}>
+          <Badge variant="action">Full Report</Badge>
         </a>
       </div>
 
       <div className="grid grid-cols-12 gap-8">
         {/* Comparable Artists */}
         <div className="col-span-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
             Comparable Artists
           </p>
           {topComps.length > 0 ? (
@@ -892,7 +959,7 @@ function MarketSnapshot({ report, projectId }: { report: { report: I1Report; con
 
         {/* Audience Profile */}
         <div className="col-span-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
             Audience
           </p>
           {audience_profile ? (
@@ -923,7 +990,7 @@ function MarketSnapshot({ report, projectId }: { report: { report: I1Report; con
 
         {/* Key Opportunity */}
         <div className="col-span-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#C4C4C4] mb-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
             Opportunity
           </p>
           {topOpp ? (

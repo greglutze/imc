@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { AuthProvider } from '../lib/auth-context';
 import AIAssistantWrapper from '../components/AIAssistantWrapper';
+import ToastWrapper from '../components/ToastWrapper';
 import './globals.css';
 import './theme-open.css';
 
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="en" className="theme-open">
       <body className="bg-white text-[#1A1A1A] font-sans">
         <AuthProvider>
+          <ToastWrapper>
           <div className="flex h-screen">
             {/* Sidebar — slim, editorial */}
             <aside className="w-14 bg-white border-r border-[#E8E8E8] flex flex-col items-center hidden lg:flex">
@@ -27,11 +29,11 @@ export default function RootLayout({
               </div>
 
               {/* Nav icons — vertical, minimal */}
-              <nav className="flex-1 flex flex-col items-center py-6 gap-6">
-                <NavDot active label="D" />
-                <NavDot label="P" />
-                <NavDot label="R" />
-                <NavDot label="G" />
+              <nav className="flex-1 flex flex-col items-center py-6 gap-6" aria-label="Main navigation">
+                <NavDot active label="D" ariaLabel="Dashboard" />
+                <NavDot label="P" ariaLabel="Projects" />
+                <NavDot label="R" ariaLabel="Research" />
+                <NavDot label="G" ariaLabel="Generate" />
               </nav>
 
               {/* Footer */}
@@ -48,15 +50,18 @@ export default function RootLayout({
             </div>
             <AIAssistantWrapper />
           </div>
+        </ToastWrapper>
         </AuthProvider>
       </body>
     </html>
   );
 }
 
-function NavDot({ label, active = false }: { label: string; active?: boolean }) {
+function NavDot({ label, active = false, ariaLabel }: { label: string; active?: boolean; ariaLabel?: string }) {
   return (
-    <div
+    <button
+      aria-label={ariaLabel}
+      aria-current={active ? 'page' : undefined}
       className={`
         w-8 h-8 rounded-full flex items-center justify-center
         text-[11px] font-medium cursor-pointer transition-all duration-150
@@ -67,6 +72,6 @@ function NavDot({ label, active = false }: { label: string; active?: boolean }) 
       `}
     >
       {label}
-    </div>
+    </button>
   );
 }

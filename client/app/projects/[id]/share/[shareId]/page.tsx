@@ -411,14 +411,11 @@ export default function ShareManagePage() {
       />
       <div className="max-w-[1400px] mx-auto px-10 py-12">
         {/* Back link */}
-        <ButtonV2
-          onClick={() => router.push(`/projects/${id}/share`)}
-          variant="ghost"
-          size="sm"
-          className="mb-8 flex items-center gap-2"
-        >
-          <span className="text-[14px]">←</span> All Share Links
-        </ButtonV2>
+        <a href={`/projects/${id}/share`} className="inline-block mb-8">
+          <ButtonV2 variant="ghost" size="sm" className="flex items-center gap-2">
+            <span className="text-[14px]">←</span> All Share Links
+          </ButtonV2>
+        </a>
 
         <div className="grid grid-cols-[1fr_340px] gap-12">
           {/* Left column: tracks */}

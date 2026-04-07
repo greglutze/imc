@@ -4,7 +4,7 @@
 
 import { resolveArtworkUrl } from '../lib/api';
 
-type NavPage = 'home' | 'prompts' | 'lyrics' | 'share';
+type NavPage = 'home' | 'research' | 'prompts' | 'lyrics' | 'share';
 
 interface ProjectNavProps {
   projectId: string;
@@ -15,6 +15,7 @@ interface ProjectNavProps {
 
 export default function ProjectNav({ projectId, artistName, imageUrl, activePage }: ProjectNavProps) {
   const links: Array<{ key: NavPage; label: string; href: string }> = [
+    { key: 'research', label: 'Research', href: `/projects/${projectId}/research` },
     { key: 'prompts', label: 'Sonic Engine', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'Lyrics', href: `/projects/${projectId}/lyrics` },
     { key: 'share', label: 'Tracks', href: `/projects/${projectId}/share` },
@@ -46,7 +47,7 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
             </span>
           </a>
         </div>
-        <nav className="flex items-center gap-3">
+        <nav className="flex items-center gap-3" aria-label="Project sections">
           {links.map((link) => {
             const isActive = activePage === link.key;
             const baseClass = `text-[11px] font-semibold uppercase tracking-wide px-3 py-3 transition-colors duration-150`;

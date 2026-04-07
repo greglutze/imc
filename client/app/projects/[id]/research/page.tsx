@@ -127,7 +127,7 @@ export default function ResearchPage() {
         projectId={id}
         artistName={artistName}
         imageUrl={projectImage}
-        activePage="home"
+        activePage="research"
       />
 
       <div className="flex-1 overflow-y-auto">

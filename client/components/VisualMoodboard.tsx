@@ -6,7 +6,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { MoodboardImage, MoodboardBrief } from '../lib/api';
 import { extractPaletteFromImages, isLightColor, type ExtractedColor } from '../lib/colorExtract';
-import { ButtonV2 } from './ui';
+import { ButtonV2, Badge } from './ui';
 import NextStepBanner from './NextStepBanner';
 
 interface VisualMoodboardProps {
@@ -434,12 +434,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
                         v{brief.version}
                       </span>
                     )}
-                    <button
-                      onClick={handleAnalyze}
-                      className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 border border-[#E8E8E8] rounded-full px-3 py-1 hover:border-[#1A1A1A]"
-                    >
-                      Regenerate
-                    </button>
+                    <Badge variant="action" onClick={handleAnalyze}>Regenerate</Badge>
                   </div>
                 </div>
 
