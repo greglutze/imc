@@ -292,7 +292,7 @@ export default function ProjectPage() {
 
                 {/* Mood pills */}
                 {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-8">
+                  <div className="flex flex-wrap gap-2 mt-8 max-w-[85%]">
                     {concept.mood_keywords.map((keyword) => (
                       <Badge key={keyword}>{keyword}</Badge>
                     ))}
@@ -792,11 +792,17 @@ function SmartProgress({
             const isFilled = i < completed; // filled if before current progress
             const isCurrent = i === completed; // the next milestone to hit
 
+            // First item: left-aligned, last: right-aligned, middle: centered
+            const isFirst = i === 0;
+            const isLast = i === steps.length - 1;
+            const alignment = isFirst ? 'items-start' : isLast ? 'items-end' : 'items-center';
+            const translateX = isFirst ? '0%' : isLast ? '-100%' : '-50%';
+
             const node = (
               <div
                 key={i}
-                className="absolute flex flex-col items-center"
-                style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
+                className={`absolute flex flex-col ${alignment}`}
+                style={{ left: `${position}%`, transform: `translateX(${translateX})` }}
               >
                 {/* Dot on the bar */}
                 <div className={`w-3 h-3 rounded-full border-2 -mt-2 ${
@@ -805,7 +811,7 @@ function SmartProgress({
                     : isCurrent
                       ? 'bg-white border-black'
                       : 'bg-white border-[#E8E8E8]'
-                }`}>
+                }`} style={isFirst ? { marginLeft: 0 } : isLast ? { marginRight: 0 } : {}}>
                   {step.done && (
                     <svg className="w-full h-full text-white p-[1px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
