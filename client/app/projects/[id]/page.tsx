@@ -870,7 +870,7 @@ function MarketSnapshot({ report, projectId }: { report: { report: I1Report; con
     <div className="py-10 border-b border-[#E8E8E8]">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-emerald-500" />
+          <div className="w-2 h-2 rounded-full bg-green-500" />
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
             Market Snapshot
           </p>
