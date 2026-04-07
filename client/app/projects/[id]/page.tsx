@@ -560,7 +560,7 @@ export default function ProjectPage() {
             {/* Instruments grid — 4 across */}
             <div className="py-12">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
-                Your Instruments
+                Your Studio
               </p>
               <div className="grid grid-cols-4 gap-4 stagger-enter">
                 {instruments.map((inst) => (
