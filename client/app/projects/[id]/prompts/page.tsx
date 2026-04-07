@@ -1,31 +1,26 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import StyleProfile from '../../../../components/StyleProfile';
 import TrackPrompts from '../../../../components/TrackPrompts';
 import ProjectNav from '../../../../components/ProjectNav';
 import NextStepBanner from '../../../../components/NextStepBanner';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
-import type { I2StyleProfile, I2VocalistPersona, I2Track, Project, I1Report } from '../../../../lib/api';
+import type { I2StyleProfile, I2VocalistPersona, I2Track, Project } from '../../../../lib/api';
 import { ButtonV2 } from '../../../../components/ui';
-
-type I2View = 'style' | 'tracks';
 
 export default function PromptsPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<I2View>('style');
   const [regenerating, setRegenerating] = useState<number | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [styleProfile, setStyleProfile] = useState<I2StyleProfile | null>(null);
   const [vocalistPersona, setVocalistPersona] = useState<I2VocalistPersona | null>(null);
   const [tracks, setTracks] = useState<I2Track[]>([]);
   const [promptsId, setPromptsId] = useState<string | null>(null);
-  const [report, setReport] = useState<I1Report | null>(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const autoGenerateTriggered = useRef(false);
@@ -57,13 +52,6 @@ export default function PromptsPage() {
           // No prompts yet — will show generate button
         }
 
-        // Try to load research report for style profile enrichment
-        try {
-          const reportData = await api.getReport(id);
-          setReport(reportData.report);
-        } catch {
-          // No report yet — style profile will render without market data
-        }
       } catch (err) {
         console.error('Failed to load prompts data:', err);
       } finally {
@@ -187,56 +175,25 @@ export default function PromptsPage() {
             </p>
           </div>
 
-          {/* Skeleton tabs */}
-          <div className="flex items-center gap-6 border-b border-[#E8E8E8] pb-0">
-            <span className="text-[11px] font-semibold uppercase tracking-wide pb-3 text-black border-b-2 border-black -mb-px">
-              Style Profile
-            </span>
-            <span className="text-[11px] font-semibold uppercase tracking-wide pb-3 text-[#8A8A8A]">
-              Demo Prompts
-            </span>
-          </div>
         </div>
 
-        {/* Skeleton style profile preview using concept data */}
+        {/* Skeleton tracks */}
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-[1400px] mx-auto px-10 py-10">
-            <div className="mb-10">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
-                Production Aesthetic
-              </p>
-              <blockquote className="text-[22px] leading-[1.4] text-[#1A1A1A]/60 max-w-3xl animate-pulse">
-                {previewAesthetic}
-              </blockquote>
-            </div>
-
-            <div className="mb-8">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
-                Sonic Signatures
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {previewSignatures.map((sig: string, i: number) => (
-                  <span key={i} className="text-[13px] text-[#8A8A8A] bg-[#F7F7F5] px-4 py-2 rounded-full border border-[#E8E8E8] animate-pulse">
-                    {sig}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Track count skeleton */}
             {concept?.track_count && (
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
-                  Tracks
-                </p>
-                <div className="space-y-3">
-                  {Array.from({ length: concept.track_count }, (_, i) => (
-                    <div key={i} className="flex items-center gap-4 animate-pulse">
-                      <span className="text-[13px] font-mono text-[#C4C4C4] w-6">{String(i + 1).padStart(2, '0')}</span>
-                      <div className="h-4 bg-[#F7F7F5]" style={{ width: `${120 + Math.random() * 100}px` }} />
+              <div className="space-y-8">
+                {Array.from({ length: concept.track_count }, (_, i) => (
+                  <div key={i} className="border-b border-[#E8E8E8] pb-8 animate-pulse">
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="text-[13px] font-mono text-[#C4C4C4]">{String(i + 1).padStart(2, '0')}</span>
+                      <div className="h-6 bg-[#F7F7F5]" style={{ width: `${140 + Math.random() * 120}px` }} />
                     </div>
-                  ))}
-                </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-[#F7F7F5] h-32" />
+                      <div className="bg-[#F7F7F5] h-32" />
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -295,86 +252,130 @@ export default function PromptsPage() {
     );
   }
 
-  const tabs = [
-    { id: 'style', label: 'Style Profile' },
-    { id: 'tracks', label: 'Demo Prompts', count: tracks.length },
-  ];
-
   return (
     <div className="content-reveal h-full flex flex-col">
       <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="prompts" />
 
-      {/* Editorial header */}
-      <div className="max-w-[1400px] mx-auto w-full px-10">
-        <div className="pt-10 pb-6 flex items-start justify-between">
-          <div>
-            <p className="text-[13px] font-medium text-[#C4C4C4] mb-2">
-              Production Intelligence
-            </p>
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-[1400px] mx-auto px-10">
+
+          {/* Editorial header — compact */}
+          <div className="pt-10 pb-8 border-b border-[#E8E8E8]">
             <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
               Sounds
             </p>
-            <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-lg leading-relaxed">
-              Your concept and market data, translated into production-ready style profiles, vocal direction, and per-track prompts.
+            <p className="text-[14px] text-[#8A8A8A] mt-3 max-w-lg leading-relaxed">
+              Production-ready prompts and lyrics for each track, built from your concept and research.
             </p>
           </div>
-          {hasPrompts && (
-            <ButtonV2
-              onClick={() => {
-                autoGenerateTriggered.current = false;
-                handleGenerate();
-              }}
-              className="shrink-0 mt-6"
-            >
-              Regenerate All
-            </ButtonV2>
-          )}
-        </div>
 
-        {/* Sub-navigation tabs */}
-        <div className="flex items-center gap-6 border-b border-[#E8E8E8] pb-0">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as I2View)}
-                className={`
-                  text-[11px] font-semibold uppercase tracking-wide pb-3 transition-colors duration-150
-                  ${isActive
-                    ? 'text-black border-b-2 border-black -mb-px'
-                    : 'text-[#8A8A8A] hover:text-black'
-                  }
-                `}
-              >
-                {tab.label}
-                {tab.count !== undefined && (
-                  <span className="ml-1.5 text-[#C4C4C4]">{tab.count}</span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+          {/* ———— TRACKS — primary content ———— */}
+          <TrackPrompts
+            tracks={tracks}
+            onRegenerateTrack={handleRegenerate}
+            regenerating={regenerating}
+          />
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-[1400px] mx-auto">
-          {activeTab === 'style' && styleProfile && (
-            <StyleProfile
-              styleProfile={styleProfile}
-              concept={project?.concept || undefined}
-              sonicBlueprint={report?.sonic_blueprint || undefined}
-              vocalistPersona={vocalistPersona || undefined}
-            />
-          )}
+          {/* ———— SOUND PROFILE — condensed context below tracks ———— */}
+          {styleProfile && (
+            <div className="border-t border-[#E8E8E8]">
+              {/* Production Aesthetic */}
+              <div className="py-10 border-b border-[#E8E8E8]">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                  Production Aesthetic
+                </p>
+                <blockquote className="text-[20px] leading-[1.4] font-medium text-[#1A1A1A] max-w-3xl tracking-tight">
+                  &ldquo;{styleProfile.production_aesthetic}&rdquo;
+                </blockquote>
+              </div>
 
-          {activeTab === 'tracks' && (
-            <TrackPrompts
-              tracks={tracks}
-              onRegenerateTrack={handleRegenerate}
-              regenerating={regenerating}
-            />
+              {/* Sonic Signatures — inline pills instead of card grid */}
+              {styleProfile.sonic_signatures.length > 0 && (
+                <div className="py-10 border-b border-[#E8E8E8]">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                    Sonic Signatures
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {styleProfile.sonic_signatures.map((sig, i) => (
+                      <span
+                        key={i}
+                        className="text-[13px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-4 py-2 rounded-full"
+                      >
+                        {sig.split(' — ')[0].split(': ').pop()?.trim() || sig}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Vocal Direction — compact two-column */}
+              {vocalistPersona && (
+                <div className="py-10 border-b border-[#E8E8E8]">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+                    Vocal Direction
+                  </p>
+                  <div className="grid grid-cols-12 gap-8">
+                    <div className="col-span-4">
+                      <p className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mb-2">Character</p>
+                      <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{vocalistPersona.vocal_character}</p>
+                    </div>
+                    <div className="col-span-4">
+                      <p className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mb-2">Delivery</p>
+                      <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{vocalistPersona.delivery_style}</p>
+                    </div>
+                    <div className="col-span-4">
+                      <p className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mb-2">Tone</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {vocalistPersona.tone_keywords.map((kw, i) => (
+                          <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
+                            {kw}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tempo & Key — single compact row */}
+              <div className="py-10 border-b border-[#E8E8E8]">
+                <div className="grid grid-cols-12 gap-8">
+                  <div className="col-span-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
+                      Tempo Range
+                    </p>
+                    <p className="text-[22px] font-medium text-[#1A1A1A] tracking-tight">
+                      {styleProfile.tempo_range}
+                    </p>
+                  </div>
+                  <div className="col-span-8">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
+                      Key Preferences
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {styleProfile.key_preferences.map((k, i) => (
+                        <span key={i} className="text-[13px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-4 py-2 rounded-full">
+                          {k.split(' — ')[0].split(': ').pop()?.trim() || k}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Regenerate — subtle, at the very bottom */}
+              <div className="py-8 flex items-center justify-center">
+                <button
+                  onClick={() => {
+                    autoGenerateTriggered.current = false;
+                    handleGenerate();
+                  }}
+                  className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#8A8A8A] uppercase tracking-wide transition-colors duration-150"
+                >
+                  Regenerate all sounds
+                </button>
+              </div>
+            </div>
           )}
         </div>
 
