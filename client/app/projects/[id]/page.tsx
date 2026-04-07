@@ -313,7 +313,7 @@ export default function ProjectPage() {
                       alt={artistName}
                       className="w-full h-full object-cover object-top"
                     />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end justify-center pb-4">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center">
                       <span className="bg-white/90 backdrop-blur-sm text-[#1A1A1A] text-[11px] font-semibold uppercase tracking-wide px-4 py-1.5 rounded-full shadow-sm">
                         {uploadingImage ? 'Uploading...' : 'Replace Image'}
                       </span>
@@ -326,7 +326,7 @@ export default function ProjectPage() {
                       alt={`${artistName} moodboard`}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end justify-center pb-4">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center">
                       <span className="bg-white/90 backdrop-blur-sm text-[#1A1A1A] text-[11px] font-semibold uppercase tracking-wide px-4 py-1.5 rounded-full shadow-sm">
                         {uploadingImage ? 'Uploading...' : 'Add Image'}
                       </span>
