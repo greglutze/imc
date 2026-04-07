@@ -287,9 +287,14 @@ export default function ProjectPage() {
 
                 {/* Mood pills */}
                 {concept?.mood_keywords && concept.mood_keywords.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-8 max-w-[85%]">
+                  <div className="flex flex-wrap gap-2.5 mt-8 max-w-[85%]">
                     {concept.mood_keywords.map((keyword) => (
-                      <Badge key={keyword} variant="violet">{keyword}</Badge>
+                      <span
+                        key={keyword}
+                        className="inline-flex items-center px-4 py-1.5 rounded-full bg-signal-violet/10 text-signal-violet text-[14px] font-medium"
+                      >
+                        {keyword.toLowerCase()}
+                      </span>
                     ))}
                   </div>
                 )}
