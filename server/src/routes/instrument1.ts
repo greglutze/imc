@@ -29,10 +29,12 @@ router.post(
       const project = projectCheck.rows[0];
 
       if (!project.concept || Object.keys(project.concept).length === 0) {
+        console.warn(`[research] Project ${projectId}: concept is empty — cannot run research`);
         res.status(400).json({ error: 'Project concept is empty or not extracted' });
         return;
       }
 
+      console.log(`[research] Project ${projectId}: running market research (genre=${project.concept.genre_primary})`);
       const { report, confidence } = await runMarketResearch(project.concept);
 
       await pool.query(
@@ -99,7 +101,9 @@ router.post(
 
       messages.push(newMessage);
 
+      console.log(`[conversation] Project ${projectId}: sending ${messages.length} messages (immediate=${!!immediate})`);
       const conceptResponse = await getConceptResponse(messages, !!immediate);
+      console.log(`[conversation] Project ${projectId}: conceptReady=${conceptResponse.conceptReady}, hasConcept=${!!conceptResponse.extractedConcept}`);
 
       messages.push({
         role: 'assistant',
@@ -116,6 +120,7 @@ router.post(
           'UPDATE projects SET concept = $1, updated_at = NOW() WHERE id = $2',
           [JSON.stringify(conceptResponse.extractedConcept), projectId]
         );
+        console.log(`[conversation] Project ${projectId}: concept saved to DB`);
       }
 
       await pool.query('UPDATE concept_conversations SET messages = $1, extracted = $2 WHERE project_id = $3', [

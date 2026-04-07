@@ -96,6 +96,36 @@ export interface ConceptResponse {
   extractedConcept: ProjectConcept | null;
 }
 
+/**
+ * Try to extract a valid concept JSON from an AI response.
+ * Handles multiple formats: CONCEPT_READY marker, markdown code fences,
+ * or raw JSON containing genre_primary.
+ */
+function tryExtractConceptJson(text: string): ProjectConcept | null {
+  // Look for JSON blocks — try markdown-fenced first, then raw
+  const patterns = [
+    /```(?:json)?\s*(\{[\s\S]*?\})\s*```/,
+    /(\{[\s\S]*?"genre_primary"[\s\S]*?\})/,
+    /(\{[\s\S]*\})/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) {
+      try {
+        const parsed = JSON.parse(match[1]);
+        // Validate it has the required field
+        if (parsed.genre_primary) {
+          return parsed as ProjectConcept;
+        }
+      } catch {
+        // Try next pattern
+      }
+    }
+  }
+  return null;
+}
+
 export async function getConceptResponse(
   messages: ConversationMessage[],
   immediate: boolean = false
@@ -106,25 +136,39 @@ export async function getConceptResponse(
   }));
 
   const systemPrompt = buildSystemPrompt(messages, immediate);
+
+  console.log(`[concept] Sending ${chatMessages.length} messages to AI (immediate=${immediate})`);
   const response = await chat(systemPrompt, chatMessages);
+  console.log(`[concept] AI response length: ${response.length} chars`);
+  console.log(`[concept] Contains CONCEPT_READY: ${response.includes('CONCEPT_READY')}`);
 
   let conceptReady = false;
   let extractedConcept: ProjectConcept | null = null;
-
   let cleanResponse = response;
 
+  // Primary path: explicit CONCEPT_READY marker
   if (response.includes('CONCEPT_READY')) {
     conceptReady = true;
-
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      try {
-        extractedConcept = JSON.parse(jsonMatch[0]);
-      } catch (e) {
-        console.error('Failed to parse concept JSON:', e);
-      }
+    extractedConcept = tryExtractConceptJson(response);
+  }
+  // Fallback: no marker but response contains valid concept JSON (model sometimes omits the marker)
+  else if (immediate && response.includes('genre_primary')) {
+    console.log('[concept] No CONCEPT_READY marker but found genre_primary — attempting fallback extraction');
+    extractedConcept = tryExtractConceptJson(response);
+    if (extractedConcept) {
+      conceptReady = true;
+      console.log('[concept] Fallback extraction succeeded');
     }
+  }
 
+  if (extractedConcept) {
+    console.log(`[concept] Extracted concept: genre=${extractedConcept.genre_primary}, artists=${(extractedConcept.reference_artists || []).length}`);
+  } else if (conceptReady) {
+    console.warn('[concept] CONCEPT_READY found but JSON extraction failed');
+    conceptReady = false; // Don't mark as ready if we couldn't extract
+  }
+
+  if (conceptReady) {
     // Strip CONCEPT_READY marker and any JSON block (with or without markdown fences)
     cleanResponse = response
       .replace(/CONCEPT_READY/gi, '')
