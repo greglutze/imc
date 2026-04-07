@@ -514,7 +514,7 @@ export default function ProjectPage() {
                 </div>
 
                 {/* Full-width thumbnail row */}
-                <div className="flex gap-1 overflow-hidden">
+                <div className="flex gap-0 overflow-hidden">
                   {moodboardImages.map((img) => (
                     <div key={img.id} className="flex-1 min-w-0 overflow-hidden h-24">
                       <img
