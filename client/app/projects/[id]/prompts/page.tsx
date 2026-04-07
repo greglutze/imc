@@ -8,7 +8,86 @@ import NextStepBanner from '../../../../components/NextStepBanner';
 import { useAuth } from '../../../../lib/auth-context';
 import { api } from '../../../../lib/api';
 import type { I2StyleProfile, I2VocalistPersona, I2Track, Project } from '../../../../lib/api';
-import { ButtonV2 } from '../../../../components/ui';
+import { Badge, ButtonV2 } from '../../../../components/ui';
+
+function VocalDirectionSection({ vocalistPersona }: { vocalistPersona: I2VocalistPersona }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Build a concise, copyable Suno vocal prompt from the persona data
+  const sunoVocalPrompt = `[Vocal Style: ${vocalistPersona.vocal_character.split('.')[0].trim()}. ${vocalistPersona.delivery_style.split('.')[0].trim()}. Tone: ${vocalistPersona.tone_keywords.slice(0, 5).join(', ')}]`;
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(sunoVocalPrompt);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
+
+  return (
+    <div className="py-10 border-b border-[#E8E8E8]">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
+        Vocal Direction
+      </p>
+
+      {/* Suno Vocal Prompt — prominent, copyable */}
+      <div className="bg-[#F7F7F5] p-5 mb-5">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+            Suno Vocal Prompt
+          </p>
+          <Badge variant="action" onClick={handleCopy}>
+            {copied ? 'Copied' : 'Copy'}
+          </Badge>
+        </div>
+        <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
+          {sunoVocalPrompt}
+        </p>
+      </div>
+
+      {/* Tone keywords always visible */}
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {vocalistPersona.tone_keywords.map((kw, i) => (
+          <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
+            {kw}
+          </span>
+        ))}
+      </div>
+
+      {/* Collapsible detail for Character & Delivery */}
+      <button
+        type="button"
+        className="flex items-center gap-2 text-[11px] font-medium text-[#C4C4C4] hover:text-[#8A8A8A] uppercase tracking-wide transition-colors"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ? 'Hide' : 'Show'} full character & delivery
+        <svg
+          className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[600px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+        <div className="grid grid-cols-2 gap-8">
+          <div>
+            <p className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mb-2">Character</p>
+            <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{vocalistPersona.vocal_character}</p>
+          </div>
+          <div>
+            <p className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mb-2">Delivery</p>
+            <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{vocalistPersona.delivery_style}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function PromptsPage() {
   const { id } = useParams<{ id: string }>();
@@ -308,33 +387,9 @@ export default function PromptsPage() {
                 </div>
               )}
 
-              {/* Vocal Direction — compact two-column */}
+              {/* Vocal Direction — Suno prompt + collapsible detail */}
               {vocalistPersona && (
-                <div className="py-10 border-b border-[#E8E8E8]">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
-                    Vocal Direction
-                  </p>
-                  <div className="grid grid-cols-12 gap-8">
-                    <div className="col-span-4">
-                      <p className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mb-2">Character</p>
-                      <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{vocalistPersona.vocal_character}</p>
-                    </div>
-                    <div className="col-span-4">
-                      <p className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mb-2">Delivery</p>
-                      <p className="text-[14px] text-[#1A1A1A] leading-relaxed">{vocalistPersona.delivery_style}</p>
-                    </div>
-                    <div className="col-span-4">
-                      <p className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mb-2">Tone</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {vocalistPersona.tone_keywords.map((kw, i) => (
-                          <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
-                            {kw}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <VocalDirectionSection vocalistPersona={vocalistPersona} />
               )}
 
               {/* Tempo & Key — single compact row */}
