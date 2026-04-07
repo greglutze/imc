@@ -418,18 +418,6 @@ export default function PromptsPage() {
                 </div>
               </div>
 
-              {/* Regenerate — subtle, at the very bottom */}
-              <div className="py-8 flex items-center justify-center">
-                <button
-                  onClick={() => {
-                    autoGenerateTriggered.current = false;
-                    handleGenerate();
-                  }}
-                  className="text-[11px] font-medium text-[#C4C4C4] hover:text-[#8A8A8A] uppercase tracking-wide transition-colors duration-150"
-                >
-                  Regenerate all sounds
-                </button>
-              </div>
             </div>
           )}
         </div>
