@@ -437,12 +437,26 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
-/* Badge appear — uses scaleIn keyframes from Tailwind config */
+/* ── Keyframes for custom animation classes ── */
+@keyframes scaleIn {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes cardEnter {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes contentReveal {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Badge appear */
 .badge-enter {
   animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Staggered card entrance — uses cardEnter keyframes from Tailwind config */
+/* Staggered card entrance */
 .stagger-enter > * {
   opacity: 0;
   animation: cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -454,7 +468,7 @@
 .stagger-enter > *:nth-child(5) { animation-delay: 0.25s; }
 .stagger-enter > *:nth-child(6) { animation-delay: 0.3s; }
 
-/* Content reveal — uses contentReveal keyframes from Tailwind config */
+/* Content reveal */
 .content-reveal {
   animation: contentReveal 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
