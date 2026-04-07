@@ -180,7 +180,7 @@ export default function PromptsPage() {
               </div>
             </div>
             <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
-              Sonic Engine
+              Sounds
             </p>
             <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-lg leading-relaxed">
               Translating your concept and market data into production-ready style profiles, vocal direction, and per-track prompts.
@@ -273,7 +273,7 @@ export default function PromptsPage() {
         <div className="max-w-[1400px] mx-auto px-10 py-16">
           <p className="text-[13px] font-medium text-[#C4C4C4] mb-3">02</p>
           <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] mt-4 tracking-tight">
-            Sonic Engine
+            Sounds
           </p>
           <p className="text-[14px] text-[#8A8A8A] mt-5 max-w-md leading-relaxed">
             Your concept is ready. Generate your style profiles, vocal direction, and per-track prompts.
@@ -287,7 +287,7 @@ export default function PromptsPage() {
               size="lg"
               arrow
             >
-              Generate Sonic Engine
+              Generate Sounds
             </ButtonV2>
           </div>
         </div>
@@ -312,7 +312,7 @@ export default function PromptsPage() {
               Production Intelligence
             </p>
             <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
-              Sonic Engine
+              Sounds
             </p>
             <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-lg leading-relaxed">
               Your concept and market data, translated into production-ready style profiles, vocal direction, and per-track prompts.

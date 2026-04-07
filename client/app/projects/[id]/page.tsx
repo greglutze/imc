@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import VisualMoodboard from '../../../components/VisualMoodboard';
 import ProjectNav from '../../../components/ProjectNav';
 import { useAuth } from '../../../lib/auth-context';
 import { api, resolveArtworkUrl } from '../../../lib/api';
@@ -38,7 +37,6 @@ export default function ProjectPage() {
   const [demoTracks, setDemoTracks] = useState<I2Track[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [exportingBrief, setExportingBrief] = useState(false);
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [dashboardPalette, setDashboardPalette] = useState<ExtractedColor[]>([]);
   const [moodboardBriefData, setMoodboardBriefData] = useState<MoodboardBrief | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -214,7 +212,7 @@ export default function ProjectPage() {
     const instruments = [
       {
         number: '01',
-        name: 'Sonic Engine',
+        name: 'Sounds',
         subtitle: 'Production Prompts',
         description: hasPrompts
           ? `${demoTracks.length} track prompts generated from your concept and research.`
@@ -333,13 +331,18 @@ export default function ProjectPage() {
                     </div>
                   </>
                 ) : (
-                  <div className="w-full h-full bg-[#F7F7F5] flex flex-col items-center justify-center">
+                  <div className="w-full h-full bg-[#F7F7F5] flex flex-col items-center justify-center border-2 border-dashed border-[#E8E8E8] group-hover:border-[#C4C4C4] transition-colors duration-150">
                     <span className="text-[120px] font-medium text-[#E8E8E8]">
                       {artistName.charAt(0).toUpperCase()}
                     </span>
-                    <span className="text-[11px] text-[#C4C4C4] uppercase tracking-wide mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                      {uploadingImage ? 'Uploading...' : 'Add Image'}
-                    </span>
+                    <div className="flex items-center gap-2 mt-2">
+                      <svg className="w-4 h-4 text-[#C4C4C4] group-hover:text-[#8A8A8A] transition-colors duration-150" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span className="text-[11px] text-[#C4C4C4] group-hover:text-[#8A8A8A] uppercase tracking-wide font-semibold transition-colors duration-150">
+                        {uploadingImage ? 'Uploading...' : 'Add Artist Image'}
+                      </span>
+                    </div>
                   </div>
                 )}
                 </div>
@@ -351,6 +354,19 @@ export default function ProjectPage() {
                   className="hidden"
                 />
               </div>
+            </div>
+
+            {/* Smart Progress — near the top */}
+            <div className="py-10 border-b border-[#E8E8E8]">
+              <SmartProgress
+                projectId={id}
+                conceptReady={conceptReady}
+                hasResearch={!!report}
+                hasPrompts={hasPrompts}
+                trackCount={demoTracks.length}
+                lyricSessionCount={lyricSessionCount}
+                shareCount={shareCount}
+              />
             </div>
 
             {/* Concept-failed banner — shows when project exists but concept extraction failed */}
@@ -479,10 +495,62 @@ export default function ProjectPage() {
               <MarketSnapshot report={report} projectId={id} />
             )}
 
-            {/* Visual World — full moodboard inline */}
-            <div className="border-b border-[#E8E8E8]">
-              <VisualMoodboard projectId={id} />
-            </div>
+            {/* Visual World — compact strip */}
+            {moodboardImages.length > 0 && (
+              <div className="py-10 border-b border-[#E8E8E8]">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                      Visual World
+                    </p>
+                    <span className="text-[11px] text-[#C4C4C4]">{moodboardImages.length} images</span>
+                  </div>
+                  <a href={`/projects/${id}/visuals`}>
+                    <Badge variant="action">View Moodboard</Badge>
+                  </a>
+                </div>
+
+                {/* Thumbnail row */}
+                <div className="flex gap-2 overflow-hidden h-20 mb-4">
+                  {moodboardImages.slice(0, 8).map((img) => (
+                    <div key={img.id} className="h-20 shrink-0 overflow-hidden">
+                      <img
+                        src={img.image_data}
+                        alt=""
+                        className="h-full w-auto object-cover"
+                      />
+                    </div>
+                  ))}
+                  {moodboardImages.length > 8 && (
+                    <a
+                      href={`/projects/${id}/visuals`}
+                      className="h-20 w-20 shrink-0 bg-[#F7F7F5] flex items-center justify-center hover:bg-[#EEEDEB] transition-colors duration-150"
+                    >
+                      <span className="text-[11px] font-semibold text-[#8A8A8A]">+{moodboardImages.length - 8}</span>
+                    </a>
+                  )}
+                </div>
+
+                {/* Extracted palette */}
+                {dashboardPalette.length > 0 && (
+                  <div className="flex gap-0 overflow-hidden h-8 rounded-sm">
+                    {dashboardPalette.map((color) => (
+                      <div
+                        key={color.hex}
+                        className="h-full"
+                        style={{
+                          backgroundColor: color.hex,
+                          flex: color.percentage / 10,
+                          minWidth: '2rem',
+                        }}
+                        title={color.hex}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Latest track player */}
             {latestTrack && latestShareProject && (
@@ -502,21 +570,12 @@ export default function ProjectPage() {
               </div>
             )}
 
-            {/* Smart Progress + Instruments grid */}
+            {/* Instruments grid — 4 across */}
             <div className="py-12">
-              <SmartProgress
-                projectId={id}
-                conceptReady={conceptReady}
-                hasResearch={!!report}
-                hasPrompts={hasPrompts}
-                trackCount={demoTracks.length}
-                lyricSessionCount={lyricSessionCount}
-                shareCount={shareCount}
-              />
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mt-10 mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                 Your Instruments
               </p>
-              <div className="grid grid-cols-3 gap-4 stagger-enter">
+              <div className="grid grid-cols-4 gap-4 stagger-enter">
                 {instruments.map((inst) => (
                   <a
                     key={inst.number}
@@ -562,53 +621,6 @@ export default function ProjectPage() {
                   </a>
                 ))}
               </div>
-            </div>
-
-            {/* Danger Zone */}
-            <div className="py-12 border-t border-red-200 bg-red-50">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-red-600 mb-6">
-                Danger Zone
-              </p>
-              {confirmingDelete ? (
-                <div>
-                  <p className="text-[13px] font-medium text-[#1A1A1A] mb-1">
-                    Delete {project?.artist_name || 'this project'}?
-                  </p>
-                  <p className="text-[11px] text-[#8A8A8A] mb-4">This can&apos;t be undone.</p>
-                  <div className="flex items-center gap-2">
-                    <ButtonV2
-                      size="sm"
-                      className="!bg-red-600 !text-white !border-red-600 hover:!bg-red-700 text-[12px]"
-                      onClick={() => {
-                        api.deleteProject(id)
-                          .then(() => {
-                            window.location.href = '/';
-                          })
-                          .catch((err) => {
-                            console.error('Failed to delete project:', err);
-                          });
-                      }}
-                    >
-                      Delete
-                    </ButtonV2>
-                    <ButtonV2
-                      variant="ghost"
-                      size="sm"
-                      className="text-[12px]"
-                      onClick={() => setConfirmingDelete(false)}
-                    >
-                      Cancel
-                    </ButtonV2>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setConfirmingDelete(true)}
-                  className="inline-flex items-center text-[13px] font-medium text-red-600 border border-red-200 px-4 py-2"
-                >
-                  Delete Project
-                </button>
-              )}
             </div>
 
             {/* Footer spacer */}
@@ -759,7 +771,7 @@ function SmartProgress({
   const steps = [
     { label: 'Concept defined', done: conceptReady, href: undefined },
     { label: 'Research complete', done: hasResearch, href: `/projects/${projectId}/research` },
-    { label: 'Sonic Engine ready', done: hasPrompts, href: `/projects/${projectId}/prompts` },
+    { label: 'Sounds ready', done: hasPrompts, href: `/projects/${projectId}/prompts` },
     { label: lyricSessionCount > 0 ? `${lyricSessionCount} lyric session${lyricSessionCount !== 1 ? 's' : ''}` : 'Lyrics started', done: lyricSessionCount > 0, href: `/projects/${projectId}/lyrics` },
     { label: shareCount > 0 ? `${shareCount} track${shareCount !== 1 ? 's' : ''} shared` : 'Music shared', done: shareCount > 0, href: `/projects/${projectId}/share` },
   ];
@@ -848,7 +860,7 @@ function MarketSnapshot({ report, projectId }: { report: { report: I1Report; con
           </p>
         </div>
         <a href={`/projects/${projectId}/research`}>
-          <Badge variant="action">Full Report</Badge>
+          <Badge variant="action">Full Research Report</Badge>
         </a>
       </div>
 
@@ -861,12 +873,21 @@ function MarketSnapshot({ report, projectId }: { report: { report: I1Report; con
           {topComps.length > 0 ? (
             <div className="space-y-3">
               {topComps.map((artist, i) => (
-                <div key={i}>
-                  <p className="text-[14px] font-bold text-black">{artist.name}</p>
+                <a
+                  key={i}
+                  href={`https://open.spotify.com/search/${encodeURIComponent(artist.name)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block group"
+                >
+                  <p className="text-[14px] font-bold text-black group-hover:text-[#1A1A1A] transition-colors duration-150">
+                    {artist.name}
+                    <span className="text-[#C4C4C4] ml-1.5 text-[11px]">&#8599;</span>
+                  </p>
                   <p className="text-[12px] text-[#8A8A8A]">
                     {formatListeners(artist.monthly_listeners)} listeners
                   </p>
-                </div>
+                </a>
               ))}
             </div>
           ) : (

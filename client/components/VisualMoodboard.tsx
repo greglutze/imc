@@ -200,7 +200,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
   if (loading) {
     return (
-      <div className="animate-fade-in px-10 pt-10 pb-8">
+      <div className="animate-fade-in pt-10 pb-8">
         <div className="h-3 w-32 bg-[#F7F7F5] animate-pulse mb-4" />
         <div className="h-10 w-48 bg-[#F7F7F5] animate-pulse mb-4" />
         <div className="h-4 w-80 bg-[#F7F7F5] animate-pulse mb-8" />
@@ -226,7 +226,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       />
 
       {/* Editorial header */}
-      <div className="px-10 pt-10 pb-8 flex items-start justify-between">
+      <div className="pt-10 pb-8 flex items-start justify-between">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
             Visual World
@@ -250,7 +250,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Upload area / Grid */}
       <div
-        className={`px-10 pb-8 ${dragOver ? 'bg-[#F7F7F5]' : ''} transition-colors duration-150`}
+        className={`pb-8 ${dragOver ? 'bg-[#F7F7F5]' : ''} transition-colors duration-150`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -335,7 +335,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Color Palette Strip */}
       {palette.length > 0 && (
-        <div className="px-10 py-6 border-t border-[#E8E8E8]">
+        <div className="py-6 border-t border-[#E8E8E8]">
           <div className="flex items-center justify-between mb-4">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
               Extracted Palette
@@ -387,7 +387,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         </div>
       )}
       {extractingColors && images.length > 0 && palette.length === 0 && (
-        <div className="px-10 py-6 border-t border-[#E8E8E8]">
+        <div className="py-6 border-t border-[#E8E8E8]">
           <div className="h-3 w-32 bg-[#F7F7F5] animate-pulse mb-4" />
           <div className="flex gap-0 overflow-hidden h-16">
             {[...Array(5)].map((_, i) => (
@@ -399,7 +399,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Sonic Brief */}
       {(brief || analyzing) && (
-        <div className="px-10 py-8">
+        <div className="py-8">
           <div className="bg-[#F7F7F5] px-7 py-8">
             {analyzing && (
               <div className="max-w-2xl">
@@ -525,7 +525,7 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
 
       {/* Generate brief button — shown when images exist but no brief */}
       {images.length >= 1 && !brief && !analyzing && (
-        <div className="border-t border-[#E8E8E8] px-10 py-6">
+        <div className="border-t border-[#E8E8E8] py-6">
           <ButtonV2 onClick={handleAnalyze}>
             Generate Sonic Brief
           </ButtonV2>

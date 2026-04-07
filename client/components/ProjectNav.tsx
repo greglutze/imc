@@ -15,12 +15,13 @@ interface ProjectNavProps {
 
 export default function ProjectNav({ projectId, artistName, imageUrl, activePage }: ProjectNavProps) {
   const links: Array<{ key: NavPage; label: string; href: string }> = [
-    { key: 'prompts', label: 'Sonic Engine', href: `/projects/${projectId}/prompts` },
+    { key: 'prompts', label: 'Sounds', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'Lyrics', href: `/projects/${projectId}/lyrics` },
     // { key: 'visuals', label: 'Visual Engine', href: `/projects/${projectId}/visuals` }, // 2.0
     { key: 'share', label: 'Share', href: `/projects/${projectId}/share` },
-    { key: 'research', label: 'Research', href: `/projects/${projectId}/research` },
   ];
+
+  const researchLink = { key: 'research' as NavPage, label: 'Full Research Report', href: `/projects/${projectId}/research` };
 
   return (
     <div className="border-b border-[#E8E8E8]">
@@ -64,6 +65,18 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
               </a>
             );
           })}
+
+          {/* Research — separated with pill treatment */}
+          <a
+            href={researchLink.href}
+            className={`text-[11px] font-semibold uppercase tracking-wide px-4 py-1.5 rounded-full border transition-colors duration-150 ml-1 ${
+              activePage === 'research'
+                ? 'bg-black text-white border-black'
+                : 'bg-[#F7F7F5] text-[#8A8A8A] border-[#E8E8E8] hover:text-[#1A1A1A] hover:border-[#1A1A1A]'
+            }`}
+          >
+            {researchLink.label}
+          </a>
         </nav>
       </div>
     </div>

@@ -228,11 +228,11 @@ export default function LyricAdvisorPage() {
             </div>
           )}
 
-          {/* Demo Track Drafts — auto-seeded from Sonic Engine */}
+          {/* Demo Track Drafts — auto-seeded from Sounds */}
           {demoTracks.length > 0 && (
             <div className="mb-12">
               <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4] mb-1">
-                From Sonic Engine
+                From Sounds
               </p>
               <p className="text-[13px] text-[#8A8A8A] mb-4">
                 Demo lyrics generated with your tracks — click to start refining.

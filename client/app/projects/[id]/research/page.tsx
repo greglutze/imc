@@ -187,7 +187,7 @@ export default function ResearchPage() {
               />
               <NextStepBanner
                 completedLabel="Research complete"
-                primary={{ label: 'Open Sonic Engine', href: `/projects/${id}/prompts` }}
+                primary={{ label: 'Open Sounds', href: `/projects/${id}/prompts` }}
                 secondary={{ label: 'Back to overview', href: `/projects/${id}` }}
               />
             </>
