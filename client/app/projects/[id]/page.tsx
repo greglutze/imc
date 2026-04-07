@@ -421,8 +421,14 @@ export default function ProjectPage() {
                   </blockquote>
                 </div>
 
-                {/* Three-column data strip */}
-                <div className="flex items-center justify-end pt-8 pb-4">
+                {/* Artist DNA */}
+                <div className="flex items-center justify-between pt-8 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                      Artist DNA
+                    </p>
+                  </div>
                   <a href={`/projects/${id}/prompts`}>
                     <Badge variant="action">View Sounds</Badge>
                   </a>
