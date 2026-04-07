@@ -558,10 +558,13 @@ export default function ProjectPage() {
             )}
 
             {/* Instruments grid — 4 across */}
-            <div className="py-12">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
-                Your Studio
-              </p>
+            <div className="py-10">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                  Your Studio
+                </p>
+              </div>
               <div className="grid grid-cols-4 gap-4 stagger-enter">
                 {instruments.map((inst) => (
                   <a
