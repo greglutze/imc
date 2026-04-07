@@ -33,9 +33,24 @@ const config: Config = {
           yellow: '#FFD700',   // Brand accent, primary action
           orange: '#FF6B00',   // Warning, attention
           red: '#E53535',      // Error, destructive
-          green: '#00C853',    // Success, active, confidence
+          green: '#00FF00',    // Success, active, confidence — neon
           blue: '#2979FF',     // Info, link, navigation
           violet: '#7C4DFF',   // AI/intelligence indicator
+        },
+
+        // Override Tailwind default greens to match brand neon green
+        green: {
+          50: '#f0fff0',
+          100: '#ccffcc',
+          200: '#99ff99',
+          300: '#66ff66',
+          400: '#33ff33',
+          500: '#00FF00',
+          600: '#00dd00',
+          700: '#00bb00',
+          800: '#009900',
+          900: '#007700',
+          950: '#005500',
         },
 
         // Surface colors — light mode
