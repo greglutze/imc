@@ -10,11 +10,11 @@ import type { I2StyleProfile, I2VocalistPersona, I2Track, Project } from '../../
 import { Badge, ButtonV2 } from '../../../../components/ui';
 
 /**
- * MoodWheel — a compact radial chart inspired by data-viz wheels.
- * Three concentric rings: inner = mood keywords, middle = tone keywords, outer = sonic signatures.
- * Each segment gets a deterministic color from a curated palette.
+ * MoodDNA — a horizontal strip of colored bars (like a barcode/DNA strand)
+ * that gives each project a unique visual fingerprint.
+ * Below the strip, mood keywords are displayed typographically at varying sizes.
  */
-function MoodWheel({
+function MoodDNA({
   moodKeywords = [],
   toneKeywords = [],
   sonicSignatures = [],
@@ -23,95 +23,77 @@ function MoodWheel({
   toneKeywords?: string[];
   sonicSignatures?: string[];
 }) {
-  // Curated palette — warm, saturated, editorial
+  // Curated palette — saturated, editorial
   const palette = [
     '#E53535', '#FF6B00', '#FFB800', '#00C853', '#00BFA5',
     '#2979FF', '#7C4DFF', '#D500F9', '#FF4081', '#795548',
-    '#607D8B', '#1A1A1A', '#FF8A65', '#AED581', '#4FC3F7',
-    '#CE93D8', '#BCAAA4', '#A1887F', '#90A4AE', '#FFF176',
-    '#81D4FA', '#C5E1A5', '#FFAB91', '#B39DDB', '#80CBC4',
+    '#607D8B', '#FF8A65', '#AED581', '#4FC3F7', '#CE93D8',
+    '#A1887F', '#1A1A1A', '#BCAAA4', '#81D4FA', '#FFAB91',
   ];
 
-  const rings = [
-    { items: moodKeywords.slice(0, 8), radius: 36, width: 24 },
-    { items: toneKeywords.slice(0, 10), radius: 64, width: 20 },
-    { items: sonicSignatures.slice(0, 12).map(s => s.split(' — ')[0].split(': ').pop()?.trim() || s), radius: 88, width: 18 },
-  ].filter(r => r.items.length > 0);
+  // Combine all keywords into one list with category labels
+  const allItems: { word: string; category: 'mood' | 'tone' | 'sonic' }[] = [
+    ...moodKeywords.slice(0, 6).map(w => ({ word: w, category: 'mood' as const })),
+    ...toneKeywords.slice(0, 6).map(w => ({ word: w, category: 'tone' as const })),
+    ...sonicSignatures.slice(0, 6).map(s => ({
+      word: s.split(' — ')[0].split(': ').pop()?.trim() || s,
+      category: 'sonic' as const,
+    })),
+  ];
 
-  if (rings.length === 0) return null;
+  if (allItems.length === 0) return null;
 
-  const size = 220;
-  const cx = size / 2;
-  const cy = size / 2;
-  let colorIndex = 0;
-
-  // Build arc path for a segment
-  const arc = (cx: number, cy: number, r: number, startAngle: number, endAngle: number) => {
-    const start = {
-      x: cx + r * Math.cos(startAngle),
-      y: cy + r * Math.sin(startAngle),
-    };
-    const end = {
-      x: cx + r * Math.cos(endAngle),
-      y: cy + r * Math.sin(endAngle),
-    };
-    const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
-    return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y}`;
+  // Deterministic hash for bar width variation
+  const hashWidth = (str: string) => {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+    return Math.abs(h);
   };
 
-  // Build annular sector (filled wedge between inner and outer radius)
-  const sector = (cx: number, cy: number, innerR: number, outerR: number, startAngle: number, endAngle: number) => {
-    const gap = 0.02; // small gap between segments
-    const s = startAngle + gap;
-    const e = endAngle - gap;
-    if (e <= s) return '';
-
-    const outerStart = { x: cx + outerR * Math.cos(s), y: cy + outerR * Math.sin(s) };
-    const outerEnd = { x: cx + outerR * Math.cos(e), y: cy + outerR * Math.sin(e) };
-    const innerStart = { x: cx + innerR * Math.cos(e), y: cy + innerR * Math.sin(e) };
-    const innerEnd = { x: cx + innerR * Math.cos(s), y: cy + innerR * Math.sin(s) };
-    const largeArc = (e - s) > Math.PI ? 1 : 0;
-
-    return [
-      `M ${outerStart.x} ${outerStart.y}`,
-      `A ${outerR} ${outerR} 0 ${largeArc} 1 ${outerEnd.x} ${outerEnd.y}`,
-      `L ${innerStart.x} ${innerStart.y}`,
-      `A ${innerR} ${innerR} 0 ${largeArc} 0 ${innerEnd.x} ${innerEnd.y}`,
-      'Z',
-    ].join(' ');
+  // Font sizes: mood = largest, tone = medium, sonic = smallest
+  const fontSize = (cat: string) => {
+    if (cat === 'mood') return 'text-[16px] font-medium';
+    if (cat === 'tone') return 'text-[13px] font-normal';
+    return 'text-[11px] font-normal';
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {/* Center dot */}
-        <circle cx={cx} cy={cy} r={4} fill="#1A1A1A" />
-
-        {rings.map((ring, ri) => {
-          const count = ring.items.length;
-          const anglePerItem = (Math.PI * 2) / count;
-          const innerR = ring.radius - ring.width / 2;
-          const outerR = ring.radius + ring.width / 2;
-
-          return ring.items.map((item, si) => {
-            const startAngle = si * anglePerItem - Math.PI / 2;
-            const endAngle = startAngle + anglePerItem;
-            const color = palette[colorIndex % palette.length];
-            colorIndex++;
-
-            return (
-              <path
-                key={`${ri}-${si}`}
-                d={sector(cx, cy, innerR, outerR, startAngle, endAngle)}
-                fill={color}
-                opacity={0.85}
-              >
-                <title>{item}</title>
-              </path>
-            );
-          });
+    <div>
+      {/* DNA Strip — colored bars */}
+      <div className="flex items-end gap-[2px] h-16 mb-4">
+        {allItems.map((item, i) => {
+          const color = palette[i % palette.length];
+          // Vary heights for visual rhythm
+          const minH = 40;
+          const maxH = 100;
+          const heightPct = minH + (hashWidth(item.word) % (maxH - minH));
+          return (
+            <div
+              key={i}
+              className="flex-1 rounded-sm transition-all duration-200 hover:opacity-70"
+              style={{
+                backgroundColor: color,
+                height: `${heightPct}%`,
+                minWidth: '3px',
+              }}
+              title={item.word}
+            />
+          );
         })}
-      </svg>
+      </div>
+
+      {/* Typographic keyword list */}
+      <div className="flex flex-wrap gap-x-3 gap-y-1">
+        {allItems.map((item, i) => (
+          <span
+            key={i}
+            className={`${fontSize(item.category)} text-[#1A1A1A] leading-tight`}
+            style={{ color: palette[i % palette.length] }}
+          >
+            {item.word}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -136,12 +118,9 @@ function VocalDirectionSection({ vocalistPersona }: { vocalistPersona: I2Vocalis
         Vocal Direction
       </p>
 
-      {/* Character — large editorial type */}
-      <p className="text-[28px] leading-[1.35] font-medium text-[#1A1A1A] tracking-tight max-w-3xl">
-        {vocalistPersona.vocal_character.split('.')[0].trim()}.
-      </p>
-      <p className="text-[14px] leading-[1.6] text-[#8A8A8A] mt-3 max-w-2xl">
-        {vocalistPersona.vocal_character.split('.').slice(1).join('.').trim()}
+      {/* Character — editorial type, matching Production Aesthetic */}
+      <p className="text-[20px] leading-[1.4] font-medium text-[#1A1A1A] tracking-tight max-w-3xl">
+        &ldquo;{vocalistPersona.vocal_character}&rdquo;
       </p>
 
       {/* Tone keywords */}
@@ -445,7 +424,7 @@ export default function PromptsPage() {
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                   Production Aesthetic
                 </p>
-                <blockquote className="text-[16px] leading-[1.6] text-[#1A1A1A] max-w-3xl italic">
+                <blockquote className="text-[20px] leading-[1.4] font-medium text-[#1A1A1A] max-w-3xl tracking-tight">
                   &ldquo;{styleProfile.production_aesthetic}&rdquo;
                 </blockquote>
               </div>
@@ -481,10 +460,9 @@ export default function PromptsPage() {
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
                       Tempo
                     </p>
-                    <p className="text-[36px] font-medium text-[#1A1A1A] tracking-tight leading-none">
+                    <p className="text-[20px] font-medium text-[#1A1A1A] tracking-tight">
                       {styleProfile.tempo_range}
                     </p>
-                    <p className="text-[11px] text-[#C4C4C4] mt-1 uppercase tracking-wide">BPM</p>
                   </div>
                   <div className="col-span-5">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
@@ -500,9 +478,9 @@ export default function PromptsPage() {
                   </div>
                   <div className="col-span-4">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
-                      Mood Map
+                      Mood DNA
                     </p>
-                    <MoodWheel
+                    <MoodDNA
                       moodKeywords={project?.concept?.mood_keywords}
                       toneKeywords={vocalistPersona?.tone_keywords}
                       sonicSignatures={styleProfile.sonic_signatures}
