@@ -179,6 +179,41 @@ router.patch('/:projectId/session/:sessionId/title', async (req: AuthRequest, re
   }
 });
 
+// Update session notes
+router.patch('/:projectId/session/:sessionId/notes', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const user = req.user!;
+    const { projectId, sessionId } = req.params;
+    const { notes } = req.body;
+
+    const projectCheck = await pool.query(
+      'SELECT id FROM projects WHERE id = $1 AND org_id = $2',
+      [projectId, user.org_id]
+    );
+    if (projectCheck.rows.length === 0) {
+      res.status(403).json({ error: 'Project not found or not authorized' });
+      return;
+    }
+
+    const result = await pool.query(
+      `UPDATE lyric_sessions SET notes = $1::jsonb, updated_at = NOW()
+       WHERE id = $2 AND project_id = $3
+       RETURNING id, notes, updated_at`,
+      [JSON.stringify(notes), sessionId, projectId]
+    );
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Session not found' });
+      return;
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Send a message to the advisor
 router.post('/:projectId/session/:sessionId/message', async (req: AuthRequest, res: Response): Promise<void> => {
   try {

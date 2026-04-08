@@ -6,7 +6,7 @@ import ProjectNav from '../../../../../components/ProjectNav';
 import { Badge, Signal } from '../../../../../components/ui';
 import { useAuth } from '../../../../../lib/auth-context';
 import { api } from '../../../../../lib/api';
-import type { LyricSession, LyricSessionMessage, Project } from '../../../../../lib/api';
+import type { LyricSession, LyricSessionMessage, LyricNote, Project } from '../../../../../lib/api';
 
 // ─── Syllable Counter ────────────────────────────────────────────────────────
 
@@ -256,9 +256,10 @@ export default function LyricSessionPage() {
   const [advisorOpen, setAdvisorOpen] = useState(false);
   const [fontSize, setFontSize] = useState<14 | 16 | 18 | 20>(16);
   const [showSyllables, setShowSyllables] = useState(false);
-  const [notes, setNotes] = useState<Record<number, string>>({});
-  const [editingNote, setEditingNote] = useState<{ line: number; text: string } | null>(null);
+  const [notes, setNotes] = useState<LyricNote[]>([]);
+  const [editingNote, setEditingNote] = useState<{ line: number; highlight?: string } | null>(null);
   const [noteInputText, setNoteInputText] = useState('');
+  const notesSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Selection popup state
   const [selectionPopup, setSelectionPopup] = useState<{
@@ -290,6 +291,7 @@ export default function LyricSessionPage() {
         setSession(sess);
         setLyrics(sess.lyrics || '');
         setMessages(sess.messages || []);
+        setNotes(sess.notes || []);
       } catch (err) {
         console.error('Failed to load session:', err);
       } finally {
@@ -337,12 +339,26 @@ export default function LyricSessionPage() {
     el.style.height = `${Math.max(el.scrollHeight, 400)}px`;
   }, [lyrics, fontSize]);
 
-  // Cleanup timeout on unmount
+  // Persist notes to backend (debounced)
+  const saveNotes = useCallback(async (notesData: LyricNote[]) => {
+    if (!id || !sessionId) return;
+    try {
+      await api.saveLyricNotes(id, sessionId, notesData);
+    } catch (err) {
+      console.error('Failed to save notes:', err);
+    }
+  }, [id, sessionId]);
+
+  const persistNotes = useCallback((notesData: LyricNote[]) => {
+    if (notesSaveRef.current) clearTimeout(notesSaveRef.current);
+    notesSaveRef.current = setTimeout(() => saveNotes(notesData), 500);
+  }, [saveNotes]);
+
+  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      if (notesSaveRef.current) clearTimeout(notesSaveRef.current);
     };
   }, []);
 
@@ -496,13 +512,14 @@ export default function LyricSessionPage() {
 
   const handlePopupAction = useCallback((type: string, text: string) => {
     if (type === 'note') {
-      // Find which line the selection is on
+      // Find which line the selection is on and capture the highlight text
       if (lyricsRef.current) {
         const start = lyricsRef.current.selectionStart;
         const textBefore = lyricsRef.current.value.substring(0, start);
         const lineIndex = textBefore.split('\n').length - 1;
-        setEditingNote({ line: lineIndex, text: notes[lineIndex] || '' });
-        setNoteInputText(notes[lineIndex] || '');
+        const existing = notes.find(n => n.line === lineIndex);
+        setEditingNote({ line: lineIndex, highlight: text });
+        setNoteInputText(existing?.note || '');
       }
       setSelectionPopup({ visible: false, position: null, text: '' });
       return;
@@ -524,30 +541,37 @@ export default function LyricSessionPage() {
   // Save note
   const handleNoteSave = useCallback(() => {
     if (editingNote === null) return;
+    let updated: LyricNote[];
     if (noteInputText.trim()) {
-      setNotes(prev => ({ ...prev, [editingNote.line]: noteInputText.trim() }));
+      const existing = notes.findIndex(n => n.line === editingNote.line);
+      const newNote: LyricNote = {
+        line: editingNote.line,
+        note: noteInputText.trim(),
+        highlight: editingNote.highlight,
+      };
+      if (existing >= 0) {
+        updated = notes.map((n, i) => i === existing ? newNote : n);
+      } else {
+        updated = [...notes, newNote];
+      }
     } else {
-      setNotes(prev => {
-        const next = { ...prev };
-        delete next[editingNote.line];
-        return next;
-      });
+      updated = notes.filter(n => n.line !== editingNote.line);
     }
+    setNotes(updated);
+    persistNotes(updated);
     setEditingNote(null);
     setNoteInputText('');
-  }, [editingNote, noteInputText]);
+  }, [editingNote, noteInputText, notes, persistNotes]);
 
   const handleNoteDelete = useCallback((line: number) => {
-    setNotes(prev => {
-      const next = { ...prev };
-      delete next[line];
-      return next;
-    });
+    const updated = notes.filter(n => n.line !== line);
+    setNotes(updated);
+    persistNotes(updated);
     if (editingNote?.line === line) {
       setEditingNote(null);
       setNoteInputText('');
     }
-  }, [editingNote]);
+  }, [editingNote, notes, persistNotes]);
 
   // Dismiss message
   const handleDismiss = useCallback(async (index: number) => {
@@ -750,66 +774,103 @@ export default function LyricSessionPage() {
             </div>
           )}
 
-          {/* Textarea */}
-          <textarea
-            ref={lyricsRef}
-            value={lyrics}
-            onChange={handleLyricsChange}
-            onSelect={handleSelectionChange}
-            placeholder={
-              session?.entry_mode === 'paste'
-                ? 'Paste your lyrics here...'
-                : 'Start writing your lyrics...'
-            }
-            className="w-full resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-8 text-black font-mono bg-white placeholder-[#C4C4C4]"
-            style={{
-              fontSize: `${fontSize}px`,
-              lineHeight: 1.8,
-              paddingLeft: showSyllables ? '8px' : '40px',
-              paddingRight: '40px',
-              maxWidth: '680px',
-              minHeight: '400px',
-              overflow: 'hidden',
-            }}
-            spellCheck={false}
-          />
+          {/* Textarea with highlight layer */}
+          <div className="relative w-full" style={{ maxWidth: '680px' }}>
+            {/* Highlight backdrop — mirrors textarea text, shows highlights behind */}
+            {notes.length > 0 && (
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none py-8 font-mono whitespace-pre-wrap break-words"
+                style={{
+                  fontSize: `${fontSize}px`,
+                  lineHeight: 1.8,
+                  paddingLeft: showSyllables ? '8px' : '40px',
+                  paddingRight: '40px',
+                  color: 'transparent',
+                  overflow: 'hidden',
+                }}
+              >
+                {lyricsLines.map((line, i) => {
+                  const lineNote = notes.find(n => n.line === i);
+                  if (lineNote?.highlight && line.includes(lineNote.highlight)) {
+                    const idx = line.indexOf(lineNote.highlight);
+                    return (
+                      <div key={i}>
+                        <span>{line.substring(0, idx)}</span>
+                        <span className="bg-signal-orange/15 rounded-sm">{lineNote.highlight}</span>
+                        <span>{line.substring(idx + lineNote.highlight.length)}</span>
+                      </div>
+                    );
+                  }
+                  return <div key={i}>{line || '\u200B'}</div>;
+                })}
+              </div>
+            )}
+
+            {/* Actual textarea */}
+            <textarea
+              ref={lyricsRef}
+              value={lyrics}
+              onChange={handleLyricsChange}
+              onSelect={handleSelectionChange}
+              placeholder={
+                session?.entry_mode === 'paste'
+                  ? 'Paste your lyrics here...'
+                  : 'Start writing your lyrics...'
+              }
+              className="relative w-full resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-8 text-black font-mono placeholder-[#C4C4C4]"
+              style={{
+                fontSize: `${fontSize}px`,
+                lineHeight: 1.8,
+                paddingLeft: showSyllables ? '8px' : '40px',
+                paddingRight: '40px',
+                minHeight: '400px',
+                overflow: 'hidden',
+                background: 'transparent',
+              }}
+              spellCheck={false}
+            />
+          </div>
 
           {/* Notes margin */}
-          {Object.keys(notes).length > 0 && (
+          {notes.length > 0 && (
             <div
               className="shrink-0 pt-8 pl-4 select-none"
               style={{ width: '200px' }}
             >
-              {lyricsLines.map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    height: `${fontSize * 1.8}px`,
-                    lineHeight: `${fontSize * 1.8}px`,
-                  }}
-                >
-                  {notes[i] && (
-                    <div className="group/note flex items-center gap-1">
-                      <button
-                        onClick={() => {
-                          setEditingNote({ line: i, text: notes[i] });
-                          setNoteInputText(notes[i]);
-                        }}
-                        className="text-[10px] text-signal-orange leading-tight truncate max-w-[160px] hover:text-signal-orange/80 cursor-pointer"
-                        title={notes[i]}
-                      >
-                        {notes[i]}
-                      </button>
-                      <button
-                        onClick={() => handleNoteDelete(i)}
-                        className="text-[9px] text-[#C4C4C4] hover:text-signal-red opacity-0 group-hover/note:opacity-100 transition-opacity shrink-0"
-                      >
-                        &#x2715;
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
+              {lyricsLines.map((_, i) => {
+                const lineNote = notes.find(n => n.line === i);
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      height: `${fontSize * 1.8}px`,
+                      lineHeight: `${fontSize * 1.8}px`,
+                    }}
+                  >
+                    {lineNote && (
+                      <div className="group/note flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            setEditingNote({ line: i, highlight: lineNote.highlight });
+                            setNoteInputText(lineNote.note);
+                          }}
+                          className="text-[10px] text-signal-orange leading-tight truncate max-w-[160px] hover:text-signal-orange/80 cursor-pointer"
+                          title={lineNote.note}
+                        >
+                          {lineNote.note}
+                        </button>
+                        <button
+                          onClick={() => handleNoteDelete(i)}
+                          className="text-[9px] text-[#C4C4C4] hover:text-signal-red opacity-0 group-hover/note:opacity-100 transition-opacity shrink-0"
+                        >
+                          &#x2715;
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -846,16 +907,16 @@ export default function LyricSessionPage() {
               className="w-full text-[13px] text-black bg-[#F7F7F5] border-none outline-none focus:outline-none focus:ring-0 shadow-none resize-none p-2.5"
               rows={3}
             />
-            <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center justify-end gap-2 mt-2">
               <button
                 onClick={() => { setEditingNote(null); setNoteInputText(''); }}
-                className="text-[11px] text-[#C4C4C4] hover:text-[#8A8A8A] transition-colors"
+                className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] bg-white border border-[#E8E8E8] px-4 py-1.5 rounded-full hover:border-[#C4C4C4] transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleNoteSave}
-                className="text-[11px] font-semibold uppercase tracking-wide bg-black text-white px-3 py-1.5 hover:bg-[#333] transition-colors"
+                className="text-[11px] font-semibold uppercase tracking-wide bg-black text-white px-4 py-1.5 rounded-full hover:bg-[#333] transition-colors"
               >
                 Save
               </button>

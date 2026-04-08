@@ -348,6 +348,16 @@ async function migrate(): Promise<void> {
       `);
       console.log('Lyric sessions table created.');
     }
+    // Lyric notes column migration
+    const lyricNotesCheck = await pool.query(
+      `SELECT EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'lyric_sessions' AND column_name = 'notes')`
+    );
+    if (!lyricNotesCheck.rows[0].exists) {
+      console.log('Adding notes column to lyric_sessions...');
+      await pool.query(`ALTER TABLE lyric_sessions ADD COLUMN notes jsonb DEFAULT '[]'`);
+      console.log('Notes column added.');
+    }
+
     // Track annotations migration
     const annotationsCheck = await pool.query(
       `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'track_annotations')`

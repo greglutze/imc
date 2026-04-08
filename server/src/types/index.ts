@@ -376,12 +376,19 @@ export interface LyricSessionMessage {
   timestamp: string;
 }
 
+export interface LyricNote {
+  line: number;
+  note: string;
+  highlight?: string; // the selected text that was highlighted when note was created
+}
+
 export interface LyricSession {
   id: string;
   project_id: string;
   title: string | null;
   lyrics: string;
   messages: LyricSessionMessage[];
+  notes: LyricNote[];
   entry_mode: LyricSessionEntryMode;
   vibe_context: string | null;
   created_at: Date;

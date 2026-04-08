@@ -198,12 +198,19 @@ export interface LyricSessionMessage {
   timestamp: string;
 }
 
+export interface LyricNote {
+  line: number;
+  note: string;
+  highlight?: string;
+}
+
 export interface LyricSession {
   id: string;
   project_id: string;
   title: string | null;
   lyrics: string;
   messages: LyricSessionMessage[];
+  notes: LyricNote[];
   entry_mode: LyricEntryMode;
   vibe_context: string | null;
   created_at: string;
@@ -682,6 +689,13 @@ class ApiClient {
     return this.request(`/api/lyric-advisor/${projectId}/session/${sessionId}/dismiss`, {
       method: 'PATCH',
       body: JSON.stringify({ messageIndex }),
+    });
+  }
+
+  async saveLyricNotes(projectId: string, sessionId: string, notes: LyricNote[]): Promise<{ id: string; notes: LyricNote[]; updated_at: string }> {
+    return this.request(`/api/lyric-advisor/${projectId}/session/${sessionId}/notes`, {
+      method: 'PATCH',
+      body: JSON.stringify({ notes }),
     });
   }
 
