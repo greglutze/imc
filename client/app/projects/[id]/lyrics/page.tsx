@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ProjectNav from '../../../../components/ProjectNav';
 import { useAuth } from '../../../../lib/auth-context';
@@ -196,64 +196,29 @@ export default function LyricAdvisorPage() {
               <div className="space-y-3 stagger-enter">
                 {/* User sessions first */}
                 {sessions.map((session) => (
-                  <a
+                  <SessionRow
                     key={session.id}
+                    title={session.title || 'Untitled Session'}
+                    subtitle={session.lyrics_preview}
+                    date={session.updated_at}
                     href={`/projects/${id}/lyrics/${session.id}`}
-                    className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5 block"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[16px] font-medium text-[#1A1A1A]">
-                        {session.title || 'Untitled Session'}
-                      </p>
-                      {session.lyrics_preview && (
-                        <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
-                          {session.lyrics_preview}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-4 shrink-0">
-                      <span className="text-[11px] font-medium text-[#C4C4C4]">
-                        {new Date(session.updated_at).toLocaleDateString()}
-                      </span>
-                      <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
-                    </div>
-                  </a>
+                    onDelete={async () => {
+                      await api.deleteLyricSession(id, session.id);
+                      setSessions(prev => prev.filter(s => s.id !== session.id));
+                    }}
+                  />
                 ))}
 
                 {/* Demo tracks with "from sounds" tag */}
                 {demoTracks.map((track) => (
-                  <button
+                  <SessionRow
                     key={`demo-${track.track_number}`}
+                    title={track.title}
+                    subtitle={(track.lyrics || '').replace(/\\n/g, ' ').slice(0, 100) + '...'}
+                    tag="from sounds"
                     onClick={() => handleOpenTrackLyrics(track)}
-                    disabled={creating !== null}
-                    className="group w-full text-left bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2.5">
-                        <p className="text-[16px] font-medium text-[#1A1A1A]">
-                          {track.title}
-                        </p>
-                        <span className="text-[10px] font-medium text-[#8A8A8A] border border-[#E8E8E8] px-2 py-0.5 rounded-full">
-                          from sounds
-                        </span>
-                      </div>
-                      <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
-                        {(track.lyrics || '').replace(/\\n/g, ' ').slice(0, 100)}...
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-4 shrink-0">
-                      {creating === `track-${track.track_number}` ? (
-                        <div className="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <span className="text-[11px] font-medium text-[#C4C4C4]">
-                            {new Date().toLocaleDateString()}
-                          </span>
-                          <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
-                        </>
-                      )}
-                    </div>
-                  </button>
+                    loading={creating === `track-${track.track_number}`}
+                  />
                 ))}
               </div>
             </div>
@@ -286,7 +251,7 @@ export default function LyricAdvisorPage() {
                       key={theme.id}
                       onClick={() => handleThemeSelect(theme)}
                       disabled={creating !== null}
-                      className="group text-left border border-[#E8E8E8] hover:border-[#C4C4C4] rounded-sm px-5 py-4 transition-all duration-150 relative"
+                      className="group text-left border border-[#E8E8E8] hover:border-[#C4C4C4] px-5 py-4 transition-all duration-150 relative"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
@@ -330,3 +295,150 @@ export default function LyricAdvisorPage() {
   );
 }
 
+/** Unified session row with ⋯ menu for delete */
+function SessionRow({
+  title,
+  subtitle,
+  date,
+  tag,
+  href,
+  onClick,
+  loading,
+  onDelete,
+}: {
+  title: string;
+  subtitle?: string | null;
+  date?: string;
+  tag?: string;
+  href?: string;
+  onClick?: () => void;
+  loading?: boolean;
+  onDelete?: () => Promise<void>;
+}) {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+        setConfirmingDelete(false);
+      }
+    };
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuOpen]);
+
+  const handleDelete = async () => {
+    if (!onDelete) return;
+    setDeleting(true);
+    try {
+      await onDelete();
+    } catch (err) {
+      console.error('Failed to delete session:', err);
+    } finally {
+      setDeleting(false);
+      setMenuOpen(false);
+      setConfirmingDelete(false);
+    }
+  };
+
+  const Wrapper = href ? 'a' : 'button';
+  const wrapperProps = href
+    ? { href }
+    : { onClick, disabled: loading, type: 'button' as const };
+
+  return (
+    <div className="relative group flex items-center bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover">
+      <Wrapper
+        {...(wrapperProps as any)}
+        className="flex-1 flex items-center gap-6 px-7 py-5 text-left min-w-0"
+      >
+        {loading ? (
+          <div className="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin shrink-0" />
+        ) : null}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2.5">
+            <p className="text-[16px] font-medium text-[#1A1A1A]">
+              {title}
+            </p>
+            {tag && (
+              <span className="text-[10px] font-medium text-[#8A8A8A] border border-[#E8E8E8] px-2 py-0.5 rounded-full">
+                {tag}
+              </span>
+            )}
+          </div>
+          {subtitle && (
+            <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
+              {subtitle}
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-4 shrink-0">
+          {date && (
+            <span className="text-[11px] font-medium text-[#C4C4C4]">
+              {new Date(date).toLocaleDateString()}
+            </span>
+          )}
+          <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+        </div>
+      </Wrapper>
+
+      {/* ⋯ menu */}
+      {onDelete && (
+        <div className="relative shrink-0 pr-5" ref={menuRef}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setMenuOpen(!menuOpen);
+            }}
+            className="text-[20px] text-[#C4C4C4] hover:text-[#1A1A1A] transition-colors duration-150 px-2 py-1"
+            aria-label={`Options for ${title}`}
+          >
+            ⋯
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 top-full mt-2 bg-white border border-[#E8E8E8] z-50 min-w-[200px]">
+              {confirmingDelete ? (
+                <div className="px-4 py-3">
+                  <p className="text-[13px] font-medium text-[#1A1A1A] mb-1">
+                    Delete &ldquo;{title}&rdquo;?
+                  </p>
+                  <p className="text-[11px] text-[#8A8A8A] mb-3">This can&apos;t be undone.</p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(); }}
+                      disabled={deleting}
+                      className="text-[12px] font-medium text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 transition-colors disabled:opacity-50"
+                    >
+                      {deleting ? 'Deleting...' : 'Delete'}
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setConfirmingDelete(false); setMenuOpen(false); }}
+                      className="text-[12px] font-medium text-[#8A8A8A] hover:text-[#1A1A1A] px-3 py-1.5 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setConfirmingDelete(true); }}
+                  className="w-full text-left px-4 py-3 text-[13px] text-red-600 hover:bg-[#F7F7F5] transition-colors"
+                >
+                  Delete Session
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
