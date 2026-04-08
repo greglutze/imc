@@ -358,8 +358,8 @@ export default function PromptsPage() {
             <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
               Sounds
             </p>
-            <p className="text-[14px] text-[#8A8A8A] mt-3 max-w-lg leading-relaxed">
-              Production-ready prompts and lyrics for each track, built from your concept and research.
+            <p className="text-[20px] leading-[1.4] font-medium text-[#1A1A1A] mt-3 max-w-3xl tracking-tight">
+              Demo prompts and lyrics for each track, built from your concept and research.
             </p>
           </div>
 
@@ -407,10 +407,10 @@ export default function PromptsPage() {
                 <VocalDirectionSection vocalistPersona={vocalistPersona} />
               )}
 
-              {/* Tempo, Key & Mood Map — compact row */}
+              {/* Tempo, Key & Instruments — equal columns */}
               <div className="py-10 border-b border-[#E8E8E8]">
-                <div className="grid grid-cols-12 gap-8">
-                  <div className="col-span-3">
+                <div className="grid grid-cols-3 gap-8">
+                  <div>
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
                       Tempo
                     </p>
@@ -418,7 +418,7 @@ export default function PromptsPage() {
                       {styleProfile.tempo_range}
                     </p>
                   </div>
-                  <div className="col-span-5">
+                  <div>
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
                       Key Preferences
                     </p>
@@ -430,13 +430,13 @@ export default function PromptsPage() {
                       ))}
                     </div>
                   </div>
-                  <div className="col-span-4">
+                  <div>
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
                       Instrument Palette
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {extractInstruments(tracks).map((inst, i) => (
-                        <span key={i} className="text-[11px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-3 py-1 rounded-full">
+                        <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
                           {inst}
                         </span>
                       ))}
