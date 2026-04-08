@@ -10,92 +10,44 @@ import type { I2StyleProfile, I2VocalistPersona, I2Track, Project } from '../../
 import { Badge, ButtonV2 } from '../../../../components/ui';
 
 /**
- * MoodDNA — a horizontal strip of colored bars (like a barcode/DNA strand)
- * that gives each project a unique visual fingerprint.
- * Below the strip, mood keywords are displayed typographically at varying sizes.
+ * extractInstruments — scans all Suno prompts for instrument/sound keywords
+ * and returns a deduplicated list of the key sounds in the project.
  */
-function MoodDNA({
-  moodKeywords = [],
-  toneKeywords = [],
-  sonicSignatures = [],
-}: {
-  moodKeywords?: string[];
-  toneKeywords?: string[];
-  sonicSignatures?: string[];
-}) {
-  // Curated palette — saturated, editorial
-  const palette = [
-    '#E53535', '#FF6B00', '#FFB800', '#00C853', '#00BFA5',
-    '#2979FF', '#7C4DFF', '#D500F9', '#FF4081', '#795548',
-    '#607D8B', '#FF8A65', '#AED581', '#4FC3F7', '#CE93D8',
-    '#A1887F', '#1A1A1A', '#BCAAA4', '#81D4FA', '#FFAB91',
+function extractInstruments(tracks: I2Track[]): string[] {
+  // Common instruments and production elements to look for
+  const instrumentPatterns = [
+    'piano', 'rhodes', 'wurlitzer', 'keys', 'organ', 'synth', 'synthesizer', 'pad',
+    'guitar', 'acoustic guitar', 'electric guitar', 'bass guitar', 'nylon guitar',
+    'bass', 'upright bass', 'sub bass', 'double bass', '808',
+    'drums', 'drum machine', 'hi-hat', 'kick', 'snare', 'percussion', 'congas', 'bongos', 'shaker', 'tambourine',
+    'strings', 'violin', 'viola', 'cello', 'orchestra', 'orchestral',
+    'brass', 'trumpet', 'horn', 'trombone', 'saxophone', 'sax', 'flute', 'clarinet', 'oboe',
+    'harp', 'vibraphone', 'marimba', 'glockenspiel', 'bells', 'chimes',
+    'tape', 'vinyl', 'distortion', 'reverb', 'delay', 'chorus', 'tremolo', 'saturation',
+    'sampler', 'sample', 'loop', 'arpeggio', 'granular',
+    'vocoder', 'autotune', 'choir', 'backing vocals', 'harmonies',
+    'ambient', 'field recording', 'noise', 'texture', 'drone',
   ];
 
-  // Combine all keywords into one list with category labels
-  const allItems: { word: string; category: 'mood' | 'tone' | 'sonic' }[] = [
-    ...moodKeywords.slice(0, 6).map(w => ({ word: w, category: 'mood' as const })),
-    ...toneKeywords.slice(0, 6).map(w => ({ word: w, category: 'tone' as const })),
-    ...sonicSignatures.slice(0, 6).map(s => ({
-      word: s.split(' — ')[0].split(': ').pop()?.trim() || s,
-      category: 'sonic' as const,
-    })),
-  ];
+  const allText = tracks.map(t => t.suno_prompt.toLowerCase()).join(' ');
+  const found = new Set<string>();
 
-  if (allItems.length === 0) return null;
+  // Check multi-word patterns first (longest match), then single words
+  const sorted = [...instrumentPatterns].sort((a, b) => b.length - a.length);
+  for (const pattern of sorted) {
+    if (allText.includes(pattern)) {
+      // Don't add if a longer version already captured (e.g., "upright bass" covers "bass")
+      const isSubstring = Array.from(found).some(f => f.includes(pattern) && f !== pattern);
+      if (!isSubstring) {
+        found.add(pattern);
+      }
+    }
+  }
 
-  // Deterministic hash for bar width variation
-  const hashWidth = (str: string) => {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) h = ((h << 5) - h + str.charCodeAt(i)) | 0;
-    return Math.abs(h);
-  };
-
-  // Font sizes: mood = largest, tone = medium, sonic = smallest
-  const fontSize = (cat: string) => {
-    if (cat === 'mood') return 'text-[16px] font-medium';
-    if (cat === 'tone') return 'text-[13px] font-normal';
-    return 'text-[11px] font-normal';
-  };
-
-  return (
-    <div>
-      {/* DNA Strip — colored bars */}
-      <div className="flex items-end gap-[2px] h-16 mb-4">
-        {allItems.map((item, i) => {
-          const color = palette[i % palette.length];
-          // Vary heights for visual rhythm
-          const minH = 40;
-          const maxH = 100;
-          const heightPct = minH + (hashWidth(item.word) % (maxH - minH));
-          return (
-            <div
-              key={i}
-              className="flex-1 rounded-sm transition-all duration-200 hover:opacity-70"
-              style={{
-                backgroundColor: color,
-                height: `${heightPct}%`,
-                minWidth: '3px',
-              }}
-              title={item.word}
-            />
-          );
-        })}
-      </div>
-
-      {/* Typographic keyword list */}
-      <div className="flex flex-wrap gap-x-3 gap-y-1">
-        {allItems.map((item, i) => (
-          <span
-            key={i}
-            className={`${fontSize(item.category)} text-[#1A1A1A] leading-tight`}
-            style={{ color: palette[i % palette.length] }}
-          >
-            {item.word}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
+  // Capitalize nicely
+  return Array.from(found).map(w =>
+    w.split(' ').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ')
+  ).slice(0, 12);
 }
 
 function VocalDirectionSection({ vocalistPersona }: { vocalistPersona: I2VocalistPersona }) {
@@ -118,33 +70,35 @@ function VocalDirectionSection({ vocalistPersona }: { vocalistPersona: I2Vocalis
         Vocal Direction
       </p>
 
-      {/* Character — editorial type, matching Production Aesthetic */}
-      <p className="text-[20px] leading-[1.4] font-medium text-[#1A1A1A] tracking-tight max-w-3xl">
-        &ldquo;{vocalistPersona.vocal_character}&rdquo;
-      </p>
-
-      {/* Tone keywords */}
-      <div className="flex flex-wrap gap-1.5 mt-5">
-        {vocalistPersona.tone_keywords.map((kw, i) => (
-          <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
-            {kw}
-          </span>
-        ))}
-      </div>
-
-      {/* Suno Vocal Prompt — copyable, below */}
-      <div className="bg-[#F7F7F5] p-5 mt-6" style={{ maxWidth: 'calc(50% - 8px)' }}>
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
-            Suno Vocal Prompt
+      <div className="grid grid-cols-2 gap-8">
+        {/* Left: Character + tone pills */}
+        <div>
+          <p className="text-[20px] leading-[1.4] font-medium text-[#1A1A1A] tracking-tight">
+            &ldquo;{vocalistPersona.vocal_character}&rdquo;
           </p>
-          <Badge variant="action" onClick={handleCopy}>
-            {copied ? 'Copied' : 'Copy'}
-          </Badge>
+          <div className="flex flex-wrap gap-1.5 mt-4">
+            {vocalistPersona.tone_keywords.map((kw, i) => (
+              <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
+                {kw}
+              </span>
+            ))}
+          </div>
         </div>
-        <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
-          {sunoVocalPrompt}
-        </p>
+
+        {/* Right: Suno Vocal Prompt */}
+        <div className="bg-[#F7F7F5] p-5">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+              Suno Vocal Prompt
+            </p>
+            <Badge variant="action" onClick={handleCopy}>
+              {copied ? 'Copied' : 'Copy'}
+            </Badge>
+          </div>
+          <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
+            {sunoVocalPrompt}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -478,13 +432,15 @@ export default function PromptsPage() {
                   </div>
                   <div className="col-span-4">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
-                      Mood DNA
+                      Instrument Palette
                     </p>
-                    <MoodDNA
-                      moodKeywords={project?.concept?.mood_keywords}
-                      toneKeywords={vocalistPersona?.tone_keywords}
-                      sonicSignatures={styleProfile.sonic_signatures}
-                    />
+                    <div className="flex flex-wrap gap-2">
+                      {extractInstruments(tracks).map((inst, i) => (
+                        <span key={i} className="text-[11px] font-medium text-[#1A1A1A] bg-[#F7F7F5] px-3 py-1 rounded-full">
+                          {inst}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
