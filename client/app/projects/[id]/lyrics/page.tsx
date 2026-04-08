@@ -195,22 +195,28 @@ export default function LyricAdvisorPage() {
               </p>
               <div className="space-y-3 stagger-enter">
                 {/* User sessions first */}
-                {sessions.map((session) => (
-                  <SessionRow
-                    key={session.id}
-                    title={session.title || 'Untitled Session'}
-                    subtitle={session.lyrics_preview}
-                    date={session.updated_at}
-                    href={`/projects/${id}/lyrics/${session.id}`}
-                    onDelete={async () => {
-                      await api.deleteLyricSession(id, session.id);
-                      setSessions(prev => prev.filter(s => s.id !== session.id));
-                    }}
-                  />
-                ))}
+                {sessions.map((session) => {
+                  const isFromDemo = demoTracks.some(t => t.title === session.title);
+                  return (
+                    <SessionRow
+                      key={session.id}
+                      title={session.title || 'Untitled Session'}
+                      subtitle={session.lyrics_preview}
+                      date={session.updated_at}
+                      tag={isFromDemo ? 'from sounds' : undefined}
+                      href={`/projects/${id}/lyrics/${session.id}`}
+                      onDelete={async () => {
+                        await api.deleteLyricSession(id, session.id);
+                        setSessions(prev => prev.filter(s => s.id !== session.id));
+                      }}
+                    />
+                  );
+                })}
 
-                {/* Demo tracks with "from sounds" tag */}
-                {demoTracks.map((track) => (
+                {/* Demo tracks with "from sounds" tag — hide if session already exists for this track */}
+                {demoTracks
+                  .filter(track => !sessions.some(s => s.title === track.title))
+                  .map((track) => (
                   <SessionRow
                     key={`demo-${track.track_number}`}
                     title={track.title}
