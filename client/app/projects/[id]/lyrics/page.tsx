@@ -193,7 +193,7 @@ export default function LyricAdvisorPage() {
           {/* Sessions — user's work comes first */}
           {sessions.length > 0 && (
             <div className="mb-12">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4] mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                 My Sessions
               </p>
               <div className="space-y-3 stagger-enter">
@@ -231,7 +231,7 @@ export default function LyricAdvisorPage() {
           {/* Demo Track Drafts — auto-seeded from Sounds */}
           {demoTracks.length > 0 && (
             <div className="mb-12">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4] mb-1">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-1">
                 From Sounds
               </p>
               <p className="text-[13px] text-[#8A8A8A] mb-4">
@@ -275,7 +275,7 @@ export default function LyricAdvisorPage() {
           {hasConcept && (
             <div className="mb-12">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4]">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
                   Writing Prompts
                 </p>
                 {themes.length > 0 && !themesLoading && (
