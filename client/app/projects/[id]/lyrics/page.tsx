@@ -190,13 +190,14 @@ export default function LyricAdvisorPage() {
             </button>
           </div>
 
-          {/* Sessions — user's work comes first */}
-          {sessions.length > 0 && (
+          {/* Sessions — user's work + demo tracks combined */}
+          {(sessions.length > 0 || demoTracks.length > 0) && (
             <div className="mb-12">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                 My Sessions
               </p>
               <div className="space-y-3 stagger-enter">
+                {/* User sessions first */}
                 {sessions.map((session) => (
                   <a
                     key={session.id}
@@ -204,9 +205,11 @@ export default function LyricAdvisorPage() {
                     className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5 block"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-[16px] font-medium text-[#1A1A1A]">
-                        {session.title || 'Untitled Session'}
-                      </p>
+                      <div className="flex items-center gap-2.5">
+                        <p className="text-[16px] font-medium text-[#1A1A1A]">
+                          {session.title || 'Untitled Session'}
+                        </p>
+                      </div>
                       {session.lyrics_preview && (
                         <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
                           {session.lyrics_preview}
@@ -224,34 +227,24 @@ export default function LyricAdvisorPage() {
                     </div>
                   </a>
                 ))}
-              </div>
-            </div>
-          )}
 
-          {/* Demo Track Drafts — auto-seeded from Sounds */}
-          {demoTracks.length > 0 && (
-            <div className="mb-12">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-1">
-                From Sounds
-              </p>
-              <p className="text-[13px] text-[#8A8A8A] mb-4">
-                Demo lyrics generated with your tracks.
-              </p>
-              <div className="space-y-3 stagger-enter">
+                {/* Demo tracks with "from sounds" tag */}
                 {demoTracks.map((track) => (
                   <button
-                    key={track.track_number}
+                    key={`demo-${track.track_number}`}
                     onClick={() => handleOpenTrackLyrics(track)}
                     disabled={creating !== null}
                     className="group w-full text-left bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5"
                   >
-                    <span className="text-[11px] font-mono text-[#C4C4C4] shrink-0">
-                      {String(track.track_number).padStart(2, '0')}
-                    </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[16px] font-medium text-[#1A1A1A]">
-                        {track.title}
-                      </p>
+                      <div className="flex items-center gap-2.5">
+                        <p className="text-[16px] font-medium text-[#1A1A1A]">
+                          {track.title}
+                        </p>
+                        <span className="text-[10px] font-medium text-[#8A8A8A] border border-[#E8E8E8] px-2 py-0.5 rounded-full">
+                          from sounds
+                        </span>
+                      </div>
                       <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
                         {(track.lyrics || '').replace(/\\n/g, ' ').slice(0, 100)}...
                       </p>
