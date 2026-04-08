@@ -4,7 +4,7 @@
 
 import { resolveArtworkUrl } from '../lib/api';
 
-type NavPage = 'home' | 'research' | 'prompts' | 'lyrics' | 'visuals' | 'share';
+type NavPage = 'home' | 'research' | 'prompts' | 'lyrics' | 'moodboard' | 'visuals' | 'share'; // moodboard accessible from artist page, not top nav
 
 interface ProjectNavProps {
   projectId: string;
@@ -17,7 +17,6 @@ export default function ProjectNav({ projectId, artistName, imageUrl, activePage
   const links: Array<{ key: NavPage; label: string; href: string }> = [
     { key: 'prompts', label: 'Sounds', href: `/projects/${projectId}/prompts` },
     { key: 'lyrics', label: 'Lyrics', href: `/projects/${projectId}/lyrics` },
-    // { key: 'visuals', label: 'Visual Engine', href: `/projects/${projectId}/visuals` }, // 2.0
     { key: 'share', label: 'Share', href: `/projects/${projectId}/share` },
   ];
 

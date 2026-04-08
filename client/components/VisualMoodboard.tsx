@@ -21,7 +21,6 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [showPreviousBrief, setShowPreviousBrief] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [palette, setPalette] = useState<ExtractedColor[]>([]);
   const [extractingColors, setExtractingColors] = useState(false);
@@ -154,18 +153,6 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
     }
   }, [projectId]);
 
-  // Handle flag toggle
-  const handleFlagToggle = useCallback(async (sentence: string) => {
-    if (!brief) return;
-    const isFlagged = brief.flagged_elements.includes(sentence);
-    try {
-      const result = await api.flagMoodboardElement(projectId, sentence, !isFlagged);
-      setBrief(result.brief);
-    } catch (err) {
-      console.error('Flag failed:', err);
-    }
-  }, [projectId, brief]);
-
   // Drag and drop handlers
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -191,11 +178,6 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       e.target.value = '';
     }
   }, [handleUpload]);
-
-  // Split prose into sentences for flagging
-  const proseSentences = brief?.prose
-    ? brief.prose.match(/[^.!?]+[.!?]+/g)?.map(s => s.trim()) || [brief.prose]
-    : [];
 
   if (loading) {
     return (
@@ -228,14 +210,14 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
       <div className="pt-10 pb-8 flex items-start justify-between">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
-            Visual World
+            Moodboard
           </p>
           <p className="text-[40px] leading-[1.1] font-medium text-black tracking-tight">
-            Audio/Visuals
+            Visual World
           </p>
-          <p className="text-[16px] text-[#8A8A8A] mt-4 max-w-lg">
+          <p className="text-[20px] leading-[1.4] font-medium text-[#1A1A1A] tracking-tight mt-4 max-w-xl">
             {images.length > 0
-              ? `${imageCount} images shaping the sound and vision of your project.`
+              ? 'A moodboard shaping the sound and vision of your project.'
               : 'Drop in anything that feels like your sound — photos, textures, artwork, color palettes, film stills.'
             }
           </p>
@@ -396,122 +378,80 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
         </div>
       )}
 
-      {/* Sonic Brief */}
+      {/* Sonic Integration — collapsed pills */}
       {(brief || analyzing) && (
-        <div className="py-8">
-          <div className="bg-[#F7F7F5] px-7 py-8">
-            {analyzing && (
-              <div className="max-w-2xl">
-                <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-3">
-                  Reading your images...
-                </p>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" />
-                  <div className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '200ms' }} />
-                  <div className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '400ms' }} />
-                </div>
+        <div className="py-8 border-t border-[#E8E8E8]">
+          {analyzing && (
+            <div>
+              <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-3">
+                Reading your images...
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" />
+                <div className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '200ms' }} />
+                <div className="w-2 h-2 bg-[#C4C4C4] rounded-full animate-pulse" style={{ animationDelay: '400ms' }} />
               </div>
-            )}
+            </div>
+          )}
 
-            {brief && !analyzing && (
-              <div className="max-w-2xl">
-                <div className="flex items-center justify-between mb-5">
-                  <p className="text-[11px] font-medium text-[#1A1A1A] uppercase tracking-wide">
-                    Sonic Brief
+          {brief && !analyzing && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                    Integrated into Sounds
                   </p>
-                  <div className="flex items-center gap-3">
-                    {brief.confidence && (
-                      <span className={`text-[11px] font-medium uppercase tracking-wide ${
-                        brief.confidence === 'high' ? 'text-green-600' :
-                        brief.confidence === 'medium' ? 'text-signal-yellow' : 'text-red-500'
-                      }`}>
-                        {brief.confidence} confidence
-                      </span>
-                    )}
-                    {brief.version > 1 && (
-                      <span className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4]">
-                        v{brief.version}
-                      </span>
-                    )}
-                    <Badge variant="action" onClick={handleAnalyze}>Regenerate</Badge>
-                  </div>
+                  <span className="inline-flex items-center h-5 px-2 text-[10px] font-semibold uppercase tracking-wide rounded-full bg-signal-green text-black">
+                    Active
+                  </span>
                 </div>
+                <Badge variant="action" onClick={handleAnalyze}>Regenerate</Badge>
+              </div>
 
-                {/* Prose brief — each sentence hoverable for flagging */}
-                <div className="text-[14px] text-[#1A1A1A] leading-relaxed">
-                  {proseSentences.map((sentence, i) => {
-                    const isFlagged = brief.flagged_elements.includes(sentence);
-                    return (
-                      <span
-                        key={i}
-                        className={`
-                          inline cursor-pointer transition-colors duration-150
-                          ${isFlagged ? 'text-[#C4C4C4] line-through' : 'hover:bg-[#EEEDEB] rounded'}
-                        `}
-                        onClick={() => handleFlagToggle(sentence)}
-                        title={isFlagged ? 'Click to unflag' : 'Click to flag as not right'}
-                      >
-                        {sentence}{' '}
-                      </span>
-                    );
-                  })}
-                </div>
-
-                {/* Brief metadata */}
-                <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
-                  {brief.tempo_feel && (
-                    <BriefTag label="Tempo" value={brief.tempo_feel} />
-                  )}
-                  {brief.texture && (
-                    <BriefTag label="Texture" value={brief.texture} />
-                  )}
-                  {brief.arrangement_density && (
-                    <BriefTag label="Density" value={brief.arrangement_density} />
-                  )}
-                  {brief.dynamic_range && (
-                    <BriefTag label="Dynamic Range" value={brief.dynamic_range} />
-                  )}
-                  {brief.production_era && (
-                    <BriefTag label="Era" value={brief.production_era} />
-                  )}
-                </div>
-
-                {/* Sonic references */}
-                {brief.sonic_references.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-[11px] font-medium text-[#C4C4C4] uppercase tracking-wide mb-2">
-                      Sonic References
-                    </p>
-                    <div className="flex gap-2 flex-wrap">
-                      {brief.sonic_references.map((ref, i) => (
-                        <span
-                          key={i}
-                          className="text-[13px] font-medium text-[#1A1A1A] bg-white px-3 py-1 rounded-full border border-[#E8E8E8]"
-                        >
-                          {ref}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+              {/* Attribute pills */}
+              <div className="flex flex-wrap gap-2">
+                {brief.atmosphere && (
+                  <Badge variant="violet">{brief.atmosphere}</Badge>
                 )}
-
-                {/* Previous brief toggle */}
-                {brief.previous_prose && (
-                  <div className="mt-5">
-                    <ButtonV2 onClick={() => setShowPreviousBrief(!showPreviousBrief)} variant="ghost" size="md">
-                      {showPreviousBrief ? 'Hide' : 'See'} previous brief
-                    </ButtonV2>
-                    {showPreviousBrief && (
-                      <p className="text-[13px] text-[#8A8A8A] mt-3 italic leading-relaxed">
-                        {brief.previous_prose}
-                      </p>
-                    )}
-                  </div>
+                {brief.texture && (
+                  <Badge variant="violet">{brief.texture}</Badge>
+                )}
+                {brief.emotional_register && (
+                  <Badge variant="violet">{brief.emotional_register}</Badge>
+                )}
+                {brief.tempo_feel && (
+                  <Badge variant="default">{brief.tempo_feel}</Badge>
+                )}
+                {brief.arrangement_density && (
+                  <Badge variant="default">{brief.arrangement_density}</Badge>
+                )}
+                {brief.dynamic_range && (
+                  <Badge variant="default">{brief.dynamic_range}</Badge>
+                )}
+                {brief.production_era && (
+                  <Badge variant="default">{brief.production_era}</Badge>
                 )}
               </div>
-            )}
 
-          </div>
+              {/* Sonic references as pills */}
+              {brief.sonic_references.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {brief.sonic_references.map((ref, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center h-5 px-2 text-[11px] font-semibold uppercase tracking-wide rounded-full bg-white text-[#1A1A1A] border border-[#E8E8E8]"
+                    >
+                      {ref}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <p className="text-[13px] text-[#C4C4C4] mt-4">
+                This moodboard shapes your sound palette, production aesthetic, and vocal direction in Sounds.
+              </p>
+            </div>
+          )}
         </div>
       )}
 
@@ -537,15 +477,3 @@ export default function VisualMoodboard({ projectId }: VisualMoodboardProps) {
   );
 }
 
-function BriefTag({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline gap-2">
-      <span className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
-        {label}
-      </span>
-      <span className="text-[13px] text-black">
-        {value}
-      </span>
-    </div>
-  );
-}

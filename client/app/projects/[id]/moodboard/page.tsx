@@ -65,7 +65,7 @@ export default function MoodboardPage() {
         projectId={id}
         artistName={artistName}
         imageUrl={project?.image_url}
-        activePage="home"
+        activePage="moodboard"
       />
 
       <div className="flex-1 overflow-y-auto">
