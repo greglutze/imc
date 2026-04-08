@@ -150,29 +150,13 @@ function TrackCard({
         className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[2000px] opacity-100 pb-8' : 'max-h-0 opacity-0'}`}
       >
         {track.notes && (
-          <p className="text-[13px] text-[#8A8A8A] leading-relaxed mb-5 max-w-xl">
+          <p className="text-[13px] text-[#8A8A8A] leading-relaxed mb-5" style={{ maxWidth: 'calc(50% - 8px)' }}>
             {track.notes}
           </p>
         )}
 
-        {/* Two-column: Suno Prompt + Lyrics */}
+        {/* Two-column: Lyrics (left) + Suno Prompt (right) */}
         <div className="grid grid-cols-2 gap-4">
-          {/* Suno prompt */}
-          <div className="bg-[#F7F7F5] p-5">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
-                Suno Prompt
-                <span className={`ml-2 font-mono ${sunoCharCount > 1000 ? 'text-signal-red' : 'text-[#C4C4C4]'}`}>
-                  {sunoCharCount}/1000
-                </span>
-              </p>
-              <Badge variant="action" copyText={track.suno_prompt}>Copy</Badge>
-            </div>
-            <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
-              {track.suno_prompt}
-            </p>
-          </div>
-
           {/* Lyrics */}
           <div className="bg-[#F7F7F5] p-5 flex flex-col">
             <div className="flex items-center justify-between mb-3">
@@ -191,6 +175,22 @@ function TrackCard({
             <div className="max-h-[400px] overflow-y-auto pr-2 flex-1">
               {renderLyrics(track.lyrics)}
             </div>
+          </div>
+
+          {/* Suno prompt */}
+          <div className="bg-[#F7F7F5] p-5">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                Suno Prompt
+                <span className={`ml-2 font-mono ${sunoCharCount > 1000 ? 'text-signal-red' : 'text-[#C4C4C4]'}`}>
+                  {sunoCharCount}/1000
+                </span>
+              </p>
+              <Badge variant="action" copyText={track.suno_prompt}>Copy</Badge>
+            </div>
+            <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
+              {track.suno_prompt}
+            </p>
           </div>
         </div>
       </div>
