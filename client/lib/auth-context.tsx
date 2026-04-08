@@ -14,12 +14,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// DEV BYPASS: skip auth when backend isn't running
+const DEV_BYPASS = process.env.NODE_ENV === 'development';
+const DEV_USER: AuthUser = { id: 'dev-1', email: 'greg@vsco.co', name: 'Greg' } as AuthUser;
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<AuthUser | null>(DEV_BYPASS ? DEV_USER : null);
+  const [loading, setLoading] = useState(DEV_BYPASS ? false : true);
 
   // Restore user from session on mount
   useEffect(() => {
+    if (DEV_BYPASS) return; // Skip API calls in dev
     const stored = api.getUser();
     if (stored && api.isAuthenticated()) {
       setUser(stored);
