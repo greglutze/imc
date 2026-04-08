@@ -163,13 +163,10 @@ export default function LyricAdvisorPage() {
         <div className="max-w-[1400px] mx-auto px-10 py-10">
           {/* Header */}
           <div className="mb-10">
-            <p className="text-[13px] font-medium text-[#C4C4C4] mb-2">
-              Writing Collaborator
-            </p>
             <p className="text-[40px] leading-[1.1] font-medium text-[#1A1A1A] tracking-tight">
               Lyrics
             </p>
-            <p className="text-[14px] text-[#8A8A8A] mt-4 max-w-md leading-relaxed">
+            <p className="text-[20px] leading-[1.4] font-medium text-[#1A1A1A] mt-3 max-w-3xl tracking-tight">
               A creative collaborator that helps you find the right words.
             </p>
           </div>
@@ -205,11 +202,9 @@ export default function LyricAdvisorPage() {
                     className="group bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5 block"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2.5">
-                        <p className="text-[16px] font-medium text-[#1A1A1A]">
-                          {session.title || 'Untitled Session'}
-                        </p>
-                      </div>
+                      <p className="text-[16px] font-medium text-[#1A1A1A]">
+                        {session.title || 'Untitled Session'}
+                      </p>
                       {session.lyrics_preview && (
                         <p className="text-[13px] text-[#8A8A8A] mt-1 truncate max-w-lg">
                           {session.lyrics_preview}
@@ -217,9 +212,6 @@ export default function LyricAdvisorPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-4 shrink-0">
-                      <span className="text-[11px] font-medium text-[#C4C4C4]">
-                        {session.message_count} messages
-                      </span>
                       <span className="text-[11px] font-medium text-[#C4C4C4]">
                         {new Date(session.updated_at).toLocaleDateString()}
                       </span>
@@ -249,13 +241,16 @@ export default function LyricAdvisorPage() {
                         {(track.lyrics || '').replace(/\\n/g, ' ').slice(0, 100)}...
                       </p>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-4 shrink-0">
                       {creating === `track-${track.track_number}` ? (
                         <div className="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin" />
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
-                          Refine <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
-                        </span>
+                        <>
+                          <span className="text-[11px] font-medium text-[#C4C4C4]">
+                            {new Date().toLocaleDateString()}
+                          </span>
+                          <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
+                        </>
                       )}
                     </div>
                   </button>
