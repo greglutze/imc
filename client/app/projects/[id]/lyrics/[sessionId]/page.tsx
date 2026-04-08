@@ -8,7 +8,38 @@ import { useAuth } from '../../../../../lib/auth-context';
 import { api } from '../../../../../lib/api';
 import type { LyricSession, LyricSessionMessage, Project } from '../../../../../lib/api';
 
-// ─── Inline Selection Popup (Grammarly-style) ───────────────────────────────
+// ─── Syllable Counter ────────────────────────────────────────────────────────
+
+function countSyllables(word: string): number {
+  word = word.toLowerCase().replace(/[^a-z]/g, '');
+  if (!word) return 0;
+  if (word.length <= 2) return 1;
+
+  // Basic syllable counting heuristic
+  let count = 0;
+  const vowels = 'aeiouy';
+  let prevVowel = false;
+
+  for (let i = 0; i < word.length; i++) {
+    const isVowel = vowels.includes(word[i]);
+    if (isVowel && !prevVowel) count++;
+    prevVowel = isVowel;
+  }
+
+  // Adjust for silent e
+  if (word.endsWith('e') && count > 1) count--;
+  // Adjust for -le ending
+  if (word.endsWith('le') && word.length > 2 && !vowels.includes(word[word.length - 3])) count++;
+
+  return Math.max(1, count);
+}
+
+function lineSyllables(line: string): number {
+  const words = line.trim().split(/\s+/).filter(w => w && !/^\[.*\]$/.test(w));
+  return words.reduce((sum, w) => sum + countSyllables(w), 0);
+}
+
+// ─── Inline Selection Popup (pill-shaped) ────────────────────────────────────
 
 interface SelectionPopupProps {
   position: { x: number; y: number } | null;
@@ -24,12 +55,14 @@ function SelectionPopup({ position, selectedText, onAction, visible }: Selection
     { key: 'rhyme', label: 'Rhyme' },
     { key: 'synonym', label: 'Synonym' },
     { key: 'syllable', label: 'Syllable' },
-    { key: 'rewrite', label: 'AI Rewrite' },
+    { key: 'suggest', label: 'Suggest' },
+    { key: 'note', label: 'Note' },
   ];
 
   return (
     <div
-      className="fixed z-50 flex items-center gap-0.5 bg-[#1A1A1A] shadow-lg py-1.5 px-1.5 animate-fade-in"
+      data-selection-popup
+      className="fixed z-50 flex items-center gap-0.5 bg-[#1A1A1A] rounded-full shadow-lg py-1 px-1 animate-fade-in"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -37,7 +70,7 @@ function SelectionPopup({ position, selectedText, onAction, visible }: Selection
         marginTop: '-8px',
       }}
     >
-      {actions.map((action) => (
+      {actions.map((action, i) => (
         <button
           key={action.key}
           onClick={(e) => {
@@ -45,20 +78,13 @@ function SelectionPopup({ position, selectedText, onAction, visible }: Selection
             e.stopPropagation();
             onAction(action.key, selectedText);
           }}
-          className="text-[11px] font-semibold uppercase tracking-wide text-[#999] hover:text-white px-2.5 py-1 transition-colors duration-100 whitespace-nowrap"
+          className={`text-[11px] font-semibold uppercase tracking-wide text-[#999] hover:text-white px-3 py-1.5 transition-colors duration-100 whitespace-nowrap ${
+            i === 0 ? 'rounded-l-full' : i === actions.length - 1 ? 'rounded-r-full' : ''
+          }`}
         >
           {action.label}
         </button>
       ))}
-      {/* Arrow */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-full w-0 h-0"
-        style={{
-          borderLeft: '5px solid transparent',
-          borderRight: '5px solid transparent',
-          borderTop: '5px solid #1A1A1A',
-        }}
-      />
     </div>
   );
 }
@@ -229,6 +255,10 @@ export default function LyricSessionPage() {
   const [titleInput, setTitleInput] = useState('');
   const [advisorOpen, setAdvisorOpen] = useState(false);
   const [fontSize, setFontSize] = useState<14 | 16 | 18 | 20>(16);
+  const [showSyllables, setShowSyllables] = useState(false);
+  const [notes, setNotes] = useState<Record<number, string>>({});
+  const [editingNote, setEditingNote] = useState<{ line: number; text: string } | null>(null);
+  const [noteInputText, setNoteInputText] = useState('');
 
   // Selection popup state
   const [selectionPopup, setSelectionPopup] = useState<{
@@ -239,7 +269,6 @@ export default function LyricSessionPage() {
 
   const lyricsRef = useRef<HTMLTextAreaElement>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const editorWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -300,6 +329,14 @@ export default function LyricSessionPage() {
     }, 500);
   }, [saveLyrics]);
 
+  // Auto-resize textarea to fit content (no inner scrollbar)
+  useEffect(() => {
+    if (!lyricsRef.current) return;
+    const el = lyricsRef.current;
+    el.style.height = 'auto';
+    el.style.height = `${Math.max(el.scrollHeight, 400)}px`;
+  }, [lyrics, fontSize]);
+
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -319,7 +356,6 @@ export default function LyricSessionPage() {
     const before = lyrics.substring(0, start);
     const after = lyrics.substring(end);
 
-    // If inserting a section tag, ensure it's on its own line
     const needsNewlineBefore = before.length > 0 && !before.endsWith('\n');
     const prefix = needsNewlineBefore ? '\n' : '';
 
@@ -330,7 +366,6 @@ export default function LyricSessionPage() {
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(() => saveLyrics(newText), 500);
 
-    // Move cursor after inserted text
     setTimeout(() => {
       const newPos = start + prefix.length + text.length + 1;
       textarea.focus();
@@ -373,26 +408,27 @@ export default function LyricSessionPage() {
       return;
     }
 
-    // Calculate position relative to viewport
-    // We use a hidden mirror div approach — but for simplicity, position near the textarea
     const rect = textarea.getBoundingClientRect();
-    // Approximate position: use textarea rect + rough line/character math
     const textBefore = textarea.value.substring(0, start);
     const lines = textBefore.split('\n');
     const lineIndex = lines.length - 1;
-    const lineHeight = 22; // approximate
-    const charWidth = 8.4; // approximate mono char width
+    const lineHeight = fontSize * 1.8;
+    const charWidth = fontSize * 0.6;
     const lastLine = lines[lineIndex] || '';
 
-    const x = rect.left + Math.min(lastLine.length * charWidth + (end - start) * charWidth / 2, rect.width - 40);
-    const y = rect.top + (lineIndex * lineHeight) - textarea.scrollTop + 48; // offset for header
+    // Account for padding (40px left) and syllable gutter
+    const gutterWidth = showSyllables ? 40 : 0;
+    const paddingLeft = 40 + gutterWidth;
+
+    const x = rect.left + paddingLeft + Math.min(lastLine.length * charWidth + (end - start) * charWidth / 2, rect.width - 80);
+    const y = rect.top + (lineIndex * lineHeight) - textarea.scrollTop;
 
     setSelectionPopup({
       visible: true,
-      position: { x: Math.max(120, Math.min(x, window.innerWidth - 180)), y: Math.max(40, y) },
+      position: { x: Math.max(140, Math.min(x, window.innerWidth - 200)), y: Math.max(60, y) },
       text: selectedText,
     });
-  }, []);
+  }, [fontSize, showSyllables]);
 
   useEffect(() => {
     document.addEventListener('selectionchange', handleSelectionChange);
@@ -402,11 +438,9 @@ export default function LyricSessionPage() {
   // Close popup on click outside
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
-      // If clicking inside the popup, don't close
       const popup = document.querySelector('[data-selection-popup]');
       if (popup && popup.contains(e.target as Node)) return;
 
-      // Small delay to allow the selection to register first
       setTimeout(() => {
         if (lyricsRef.current) {
           const start = lyricsRef.current.selectionStart;
@@ -461,19 +495,59 @@ export default function LyricSessionPage() {
   // ─── Inline popup action → sends to advisor ────────────────────────────
 
   const handlePopupAction = useCallback((type: string, text: string) => {
-    // Open advisor panel and send the action
+    if (type === 'note') {
+      // Find which line the selection is on
+      if (lyricsRef.current) {
+        const start = lyricsRef.current.selectionStart;
+        const textBefore = lyricsRef.current.value.substring(0, start);
+        const lineIndex = textBefore.split('\n').length - 1;
+        setEditingNote({ line: lineIndex, text: notes[lineIndex] || '' });
+        setNoteInputText(notes[lineIndex] || '');
+      }
+      setSelectionPopup({ visible: false, position: null, text: '' });
+      return;
+    }
+
     setAdvisorOpen(true);
 
     const prompts: Record<string, string> = {
       rhyme: `Find rhymes for: "${text}"`,
       synonym: `Find synonyms for: "${text}"`,
       syllable: `Count syllables and analyze the meter of: "${text}"`,
-      rewrite: `Suggest an AI rewrite for: "${text}"`,
+      suggest: `Suggest 3 alternative ways to write this line or phrase. Give me 3 distinct options I can choose from, each with a different angle or feel: "${text}"`,
     };
 
     handleSend(prompts[type] || prompts.rhyme, type);
     setSelectionPopup({ visible: false, position: null, text: '' });
-  }, [handleSend]);
+  }, [handleSend, notes]);
+
+  // Save note
+  const handleNoteSave = useCallback(() => {
+    if (editingNote === null) return;
+    if (noteInputText.trim()) {
+      setNotes(prev => ({ ...prev, [editingNote.line]: noteInputText.trim() }));
+    } else {
+      setNotes(prev => {
+        const next = { ...prev };
+        delete next[editingNote.line];
+        return next;
+      });
+    }
+    setEditingNote(null);
+    setNoteInputText('');
+  }, [editingNote, noteInputText]);
+
+  const handleNoteDelete = useCallback((line: number) => {
+    setNotes(prev => {
+      const next = { ...prev };
+      delete next[line];
+      return next;
+    });
+    if (editingNote?.line === line) {
+      setEditingNote(null);
+      setNoteInputText('');
+    }
+  }, [editingNote]);
 
   // Dismiss message
   const handleDismiss = useCallback(async (index: number) => {
@@ -504,6 +578,16 @@ export default function LyricSessionPage() {
   const artistName = project?.artist_name || 'Untitled';
   const sessionTitle = session?.title || 'Untitled Session';
 
+  // Compute syllable counts for each line
+  const lyricsLines = lyrics.split('\n');
+  const syllableCounts = showSyllables
+    ? lyricsLines.map(line => {
+        const trimmed = line.trim();
+        if (!trimmed || /^\[.*\]$/.test(trimmed)) return null; // skip empty & section tags
+        return lineSyllables(trimmed);
+      })
+    : [];
+
   if (authLoading || pageLoading) {
     return (
       <div className="animate-fade-in px-10 py-16 max-w-2xl">
@@ -516,11 +600,11 @@ export default function LyricSessionPage() {
   }
 
   return (
-    <div className="animate-fade-in h-screen flex flex-col">
+    <div className="animate-fade-in min-h-screen flex flex-col">
       <ProjectNav projectId={id} artistName={artistName} imageUrl={project?.image_url} activePage="lyrics" />
 
-      {/* Session header */}
-      <div className="border-b border-[#E8E8E8] px-10 py-3 flex items-center justify-between">
+      {/* Session header — sticky */}
+      <div className="sticky top-0 z-20 bg-white border-b border-[#E8E8E8] px-10 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <a
             href={`/projects/${id}/lyrics`}
@@ -556,71 +640,68 @@ export default function LyricSessionPage() {
         </div>
       </div>
 
-      {/* Formatting toolbar */}
-      <div className="border-b border-[#E8E8E8] px-10 py-2 flex items-center gap-1" style={{ maxWidth: '720px', margin: '0 auto', width: '100%' }}>
+      {/* Formatting toolbar — sticky below header */}
+      <div className="sticky top-[49px] z-20 bg-white border-b border-[#E8E8E8] px-10 py-2 flex items-center gap-1">
         <button
           onClick={() => insertAtCursor('[Verse]')}
           className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#1A1A1A] px-2.5 py-1 hover:bg-[#F7F7F5] transition-colors duration-100"
-          title="Insert Verse tag"
         >
           Verse
         </button>
         <button
           onClick={() => insertAtCursor('[Chorus]')}
           className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#1A1A1A] px-2.5 py-1 hover:bg-[#F7F7F5] transition-colors duration-100"
-          title="Insert Chorus tag"
         >
           Chorus
         </button>
         <button
           onClick={() => insertAtCursor('[Bridge]')}
           className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#1A1A1A] px-2.5 py-1 hover:bg-[#F7F7F5] transition-colors duration-100"
-          title="Insert Bridge tag"
         >
           Bridge
         </button>
         <button
           onClick={() => insertAtCursor('[Pre-Chorus]')}
           className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#1A1A1A] px-2.5 py-1 hover:bg-[#F7F7F5] transition-colors duration-100"
-          title="Insert Pre-Chorus tag"
         >
           Pre
         </button>
         <button
           onClick={() => insertAtCursor('[Outro]')}
           className="text-[11px] font-medium text-[#8A8A8A] hover:text-[#1A1A1A] px-2.5 py-1 hover:bg-[#F7F7F5] transition-colors duration-100"
-          title="Insert Outro tag"
         >
           Outro
         </button>
 
         <div className="w-px h-4 bg-[#E8E8E8] mx-1" />
 
-        <button
-          onClick={() => wrapSelection('**', '**')}
-          className="text-[11px] font-bold text-[#8A8A8A] hover:text-[#1A1A1A] px-2 py-1 hover:bg-[#F7F7F5] transition-colors duration-100"
-          title="Bold (emphasis)"
-        >
-          B
-        </button>
-        <button
-          onClick={() => wrapSelection('_', '_')}
-          className="text-[11px] italic text-[#8A8A8A] hover:text-[#1A1A1A] px-2 py-1 hover:bg-[#F7F7F5] transition-colors duration-100"
-          title="Italic (soft emphasis)"
-        >
-          I
-        </button>
+        {/* Ad-lib / backing vocal wrap */}
         <button
           onClick={() => wrapSelection('(', ')')}
-          className="text-[11px] text-[#8A8A8A] hover:text-[#1A1A1A] px-2 py-1 hover:bg-[#F7F7F5] transition-colors duration-100"
-          title="Parenthetical (ad-lib / backing vocal)"
+          className="text-[11px] text-[#8A8A8A] hover:text-[#1A1A1A] px-2.5 py-1 hover:bg-[#F7F7F5] transition-colors duration-100"
+          title="Wrap in parentheses (ad-lib / backing vocal)"
         >
           ( )
         </button>
 
         <div className="w-px h-4 bg-[#E8E8E8] mx-1" />
 
-        {/* Font size controls */}
+        {/* Syllable counter toggle */}
+        <button
+          onClick={() => setShowSyllables(prev => !prev)}
+          className={`text-[11px] font-medium px-2.5 py-1 transition-colors duration-100 ${
+            showSyllables
+              ? 'text-signal-violet bg-signal-violet/10'
+              : 'text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#F7F7F5]'
+          }`}
+          title="Toggle syllable count per line"
+        >
+          Syllables
+        </button>
+
+        <div className="w-px h-4 bg-[#E8E8E8] mx-1" />
+
+        {/* Font size */}
         <div className="flex items-center gap-0.5">
           {([14, 16, 18, 20] as const).map((size) => (
             <button
@@ -631,7 +712,6 @@ export default function LyricSessionPage() {
                   ? 'text-[#1A1A1A] font-semibold bg-[#F7F7F5]'
                   : 'text-[#C4C4C4] hover:text-[#8A8A8A]'
               }`}
-              title={`Font size ${size}px`}
             >
               {size}
             </button>
@@ -639,22 +719,149 @@ export default function LyricSessionPage() {
         </div>
       </div>
 
-      {/* Full-width writing area */}
-      <div ref={editorWrapperRef} className="flex-1 flex flex-col overflow-hidden relative">
-        <textarea
-          ref={lyricsRef}
-          value={lyrics}
-          onChange={handleLyricsChange}
-          onSelect={handleSelectionChange}
-          placeholder={
-            session?.entry_mode === 'paste'
-              ? 'Paste your lyrics here...'
-              : 'Start writing your lyrics...'
-          }
-          className="flex-1 resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none px-10 py-8 text-black leading-[1.8] font-mono bg-white placeholder-[#C4C4C4]"
-          style={{ maxWidth: '720px', margin: '0 auto', width: '100%', display: 'block', fontSize: `${fontSize}px` }}
-          spellCheck={false}
-        />
+      {/* Writing area — left-aligned, browser scrolls naturally */}
+      <div className="flex-1 relative">
+        <div className="flex">
+          {/* Syllable gutter */}
+          {showSyllables && (
+            <div
+              className="shrink-0 pt-8 pr-0 select-none pointer-events-none"
+              style={{
+                width: '40px',
+                marginLeft: '40px',
+              }}
+            >
+              {lyricsLines.map((_, i) => (
+                <div
+                  key={i}
+                  className="text-right pr-2"
+                  style={{
+                    height: `${fontSize * 1.8}px`,
+                    lineHeight: `${fontSize * 1.8}px`,
+                  }}
+                >
+                  {syllableCounts[i] != null && (
+                    <span className="text-[10px] text-signal-violet font-medium tabular-nums">
+                      {syllableCounts[i]}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Textarea */}
+          <textarea
+            ref={lyricsRef}
+            value={lyrics}
+            onChange={handleLyricsChange}
+            onSelect={handleSelectionChange}
+            placeholder={
+              session?.entry_mode === 'paste'
+                ? 'Paste your lyrics here...'
+                : 'Start writing your lyrics...'
+            }
+            className="w-full resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-8 text-black font-mono bg-white placeholder-[#C4C4C4]"
+            style={{
+              fontSize: `${fontSize}px`,
+              lineHeight: 1.8,
+              paddingLeft: showSyllables ? '8px' : '40px',
+              paddingRight: '40px',
+              maxWidth: '680px',
+              minHeight: '400px',
+              overflow: 'hidden',
+            }}
+            spellCheck={false}
+          />
+
+          {/* Notes margin */}
+          {Object.keys(notes).length > 0 && (
+            <div
+              className="shrink-0 pt-8 pl-4 select-none"
+              style={{ width: '200px' }}
+            >
+              {lyricsLines.map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    height: `${fontSize * 1.8}px`,
+                    lineHeight: `${fontSize * 1.8}px`,
+                  }}
+                >
+                  {notes[i] && (
+                    <div className="group/note flex items-center gap-1">
+                      <button
+                        onClick={() => {
+                          setEditingNote({ line: i, text: notes[i] });
+                          setNoteInputText(notes[i]);
+                        }}
+                        className="text-[10px] text-signal-orange leading-tight truncate max-w-[160px] hover:text-signal-orange/80 cursor-pointer"
+                        title={notes[i]}
+                      >
+                        {notes[i]}
+                      </button>
+                      <button
+                        onClick={() => handleNoteDelete(i)}
+                        className="text-[9px] text-[#C4C4C4] hover:text-signal-red opacity-0 group-hover/note:opacity-100 transition-opacity shrink-0"
+                      >
+                        &#x2715;
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Note editing popover */}
+        {editingNote !== null && (
+          <div
+            className="fixed z-50 bg-white border border-[#E8E8E8] shadow-lg p-3 animate-fade-in"
+            style={{
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '320px',
+            }}
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-2">
+              Note on line {editingNote.line + 1}
+            </p>
+            <textarea
+              value={noteInputText}
+              onChange={(e) => setNoteInputText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleNoteSave();
+                }
+                if (e.key === 'Escape') {
+                  setEditingNote(null);
+                  setNoteInputText('');
+                }
+              }}
+              autoFocus
+              placeholder="Add a note, alternate line, or idea..."
+              className="w-full text-[13px] text-black bg-[#F7F7F5] border-none outline-none focus:outline-none focus:ring-0 shadow-none resize-none p-2.5"
+              rows={3}
+            />
+            <div className="flex items-center justify-between mt-2">
+              <button
+                onClick={() => { setEditingNote(null); setNoteInputText(''); }}
+                className="text-[11px] text-[#C4C4C4] hover:text-[#8A8A8A] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleNoteSave}
+                className="text-[11px] font-semibold uppercase tracking-wide bg-black text-white px-3 py-1.5 hover:bg-[#333] transition-colors"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Selection popup */}
         <SelectionPopup
@@ -663,39 +870,39 @@ export default function LyricSessionPage() {
           onAction={handlePopupAction}
           visible={selectionPopup.visible}
         />
-
-        {/* Floating Advisor Button */}
-        {!advisorOpen && (
-          <button
-            onClick={() => setAdvisorOpen(true)}
-            className="fixed bottom-6 right-6 z-30 w-12 h-12 bg-black text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#333] transition-colors duration-150 group"
-            title="Open Advisor"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
-            {messages.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-signal-violet text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                {messages.filter(m => !m.dismissed).length}
-              </span>
-            )}
-          </button>
-        )}
-
-        {/* Advisor Panel */}
-        {advisorOpen && (
-          <AdvisorPanel
-            messages={messages}
-            sending={sending}
-            input={input}
-            onInputChange={setInput}
-            onSend={(content, type) => handleSend(content, type || 'chat')}
-            onDismiss={handleDismiss}
-            onClose={() => setAdvisorOpen(false)}
-            entryMode={session?.entry_mode}
-          />
-        )}
       </div>
+
+      {/* Floating Advisor Button */}
+      {!advisorOpen && (
+        <button
+          onClick={() => setAdvisorOpen(true)}
+          className="fixed bottom-6 right-6 z-30 w-12 h-12 bg-black text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#333] transition-colors duration-150"
+          title="Open Advisor"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+          {messages.length > 0 && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-signal-violet text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+              {messages.filter(m => !m.dismissed).length}
+            </span>
+          )}
+        </button>
+      )}
+
+      {/* Advisor Panel */}
+      {advisorOpen && (
+        <AdvisorPanel
+          messages={messages}
+          sending={sending}
+          input={input}
+          onInputChange={setInput}
+          onSend={(content, type) => handleSend(content, type || 'chat')}
+          onDismiss={handleDismiss}
+          onClose={() => setAdvisorOpen(false)}
+          entryMode={session?.entry_mode}
+        />
+      )}
     </div>
   );
 }
