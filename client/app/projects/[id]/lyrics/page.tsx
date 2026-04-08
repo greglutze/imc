@@ -194,7 +194,7 @@ export default function LyricAdvisorPage() {
           {sessions.length > 0 && (
             <div className="mb-12">
               <p className="text-[11px] font-medium uppercase tracking-wide text-[#C4C4C4] mb-4">
-                Sessions
+                My Sessions
               </p>
               <div className="space-y-3 stagger-enter">
                 {sessions.map((session) => (
@@ -286,47 +286,40 @@ export default function LyricAdvisorPage() {
               </div>
 
               {themesLoading ? (
-                <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="bg-[#F7F7F5] h-20 skel" />
+                    <div key={i} className="bg-[#F7F7F5] h-24 skel" />
                   ))}
                 </div>
               ) : themes.length > 0 ? (
-                <div className="space-y-3 stagger-enter">
-                  {themes.map((theme, index) => (
+                <div className="grid grid-cols-2 gap-3 stagger-enter">
+                  {themes.map((theme) => (
                     <button
                       key={theme.id}
                       onClick={() => handleThemeSelect(theme)}
                       disabled={creating !== null}
-                      className="group w-full text-left bg-[#F7F7F5] hover:bg-[#F0F0ED] card-hover flex items-center gap-6 px-7 py-5 relative"
+                      className="group text-left border border-[#E8E8E8] hover:border-[#C4C4C4] rounded-sm px-5 py-4 transition-all duration-150 relative"
                     >
-                      <span className="text-[11px] font-mono text-[#C4C4C4] shrink-0">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h3 className="text-[16px] font-medium text-[#1A1A1A]">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-[14px] font-medium text-[#1A1A1A] leading-tight">
                             {theme.title}
                           </h3>
-                          {theme.mood && (
-                            <span className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
-                              {theme.mood.toLowerCase()}
-                            </span>
-                          )}
+                          <p className="text-[12px] text-[#8A8A8A] mt-1.5 line-clamp-2 leading-relaxed">
+                            {theme.subtitle}
+                          </p>
                         </div>
-                        <p className="text-[13px] text-[#8A8A8A] truncate max-w-lg">
-                          {theme.subtitle}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3 shrink-0">
                         {creating === theme.id ? (
-                          <div className="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin" />
+                          <div className="w-3.5 h-3.5 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin shrink-0 mt-0.5" />
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1A1A1A] border border-[#E8E8E8] rounded-full px-4 py-1.5 group-hover:border-[#1A1A1A] transition-colors duration-150">
-                            Start Writing <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150">&rarr;</span>
-                          </span>
+                          <span className="text-[#C4C4C4] group-hover:text-[#1A1A1A] transition-colors duration-150 shrink-0 mt-0.5">&rarr;</span>
                         )}
                       </div>
+                      {theme.mood && (
+                        <span className="inline-block text-[10px] font-medium text-violet-600 bg-violet-50 px-2.5 py-0.5 rounded-full mt-3">
+                          {theme.mood.toLowerCase()}
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
