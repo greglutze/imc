@@ -129,7 +129,7 @@ function TrackCard({
         </div>
         <div className="flex items-center gap-3">
           {onRegenerate && isOpen && (
-            <Badge variant="action" onClick={(e: React.MouseEvent) => { e.stopPropagation(); onRegenerate(track.track_number); }}>
+            <Badge variant="action" onClick={() => { onRegenerate(track.track_number); }}>
               {isRegenerating ? 'Regenerating...' : 'Regenerate'}
             </Badge>
           )}
