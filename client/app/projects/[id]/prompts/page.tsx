@@ -136,35 +136,36 @@ function VocalDirectionSection({ vocalistPersona }: { vocalistPersona: I2Vocalis
         Vocal Direction
       </p>
 
-      <div className="grid grid-cols-2 gap-8">
-        {/* Left: Character — editorial pull quote */}
-        <div>
-          <p className="text-[18px] leading-[1.5] text-[#1A1A1A] italic">
-            &ldquo;{vocalistPersona.vocal_character}&rdquo;
-          </p>
-          <div className="flex flex-wrap gap-1.5 mt-4">
-            {vocalistPersona.tone_keywords.map((kw, i) => (
-              <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
-                {kw}
-              </span>
-            ))}
-          </div>
-        </div>
+      {/* Character — large editorial type */}
+      <p className="text-[28px] leading-[1.35] font-medium text-[#1A1A1A] tracking-tight max-w-3xl">
+        {vocalistPersona.vocal_character.split('.')[0].trim()}.
+      </p>
+      <p className="text-[14px] leading-[1.6] text-[#8A8A8A] mt-3 max-w-2xl">
+        {vocalistPersona.vocal_character.split('.').slice(1).join('.').trim()}
+      </p>
 
-        {/* Right: Suno Vocal Prompt — copyable */}
-        <div className="bg-[#F7F7F5] p-5">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
-              Suno Vocal Prompt
-            </p>
-            <Badge variant="action" onClick={handleCopy}>
-              {copied ? 'Copied' : 'Copy'}
-            </Badge>
-          </div>
-          <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
-            {sunoVocalPrompt}
+      {/* Tone keywords */}
+      <div className="flex flex-wrap gap-1.5 mt-5">
+        {vocalistPersona.tone_keywords.map((kw, i) => (
+          <span key={i} className="text-[11px] font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
+            {kw}
+          </span>
+        ))}
+      </div>
+
+      {/* Suno Vocal Prompt — copyable, below */}
+      <div className="bg-[#F7F7F5] p-5 mt-6" style={{ maxWidth: 'calc(50% - 8px)' }}>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+            Suno Vocal Prompt
           </p>
+          <Badge variant="action" onClick={handleCopy}>
+            {copied ? 'Copied' : 'Copy'}
+          </Badge>
         </div>
+        <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
+          {sunoVocalPrompt}
+        </p>
       </div>
     </div>
   );
@@ -444,7 +445,7 @@ export default function PromptsPage() {
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-4">
                   Production Aesthetic
                 </p>
-                <blockquote className="text-[20px] leading-[1.4] font-medium text-[#1A1A1A] max-w-3xl tracking-tight">
+                <blockquote className="text-[16px] leading-[1.6] text-[#1A1A1A] max-w-3xl italic">
                   &ldquo;{styleProfile.production_aesthetic}&rdquo;
                 </blockquote>
               </div>
@@ -473,16 +474,17 @@ export default function PromptsPage() {
                 <VocalDirectionSection vocalistPersona={vocalistPersona} />
               )}
 
-              {/* Tempo, Key & References — compact row */}
+              {/* Tempo, Key & Mood Map — compact row */}
               <div className="py-10 border-b border-[#E8E8E8]">
                 <div className="grid grid-cols-12 gap-8">
                   <div className="col-span-3">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
-                      Tempo Range
+                      Tempo
                     </p>
-                    <p className="text-[22px] font-medium text-[#1A1A1A] tracking-tight">
+                    <p className="text-[36px] font-medium text-[#1A1A1A] tracking-tight leading-none">
                       {styleProfile.tempo_range}
                     </p>
+                    <p className="text-[11px] text-[#C4C4C4] mt-1 uppercase tracking-wide">BPM</p>
                   </div>
                   <div className="col-span-5">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8A8A8A] mb-3">
