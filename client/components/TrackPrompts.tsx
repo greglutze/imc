@@ -14,7 +14,7 @@ interface TrackPromptsProps {
 
 export default function TrackPrompts({ tracks, onRegenerateTrack, regenerating }: TrackPromptsProps) {
   return (
-    <div className="content-reveal py-10">
+    <div className="content-reveal">
       <div className="space-y-4 stagger-enter">
         {tracks.map((track, index) => (
           <TrackCard
@@ -114,8 +114,8 @@ function TrackCard({
         className="w-full flex items-center justify-between py-5 text-left group"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex items-center gap-4">
-          <span className="text-[13px] font-medium text-[#C4C4C4]">
+        <div className="flex items-baseline gap-3">
+          <span className="text-[13px] font-medium text-[#C4C4C4] tabular-nums">
             {String(track.track_number).padStart(2, '0')}
           </span>
           <div>
@@ -150,7 +150,7 @@ function TrackCard({
         className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[2000px] opacity-100 pb-8' : 'max-h-0 opacity-0'}`}
       >
         {track.notes && (
-          <p className="text-[13px] text-[#8A8A8A] leading-relaxed mb-5 ml-[52px] max-w-xl">
+          <p className="text-[13px] text-[#8A8A8A] leading-relaxed mb-5 max-w-xl">
             {track.notes}
           </p>
         )}
