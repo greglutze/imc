@@ -45,7 +45,25 @@ function TrackCard({
   const [copiedField, setCopiedField] = useState<'suno' | 'lyrics' | null>(null);
   const [creatingSession, setCreatingSession] = useState(false);
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const sunoCharCount = track.suno_prompt.length;
+  // Ensure Suno prompt fits within 1000 char limit and has closing bracket
+  const sanitizeSunoPrompt = (prompt: string): string => {
+    let p = prompt.trim();
+    if (p.length > 1000) {
+      p = p.slice(0, 999);
+      // Remove any partial word at the end
+      const lastSpace = p.lastIndexOf(' ');
+      if (lastSpace > 900) p = p.slice(0, lastSpace);
+    }
+    // Ensure closing bracket if prompt starts with [
+    if (p.startsWith('[') && !p.endsWith(']')) {
+      if (p.length >= 1000) p = p.slice(0, 999);
+      p += ']';
+    }
+    return p;
+  };
+
+  const sunoPrompt = sanitizeSunoPrompt(track.suno_prompt);
+  const sunoCharCount = sunoPrompt.length;
 
   // Normalize escaped newlines from JSON into real newlines
   const normalizeLyrics = (text: string) => text.replace(/\\n/g, '\n');
@@ -186,10 +204,10 @@ function TrackCard({
                   {sunoCharCount}/1000
                 </span>
               </p>
-              <Badge variant="action" copyText={track.suno_prompt}>Copy</Badge>
+              <Badge variant="action" copyText={sunoPrompt}>Copy</Badge>
             </div>
             <p className="text-[13px] text-[#1A1A1A] font-mono leading-relaxed">
-              {track.suno_prompt}
+              {sunoPrompt}
             </p>
           </div>
         </div>
