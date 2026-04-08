@@ -127,7 +127,7 @@ function AdvisorPanel({ messages, sending, input, onInputChange, onSend, onDismi
       {/* Header */}
       <div className="px-5 py-3 border-b border-[#E8E8E8] flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
-          <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A]">Advisor</p>
+          <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8A8A8A]">Creative Collaborator</p>
           {sending && <Signal color="violet" label="" pulse />}
         </div>
         <button
@@ -163,7 +163,7 @@ function AdvisorPanel({ messages, sending, input, onInputChange, onSend, onDismi
                   <div className={`w-1 min-h-[16px] rounded-full shrink-0 mt-1 ${isUser ? 'bg-black' : 'bg-signal-violet'}`} />
                   <div className="flex-1 min-w-0">
                     <p className={`text-[10px] font-semibold uppercase tracking-wide mb-0.5 ${isUser ? 'text-[#8A8A8A]' : 'text-signal-violet'}`}>
-                      {isUser ? 'You' : 'Advisor'}
+                      {isUser ? 'You' : 'Collaborator'}
                     </p>
                     <div className="text-[13px] text-[#333] leading-relaxed whitespace-pre-wrap">
                       {msg.content}
@@ -188,7 +188,7 @@ function AdvisorPanel({ messages, sending, input, onInputChange, onSend, onDismi
               <div className="w-1 min-h-[16px] rounded-full shrink-0 mt-1 bg-signal-violet animate-pulse" />
               <div className="flex-1">
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-signal-violet mb-0.5">
-                  Advisor
+                  Collaborator
                 </p>
                 <div className="flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-[#C4C4C4] rounded-full animate-pulse" />
@@ -211,7 +211,7 @@ function AdvisorPanel({ messages, sending, input, onInputChange, onSend, onDismi
             value={input}
             onChange={(e) => onInputChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask the Advisor..."
+            placeholder="Ask the Collaborator..."
             disabled={sending}
             rows={1}
             className="flex-1 bg-transparent text-[13px] text-black placeholder-[#C4C4C4] resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-0.5"
@@ -775,7 +775,7 @@ export default function LyricSessionPage() {
           )}
 
           {/* Textarea with highlight layer */}
-          <div className="relative w-full" style={{ maxWidth: '680px' }}>
+          <div className="relative flex-1">
             {/* Highlight backdrop — mirrors textarea text, shows highlights behind */}
             {notes.length > 0 && (
               <div
@@ -818,7 +818,7 @@ export default function LyricSessionPage() {
                   ? 'Paste your lyrics here...'
                   : 'Start writing your lyrics...'
               }
-              className="relative w-full resize-none border-none outline-none focus:outline-none focus:ring-0 shadow-none py-8 text-black font-mono placeholder-[#C4C4C4]"
+              className="relative w-full resize-none border-0 border-none outline-none focus:outline-none focus:ring-0 focus:border-0 shadow-none py-8 text-black font-mono placeholder-[#C4C4C4]"
               style={{
                 fontSize: `${fontSize}px`,
                 lineHeight: 1.8,
@@ -835,8 +835,8 @@ export default function LyricSessionPage() {
           {/* Notes margin */}
           {notes.length > 0 && (
             <div
-              className="shrink-0 pt-8 pl-4 select-none"
-              style={{ width: '200px' }}
+              className="shrink-0 pt-8 pl-6 select-none"
+              style={{ width: '200px', borderLeft: 'none' }}
             >
               {lyricsLines.map((_, i) => {
                 const lineNote = notes.find(n => n.line === i);
@@ -938,7 +938,7 @@ export default function LyricSessionPage() {
         <button
           onClick={() => setAdvisorOpen(true)}
           className="fixed bottom-6 right-6 z-30 w-12 h-12 bg-black text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#333] transition-colors duration-150"
-          title="Open Advisor"
+          title="Open Creative Collaborator"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
